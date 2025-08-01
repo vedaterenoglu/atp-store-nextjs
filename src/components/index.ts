@@ -19,5 +19,8 @@
 // UI Components (includes shadcn/ui and custom components)
 export * from './ui'
 
-// Note: Other component categories (admin, forms, layout, etc.)
+// Layout Components
+export * from './layout'
+
+// Note: Other component categories (admin, forms, etc.)
 // will be exported when their index files are created

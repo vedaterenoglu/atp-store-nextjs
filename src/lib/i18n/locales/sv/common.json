@@ -66,5 +66,32 @@
     "serverError": "Serverfel",
     "timeout": "Tidsgräns för begäran",
     "validation": "Valideringsfel"
+  },
+  "home": {
+    "hero": {
+      "title": "Premiumprodukter",
+      "subtitle": "från Alfe Tissue Paper",
+      "description": "Upplev den perfekta blandningen av mjukhet, styrka och hållbarhet. Kvalitetsmjukpapper för ditt hem och företag.",
+      "browseProducts": "Bläddra produkter",
+      "learnMore": "Läs mer"
+    },
+    "features": {
+      "premiumQuality": {
+        "title": "Premiumkvalitet",
+        "description": "Tillverkad av de finaste materialen för överlägsen mjukhet och styrka"
+      },
+      "fastDelivery": {
+        "title": "Snabb leverans",
+        "description": "Snabb och pålitlig frakt till din dörr över hela Sverige"
+      },
+      "trustedBrand": {
+        "title": "Pålitligt varumärke",
+        "description": "Betjänar kunder med excellens och pålitlighet sedan etableringen"
+      },
+      "ecoFriendly": {
+        "title": "Miljövänlig",
+        "description": "Engagerad i hållbara metoder och miljömedveten produktion"
+      }
+    }
   }
 }

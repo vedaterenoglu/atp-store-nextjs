@@ -2,21 +2,23 @@
  * Language Toggle Dropdown Component
  *
  * SOLID Principles Applied:
- * - SRP: Single responsibility for language selection UI
- * - OCP: Open for extension with additional language options
- * - DIP: Depends on abstractions (Zustand store, i18next)
+ * - SRP: Single responsibility for language selection UI with flag display
+ * - OCP: Open for extension with additional language/flag options
+ * - DIP: Depends on abstractions (Zustand store interface)
+ * - ISP: Minimal interface with only required language functionality
  *
  * Design Patterns:
  * - Command Pattern: Language change actions encapsulated
- * - Observer Pattern: Reacts to language state changes
- * - Composite Pattern: Composed of shadcn/ui components
+ * - Observer Pattern: Reacts to language state changes via Zustand
+ * - Composite Pattern: Composed of atomic UI components
+ * - Strategy Pattern: Flag display strategy based on selected language
  *
- * Architecture: Dropdown component for language selection integrated with
- * i18next and Zustand language store, supporting English, Swedish, and Turkish
+ * Architecture: Flag-based language selector with dropdown menu
+ * displaying British, Swedish, and Turkish flags for language selection
  */
 'use client'
 
-import { Languages, Check } from 'lucide-react'
+import { Check } from 'lucide-react'
 import { Button } from '@/components/ui'
 import {
   DropdownMenu,
@@ -25,74 +27,163 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui'
 import { useLanguageStore, type SupportedLanguage } from '@/lib/stores'
-import { useTranslation } from 'react-i18next'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 interface LanguageOption {
   value: SupportedLanguage
+  flag: string
   label: string
-  nativeLabel: string
 }
 
 const languages: LanguageOption[] = [
-  { value: 'en', label: 'English', nativeLabel: 'English' },
-  { value: 'sv', label: 'Swedish', nativeLabel: 'Svenska' },
-  { value: 'tr', label: 'Turkish', nativeLabel: 'Türkçe' },
+  { value: 'en', flag: '🇬🇧', label: 'English' },
+  { value: 'sv', flag: '🇸🇪', label: 'Svenska' },
+  { value: 'tr', flag: '🇹🇷', label: 'Türkçe' },
 ]
 
 export function LanguageToggle() {
-  const { t, i18n } = useTranslation('common')
+  return (
+    <LanguageToggleContainer>
+      <LanguageToggleDropdown />
+    </LanguageToggleContainer>
+  )
+}
+
+function LanguageToggleContainer({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return <LanguageToggleSkeleton />
+  }
+
+  return <>{children}</>
+}
+
+function LanguageToggleSkeleton() {
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      className="w-9 h-9"
+      disabled
+      aria-label="Loading language selector"
+    >
+      <span className="text-xl">🌐</span>
+    </Button>
+  )
+}
+
+function LanguageToggleDropdown() {
   const { language, setLanguage, isLoading } = useLanguageStore()
 
-  // Sync i18n with store on mount
-  useEffect(() => {
-    if (i18n.language !== language) {
-      i18n.changeLanguage(language)
-    }
-  }, [i18n, language])
+  return (
+    <DropdownMenu>
+      <LanguageToggleTrigger language={language} isLoading={isLoading} />
+      <LanguageToggleContent
+        language={language}
+        onLanguageChange={setLanguage}
+        isLoading={isLoading}
+      />
+    </DropdownMenu>
+  )
+}
 
-  const handleLanguageChange = async (newLanguage: SupportedLanguage) => {
-    if (newLanguage !== language && !isLoading) {
-      try {
-        await setLanguage(newLanguage)
-      } catch (error) {
-        console.error('Failed to change language:', error)
-      }
+function LanguageToggleTrigger({
+  language,
+  isLoading,
+}: {
+  language: SupportedLanguage
+  isLoading: boolean
+}) {
+  const currentLanguage = languages.find(lang => lang.value === language)
+
+  return (
+    <DropdownMenuTrigger asChild>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="w-9 h-9"
+        disabled={isLoading}
+        aria-label={`Current language: ${currentLanguage?.label || language}`}
+      >
+        <span className="text-xl">{currentLanguage?.flag || '🌐'}</span>
+      </Button>
+    </DropdownMenuTrigger>
+  )
+}
+
+function LanguageToggleContent({
+  language,
+  onLanguageChange,
+  isLoading,
+}: {
+  language: SupportedLanguage
+  onLanguageChange: (language: SupportedLanguage) => Promise<void>
+  isLoading: boolean
+}) {
+  return (
+    <DropdownMenuContent align="end" className="min-w-[120px]">
+      {languages.map(lang => (
+        <LanguageMenuItem
+          key={lang.value}
+          option={lang}
+          isSelected={language === lang.value}
+          onSelect={onLanguageChange}
+          isLoading={isLoading}
+        />
+      ))}
+    </DropdownMenuContent>
+  )
+}
+
+function LanguageMenuItem({
+  option,
+  isSelected,
+  onSelect,
+  isLoading,
+}: {
+  option: LanguageOption
+  isSelected: boolean
+  onSelect: (language: SupportedLanguage) => Promise<void>
+  isLoading: boolean
+}) {
+  const handleClick = async () => {
+    if (!isSelected && !isLoading) {
+      await onSelect(option.value)
     }
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="w-9 h-9"
-          disabled={isLoading}
-        >
-          <Languages className="h-[1.2rem] w-[1.2rem]" />
-          <span className="sr-only">{t('language.selectLanguage')}</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        {languages.map(lang => (
-          <DropdownMenuItem
-            key={lang.value}
-            onClick={() => handleLanguageChange(lang.value)}
-            className="cursor-pointer"
-          >
-            <Check
-              className={`mr-2 h-4 w-4 ${
-                language === lang.value ? 'opacity-100' : 'opacity-0'
-              }`}
-            />
-            <span className="mr-2">{lang.nativeLabel}</span>
-            <span className="text-muted-foreground text-xs">
-              ({t(`language.${lang.value}`)})
-            </span>
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <DropdownMenuItem
+      onClick={handleClick}
+      className="cursor-pointer"
+      disabled={isLoading}
+    >
+      <LanguageMenuItemContent option={option} isSelected={isSelected} />
+    </DropdownMenuItem>
+  )
+}
+
+function LanguageMenuItemContent({
+  option,
+  isSelected,
+}: {
+  option: LanguageOption
+  isSelected: boolean
+}) {
+  return (
+    <>
+      <span className="text-xl mr-3">{option.flag}</span>
+      <Check
+        className={`h-4 w-4 ml-auto ${
+          isSelected ? 'opacity-100' : 'opacity-0'
+        }`}
+        aria-hidden="true"
+      />
+    </>
   )
 }

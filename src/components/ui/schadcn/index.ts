@@ -25,7 +25,14 @@ export { Textarea } from './textarea'
 export { Select } from './select'
 
 // UI components
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from './card'
+export {
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from './card'
 
 export { Calendar } from './calendar'
 

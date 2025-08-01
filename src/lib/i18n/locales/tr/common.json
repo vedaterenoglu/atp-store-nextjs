@@ -66,5 +66,32 @@
     "serverError": "Sunucu hatası",
     "timeout": "İstek zaman aşımı",
     "validation": "Doğrulama hatası"
+  },
+  "home": {
+    "hero": {
+      "title": "Premium Ürünler",
+      "subtitle": "Alfe Tissue Paper'dan",
+      "description": "Yumuşaklık, dayanıklılık ve sürdürülebilirliğin mükemmel karışımını deneyimleyin. Eviniz ve işletmeniz için kaliteli kağıt mendil ürünleri.",
+      "browseProducts": "Ürünleri Görüntüle",
+      "learnMore": "Daha Fazla Bilgi"
+    },
+    "features": {
+      "premiumQuality": {
+        "title": "Premium Kalite",
+        "description": "Üstün yumuşaklık ve dayanıklılık için en kaliteli malzemelerden üretilmiştir"
+      },
+      "fastDelivery": {
+        "title": "Hızlı Teslimat",
+        "description": "İsveç genelinde kapınıza hızlı ve güvenilir teslimat"
+      },
+      "trustedBrand": {
+        "title": "Güvenilir Marka",
+        "description": "Kuruluşundan bu yana mükemmellik ve güvenilirlikle müşterilerine hizmet vermektedir"
+      },
+      "ecoFriendly": {
+        "title": "Çevre Dostu",
+        "description": "Sürdürülebilir uygulamalar ve çevre bilincine sahip üretime bağlıdır"
+      }
+    }
   }
 }

@@ -16,7 +16,6 @@
  */
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import { i18n } from '@/lib/i18n'
 
 export type SupportedLanguage = 'en' | 'sv' | 'tr'
 
@@ -30,14 +29,17 @@ interface LanguageStore {
 export const useLanguageStore = create<LanguageStore>()(
   persist(
     set => ({
-      language: 'en',
+      language: 'sv', // Default to Swedish
       isLoading: false,
 
       setLanguage: async (language: SupportedLanguage) => {
         set({ isLoading: true })
         try {
-          // Update i18next language
-          await i18n.changeLanguage(language)
+          // Update i18next language dynamically to avoid circular dependency
+          const i18nModule = await import('@/lib/i18n')
+          if (i18nModule.default && i18nModule.default.isInitialized) {
+            await i18nModule.default.changeLanguage(language)
+          }
 
           // Update store state
           set({ language, isLoading: false })
@@ -45,7 +47,6 @@ export const useLanguageStore = create<LanguageStore>()(
           // Update document lang attribute
           document.documentElement.lang = language
         } catch (error) {
-          console.error('Failed to change language:', error)
           set({ isLoading: false })
           throw error
         }
@@ -58,10 +59,24 @@ export const useLanguageStore = create<LanguageStore>()(
       storage: createJSONStorage(() => localStorage),
       partialize: state => ({ language: state.language }),
       onRehydrateStorage: () => state => {
-        // Apply stored language on rehydration
-        if (state?.language) {
-          i18n.changeLanguage(state.language)
+        // Apply stored language after rehydration
+        if (state?.language && typeof window !== 'undefined') {
           document.documentElement.lang = state.language
+
+          // Update i18n if already initialized
+          import('@/lib/i18n')
+            .then(i18nModule => {
+              if (
+                i18nModule.default &&
+                i18nModule.default.isInitialized &&
+                i18nModule.default.language !== state.language
+              ) {
+                i18nModule.default.changeLanguage(state.language)
+              }
+            })
+            .catch(() => {
+              // Silently handle error
+            })
         }
       },
     }

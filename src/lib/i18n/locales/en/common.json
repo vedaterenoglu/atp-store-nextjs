@@ -66,5 +66,32 @@
     "serverError": "Server error",
     "timeout": "Request timeout",
     "validation": "Validation error"
+  },
+  "home": {
+    "hero": {
+      "title": "Premium Products",
+      "subtitle": "by Alfe Tissue Paper",
+      "description": "Experience the perfect blend of softness, strength, and sustainability. Quality tissue products for your home and business.",
+      "browseProducts": "Browse Products",
+      "learnMore": "Learn More"
+    },
+    "features": {
+      "premiumQuality": {
+        "title": "Premium Quality",
+        "description": "Crafted from the finest materials for superior softness and strength"
+      },
+      "fastDelivery": {
+        "title": "Fast Delivery",
+        "description": "Quick and reliable shipping to your doorstep across Sweden"
+      },
+      "trustedBrand": {
+        "title": "Trusted Brand",
+        "description": "Serving customers with excellence and reliability since establishment"
+      },
+      "ecoFriendly": {
+        "title": "Eco-Friendly",
+        "description": "Committed to sustainable practices and environmentally conscious production"
+      }
+    }
   }
 }
