@@ -1,0 +1,70 @@
+{
+  "app": {
+    "name": "ATP Store",
+    "description": "Your trusted online shopping destination"
+  },
+  "navigation": {
+    "home": "Home",
+    "products": "Products",
+    "categories": "Categories",
+    "cart": "Cart",
+    "profile": "Profile",
+    "settings": "Settings",
+    "admin": "Admin"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "view": "View",
+    "close": "Close",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "add": "Add",
+    "remove": "Remove",
+    "update": "Update",
+    "refresh": "Refresh",
+    "loadMore": "Load more"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "toggleTheme": "Toggle theme"
+  },
+  "language": {
+    "en": "English",
+    "sv": "Swedish",
+    "tr": "Turkish",
+    "selectLanguage": "Select language"
+  },
+  "status": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Info",
+    "noData": "No data available",
+    "notFound": "Not found",
+    "offline": "You are offline",
+    "online": "You are online"
+  },
+  "errors": {
+    "generic": "Something went wrong",
+    "network": "Network error",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Forbidden",
+    "notFound": "Not found",
+    "serverError": "Server error",
+    "timeout": "Request timeout",
+    "validation": "Validation error"
+  }
+}

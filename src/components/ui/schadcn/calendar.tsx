@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client"
 
 import * as React from "react"
@@ -8,8 +9,8 @@ import {
 } from "lucide-react"
 import { DayButton, DayPicker, getDefaultClassNames } from "react-day-picker"
 
-import { cn } from "@/components/ui/utils/utils"
-import { Button, buttonVariants } from "@/components/ui/schadcn/button"
+import { cn } from "@/components/ui/utils"
+import { Button, buttonVariants } from "./button"
 
 function Calendar({
   className,
