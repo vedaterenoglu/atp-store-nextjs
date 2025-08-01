@@ -1,0 +1,20 @@
+{
+  "required": "{{field}} är obligatoriskt",
+  "email": "Ange en giltig e-postadress",
+  "min": "{{field}} måste vara minst {{min}} tecken",
+  "max": "{{field}} får vara högst {{max}} tecken",
+  "pattern": "{{field}} format är ogiltigt",
+  "passwordMatch": "Lösenorden matchar inte",
+  "number": "{{field}} måste vara ett nummer",
+  "positive": "{{field}} måste vara positivt",
+  "integer": "{{field}} måste vara ett heltal",
+  "url": "Ange en giltig URL",
+  "date": "Ange ett giltigt datum",
+  "future": "{{field}} måste vara i framtiden",
+  "past": "{{field}} måste vara i det förflutna",
+  "unique": "{{field}} finns redan",
+  "minItems": "Välj minst {{min}} objekt",
+  "maxItems": "Välj högst {{max}} objekt",
+  "fileSize": "Filstorlek måste vara mindre än {{max}}",
+  "fileType": "Ogiltig filtyp"
+}

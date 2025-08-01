@@ -1,0 +1,70 @@
+{
+  "app": {
+    "name": "ATP Store",
+    "description": "Din pålitliga onlineshoppingdestination"
+  },
+  "navigation": {
+    "home": "Hem",
+    "products": "Produkter",
+    "categories": "Kategorier",
+    "cart": "Varukorg",
+    "profile": "Profil",
+    "settings": "Inställningar",
+    "admin": "Admin"
+  },
+  "actions": {
+    "save": "Spara",
+    "cancel": "Avbryt",
+    "delete": "Ta bort",
+    "edit": "Redigera",
+    "create": "Skapa",
+    "search": "Sök",
+    "filter": "Filtrera",
+    "sort": "Sortera",
+    "view": "Visa",
+    "close": "Stäng",
+    "confirm": "Bekräfta",
+    "back": "Tillbaka",
+    "next": "Nästa",
+    "previous": "Föregående",
+    "submit": "Skicka",
+    "add": "Lägg till",
+    "remove": "Ta bort",
+    "update": "Uppdatera",
+    "refresh": "Uppdatera",
+    "loadMore": "Ladda mer"
+  },
+  "theme": {
+    "light": "Ljus",
+    "dark": "Mörk",
+    "system": "System",
+    "toggleTheme": "Växla tema"
+  },
+  "language": {
+    "en": "Engelska",
+    "sv": "Svenska",
+    "tr": "Turkiska",
+    "selectLanguage": "Välj språk"
+  },
+  "status": {
+    "loading": "Laddar...",
+    "error": "Fel",
+    "success": "Framgång",
+    "warning": "Varning",
+    "info": "Info",
+    "noData": "Ingen data tillgänglig",
+    "notFound": "Hittades inte",
+    "offline": "Du är offline",
+    "online": "Du är online"
+  },
+  "errors": {
+    "generic": "Något gick fel",
+    "network": "Nätverksfel",
+    "unauthorized": "Obehörig",
+    "forbidden": "Förbjuden",
+    "notFound": "Hittades inte",
+    "serverError": "Serverfel",
+    "timeout": "Tidsgräns för begäran",
+    "validation": "Valideringsfel"
+  }
+}

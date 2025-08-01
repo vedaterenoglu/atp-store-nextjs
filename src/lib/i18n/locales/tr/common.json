@@ -1,0 +1,70 @@
+{
+  "app": {
+    "name": "ATP Store",
+    "description": "Güvenilir online alışveriş adresiniz"
+  },
+  "navigation": {
+    "home": "Ana Sayfa",
+    "products": "Ürünler",
+    "categories": "Kategoriler",
+    "cart": "Sepet",
+    "profile": "Profil",
+    "settings": "Ayarlar",
+    "admin": "Yönetici"
+  },
+  "actions": {
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "create": "Oluştur",
+    "search": "Ara",
+    "filter": "Filtrele",
+    "sort": "Sırala",
+    "view": "Görüntüle",
+    "close": "Kapat",
+    "confirm": "Onayla",
+    "back": "Geri",
+    "next": "İleri",
+    "previous": "Önceki",
+    "submit": "Gönder",
+    "add": "Ekle",
+    "remove": "Kaldır",
+    "update": "Güncelle",
+    "refresh": "Yenile",
+    "loadMore": "Daha fazla yükle"
+  },
+  "theme": {
+    "light": "Açık",
+    "dark": "Koyu",
+    "system": "Sistem",
+    "toggleTheme": "Temayı değiştir"
+  },
+  "language": {
+    "en": "İngilizce",
+    "sv": "İsveççe",
+    "tr": "Türkçe",
+    "selectLanguage": "Dil seçin"
+  },
+  "status": {
+    "loading": "Yükleniyor...",
+    "error": "Hata",
+    "success": "Başarılı",
+    "warning": "Uyarı",
+    "info": "Bilgi",
+    "noData": "Veri bulunamadı",
+    "notFound": "Bulunamadı",
+    "offline": "Çevrimdışısınız",
+    "online": "Çevrimiçisiniz"
+  },
+  "errors": {
+    "generic": "Bir şeyler yanlış gitti",
+    "network": "Ağ hatası",
+    "unauthorized": "Yetkisiz",
+    "forbidden": "Yasaklanmış",
+    "notFound": "Bulunamadı",
+    "serverError": "Sunucu hatası",
+    "timeout": "İstek zaman aşımı",
+    "validation": "Doğrulama hatası"
+  }
+}

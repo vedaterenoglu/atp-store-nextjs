@@ -1,0 +1,20 @@
+{
+  "required": "{{field}} zorunludur",
+  "email": "Lütfen geçerli bir e-posta girin",
+  "min": "{{field}} en az {{min}} karakter olmalıdır",
+  "max": "{{field}} en fazla {{max}} karakter olabilir",
+  "pattern": "{{field}} formatı geçersiz",
+  "passwordMatch": "Şifreler eşleşmiyor",
+  "number": "{{field}} bir sayı olmalıdır",
+  "positive": "{{field}} pozitif olmalıdır",
+  "integer": "{{field}} tam sayı olmalıdır",
+  "url": "Lütfen geçerli bir URL girin",
+  "date": "Lütfen geçerli bir tarih girin",
+  "future": "{{field}} gelecekte olmalıdır",
+  "past": "{{field}} geçmişte olmalıdır",
+  "unique": "{{field}} zaten mevcut",
+  "minItems": "En az {{min}} öğe seçin",
+  "maxItems": "En fazla {{max}} öğe seçin",
+  "fileSize": "Dosya boyutu {{max}} değerinden küçük olmalıdır",
+  "fileType": "Geçersiz dosya türü"
+}
