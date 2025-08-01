@@ -16,7 +16,6 @@
  */
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
-import LanguageDetector from 'i18next-browser-languagedetector'
 import Backend from 'i18next-http-backend'
 
 // Import translation files
@@ -51,32 +50,52 @@ export const resources = {
   },
 } as const
 
-i18n
-  .use(Backend)
-  .use(LanguageDetector)
-  .use(initReactI18next)
-  .init({
-    lng: 'en', // Default language
-    fallbackLng: 'en',
-    defaultNS,
-    ns: ['common', 'auth', 'validation'],
-    resources,
+// Helper function to get stored language
+export function getStoredLanguage(): string {
+  if (typeof window === 'undefined') return 'sv' // SSR fallback
 
-    detection: {
-      order: ['localStorage', 'navigator', 'htmlTag'],
-      caches: ['localStorage'],
-      lookupLocalStorage: 'i18nextLng',
-    },
+  try {
+    const stored = localStorage.getItem('language-storage')
+    if (stored) {
+      const parsed = JSON.parse(stored)
+      const lang = parsed?.state?.language
+      if (lang && ['en', 'sv', 'tr'].includes(lang)) {
+        return lang
+      }
+    }
+  } catch {
+    // Silently handle error
+  }
 
-    interpolation: {
-      escapeValue: false, // React already does escaping
-    },
+  return 'sv' // Fallback to Swedish
+}
 
-    react: {
-      useSuspense: false, // We'll handle loading states manually
-    },
+// Don't initialize immediately - will be done by I18nInitializer
+export const initI18n = async () => {
+  const initialLanguage = getStoredLanguage()
 
-    debug: process.env.NODE_ENV === 'development',
-  })
+  await i18n
+    .use(Backend)
+    .use(initReactI18next)
+    .init({
+      lng: initialLanguage, // Use stored language or Swedish fallback
+      fallbackLng: 'sv', // Fallback to Swedish
+      defaultNS,
+      ns: ['common', 'auth', 'validation'],
+      resources,
+
+      interpolation: {
+        escapeValue: false, // React already does escaping
+      },
+
+      react: {
+        useSuspense: false, // We'll handle loading states manually
+      },
+
+      debug: false, // Disable debug in production
+    })
+
+  return i18n
+}
 
 export default i18n
