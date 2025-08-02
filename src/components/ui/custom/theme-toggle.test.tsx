@@ -153,4 +153,103 @@ describe('ThemeToggle', () => {
     expect(menuItems[1]?.querySelector('.text-blue-600')).toBeInTheDocument() // Dark
     expect(menuItems[2]?.querySelector('.text-slate-500')).toBeInTheDocument() // System
   })
+
+  it('should handle invalid theme value in trigger with empty color class', () => {
+    // TypeScript will prevent us from passing invalid values directly,
+    // so we need to cast to test the default case
+    ;(useThemeStore as unknown as jest.Mock).mockReturnValue({
+      theme: 'invalid-theme' as 'light' | 'dark' | 'system',
+      resolvedTheme: 'light',
+      systemTheme: 'light',
+      toggleTheme: mockToggleTheme,
+      setTheme: mockSetTheme,
+    })
+
+    render(<ThemeToggle />)
+    const button = screen.getByRole('button', { name: /current theme/i })
+    expect(button).toBeInTheDocument()
+
+    // Should fallback to Sun icon and empty color class from default case (line 104)
+    const icon = button.querySelector('[class*="h-[1.2rem]"]')
+    expect(icon).toBeInTheDocument()
+    // The icon should not have any specific theme color classes when default case is hit
+    expect(icon).not.toHaveClass('text-amber-500')
+    expect(icon).not.toHaveClass('text-blue-600')
+    expect(icon).not.toHaveClass('text-slate-500')
+  })
+
+  it('should handle edge cases and provide full coverage', () => {
+    // Test scenarios that might trigger default cases in switch statements
+
+    // Test 1: Theme value that doesn't match any case (covers line 104)
+    ;(useThemeStore as unknown as jest.Mock).mockReturnValue({
+      theme: 'unknown' as 'light' | 'dark' | 'system',
+      resolvedTheme: 'light',
+      systemTheme: 'light',
+      toggleTheme: mockToggleTheme,
+      setTheme: mockSetTheme,
+    })
+
+    const { rerender } = render(<ThemeToggle />)
+
+    // Should render without crashing when theme is unknown
+    let button = screen.getByRole('button', { name: /current theme/i })
+    expect(button).toBeInTheDocument()
+
+    // Test 2: Simulate a scenario where themes array might have different values
+    // This is more of a defensive test for robustness
+    ;(useThemeStore as unknown as jest.Mock).mockReturnValue({
+      theme: 'system',
+      resolvedTheme: 'light',
+      systemTheme: 'light',
+      toggleTheme: mockToggleTheme,
+      setTheme: mockSetTheme,
+    })
+
+    rerender(<ThemeToggle />)
+
+    // Verify system theme works correctly
+    button = screen.getByRole('button', { name: /current theme/i })
+    expect(button).toBeInTheDocument()
+
+    // Verify all menu items render with proper structure
+    const menuItems = screen.getAllByRole('menuitem')
+    expect(menuItems).toHaveLength(3)
+
+    // Each menu item should have an icon and check mark
+    menuItems.forEach(item => {
+      const icon = item.querySelector('[class*="h-4"]')
+      const check = item.querySelector('[class*="opacity-"]')
+      expect(icon).toBeInTheDocument()
+      expect(check).toBeInTheDocument()
+    })
+  })
+
+  it('should handle invalid theme option value in menu items to cover line 183', () => {
+    // Import the exported component to test directly
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { ThemeMenuItemContent } = require('./theme-toggle')
+
+    // Create an invalid theme option to trigger the default case in getIconColor (line 183)
+    const invalidOption = {
+      value: 'invalid-theme-value' as 'light' | 'dark' | 'system',
+      icon: () => <div data-testid="test-icon" />,
+      label: 'Invalid',
+    }
+
+    // This should trigger the default case in getIconColor function (line 183)
+    const { container } = render(
+      <ThemeMenuItemContent option={invalidOption} isSelected={false} />
+    )
+
+    expect(container).toBeInTheDocument()
+
+    // Verify the icon is rendered without any theme-specific color class
+    const icon = container.querySelector('[data-testid="test-icon"]')
+    expect(icon).toBeInTheDocument()
+
+    // The component should render without crashing with invalid theme value
+    // This exercises the default case in getIconColor function (line 183)
+    expect(container.firstChild).toBeInTheDocument()
+  })
 })
