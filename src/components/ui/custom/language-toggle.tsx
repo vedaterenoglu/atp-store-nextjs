@@ -126,7 +126,10 @@ function LanguageToggleContent({
   isLoading: boolean
 }) {
   return (
-    <DropdownMenuContent align="end" className="min-w-[120px]">
+    <DropdownMenuContent
+      align="end"
+      className="!w-[80px] min-w-0 bg-popover border-border"
+    >
       {languages.map(lang => (
         <LanguageMenuItem
           key={lang.value}
@@ -177,11 +180,9 @@ function LanguageMenuItemContent({
 }) {
   return (
     <>
-      <span className="text-xl mr-3">{option.flag}</span>
+      <span className="text-xl mr-2">{option.flag}</span>
       <Check
-        className={`h-4 w-4 ml-auto ${
-          isSelected ? 'opacity-100' : 'opacity-0'
-        }`}
+        className={`h-4 w-4 ${isSelected ? 'opacity-100' : 'opacity-0'}`}
         aria-hidden="true"
       />
     </>
