@@ -11,9 +11,7 @@
  * Architecture: Runs once before all E2E tests to set up the test environment
  */
 
-import type { FullConfig } from '@playwright/test'
-
-async function globalSetup(_config: FullConfig) {
+async function globalSetup() {
   // Store original environment variables
   process.env['ORIGINAL_NODE_ENV'] = process.env['NODE_ENV']
   // Use Object.defineProperty to set NODE_ENV since it's read-only

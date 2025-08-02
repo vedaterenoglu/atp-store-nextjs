@@ -24,6 +24,15 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  webpack: (config) => {
+    // Add GraphQL file loader
+    config.module.rules.push({
+      test: /\.(graphql|gql)$/,
+      exclude: /node_modules/,
+      loader: '@graphql-tools/webpack-loader',
+    })
+    return config
+  },
 }
 
 export default nextConfig

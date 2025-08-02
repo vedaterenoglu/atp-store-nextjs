@@ -98,6 +98,70 @@ jest.mock('next/image', () => {
   }
 })
 
+// Mock next/dynamic component
+jest.mock('next/dynamic', () => ({
+  __esModule: true,
+  default: jest.fn(
+    (
+      importFn: () => Promise<unknown>,
+      options?: { ssr?: boolean; loading?: () => React.JSX.Element }
+    ) => {
+      // Return different components based on the import
+      const importStr = importFn.toString()
+
+      if (importStr.includes('hero-section')) {
+        // Return a component that simulates loading behavior
+        return function MockHeroSection() {
+          const [isLoading, setIsLoading] = React.useState(true)
+
+          React.useEffect(() => {
+            const timer = setTimeout(() => setIsLoading(false), 0)
+            return () => clearTimeout(timer)
+          }, [])
+
+          if (isLoading && options?.loading) {
+            return React.createElement(React.Fragment, null, options.loading())
+          }
+
+          return React.createElement(
+            'div',
+            { 'data-testid': 'hero-section' },
+            'Hero Section'
+          )
+        }
+      }
+
+      if (importStr.includes('features-section')) {
+        // Return a component that simulates loading behavior
+        return function MockFeaturesSection() {
+          const [isLoading, setIsLoading] = React.useState(true)
+
+          React.useEffect(() => {
+            const timer = setTimeout(() => setIsLoading(false), 0)
+            return () => clearTimeout(timer)
+          }, [])
+
+          if (isLoading && options?.loading) {
+            return React.createElement(React.Fragment, null, options.loading())
+          }
+
+          return React.createElement(
+            'div',
+            { 'data-testid': 'features-section' },
+            'Features Section'
+          )
+        }
+      }
+
+      // Default mock component
+      const MockComponent = () =>
+        React.createElement('div', null, 'Mock Component')
+      MockComponent.displayName = 'MockComponent'
+      return MockComponent
+    }
+  ),
+}))
+
 // Mock Radix UI components that use portals
 jest.mock('@radix-ui/react-dropdown-menu', () => {
   return {
@@ -112,25 +176,42 @@ jest.mock('@radix-ui/react-dropdown-menu', () => {
       ),
     Trigger: ({
       children,
+      asChild,
       ...props
     }: React.PropsWithChildren<
-      React.ButtonHTMLAttributes<HTMLButtonElement>
-    >) =>
-      React.createElement(
+      React.ButtonHTMLAttributes<HTMLButtonElement> & { asChild?: boolean }
+    >) => {
+      if (asChild && React.isValidElement(children)) {
+        const childProps = {
+          'data-testid': 'dropdown-trigger',
+          ...props,
+        }
+        return React.cloneElement(
+          children as React.ReactElement<React.HTMLAttributes<HTMLElement>>,
+          childProps as React.HTMLAttributes<HTMLElement>
+        )
+      }
+      return React.createElement(
         'button',
         { 'data-testid': 'dropdown-trigger', ...props },
         children
-      ),
+      )
+    },
     Portal: ({ children }: React.PropsWithChildren) => children,
     Content: ({
       children,
+      sideOffset: _sideOffset,
       ...props
-    }: React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>) =>
-      React.createElement(
+    }: React.PropsWithChildren<
+      React.HTMLAttributes<HTMLDivElement> & { sideOffset?: number }
+    >) => {
+      void _sideOffset // Intentionally unused - excluded from DOM props
+      return React.createElement(
         'div',
         { 'data-testid': 'dropdown-content', role: 'menu', ...props },
         children
-      ),
+      )
+    },
     Item: ({
       children,
       ...props
@@ -166,7 +247,11 @@ jest.mock('@radix-ui/react-dropdown-menu', () => {
       children,
       ...props
     }: React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>) =>
-      React.createElement('div', { ...props }, children),
+      React.createElement(
+        'div',
+        { 'data-testid': 'dropdown-sub', ...props },
+        children
+      ),
     SubContent: ({
       children,
       ...props
