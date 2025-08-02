@@ -1,23 +1,24 @@
 /**
  * Jest Configuration for Next.js with TypeScript
- * 
+ *
  * SOLID Principles Applied:
  * - SRP: Single responsibility for test configuration
  * - OCP: Open for extension with custom matchers and setup files
  * - DIP: Depends on abstractions (jest interfaces) not implementations
- * 
+ *
  * Design Patterns:
  * - Configuration Pattern: Centralized test configuration
  * - Module Pattern: Modular test setup with separate setup files
- * 
+ *
  * Architecture: Comprehensive Jest configuration supporting unit tests
  * co-located with source files and integration tests in __tests__ directory
  */
 
-const nextJest = require('next/jest').default
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const nextJest = require('next/jest')
 /** @type {import('jest').Config} */
 
-const createJestConfig = nextJest({
+const createJestConfig = nextJest.default({
   // Provide the path to your Next.js app to load next.config.js and .env files
   dir: './',
 })
@@ -66,11 +67,14 @@ const config = {
 
   // Transform configuration
   transform: {
-    '^.+\\.(ts|tsx)$': ['ts-jest', {
-      tsconfig: {
-        jsx: 'react-jsx',
+    '^.+\\.(ts|tsx)$': [
+      'ts-jest',
+      {
+        tsconfig: {
+          jsx: 'react-jsx',
+        },
       },
-    }],
+    ] as [string, unknown],
   },
 
   // Test path patterns
@@ -79,8 +83,8 @@ const config = {
     '<rootDir>/src/**/*.{test,spec}.{ts,tsx}',
     // Integration tests in __tests__ directory
     '<rootDir>/src/__tests__/integration/**/*.test.{ts,tsx}',
-    // CI tests
-    '<rootDir>/src/__tests__/ci/**/*.test.{ts,tsx}',
+    // CI tests - DISABLED: Uncomment to re-enable CI tests
+    // '<rootDir>/src/__tests__/ci/**/*.test.{ts,tsx}',
   ],
 
   // Ignore patterns

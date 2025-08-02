@@ -36,11 +36,15 @@ export function I18nInitializer() {
   // After initialization, sync with language store
   useEffect(() => {
     if (initialized && language) {
-      import('@/lib/i18n').then(({ default: i18n }) => {
-        if (i18n && i18n.language !== language) {
-          i18n.changeLanguage(language)
-        }
-      })
+      import('@/lib/i18n')
+        .then(({ default: i18n }) => {
+          if (i18n && i18n.language !== language) {
+            i18n.changeLanguage(language)
+          }
+        })
+        .catch(() => {
+          // Handle import errors gracefully
+        })
     }
   }, [initialized, language])
 
