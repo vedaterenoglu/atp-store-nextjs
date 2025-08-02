@@ -13,19 +13,24 @@ export function ThemeInitializer() {
     setSystemTheme(systemTheme)
 
     // Apply initial theme
-    const savedTheme = localStorage.getItem('theme-storage')
-    if (savedTheme) {
-      try {
-        const parsed = JSON.parse(savedTheme)
-        if (parsed.state?.theme) {
-          setTheme(parsed.state.theme)
+    try {
+      const savedTheme = localStorage.getItem('theme-storage')
+      if (savedTheme) {
+        try {
+          const parsed = JSON.parse(savedTheme)
+          if (parsed.state?.theme) {
+            setTheme(parsed.state.theme)
+          }
+        } catch {
+          // If parsing fails, apply system theme
+          setTheme('system')
         }
-      } catch {
-        // If parsing fails, apply system theme
+      } else {
+        // No saved theme, apply system theme
         setTheme('system')
       }
-    } else {
-      // No saved theme, apply system theme
+    } catch {
+      // If localStorage access fails, apply system theme
       setTheme('system')
     }
 

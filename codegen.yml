@@ -6,8 +6,8 @@ schema:
         # Use environment variable for security
         x-hasura-admin-secret: ${HASURA_ADMIN_SECRET}
 documents:
-  - "src/**/*.graphql"
-  - "src/**/*.gql"
+  - 'src/**/*.graphql'
+  - 'src/**/*.gql'
 generates:
   # Generated TypeScript types and operations
   src/lib/generated/graphql.ts:
@@ -32,7 +32,7 @@ generates:
       - typescript-validation-schema
     config:
       schema: zod
-      importFrom: "./graphql"
+      importFrom: './graphql'
       enumsAsTypes: true
       scalarSchemas:
         uuid: z.string().uuid()

@@ -8,12 +8,7 @@ query GetProducts(
   $where: products_bool_exp
   $order_by: [products_order_by!]
 ) {
-  products(
-    limit: $limit
-    offset: $offset
-    where: $where
-    order_by: $order_by
-  ) {
+  products(limit: $limit, offset: $offset, where: $where, order_by: $order_by) {
     ...ProductDetailFields
     category {
       ...CategoryFields
@@ -56,10 +51,7 @@ query GetProductBySlug($slug: String!) {
 query SearchProducts($search: String!) {
   products(
     where: {
-      _or: [
-        { name: { _ilike: $search } }
-        { description: { _ilike: $search } }
-      ]
+      _or: [{ name: { _ilike: $search } }, { description: { _ilike: $search } }]
     }
   ) {
     ...ProductBasicFields
