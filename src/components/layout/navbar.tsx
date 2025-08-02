@@ -2,20 +2,24 @@
  * Navigation Bar Component
  *
  * SOLID Principles Applied:
- * - SRP: Single responsibility for navigation and branding UI
+ * - SRP: Each sub-component has single responsibility
  * - OCP: Open for extension via modular component structure
- * - DIP: Depends on theme toggle abstraction
+ * - DIP: Depends on abstractions (Clerk hooks, theme toggle)
+ * - ISP: Focused interfaces for brand, actions, and auth
  *
  * Design Patterns:
- * - Simple Component Pattern: Clean, focused navigation bar
- * - Composition Pattern: Combines brand and controls
+ * - Composite Pattern: Composed of specialized sub-components
+ * - Delegation Pattern: Delegates auth state to Clerk
+ * - Component Decomposition: Separated brand, actions, and auth
  *
- * Dependencies: Next.js Link, Lucide icons, Theme toggle component
+ * Dependencies: Next.js, Clerk hooks, Theme/Language toggles
  */
 'use client'
 
 import Link from 'next/link'
-import { ShoppingBag } from 'lucide-react'
+import Image from 'next/image'
+import { SignInButton, UserButton, useAuth, useUser } from '@clerk/nextjs'
+import { Button } from '@/components/ui/schadcn/button'
 import { ThemeToggle } from '@/components/ui/custom/theme-toggle'
 import { LanguageToggle } from '@/components/ui/custom/language-toggle'
 
@@ -38,7 +42,14 @@ function NavbarBrand() {
       href="/"
       className="flex items-center gap-3 text-foreground transition-colors hover:text-primary"
     >
-      <ShoppingBag className="h-6 w-6" aria-hidden="true" />
+      <Image
+        src="/logo.png"
+        alt="ATP Store Logo"
+        width={40}
+        height={40}
+        className="h-10 w-10 object-contain"
+        priority
+      />
       <span className="text-xl font-bold">ATP Store</span>
     </Link>
   )
@@ -49,7 +60,60 @@ function NavbarActions() {
     <div className="flex items-center gap-4">
       <LanguageToggle />
       <ThemeToggle />
-      {/* Future navigation and authentication controls will go here */}
+      <NavbarAuth />
+    </div>
+  )
+}
+
+function NavbarAuth() {
+  const { isLoaded, isSignedIn } = useAuth()
+  const { user } = useUser()
+
+  // Show loading state while Clerk initializes
+  if (!isLoaded) {
+    return <NavbarAuthSkeleton />
+  }
+
+  // Show sign-in button for unauthenticated users
+  if (!isSignedIn) {
+    return <NavbarSignIn />
+  }
+
+  // Show user button for authenticated users
+  return <NavbarUserButton user={user} />
+}
+
+function NavbarAuthSkeleton() {
+  return <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
+}
+
+function NavbarSignIn() {
+  return (
+    <SignInButton mode="modal">
+      <Button variant="default" size="sm">
+        Sign In
+      </Button>
+    </SignInButton>
+  )
+}
+
+function NavbarUserButton({
+  user,
+}: {
+  user: ReturnType<typeof useUser>['user']
+}) {
+  const isAdmin = user?.publicMetadata?.['role'] === 'admin'
+
+  return (
+    <div className="flex items-center gap-2">
+      {isAdmin && (
+        <Link href="/admin">
+          <Button variant="ghost" size="sm">
+            Admin
+          </Button>
+        </Link>
+      )}
+      <UserButton afterSignOutUrl="/" />
     </div>
   )
 }

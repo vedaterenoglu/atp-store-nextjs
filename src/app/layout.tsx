@@ -4,16 +4,23 @@
  * SOLID Principles Applied:
  * - SRP: Single responsibility for application-wide layout structure
  * - DIP: Depends on provider abstractions not implementations
+ * - ISP: Each provider serves specific interface needs
  *
  * Design Patterns:
- * - Provider Pattern: Wraps app with theme provider
+ * - Provider Pattern: Hierarchical provider composition
  * - Composite Pattern: Combines multiple providers into single layout
  * - Template Method: Defines app structure template for all pages
+ *
+ * Provider Hierarchy: ClerkProvider → ThemeInitializer → I18nProvider → AppLayout
  */
 
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
-import { ThemeInitializer, I18nProvider } from '@/components/providers'
+import {
+  ThemeInitializer,
+  I18nProvider,
+  ClerkLocaleProvider,
+} from '@/components/providers'
 import { AppLayout } from '@/components/layout'
 import './globals.css'
 
@@ -42,10 +49,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeInitializer />
-        <I18nProvider>
-          <AppLayout>{children}</AppLayout>
-        </I18nProvider>
+        <ClerkLocaleProvider>
+          <ThemeInitializer />
+          <I18nProvider>
+            <AppLayout>{children}</AppLayout>
+          </I18nProvider>
+        </ClerkLocaleProvider>
       </body>
     </html>
   )
