@@ -8,7 +8,18 @@
     "start": "next start --port 3081",
     "lint": "next lint",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
-    "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\""
+    "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:unit": "jest --testPathIgnorePatterns='integration|e2e|ci'",
+    "test:unit:coverage": "jest --testPathIgnorePatterns='integration|e2e|ci' --coverage",
+    "test:integration": "jest --testMatch='**/integration/**/*.test.{ts,tsx}'",
+    "test:integration:coverage": "jest --testMatch='**/integration/**/*.test.{ts,tsx}' --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:coverage": "playwright test --reporter=html",
+    "test:ci": "npm run test:unit:coverage && npm run test:integration:coverage"
   },
   "dependencies": {
     "@clerk/localizations": "^3.20.6",
@@ -32,8 +43,14 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@jest/globals": "^30.0.5",
+    "@playwright/test": "^1.54.2",
     "@radix-ui/react-slot": "^1.2.3",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.6.4",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -43,11 +60,15 @@
     "eslint-config-next": "15.4.5",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.3",
+    "jest": "^30.0.5",
+    "jest-environment-jsdom": "^30.0.5",
+    "jest-watch-typeahead": "^3.0.1",
     "lucide-react": "^0.536.0",
     "prettier": "^3.6.2",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4",
     "tailwindcss-animate": "^1.0.7",
+    "ts-jest": "^29.4.0",
     "typescript": "^5"
   }
 }
