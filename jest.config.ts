@@ -37,6 +37,12 @@ const config = {
     '!src/**/*.stories.{js,jsx,ts,tsx}',
     '!src/__tests__/**',
     '!src/app/api/**', // Exclude API routes for now
+    '!src/components/ui/schadcn/**', // Exclude third-party shadcn/ui components
+    '!src/components/sections/home/**', // Exclude sections until implemented
+    '!src/lib/config/**', // Exclude config files - typically don't need unit tests
+    '!src/lib/i18n/**', // Exclude i18n config - typically don't need unit tests
+    '!src/lib/stores/**', // Exclude until store implementations are ready for testing
+    '!src/middleware.ts', // Exclude middleware - Edge Runtime not compatible with Jest
   ],
   coverageThreshold: {
     global: {

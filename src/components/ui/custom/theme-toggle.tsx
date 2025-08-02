@@ -196,3 +196,6 @@ function ThemeMenuItemContent({
     </>
   )
 }
+
+// Export for testing
+export { ThemeMenuItemContent }
