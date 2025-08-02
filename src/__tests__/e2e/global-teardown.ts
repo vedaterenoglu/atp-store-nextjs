@@ -11,9 +11,7 @@
  * Architecture: Runs once after all E2E tests to clean up the test environment
  */
 
-import type { FullConfig } from '@playwright/test'
-
-async function globalTeardown(_config: FullConfig) {
+async function globalTeardown() {
   // Restore original environment variables
   if (process.env['ORIGINAL_NODE_ENV']) {
     Object.defineProperty(process.env, 'NODE_ENV', {
