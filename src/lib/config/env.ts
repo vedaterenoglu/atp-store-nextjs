@@ -1,14 +1,11 @@
 import { z } from 'zod'
 
 /**
- * Environment Variable Validation
- *
- * SOLID Principles Applied:
- * - SRP: Single responsibility for environment validation
- * - OCP: Open for extension via schema additions
- * - DIP: Depends on Zod abstraction for validation
- *
- * Design Pattern: Configuration Validation Pattern
+ * @file env.ts
+ * @role Environment variable validation and type-safe access
+ * @patterns Configuration Validation Pattern, Adapter Pattern
+ * @solid SRP: Environment validation only, DIP: Depends on Zod abstraction
+ * @tests src/lib/config/__tests__/env.test.ts (100% coverage target)
  */
 
 // Server-side environment variables schema
@@ -18,7 +15,9 @@ const serverEnvSchema = z.object({
   PORT: z.string().default('3081'),
 
   // Hasura
-  HASURA_GRAPHQL_ADMIN_SECRET: z.string().min(1),
+  HASURA_GRAPHQL_ADMIN_SECRET: z
+    .string()
+    .min(1, 'HASURA_GRAPHQL_ADMIN_SECRET is required'),
 
   // Clerk (Server)
   CLERK_SECRET_KEY: z.string().min(1),
@@ -55,15 +54,24 @@ const clientEnvSchema = z.object({
   NEXT_PUBLIC_APP_URL: z.string().url(),
 
   // Hasura
-  NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT: z.string().url(),
-  NEXT_PUBLIC_HASURA_WS_ENDPOINT: z.string().min(1),
+  NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT: z
+    .string()
+    .url('NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT must be a valid URL')
+    .refine(
+      url => url.startsWith('http://') || url.startsWith('https://'),
+      'HASURA_GRAPHQL_ENDPOINT must use http or https protocol'
+    ),
+  NEXT_PUBLIC_HASURA_WS_ENDPOINT: z
+    .string()
+    .min(1, 'NEXT_PUBLIC_HASURA_WS_ENDPOINT is required')
+    .refine(
+      url => url.startsWith('ws://') || url.startsWith('wss://'),
+      'HASURA_WS_ENDPOINT must use ws or wss protocol'
+    ),
 
   // Clerk (Client)
+  // NOTE: We don't use custom Clerk sign-in/sign-up URLs - using modal authentication in navbar instead
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
-  NEXT_PUBLIC_CLERK_SIGN_IN_URL: z.string().min(1),
-  NEXT_PUBLIC_CLERK_SIGN_UP_URL: z.string().min(1),
-  NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: z.string().min(1),
-  NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: z.string().min(1),
 
   // Feature Flags
   NEXT_PUBLIC_ENABLE_ANALYTICS: z
@@ -113,12 +121,6 @@ const processEnv = {
   NEXT_PUBLIC_HASURA_WS_ENDPOINT: process.env['NEXT_PUBLIC_HASURA_WS_ENDPOINT'],
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
     process.env['NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY'],
-  NEXT_PUBLIC_CLERK_SIGN_IN_URL: process.env['NEXT_PUBLIC_CLERK_SIGN_IN_URL'],
-  NEXT_PUBLIC_CLERK_SIGN_UP_URL: process.env['NEXT_PUBLIC_CLERK_SIGN_UP_URL'],
-  NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL:
-    process.env['NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL'],
-  NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL:
-    process.env['NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL'],
   NEXT_PUBLIC_ENABLE_ANALYTICS: process.env['NEXT_PUBLIC_ENABLE_ANALYTICS'],
   NEXT_PUBLIC_ENABLE_DEBUG: process.env['NEXT_PUBLIC_ENABLE_DEBUG'],
   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
@@ -167,3 +169,57 @@ export const env = {
 export type ServerEnv = z.infer<typeof serverEnvSchema>
 export type ClientEnv = z.infer<typeof clientEnvSchema>
 export type Env = typeof env
+
+// Hasura Configuration Helpers - Following Adapter Pattern
+export const hasuraConfig = {
+  /**
+   * Get Hasura GraphQL endpoint
+   * @returns The validated Hasura GraphQL endpoint URL
+   */
+  getGraphQLEndpoint: () => env.NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT,
+
+  /**
+   * Get Hasura WebSocket endpoint
+   * @returns The validated Hasura WebSocket endpoint URL
+   */
+  getWSEndpoint: () => env.NEXT_PUBLIC_HASURA_WS_ENDPOINT,
+
+  /**
+   * Get Hasura admin secret (server-side only)
+   * @returns The admin secret or undefined if on client
+   */
+  getAdminSecret: () => {
+    if (typeof window !== 'undefined') {
+      throw new Error(
+        'Cannot access HASURA_GRAPHQL_ADMIN_SECRET on client side'
+      )
+    }
+    return env.HASURA_GRAPHQL_ADMIN_SECRET
+  },
+
+  /**
+   * Get authorization headers for Hasura requests
+   * @returns Headers object with admin secret
+   */
+  getAuthHeaders: () => {
+    if (typeof window !== 'undefined') {
+      // Client-side: no admin secret
+      return {}
+    }
+    return {
+      'x-hasura-admin-secret': env.HASURA_GRAPHQL_ADMIN_SECRET,
+    }
+  },
+
+  /**
+   * Check if running in development mode
+   * @returns true if NODE_ENV is development
+   */
+  isDevelopment: () => env.NODE_ENV === 'development',
+
+  /**
+   * Check if running in production mode
+   * @returns true if NODE_ENV is production
+   */
+  isProduction: () => env.NODE_ENV === 'production',
+}

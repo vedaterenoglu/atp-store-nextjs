@@ -1,0 +1,9 @@
+query GetCategoriesQuery {
+  _type_stock_groups(
+    order_by: { stock_groups: asc }
+    where: { our_company: { _eq: "alfe" }, willBeListed: { _eq: true } }
+  ) {
+    stock_groups
+    our_company
+  }
+}

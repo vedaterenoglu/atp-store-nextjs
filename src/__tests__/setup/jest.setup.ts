@@ -18,23 +18,97 @@ import '@testing-library/jest-dom'
 import { TextEncoder, TextDecoder } from 'util'
 import React from 'react'
 
+// Load test environment variables
+import dotenv from 'dotenv'
+import path from 'path'
+
+// Load .env.test file
+dotenv.config({ path: path.resolve(process.cwd(), '.env.test') })
+
+// Configure Clerk for test environment
+// Clerk needs these to work in test mode
+process.env['CLERK_TESTING'] = 'true'
+process.env['CLERK_API_URL'] = 'https://api.clerk.dev'
+process.env['CLERK_FRONTEND_API'] =
+  'https://charmed-primate-18.clerk.accounts.dev'
+
 // Polyfill for TextEncoder/TextDecoder (required for some dependencies)
 global.TextEncoder = TextEncoder
 global.TextDecoder = TextDecoder as unknown as typeof globalThis.TextDecoder
 
+// Add fetch polyfills for MSW in Node.js environment BEFORE any imports
+// Import node-fetch and set up polyfills immediately
+import * as nodeFetch from 'node-fetch'
+
+// Set up polyfills synchronously
+;(() => {
+  if (!globalThis.fetch) {
+    globalThis.fetch = nodeFetch.default as unknown as typeof globalThis.fetch
+    globalThis.Headers =
+      nodeFetch.Headers as unknown as typeof globalThis.Headers
+    globalThis.Request =
+      nodeFetch.Request as unknown as typeof globalThis.Request
+    globalThis.Response =
+      nodeFetch.Response as unknown as typeof globalThis.Response
+  }
+
+  // Also set on global object for compatibility
+  global.fetch = globalThis.fetch
+  global.Headers = globalThis.Headers
+  global.Request = globalThis.Request
+  global.Response = globalThis.Response
+
+  // Add TransformStream polyfill for MSW
+  if (!globalThis.TransformStream) {
+    // @ts-expect-error - Basic mock implementation for testing
+    globalThis.TransformStream = class TransformStream {
+      constructor() {
+        // Basic mock implementation
+      }
+    }
+  }
+
+  // Add BroadcastChannel polyfill for MSW
+  if (!globalThis.BroadcastChannel) {
+    // @ts-expect-error - Basic mock implementation for testing
+    globalThis.BroadcastChannel = class BroadcastChannel {
+      constructor() {
+        // Basic mock implementation
+      }
+      postMessage() {}
+      close() {}
+    }
+  }
+})()
+
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(), // deprecated
-    removeListener: jest.fn(), // deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
+  value: jest.fn().mockImplementation(query => {
+    const listeners: Array<() => void> = []
+    return {
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: jest.fn(callback => {
+        listeners.push(callback)
+      }), // deprecated but still used by some libraries
+      removeListener: jest.fn(callback => {
+        const index = listeners.indexOf(callback)
+        if (index > -1) listeners.splice(index, 1)
+      }), // deprecated but still used by some libraries
+      addEventListener: jest.fn((event, callback) => {
+        if (event === 'change') listeners.push(callback)
+      }),
+      removeEventListener: jest.fn((event, callback) => {
+        if (event === 'change') {
+          const index = listeners.indexOf(callback)
+          if (index > -1) listeners.splice(index, 1)
+        }
+      }),
+      dispatchEvent: jest.fn(),
+    }
+  }),
 })
 
 // Mock IntersectionObserver
@@ -91,9 +165,14 @@ jest.mock('next/navigation', () => ({
 jest.mock('next/image', () => {
   return {
     __esModule: true,
-    default: function Image(props: React.ImgHTMLAttributes<HTMLImageElement>) {
-      // Return an img element with the same props
-      return React.createElement('img', props)
+    default: function Image(
+      props: React.ImgHTMLAttributes<HTMLImageElement> & { priority?: boolean }
+    ) {
+      // Filter out Next.js specific props
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { priority, ...imgProps } = props
+      // Return an img element with only valid HTML props
+      return React.createElement('img', imgProps)
     },
   }
 })
@@ -276,7 +355,8 @@ beforeAll(() => {
   console.error = (...args) => {
     if (
       typeof args[0] === 'string' &&
-      args[0].includes('Warning: ReactDOM.render')
+      (args[0].includes('Warning: ReactDOM.render') ||
+        args[0].includes('not wrapped in act'))
     ) {
       return
     }
@@ -297,6 +377,36 @@ afterEach(() => {
   localStorageMock.clear.mockClear()
 })
 
+// Import the server type from MSW
+import type { SetupServerApi } from 'msw/node'
+
+// Setup MSW server after polyfills are ready using dynamic import
+let server: SetupServerApi
+
+beforeAll(async () => {
+  // Dynamic import to ensure polyfills are ready
+  const { server: mswServer } = await import('../mocks/server')
+  server = mswServer
+
+  server.listen({
+    onUnhandledRequest: 'warn' as const, // Warn on unhandled requests during tests
+  })
+})
+
+// Reset handlers after each test
+afterEach(() => {
+  if (server) {
+    server.resetHandlers()
+  }
+})
+
+// Clean up after all tests
+afterAll(() => {
+  if (server) {
+    server.close()
+  }
+})
+
 // Mock Zustand stores
 jest.mock('@/lib/stores', () => {
   let mockLanguageStore = {
@@ -310,15 +420,20 @@ jest.mock('@/lib/stores', () => {
     theme: 'system',
     resolvedTheme: 'light',
     systemTheme: 'light',
-    toggleTheme: jest.fn(),
     setTheme: jest.fn(),
+    setSystemTheme: jest.fn(),
   }
 
   let languageSubscribers: Array<() => void> = []
   let themeSubscribers: Array<() => void> = []
 
   const useLanguageStore = Object.assign(
-    jest.fn(() => mockLanguageStore),
+    jest.fn(selector => {
+      if (typeof selector === 'function') {
+        return selector(mockLanguageStore)
+      }
+      return mockLanguageStore
+    }),
     {
       setState: jest.fn(updates => {
         mockLanguageStore = {
@@ -329,7 +444,12 @@ jest.mock('@/lib/stores', () => {
         }
         languageSubscribers.forEach(sub => sub())
         // Update the mock to return new state
-        useLanguageStore.mockReturnValue(mockLanguageStore)
+        useLanguageStore.mockImplementation(selector => {
+          if (typeof selector === 'function') {
+            return selector(mockLanguageStore)
+          }
+          return mockLanguageStore
+        })
       }),
       getState: jest.fn(() => mockLanguageStore),
       persist: {
@@ -347,7 +467,12 @@ jest.mock('@/lib/stores', () => {
   )
 
   const useThemeStore = Object.assign(
-    jest.fn(() => mockThemeStore),
+    jest.fn(selector => {
+      if (typeof selector === 'function') {
+        return selector(mockThemeStore)
+      }
+      return mockThemeStore
+    }),
     {
       setState: jest.fn(updates => {
         mockThemeStore = {
@@ -358,7 +483,12 @@ jest.mock('@/lib/stores', () => {
         }
         themeSubscribers.forEach(sub => sub())
         // Update the mock to return new state
-        useThemeStore.mockReturnValue(mockThemeStore)
+        useThemeStore.mockImplementation(selector => {
+          if (typeof selector === 'function') {
+            return selector(mockThemeStore)
+          }
+          return mockThemeStore
+        })
       }),
       getState: jest.fn(() => mockThemeStore),
       persist: {
@@ -372,10 +502,6 @@ jest.mock('@/lib/stores', () => {
       }),
     }
   )
-
-  // Initialize with default values
-  useLanguageStore.mockReturnValue(mockLanguageStore)
-  useThemeStore.mockReturnValue(mockThemeStore)
 
   return {
     useLanguageStore,
