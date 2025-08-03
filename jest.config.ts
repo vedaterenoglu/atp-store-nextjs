@@ -10,8 +10,7 @@
  * - Configuration Pattern: Centralized test configuration
  * - Module Pattern: Modular test setup with separate setup files
  *
- * Architecture: Comprehensive Jest configuration supporting unit tests
- * co-located with source files and integration tests in __tests__ directory
+ * Architecture: Jest configuration for unit tests with 100% coverage target
  */
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -87,17 +86,16 @@ const config = {
   testMatch: [
     // Unit tests co-located with source files
     '<rootDir>/src/**/*.{test,spec}.{ts,tsx}',
-    // Integration tests in __tests__ directory
-    '<rootDir>/src/__tests__/integration/**/*.test.{ts,tsx}',
-    // CI tests - DISABLED: Uncomment to re-enable CI tests
-    // '<rootDir>/src/__tests__/ci/**/*.test.{ts,tsx}',
+    // Unit tests in __tests__ directory
+    '<rootDir>/src/__tests__/**/*.test.{ts,tsx}',
   ],
 
   // Ignore patterns
   testPathIgnorePatterns: [
     '<rootDir>/node_modules/',
     '<rootDir>/.next/',
-    '<rootDir>/src/__tests__/e2e/', // E2E tests handled by Playwright
+    '<rootDir>/src/__tests__/e2e/',
+    '<rootDir>/src/__tests__/ci/',
   ],
 
   // Module file extensions
