@@ -1,13 +1,12 @@
 overwrite: true
 schema:
-  # Replace with your Hasura endpoint
-  - https://your-hasura-instance.hasura.app/v1/graphql:
+  - http://192.168.1.156:8080/v1/graphql:
       headers:
-        # Use environment variable for security
-        x-hasura-admin-secret: ${HASURA_ADMIN_SECRET}
-documents:
-  - 'src/**/*.graphql'
-  - 'src/**/*.gql'
+        x-hasura-admin-secret: ${HASURA_GRAPHQL_ADMIN_SECRET}
+        x-hasura-role: admin
+documents: []
+#  - 'src/**/*.graphql'
+#  - 'src/**/*.gql'
 generates:
   # Generated TypeScript types and operations
   src/lib/generated/graphql.ts:
@@ -21,21 +20,30 @@ generates:
       withHOC: false
       avoidOptionals: false
       enumsAsTypes: true
+      skipTypename: true
+      dedupeFragments: true
+      # Skip validation to bypass __ prefix errors
+      skipDocumentsValidation: true
+      strictScalars: false
+      namingConvention:
+        typeNames: 'keep'
       scalars:
         uuid: string
         timestamptz: string
         jsonb: Record<string, any>
         _text: string[]
-  # Generated Zod schemas for validation
-  src/lib/generated/graphql-zod.ts:
-    plugins:
-      - typescript-validation-schema
-    config:
-      schema: zod
-      importFrom: './graphql'
-      enumsAsTypes: true
-      scalarSchemas:
-        uuid: z.string().uuid()
-        timestamptz: z.string().datetime()
-        jsonb: z.record(z.string(), z.any())
-        _text: z.array(z.string())
+        numeric: number
+        date: string
+        time: string
+        timetz: string
+        bigint: number
+        smallint: number
+        integer: number
+        decimal: number
+        float8: number
+        json: any
+        float: number
+        Int: number
+        Boolean: boolean
+        String: string
+        ID: string
