@@ -283,6 +283,22 @@ describe('GraphQL Client', () => {
         )
       ).rejects.toThrow('Mutation failed')
     })
+
+    it('should throw error when no data returned from mutation', async () => {
+      const mockClient = {
+        mutation: jest.fn().mockReturnValue({
+          toPromise: jest.fn().mockResolvedValue({ data: null, error: null }),
+        }),
+      }
+
+      await expect(
+        executeGraphQLMutation(
+          'mutation { test }',
+          {},
+          mockClient as unknown as Client
+        )
+      ).rejects.toThrow('No data returned from GraphQL mutation')
+    })
   })
 
   describe('executeGraphQLSubscription', () => {
