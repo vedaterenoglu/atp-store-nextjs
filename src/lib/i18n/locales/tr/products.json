@@ -1,0 +1,21 @@
+{
+  "title": "Ürünler",
+  "subtitle": "İşletmeniz için ürünleri keşfedin ve sipariş verin",
+  "searchPlaceholder": "Ürün ara...",
+  "bookmarks": {
+    "button": "Favorilerim"
+  },
+  "navigation": {
+    "backToCategories": "Kategorilere Dön",
+    "back": "Geri",
+    "goToCart": "Sepete Git",
+    "cart": "Sepet"
+  },
+  "productCard": {
+    "category": "Kategori",
+    "id": "No",
+    "unit": "Birim",
+    "addToCart": "Sepete ekle",
+    "currency": "SEK"
+  }
+}

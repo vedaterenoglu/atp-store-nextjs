@@ -2,7 +2,7 @@
  * Products Service Test Suite
  * SOLID Principles: Single Responsibility - Test products service operations
  * Design Patterns: Test Pattern - Unit tests with mocking
- * Dependencies: Jest, graphQLClientAdapter mock, products mock data
+ * Dependencies: Jest, serverGraphQLFetch mock, products mock data
  */
 
 import {
@@ -10,31 +10,37 @@ import {
   getProductsByCategory,
   searchProducts,
 } from './products.service'
-import { graphQLClientAdapter } from '@/lib/graphql/adapter'
+import { serverGraphQLFetch } from '@/lib/graphql/server-fetch'
 import mockProductsData from '@/mock/products.json'
-import type { OperationResult } from '@urql/core'
+
+// Define the query response type to match the service
+interface GetProductsListWithPriceQueryResponse {
+  stock: Array<{
+    stock_id: string
+    stock_name: string
+    stock_price: number
+    stock_unit: string
+    stock_group: string
+  }>
+}
 
 // Mock the dependencies
-jest.mock('@/lib/graphql/adapter')
+jest.mock('@/lib/graphql/server-fetch')
 jest.mock('@/lib/config/env', () => ({
   env: {
     COMPANY_ID: 'alfe',
+    NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT: 'http://localhost:8080/v1/graphql',
+  },
+  hasuraConfig: {
+    getAuthHeaders: () => ({
+      'x-hasura-admin-secret': 'test-secret',
+    }),
   },
 }))
 
-const mockGraphQLClientAdapter = graphQLClientAdapter as jest.Mocked<
-  typeof graphQLClientAdapter
+const mockServerGraphQLFetch = serverGraphQLFetch as jest.MockedFunction<
+  typeof serverGraphQLFetch
 >
-
-// Helper to create mock OperationResult
-const createMockOperationResult = <T>(data: T) =>
-  ({
-    data,
-    error: undefined,
-    operation: {} as Record<string, unknown>,
-    stale: false,
-    hasNext: false,
-  }) as unknown as OperationResult<T>
 
 describe('Products Service', () => {
   beforeEach(() => {
@@ -43,14 +49,14 @@ describe('Products Service', () => {
 
   describe('getProducts', () => {
     it('should fetch and transform products successfully', async () => {
-      mockGraphQLClientAdapter.request.mockResolvedValueOnce(
-        createMockOperationResult(mockProductsData.data)
-      )
+      mockServerGraphQLFetch.mockResolvedValueOnce({
+        data: mockProductsData.data as GetProductsListWithPriceQueryResponse,
+      })
 
       const result = await getProducts()
 
-      expect(mockGraphQLClientAdapter.request).toHaveBeenCalledWith({
-        document: expect.anything(),
+      expect(mockServerGraphQLFetch).toHaveBeenCalledWith({
+        document: expect.any(String),
         variables: { company_id: 'alfe' },
       })
 
@@ -66,9 +72,9 @@ describe('Products Service', () => {
     })
 
     it('should return empty array when no data is returned', async () => {
-      mockGraphQLClientAdapter.request.mockResolvedValueOnce(
-        createMockOperationResult({ stock: [] })
-      )
+      mockServerGraphQLFetch.mockResolvedValueOnce({
+        data: { stock: [] },
+      })
 
       const result = await getProducts()
 
@@ -76,9 +82,9 @@ describe('Products Service', () => {
     })
 
     it('should return empty array when data is null', async () => {
-      mockGraphQLClientAdapter.request.mockResolvedValueOnce(
-        createMockOperationResult(null)
-      )
+      mockServerGraphQLFetch.mockResolvedValueOnce({
+        data: null,
+      })
 
       const result = await getProducts()
 
@@ -87,20 +93,22 @@ describe('Products Service', () => {
 
     it('should throw error when GraphQL request fails', async () => {
       const error = new Error('GraphQL error')
-      mockGraphQLClientAdapter.request.mockRejectedValueOnce(error)
+      mockServerGraphQLFetch.mockResolvedValueOnce({
+        error,
+      })
 
       await expect(getProducts()).rejects.toThrow('Failed to fetch products')
     })
 
     it('should use environment COMPANY_ID', async () => {
-      mockGraphQLClientAdapter.request.mockResolvedValueOnce(
-        createMockOperationResult(mockProductsData.data)
-      )
+      mockServerGraphQLFetch.mockResolvedValueOnce({
+        data: mockProductsData.data as GetProductsListWithPriceQueryResponse,
+      })
 
       await getProducts()
 
-      expect(mockGraphQLClientAdapter.request).toHaveBeenCalledWith({
-        document: expect.anything(),
+      expect(mockServerGraphQLFetch).toHaveBeenCalledWith({
+        document: expect.any(String),
         variables: { company_id: 'alfe' },
       })
     })
@@ -108,9 +116,9 @@ describe('Products Service', () => {
 
   describe('getProductsByCategory', () => {
     it('should filter products by category', async () => {
-      mockGraphQLClientAdapter.request.mockResolvedValueOnce(
-        createMockOperationResult(mockProductsData.data)
-      )
+      mockServerGraphQLFetch.mockResolvedValueOnce({
+        data: mockProductsData.data as GetProductsListWithPriceQueryResponse,
+      })
 
       const result = await getProductsByCategory('1000 - Pizzakartonger')
 
@@ -121,9 +129,9 @@ describe('Products Service', () => {
     })
 
     it('should return empty array for non-existent category', async () => {
-      mockGraphQLClientAdapter.request.mockResolvedValueOnce(
-        createMockOperationResult(mockProductsData.data)
-      )
+      mockServerGraphQLFetch.mockResolvedValueOnce({
+        data: mockProductsData.data as GetProductsListWithPriceQueryResponse,
+      })
 
       const result = await getProductsByCategory('9999 - Non-existent')
 
@@ -131,9 +139,9 @@ describe('Products Service', () => {
     })
 
     it('should handle empty products list', async () => {
-      mockGraphQLClientAdapter.request.mockResolvedValueOnce(
-        createMockOperationResult({ stock: [] })
-      )
+      mockServerGraphQLFetch.mockResolvedValueOnce({
+        data: { stock: [] },
+      })
 
       const result = await getProductsByCategory('1000 - Pizzakartonger')
 
@@ -143,9 +151,9 @@ describe('Products Service', () => {
 
   describe('searchProducts', () => {
     it('should search products by name', async () => {
-      mockGraphQLClientAdapter.request.mockResolvedValueOnce(
-        createMockOperationResult(mockProductsData.data)
-      )
+      mockServerGraphQLFetch.mockResolvedValueOnce({
+        data: mockProductsData.data as GetProductsListWithPriceQueryResponse,
+      })
 
       const result = await searchProducts('pizza')
 
@@ -154,9 +162,9 @@ describe('Products Service', () => {
     })
 
     it('should search case-insensitively', async () => {
-      mockGraphQLClientAdapter.request.mockResolvedValueOnce(
-        createMockOperationResult(mockProductsData.data)
-      )
+      mockServerGraphQLFetch.mockResolvedValueOnce({
+        data: mockProductsData.data as GetProductsListWithPriceQueryResponse,
+      })
 
       const result = await searchProducts('PIZZA')
 
@@ -164,9 +172,9 @@ describe('Products Service', () => {
     })
 
     it('should return empty array for no matches', async () => {
-      mockGraphQLClientAdapter.request.mockResolvedValueOnce(
-        createMockOperationResult(mockProductsData.data)
-      )
+      mockServerGraphQLFetch.mockResolvedValueOnce({
+        data: mockProductsData.data as GetProductsListWithPriceQueryResponse,
+      })
 
       const result = await searchProducts('xyz')
 
@@ -174,9 +182,9 @@ describe('Products Service', () => {
     })
 
     it('should handle partial matches', async () => {
-      mockGraphQLClientAdapter.request.mockResolvedValueOnce(
-        createMockOperationResult(mockProductsData.data)
-      )
+      mockServerGraphQLFetch.mockResolvedValueOnce({
+        data: mockProductsData.data as GetProductsListWithPriceQueryResponse,
+      })
 
       const result = await searchProducts('kebab')
 
@@ -185,9 +193,9 @@ describe('Products Service', () => {
     })
 
     it('should handle empty search term', async () => {
-      mockGraphQLClientAdapter.request.mockResolvedValueOnce(
-        createMockOperationResult(mockProductsData.data)
-      )
+      mockServerGraphQLFetch.mockResolvedValueOnce({
+        data: mockProductsData.data as GetProductsListWithPriceQueryResponse,
+      })
 
       const result = await searchProducts('')
 
@@ -209,9 +217,9 @@ describe('Products Service', () => {
         ],
       }
 
-      mockGraphQLClientAdapter.request.mockResolvedValueOnce(
-        createMockOperationResult(singleProductData)
-      )
+      mockServerGraphQLFetch.mockResolvedValueOnce({
+        data: singleProductData,
+      })
 
       const result = await getProducts()
 
@@ -226,9 +234,9 @@ describe('Products Service', () => {
     })
 
     it('should handle products with special characters', async () => {
-      mockGraphQLClientAdapter.request.mockResolvedValueOnce(
-        createMockOperationResult(mockProductsData.data)
-      )
+      mockServerGraphQLFetch.mockResolvedValueOnce({
+        data: mockProductsData.data as GetProductsListWithPriceQueryResponse,
+      })
 
       const result = await getProducts()
 
@@ -246,9 +254,9 @@ describe('Products Service', () => {
     it('should log error when no products data returned', async () => {
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
 
-      mockGraphQLClientAdapter.request.mockResolvedValueOnce(
-        createMockOperationResult({})
-      )
+      mockServerGraphQLFetch.mockResolvedValueOnce({
+        data: {},
+      })
 
       await getProducts()
 
@@ -263,7 +271,9 @@ describe('Products Service', () => {
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
       const error = new Error('Network error')
 
-      mockGraphQLClientAdapter.request.mockRejectedValueOnce(error)
+      mockServerGraphQLFetch.mockResolvedValueOnce({
+        error,
+      })
 
       await expect(getProducts()).rejects.toThrow('Failed to fetch products')
 

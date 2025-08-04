@@ -1,15 +1,15 @@
 /**
  * GraphQL client adapter providing a consistent interface for GraphQL operations
- * 
+ *
  * Responsibilities:
  * - Wraps urql client with a simplified API surface
  * - Handles DocumentNode to string conversion
  * - Provides request and mutate methods with consistent signatures
- * 
+ *
  * Architecture:
  * - SOLID Principles: ISP (minimal interface), DIP (depends on urql abstractions)
  * - Patterns: Adapter (adapts urql to application needs)
- * 
+ *
  * Dependencies: urql client singleton, GraphQL types
  */
 

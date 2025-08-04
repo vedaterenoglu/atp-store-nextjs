@@ -1,11 +1,11 @@
 /**
  * I18nProvider - Internationalization context provider with language persistence
- * 
+ *
  * Features:
  * - Initializes i18n with user's stored language preference
  * - Displays loading skeleton during initialization
  * - Automatically updates language when store changes
- * 
+ *
  * Props: Children components to wrap
  * State: Initialization status tracked locally
  */

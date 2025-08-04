@@ -1,12 +1,12 @@
 /**
  * LanguageToggle - Dropdown menu for language selection with flag emojis
- * 
+ *
  * Features:
  * - Displays current language flag (🇬🇧/🇸🇪/🇹🇷)
  * - Dropdown with English/Swedish/Turkish options
  * - Shows check mark on selected language
  * - Persists selection via Zustand store
- * 
+ *
  * Props: None (uses language store)
  * State: Manages mounted state for hydration safety
  */

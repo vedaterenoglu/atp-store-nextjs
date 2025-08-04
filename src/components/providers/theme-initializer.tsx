@@ -1,12 +1,12 @@
 /**
  * ThemeInitializer - Client-side theme initialization component
- * 
+ *
  * Features:
  * - Detects system theme preference
  * - Loads persisted theme from localStorage
  * - Applies theme class to document root
  * - Listens for system theme changes
- * 
+ *
  * Props: None (uses theme store)
  * State: Managed via Zustand theme store
  */

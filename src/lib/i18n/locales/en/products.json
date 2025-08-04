@@ -1,0 +1,21 @@
+{
+  "title": "Products",
+  "subtitle": "Discover and order products for your business",
+  "searchPlaceholder": "Search products...",
+  "bookmarks": {
+    "button": "My Bookmarks"
+  },
+  "navigation": {
+    "backToCategories": "Back to Categories",
+    "back": "Back",
+    "goToCart": "Go to Cart",
+    "cart": "Cart"
+  },
+  "productCard": {
+    "category": "Category",
+    "id": "ID",
+    "unit": "Unit",
+    "addToCart": "Add to cart",
+    "currency": "SEK"
+  }
+}

@@ -29,6 +29,10 @@ export function OverlayComponent({
     >
       <div className="px-3 py-2">
         <h3 className="text-sm font-medium text-white">{title}</h3>
+        {/* Select text - only visible on mobile */}
+        <p className="text-xs text-green-400 font-semibold mt-1 md:hidden">
+          Select
+        </p>
       </div>
     </div>
   )

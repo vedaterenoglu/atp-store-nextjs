@@ -1,12 +1,12 @@
 /**
  * ThemeToggle - Dropdown menu for theme selection with dynamic icons
- * 
+ *
  * Features:
  * - Displays current theme icon (sun/moon/monitor)
  * - Dropdown with light/dark/system options
  * - Shows check mark on selected theme
  * - Smooth icon transitions
- * 
+ *
  * Props: None (uses theme store)
  * State: Manages mounted state for hydration safety
  */

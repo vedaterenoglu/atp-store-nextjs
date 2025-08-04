@@ -1,10 +1,10 @@
 /**
  * Type definitions and validation schemas for category data
- * 
+ *
  * Defines: Backend GraphQL response types and frontend category models
  * Validates: Category data from Hasura GraphQL API
  * Transforms: Backend 'stock_groups' to frontend 'categories' terminology
- * 
+ *
  * Used in: categories.service.ts for runtime validation and type safety
  */
 

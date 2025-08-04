@@ -17,6 +17,7 @@
 import { Button } from '@/components/ui/schadcn/button'
 import { ArrowRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import Link from 'next/link'
 
 export default function HeroSection() {
   return (
@@ -77,9 +78,11 @@ function HeroPrimaryAction() {
   const { t } = useTranslation('common')
 
   return (
-    <Button size="lg" className="gap-2">
-      {t('home.hero.browseProducts')}
-      <ArrowRight className="h-4 w-4" />
+    <Button size="lg" className="gap-2" asChild>
+      <Link href="/categories">
+        {t('home.hero.browseProducts')}
+        <ArrowRight className="h-4 w-4" />
+      </Link>
     </Button>
   )
 }

@@ -1,16 +1,16 @@
 /**
  * Hasura GraphQL adapter with comprehensive error handling and type safety
- * 
+ *
  * Responsibilities:
  * - Executes GraphQL operations against Hasura endpoint
  * - Validates request inputs and response structure
  * - Provides detailed error handling with custom error types
  * - Supports queries, mutations, and subscriptions
- * 
+ *
  * Architecture:
  * - SOLID Principles: SRP (GraphQL operations only), DIP (depends on urql Client interface)
  * - Patterns: Adapter (external service integration), Template Method (execute pattern)
- * 
+ *
  * Dependencies: urql client, Hasura configuration, Zod validation
  */
 

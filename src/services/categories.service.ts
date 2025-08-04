@@ -1,16 +1,16 @@
 /**
  * Category data fetching service with client-side caching
- * 
+ *
  * Responsibilities:
  * - Fetches category data from Hasura GraphQL API
  * - Validates responses using Zod schemas
  * - Transforms backend data to frontend-friendly format
  * - Provides client-side caching with TTL
- * 
+ *
  * Architecture:
  * - SOLID Principles: SRP (focused on category data operations)
  * - Patterns: Repository (data access abstraction), Cache-aside (manual cache management)
- * 
+ *
  * Dependencies: GraphQL client, Zod validation, categories schema
  */
 

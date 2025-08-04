@@ -13,10 +13,8 @@ interface PriceTagProps {
 }
 
 export function PriceTag({ price, className }: PriceTagProps) {
-  const formattedPrice = new Intl.NumberFormat('tr-TR', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(price)
+  // Format price with 2 decimal places
+  const formattedPrice = (price / 100).toFixed(2)
 
   return (
     <div
@@ -27,7 +25,7 @@ export function PriceTag({ price, className }: PriceTagProps) {
         className
       )}
     >
-      ${formattedPrice}
+      {formattedPrice} SEK
     </div>
   )
 }

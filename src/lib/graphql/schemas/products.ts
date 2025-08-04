@@ -1,10 +1,10 @@
 /**
  * Type definitions and validation schemas for product data
- * 
+ *
  * Defines: Frontend product model and transformation functions
- * Validates: Product data structure and field constraints  
+ * Validates: Product data structure and field constraints
  * Transforms: Backend 'stock' terminology to frontend 'product' terminology
- * 
+ *
  * Used in: products.service.ts for data transformation and validation
  */
 

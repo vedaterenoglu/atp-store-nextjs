@@ -1,11 +1,11 @@
 /**
  * Footer - Simple footer component with logo and copyright
- * 
+ *
  * Features:
  * - Displays logo image
  * - Shows copyright with configurable year and author
  * - Centered layout with responsive spacing
- * 
+ *
  * Props: Optional year and author for copyright text
  * State: None (pure presentation component)
  */
