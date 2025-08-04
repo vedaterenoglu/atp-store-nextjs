@@ -1,15 +1,13 @@
 /**
- * Footer Component
- *
- * SOLID Principles Applied:
- * - SRP: Single responsibility for displaying footer content
- * - OCP: Open for extension via props interface (year, author)
- *
- * Design Patterns:
- * - Simple Component Pattern: Clean, focused footer design
- * - Props Pattern: Configurable via author prop
- *
- * Dependencies: Next.js Image for logo display
+ * Footer - Simple footer component with logo and copyright
+ * 
+ * Features:
+ * - Displays logo image
+ * - Shows copyright with configurable year and author
+ * - Centered layout with responsive spacing
+ * 
+ * Props: Optional year and author for copyright text
+ * State: None (pure presentation component)
  */
 'use client'
 

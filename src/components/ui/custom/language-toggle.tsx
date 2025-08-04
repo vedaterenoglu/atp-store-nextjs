@@ -1,20 +1,14 @@
 /**
- * Language Toggle Dropdown Component
- *
- * SOLID Principles Applied:
- * - SRP: Single responsibility for language selection UI with flag display
- * - OCP: Open for extension with additional language/flag options
- * - DIP: Depends on abstractions (Zustand store interface)
- * - ISP: Minimal interface with only required language functionality
- *
- * Design Patterns:
- * - Command Pattern: Language change actions encapsulated
- * - Observer Pattern: Reacts to language state changes via Zustand
- * - Composite Pattern: Composed of atomic UI components
- * - Strategy Pattern: Flag display strategy based on selected language
- *
- * Architecture: Flag-based language selector with dropdown menu
- * displaying British, Swedish, and Turkish flags for language selection
+ * LanguageToggle - Dropdown menu for language selection with flag emojis
+ * 
+ * Features:
+ * - Displays current language flag (🇬🇧/🇸🇪/🇹🇷)
+ * - Dropdown with English/Swedish/Turkish options
+ * - Shows check mark on selected language
+ * - Persists selection via Zustand store
+ * 
+ * Props: None (uses language store)
+ * State: Manages mounted state for hydration safety
  */
 'use client'
 

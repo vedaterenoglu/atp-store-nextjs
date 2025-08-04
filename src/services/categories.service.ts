@@ -1,16 +1,28 @@
 /**
- * Categories Service using urql + manual types + Zod
- * SOLID Principles: Single Responsibility - Handle category-related API calls
- * Design Patterns: Facade Pattern - Simplifies GraphQL complexity for UI
- * Dependencies: urql client adapter, Zod schemas, GraphQL query file
+ * Category data fetching service with client-side caching
+ * 
+ * Responsibilities:
+ * - Fetches category data from Hasura GraphQL API
+ * - Validates responses using Zod schemas
+ * - Transforms backend data to frontend-friendly format
+ * - Provides client-side caching with TTL
+ * 
+ * Architecture:
+ * - SOLID Principles: SRP (focused on category data operations)
+ * - Patterns: Repository (data access abstraction), Cache-aside (manual cache management)
+ * 
+ * Dependencies: GraphQL client, Zod validation, categories schema
  */
 
 import { executeGraphQLOperation } from '@/lib/graphql/client'
 import {
   GetCategoriesQueryResponseSchema,
   type GetCategoriesQueryResponse,
-  type StockGroup,
+  validateAndTransformCategories,
+  type CategoriesArray,
+  type Category,
 } from '@/lib/graphql/schemas/categories'
+import { env } from '@/lib/config/env'
 
 // GraphQL query as string - matches GetCategoriesQuery.graphql exactly
 const GET_CATEGORIES_QUERY = `
@@ -29,23 +41,23 @@ const GET_CATEGORIES_QUERY = `
 
 /**
  * Fetch categories using urql with manual types and Zod validation
- * Combines compile-time types with runtime validation
+ * Returns frontend-friendly Category objects
  */
 export async function getCategories(
-  companyId: string = 'alfe'
-): Promise<StockGroup[]> {
+  companyId?: string
+): Promise<CategoriesArray> {
   try {
     // Use urql client adapter with manual type
     const response = await executeGraphQLOperation<GetCategoriesQueryResponse>(
       GET_CATEGORIES_QUERY,
-      { company_id: companyId }
+      { company_id: companyId || env.COMPANY_ID || 'alfe' }
     )
 
     // Validate the response structure with Zod
     const validatedResponse = GetCategoriesQueryResponseSchema.parse(response)
 
-    // Return the validated data
-    return validatedResponse._type_stock_groups
+    // Transform and return the validated data
+    return validateAndTransformCategories(validatedResponse._type_stock_groups)
   } catch (error) {
     // Handle Zod validation errors
     if (error instanceof Error && error.name === 'ZodError') {
@@ -62,11 +74,11 @@ export async function getCategories(
  * Get categories with client-side caching
  * Useful for components that need frequent access to categories
  */
-let categoriesCache: StockGroup[] | null = null
+let categoriesCache: CategoriesArray | null = null
 let cacheTimestamp = 0
 const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
 
-export async function getCategoriesWithCache(): Promise<StockGroup[]> {
+export async function getCategoriesWithCache(): Promise<CategoriesArray> {
   const now = Date.now()
 
   // Return cached data if still fresh
@@ -94,13 +106,13 @@ export function clearCategoriesCache(): void {
 }
 
 /**
- * Get a specific category by stock group name
+ * Get a specific category by ID
  */
-export async function getCategoryByStockGroup(
-  stockGroup: string
-): Promise<StockGroup | undefined> {
+export async function getCategoryById(
+  categoryId: string
+): Promise<Category | undefined> {
   const categories = await getCategories()
-  return categories.find(cat => cat.stock_groups === stockGroup)
+  return categories.find(cat => cat.id === categoryId)
 }
 
 /**
@@ -108,20 +120,20 @@ export async function getCategoryByStockGroup(
  * Example of extending the base functionality
  */
 export async function getCategoriesGrouped(): Promise<
-  Record<string, StockGroup[]>
+  Record<string, Category[]>
 > {
   const categories = await getCategories()
 
-  // Group by first digit/letter of stock_groups
+  // Group by first digit/letter of category name
   return categories.reduce(
     (acc, category) => {
-      const firstChar = category.stock_groups.charAt(0)
+      const firstChar = category.name.charAt(0)
       if (!acc[firstChar]) {
         acc[firstChar] = []
       }
       acc[firstChar].push(category)
       return acc
     },
-    {} as Record<string, StockGroup[]>
+    {} as Record<string, Category[]>
   )
 }

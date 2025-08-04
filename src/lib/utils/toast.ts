@@ -1,8 +1,8 @@
 /**
- * Toast Notification Utilities
- * SOLID Principles: Single Responsibility (toast management)
- * Design Patterns: Facade Pattern (unified toast interface)
- * Dependencies: Sonner toast library
+ * Toast notification wrapper for consistent app-wide notifications
+ * 
+ * Provides: Unified API for success/error/warning/info/loading toasts
+ * Used by: GraphQL error handlers, form submissions, async operations
  */
 
 import { toast as sonnerToast } from 'sonner'

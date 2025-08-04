@@ -1,9 +1,17 @@
 /**
- * @file hasura-graphql.adapter.ts
- * @role Adapter for Hasura GraphQL API integration
- * @patterns Adapter Pattern, Error Handling Pattern
- * @solid SRP: GraphQL communication only, DIP: Depends on abstractions (Client interface)
- * @tests src/lib/adapters/__tests__/hasura-graphql.adapter.test.ts (100% coverage target)
+ * Hasura GraphQL adapter with comprehensive error handling and type safety
+ * 
+ * Responsibilities:
+ * - Executes GraphQL operations against Hasura endpoint
+ * - Validates request inputs and response structure
+ * - Provides detailed error handling with custom error types
+ * - Supports queries, mutations, and subscriptions
+ * 
+ * Architecture:
+ * - SOLID Principles: SRP (GraphQL operations only), DIP (depends on urql Client interface)
+ * - Patterns: Adapter (external service integration), Template Method (execute pattern)
+ * 
+ * Dependencies: urql client, Hasura configuration, Zod validation
  */
 
 import type {

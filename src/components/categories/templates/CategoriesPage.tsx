@@ -12,17 +12,19 @@ import { PageTitle, ViewAllProductsButton } from '../atoms'
 import { CategoriesGrid } from '../organisms'
 
 interface Category {
-  stock_groups: string
-  our_company: string
-  image_url: string
-  alt_text: string
+  id: string
+  name: string
+  companyId: string
+  imageUrl: string
+  altText: string
 }
 
 interface CategoriesPageProps {
   categories: Category[]
+  error?: Error | null
 }
 
-export function CategoriesPage({ categories }: CategoriesPageProps) {
+export function CategoriesPage({ categories, error }: CategoriesPageProps) {
   const { t } = useTranslation('categories')
 
   return (
@@ -36,7 +38,7 @@ export function CategoriesPage({ categories }: CategoriesPageProps) {
       </div>
 
       {/* Categories Grid */}
-      <CategoriesGrid categories={categories} />
+      <CategoriesGrid categories={categories} error={error} />
     </div>
   )
 }

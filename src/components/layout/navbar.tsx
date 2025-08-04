@@ -1,18 +1,14 @@
 /**
- * Navigation Bar Component
- *
- * SOLID Principles Applied:
- * - SRP: Each sub-component has single responsibility
- * - OCP: Open for extension via modular component structure
- * - DIP: Depends on abstractions (Clerk hooks, theme toggle)
- * - ISP: Focused interfaces for brand, actions, and auth
- *
- * Design Patterns:
- * - Composite Pattern: Composed of specialized sub-components
- * - Delegation Pattern: Delegates auth state to Clerk
- * - Component Decomposition: Separated brand, actions, and auth
- *
- * Dependencies: Next.js, Clerk hooks, Theme/Language toggles
+ * Navbar - Main navigation component with authentication and preferences
+ * 
+ * Features:
+ * - Brand logo and company name
+ * - Theme and language toggles
+ * - Clerk authentication (sign in/user button)
+ * - Responsive layout with proper spacing
+ * 
+ * Props: None
+ * State: Auth state from Clerk hooks
  */
 'use client'
 

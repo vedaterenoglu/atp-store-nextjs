@@ -16,17 +16,18 @@ import {
 import { cn } from '@/components/ui/utils'
 
 interface Category {
-  stock_groups: string
-  our_company: string
-  image_url: string
-  alt_text: string
+  id: string
+  name: string
+  companyId: string
+  imageUrl: string
+  altText: string
 }
 
 interface CategoriesGridProps {
   categories: Category[]
   className?: string
   isLoading?: boolean
-  error?: Error | null
+  error?: Error | null | undefined
 }
 
 export function CategoriesGrid({
@@ -53,13 +54,13 @@ export function CategoriesGrid({
           <GridSkeleton count={6} variant="card" />
         ) : (
           categories.map(category => {
-            const slug = category.stock_groups.split(' - ')[0]
+            const slug = category.name.split(' - ')[0]
             return (
-              <GridItem key={category.stock_groups}>
+              <GridItem key={category.id}>
                 <CategoryCard
-                  id={category.stock_groups}
-                  name={category.stock_groups}
-                  imageUrl={category.image_url}
+                  id={category.id}
+                  name={category.name}
+                  imageUrl={category.imageUrl}
                   slug={slug || undefined}
                 />
               </GridItem>
