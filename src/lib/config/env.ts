@@ -46,6 +46,9 @@ const serverEnvSchema = z.object({
   // Rate Limiting
   RATE_LIMIT_WINDOW_MS: z.string().optional(),
   RATE_LIMIT_MAX_REQUESTS: z.string().optional(),
+
+  // Business
+  COMPANY_ID: z.string().min(1).default('alfe'),
 })
 
 // Client-side environment variables schema
@@ -113,6 +116,7 @@ const processEnv = {
   SENTRY_AUTH_TOKEN: process.env['SENTRY_AUTH_TOKEN'],
   RATE_LIMIT_WINDOW_MS: process.env['RATE_LIMIT_WINDOW_MS'],
   RATE_LIMIT_MAX_REQUESTS: process.env['RATE_LIMIT_MAX_REQUESTS'],
+  COMPANY_ID: process.env['COMPANY_ID'],
 
   // Client-side variables
   NEXT_PUBLIC_APP_URL: process.env['NEXT_PUBLIC_APP_URL'],

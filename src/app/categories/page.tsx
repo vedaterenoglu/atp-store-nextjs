@@ -2,20 +2,25 @@
  * Categories Route Page
  * SOLID Principles: Single Responsibility - Route handler for categories
  * Design Patterns: Page Pattern - Next.js App Router page
- * Dependencies: CategoriesPage template, mock data
+ * Dependencies: CategoriesPage template, categories service
  */
 
 import { CategoriesPage } from '@/components/categories'
-import categoriesData from '@/mock/categories.json'
+import { getCategories } from '@/services/categories.service'
 
 export const metadata = {
   title: 'Categories | ATP Store',
   description: 'Browse our product categories',
 }
 
-export default function Page() {
-  // Transform mock data to match component interface
-  const categories = categoriesData.data._type_stock_groups
+export default async function Page() {
+  try {
+    // Fetch categories from backend
+    const categories = await getCategories()
 
-  return <CategoriesPage categories={categories} />
+    return <CategoriesPage categories={categories} />
+  } catch (error) {
+    // Pass error to CategoriesGrid which has error boundary
+    return <CategoriesPage categories={[]} error={error as Error} />
+  }
 }

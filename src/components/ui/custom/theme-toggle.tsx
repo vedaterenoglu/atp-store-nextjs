@@ -1,20 +1,14 @@
 /**
- * Theme Toggle Dropdown Component
- *
- * SOLID Principles Applied:
- * - SRP: Single responsibility for theme switching UI with icon display
- * - OCP: Open for extension with additional theme options
- * - DIP: Depends on theme store abstraction, not concrete implementation
- * - ISP: Provides focused interface for theme selection
- *
- * Design Patterns:
- * - Command Pattern: Theme change actions encapsulated in menu items
- * - Observer Pattern: Reacts to theme state changes via Zustand
- * - Composite Pattern: Composed of atomic UI components
- * - Strategy Pattern: Icon display strategy based on selected theme
- *
- * Architecture: Icon-based theme selector with dropdown menu
- * displaying Sun, Moon, and Monitor icons for theme selection
+ * ThemeToggle - Dropdown menu for theme selection with dynamic icons
+ * 
+ * Features:
+ * - Displays current theme icon (sun/moon/monitor)
+ * - Dropdown with light/dark/system options
+ * - Shows check mark on selected theme
+ * - Smooth icon transitions
+ * 
+ * Props: None (uses theme store)
+ * State: Manages mounted state for hydration safety
  */
 'use client'
 

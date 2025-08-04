@@ -1,0 +1,76 @@
+{
+  "data": {
+    "stock": [
+      {
+        "stock_group": "1000 - Pizzakartonger",
+        "stock_id": "1002 1001 0001",
+        "stock_name": "Baklava Låda 1 kg 100 pack",
+        "stock_unit": "förp.",
+        "stock_price": 30000
+      },
+      {
+        "stock_group": "1000 - Pizzakartonger",
+        "stock_id": "1001 1009 0042",
+        "stock_name": "Pizzakartong 42*42*4 50 st./förp.",
+        "stock_unit": "förp.",
+        "stock_price": 29000
+      },
+      {
+        "stock_group": "1000 - Pizzakartonger",
+        "stock_id": "1001 1012 3030",
+        "stock_name": "Pizzakartong Dubbelcalzone 30*30*8 100 st./förp.",
+        "stock_unit": "förp.",
+        "stock_price": 45000
+      },
+      {
+        "stock_group": "1500 - Wellpap & Smörpapper",
+        "stock_id": "1501 1009 1009",
+        "stock_name": "Smörpapper 33*33",
+        "stock_unit": "förp.",
+        "stock_price": 49500
+      },
+      {
+        "stock_group": "1500 - Wellpap & Smörpapper",
+        "stock_id": "1501 1002 0001",
+        "stock_name": "Kebabrullebox",
+        "stock_unit": "kolli",
+        "stock_price": 51200
+      },
+      {
+        "stock_group": "2000 - Bägare",
+        "stock_id": "2001 1008 L001",
+        "stock_name": "Lock till Kaffebägare 7 Oz 1000 st./kolli",
+        "stock_unit": "kolli",
+        "stock_price": 23500
+      },
+      {
+        "stock_group": "2000 - Bägare",
+        "stock_id": "2001 1005 0060",
+        "stock_name": "Såsbägare med Lock 60 ml 1000 st./kolli",
+        "stock_unit": "kolli",
+        "stock_price": 55000
+      },
+      {
+        "stock_group": "2500 - Micro- & Sallad Förpackningar",
+        "stock_id": "2501 1019 1007",
+        "stock_name": "Salladsskål Fyrkantig Transparent med Transparent Lock 200 st./kolli 1100 ml",
+        "stock_unit": "st.",
+        "stock_price": 55000
+      },
+      {
+        "stock_group": "3000 - Avhämtningslådor PAP/BAGASSE",
+        "stock_id": "3001 1001 XPP2",
+        "stock_name": "Hämtbox Bruna 2-fack 100 st./förp. Premium",
+        "stock_unit": "förp.",
+        "stock_price": 30000
+      },
+      {
+        "stock_group": "4000 - Servetter & Ljus",
+        "stock_id": "4001 1001 0001",
+        "stock_name": "One by One Servetter 8000 st./kolli",
+        "stock_unit": "kolli",
+        "stock_price": 49900
+      }
+    ]
+  }
+}

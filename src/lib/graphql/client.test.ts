@@ -22,6 +22,11 @@ jest.mock('@/lib/config/env', () => ({
     NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT: 'http://localhost:8080/v1/graphql',
     HASURA_GRAPHQL_ADMIN_SECRET: 'test-admin-secret',
   },
+  hasuraConfig: {
+    getAuthHeaders: () => ({
+      'x-hasura-admin-secret': 'test-admin-secret',
+    }),
+  },
 }))
 
 // Mock toast

@@ -1,9 +1,13 @@
 /**
- * @file graphql-provider.tsx
- * @role Provider component for app-level GraphQL client context
- * @patterns Provider Pattern, Dependency Injection, Singleton
- * @solid SRP: GraphQL client provision only, DIP: Depends on Client abstraction
- * @tests src/lib/providers/__tests__/graphql-provider.test.tsx (80%+ coverage)
+ * GraphQLProvider - App-level GraphQL client context provider
+ * 
+ * Features:
+ * - Provides urql GraphQL client to entire component tree
+ * - Supports client injection for testing
+ * - Exposes both urql Provider and custom context for direct client access
+ * 
+ * Props: Optional client for dependency injection
+ * State: None (uses singleton client instance)
  */
 'use client'
 

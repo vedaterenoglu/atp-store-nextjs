@@ -1,18 +1,13 @@
 /**
- * I18n Provider Component
- *
- * SOLID Principles Applied:
- * - SRP: Single responsibility for i18n initialization and context
- * - OCP: Open for extension with additional i18n features
- * - DIP: Depends on i18n abstractions
- *
- * Design Patterns:
- * - Provider Pattern: Provides i18n context to children
- * - Initialization Pattern: Ensures proper i18n setup
- * - Loading State Pattern: Shows loading during initialization
- *
- * Architecture: Client-side provider that initializes i18n with stored
- * language preference and provides context to all child components
+ * I18nProvider - Internationalization context provider with language persistence
+ * 
+ * Features:
+ * - Initializes i18n with user's stored language preference
+ * - Displays loading skeleton during initialization
+ * - Automatically updates language when store changes
+ * 
+ * Props: Children components to wrap
+ * State: Initialization status tracked locally
  */
 'use client'
 

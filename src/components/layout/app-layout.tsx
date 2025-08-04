@@ -1,17 +1,14 @@
 /**
- * AppLayout - Main application layout component
- *
- * SOLID Principles Applied:
- * - SRP: Single responsibility for application layout structure
- * - OCP: Open for extension via children prop
- *
- * Design Patterns:
- * - Layout Pattern: Provides consistent page structure with header, main, and footer
- * - Composition Pattern: Composes Navbar, main content, and Footer components
- * - Slot Pattern: Uses children prop for flexible content insertion
- *
- * Architecture: Layout component that provides consistent structure across all pages
- * with max-width constraint of 1280px for optimal viewing experience
+ * AppLayout - Application shell with navbar, content area, and footer
+ * 
+ * Features:
+ * - Fixed navbar at top
+ * - Flexible content area with max-width constraint
+ * - Footer pinned to bottom
+ * - Responsive padding and centering
+ * 
+ * Props: Children components to render in main content area
+ * State: None (pure layout component)
  */
 import { Navbar } from './navbar'
 import { Footer } from './footer'

@@ -1,8 +1,17 @@
 /**
- * GraphQL Client Configuration with urql
- * SOLID Principles: Single Responsibility (GraphQL client setup)
- * Design Patterns: Singleton Pattern (single client instance), Factory Pattern (client creation)
- * Dependencies: urql, graphql
+ * GraphQL client singleton with error handling and authentication
+ * 
+ * Responsibilities:
+ * - Creates and configures urql GraphQL client
+ * - Manages authentication headers for Hasura
+ * - Implements centralized error handling with user notifications
+ * - Provides helper functions for queries, mutations, and subscriptions
+ * 
+ * Architecture:
+ * - SOLID Principles: SRP (client configuration only)
+ * - Patterns: Singleton (ensures single client instance), Factory (client creation)
+ * 
+ * Dependencies: urql exchanges, Hasura config, toast notifications
  */
 
 import {
@@ -13,7 +22,7 @@ import {
   type AnyVariables,
   type OperationResult,
 } from '@urql/core'
-import { env } from '@/lib/config/env'
+import { env, hasuraConfig } from '@/lib/config/env'
 import { toast } from '@/lib/utils/toast'
 
 /**
@@ -62,14 +71,19 @@ export function createGraphQLClient(): Client {
       fetchExchange,
     ],
     fetchOptions: () => {
+      const authHeaders = hasuraConfig.getAuthHeaders()
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
       }
 
-      // Add admin secret for server-side operations
-      if (env.HASURA_GRAPHQL_ADMIN_SECRET) {
-        headers['x-hasura-admin-secret'] = env.HASURA_GRAPHQL_ADMIN_SECRET
-      }
+      // Add auth headers only if they exist
+      Object.entries(authHeaders).forEach(([key, value]) => {
+        if (value !== undefined) {
+          headers[key] = value
+        }
+      })
+
+      // Debug logging removed - was only for testing authentication
 
       return { headers }
     },
