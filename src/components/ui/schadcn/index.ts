@@ -36,6 +36,8 @@ export {
 
 export { Calendar } from './calendar'
 
+export { Skeleton } from './skeleton'
+
 // Menu components
 export {
   DropdownMenu,

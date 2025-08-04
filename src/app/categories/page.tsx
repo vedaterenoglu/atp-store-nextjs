@@ -5,7 +5,7 @@
  * Dependencies: CategoriesPage template, mock data
  */
 
-import { CategoriesPage } from '@/components/categories/templates/CategoriesPage'
+import { CategoriesPage } from '@/components/categories'
 import categoriesData from '@/mock/categories.json'
 
 export const metadata = {
