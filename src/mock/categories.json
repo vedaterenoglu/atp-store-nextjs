@@ -1,0 +1,84 @@
+{
+  "data": {
+    "_type_stock_groups": [
+      {
+        "stock_groups": "1000 - Pizzakartonger",
+        "our_company": "alfe",
+        "image_url": "https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg",
+        "alt_text": "category image"
+      },
+      {
+        "stock_groups": "1500 - Wellpap & Smörpapper",
+        "our_company": "alfe",
+        "image_url": "https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg",
+        "alt_text": "category image"
+      },
+      {
+        "stock_groups": "1600 - Hygienpapper",
+        "our_company": "alfe",
+        "image_url": "https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg",
+        "alt_text": "category image"
+      },
+      {
+        "stock_groups": "2000 - Bägare",
+        "our_company": "alfe",
+        "image_url": "https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg",
+        "alt_text": "category image"
+      },
+      {
+        "stock_groups": "2500 - Micro- & Sallad Förpackningar",
+        "our_company": "alfe",
+        "image_url": "https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg",
+        "alt_text": "category image"
+      },
+      {
+        "stock_groups": "3000 - Avhämtningslådor PAP/BAGASSE",
+        "our_company": "alfe",
+        "image_url": "https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg",
+        "alt_text": "category image"
+      },
+      {
+        "stock_groups": "4000 - Servetter & Ljus",
+        "our_company": "alfe",
+        "image_url": "https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg",
+        "alt_text": "category image"
+      },
+      {
+        "stock_groups": "5000 - Folie & Film",
+        "our_company": "alfe",
+        "image_url": "https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg",
+        "alt_text": "category image"
+      },
+      {
+        "stock_groups": "6000 - Rengöringskem. & Rengöringstillbehör",
+        "our_company": "alfe",
+        "image_url": "https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg",
+        "alt_text": "category image"
+      },
+      {
+        "stock_groups": "7000 - Kassa & Babs",
+        "our_company": "alfe",
+        "image_url": "https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg",
+        "alt_text": "category image"
+      },
+      {
+        "stock_groups": "8000 - Bärkassar & Säckar",
+        "our_company": "alfe",
+        "image_url": "https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg",
+        "alt_text": "category image"
+      },
+      {
+        "stock_groups": "8500 - Engångs produkter",
+        "our_company": "alfe",
+        "image_url": "https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg",
+        "alt_text": "category image"
+      },
+      {
+        "stock_groups": "9000 - Aluminiumformar & Serveringsfat",
+        "our_company": "alfe",
+        "image_url": "https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg",
+        "alt_text": "category image"
+      }
+    ]
+  }
+}
