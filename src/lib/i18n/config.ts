@@ -23,16 +23,19 @@ import enCommon from './locales/en/common.json'
 import enAuth from './locales/en/auth.json'
 import enValidation from './locales/en/validation.json'
 import enCategories from './locales/en/categories.json'
+import enProducts from './locales/en/products.json'
 
 import svCommon from './locales/sv/common.json'
 import svAuth from './locales/sv/auth.json'
 import svValidation from './locales/sv/validation.json'
 import svCategories from './locales/sv/categories.json'
+import svProducts from './locales/sv/products.json'
 
 import trCommon from './locales/tr/common.json'
 import trAuth from './locales/tr/auth.json'
 import trValidation from './locales/tr/validation.json'
 import trCategories from './locales/tr/categories.json'
+import trProducts from './locales/tr/products.json'
 
 export const defaultNS = 'common'
 export const resources = {
@@ -41,18 +44,21 @@ export const resources = {
     auth: enAuth,
     validation: enValidation,
     categories: enCategories,
+    products: enProducts,
   },
   sv: {
     common: svCommon,
     auth: svAuth,
     validation: svValidation,
     categories: svCategories,
+    products: svProducts,
   },
   tr: {
     common: trCommon,
     auth: trAuth,
     validation: trValidation,
     categories: trCategories,
+    products: trProducts,
   },
 } as const
 
@@ -87,7 +93,7 @@ export const initI18n = async () => {
       lng: initialLanguage, // Use stored language or Swedish fallback
       fallbackLng: 'sv', // Fallback to Swedish
       defaultNS,
-      ns: ['common', 'auth', 'validation', 'categories'],
+      ns: ['common', 'auth', 'validation', 'categories', 'products'],
       resources,
 
       interpolation: {

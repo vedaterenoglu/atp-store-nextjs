@@ -1,16 +1,16 @@
 /**
  * GraphQL client singleton with error handling and authentication
- * 
+ *
  * Responsibilities:
  * - Creates and configures urql GraphQL client
  * - Manages authentication headers for Hasura
  * - Implements centralized error handling with user notifications
  * - Provides helper functions for queries, mutations, and subscriptions
- * 
+ *
  * Architecture:
  * - SOLID Principles: SRP (client configuration only)
  * - Patterns: Singleton (ensures single client instance), Factory (client creation)
- * 
+ *
  * Dependencies: urql exchanges, Hasura config, toast notifications
  */
 

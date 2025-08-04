@@ -2,48 +2,70 @@
  * ProductCard Molecular Component
  * SOLID Principles: Single Responsibility - Display product card
  * Design Patterns: Composition Pattern - Combines multiple UI elements
- * Dependencies: shadcn/ui Card, Next.js Image
+ * Dependencies: shadcn/ui Card, Next.js Image, PriceTag atom, react-i18next
  */
 
 'use client'
 
-import { Card } from '@/components/ui/schadcn'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Card, Button } from '@/components/ui/schadcn'
 import Image from 'next/image'
 import { cn } from '@/components/ui/utils'
+import { PriceTag } from '../atoms'
+import { Minus, Plus } from 'lucide-react'
 
 interface ProductCardProps {
   id: string
   name: string
   imageUrl?: string
   price: number
-  currency?: string
   unit: string
+  categoryId: string
   className?: string
   onClick?: () => void
 }
 
 export function ProductCard({
-  id: _id, // eslint-disable-line @typescript-eslint/no-unused-vars
+  id,
   name,
   imageUrl,
   price,
-  currency = 'kr',
   unit,
+  categoryId,
   className,
   onClick,
 }: ProductCardProps) {
+  const { t } = useTranslation('products')
+  const [quantity, setQuantity] = useState(0)
+
+  const handleDecrease = () => {
+    if (quantity > 0) setQuantity(quantity - 1)
+  }
+
+  const handleIncrease = () => {
+    setQuantity(quantity + 1)
+  }
+
+  const handleAddToCart = () => {
+    if (quantity > 0) {
+      // TODO: Implement add to cart functionality
+      // Will be implemented when cart functionality is added
+    }
+  }
+
   return (
     <Card
       className={cn(
-        'group overflow-hidden bg-neutral-950 border-gray-800 transition-all duration-200',
-        'hover:shadow-lg hover:scale-[1.02] hover:border-gray-700',
+        'group overflow-hidden transition-all duration-200',
+        'hover:shadow-lg hover:scale-[1.02]',
         'cursor-pointer',
         className
       )}
       onClick={onClick}
     >
       {/* Image Container */}
-      <div className="relative aspect-[3/2] overflow-hidden bg-gray-100">
+      <div className="relative aspect-[3/2] overflow-hidden bg-muted">
         {imageUrl ? (
           <Image
             src={imageUrl}
@@ -53,19 +75,69 @@ export function ProductCard({
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gray-800">
-            <span className="text-4xl text-gray-600">📦</span>
+          <div className="flex h-full w-full items-center justify-center bg-muted">
+            <span className="text-4xl text-muted-foreground">📦</span>
           </div>
         )}
+        {/* Price Tag */}
+        <PriceTag price={price} />
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-2">
-        <p className="text-sm text-gray-500">{unit}</p>
-        <h3 className="font-medium text-white line-clamp-2">{name}</h3>
-        <p className="text-lg font-semibold text-white">
-          {price.toFixed(2)} {currency}
-        </p>
+      <div className="p-4 space-y-3">
+        <h3 className="font-medium line-clamp-2">{name}</h3>
+        <div className="space-y-1">
+          <p className="text-sm text-muted-foreground">
+            {t('productCard.category')}: {categoryId}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            {t('productCard.id')}: {id}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            {t('productCard.unit')}: {unit}
+          </p>
+        </div>
+
+        {/* Quantity selector and Add to cart */}
+        <div className="space-y-2 pt-2">
+          <div className="flex items-center justify-center gap-3">
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-8 w-8 p-0"
+              onClick={e => {
+                e.stopPropagation()
+                handleDecrease()
+              }}
+              disabled={quantity === 0}
+            >
+              <Minus className="h-3 w-3" />
+            </Button>
+            <span className="font-medium w-8 text-center">{quantity}</span>
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-8 w-8 p-0"
+              onClick={e => {
+                e.stopPropagation()
+                handleIncrease()
+              }}
+            >
+              <Plus className="h-3 w-3" />
+            </Button>
+          </div>
+          <Button
+            size="sm"
+            className="w-full"
+            onClick={e => {
+              e.stopPropagation()
+              handleAddToCart()
+            }}
+            disabled={quantity === 0}
+          >
+            {t('productCard.addToCart')}
+          </Button>
+        </div>
       </div>
     </Card>
   )

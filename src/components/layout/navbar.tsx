@@ -1,12 +1,12 @@
 /**
  * Navbar - Main navigation component with authentication and preferences
- * 
+ *
  * Features:
  * - Brand logo and company name
  * - Theme and language toggles
  * - Clerk authentication (sign in/user button)
  * - Responsive layout with proper spacing
- * 
+ *
  * Props: None
  * State: Auth state from Clerk hooks
  */

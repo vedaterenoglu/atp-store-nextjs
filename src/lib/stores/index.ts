@@ -23,3 +23,6 @@ export type { Theme } from './theme.store'
 // Language management store
 export { useLanguageStore } from './language.store'
 export type { SupportedLanguage } from './language.store'
+
+// Category search prefix store
+export { useCategorySearchStore } from './category-search.store'

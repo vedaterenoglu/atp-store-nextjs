@@ -1,6 +1,6 @@
 /**
  * Toast notification wrapper for consistent app-wide notifications
- * 
+ *
  * Provides: Unified API for success/error/warning/info/loading toasts
  * Used by: GraphQL error handlers, form submissions, async operations
  */

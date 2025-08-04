@@ -2,13 +2,16 @@
  * BookmarksFilterButton Atom Component
  * SOLID Principles: Single Responsibility - Toggle bookmarks filter
  * Design Patterns: Toggle Component Pattern
- * Dependencies: shadcn/ui Button, lucide-react icons
+ * Dependencies: shadcn/ui Button, lucide-react icons, react-i18next, customer auth
  */
 
 'use client'
 
+import { useTranslation } from 'react-i18next'
+import { Button } from '@/components/ui/schadcn'
 import { Bookmark } from 'lucide-react'
 import { cn } from '@/components/ui/utils'
+import { useCustomerAuth } from '@/lib/auth/customer-auth'
 
 interface BookmarksFilterButtonProps {
   isActive: boolean
@@ -21,19 +24,24 @@ export function BookmarksFilterButton({
   onClick,
   className,
 }: BookmarksFilterButtonProps) {
+  const { t } = useTranslation('products')
+  const { requireCustomerAuth } = useCustomerAuth()
+
+  const handleClick = () => {
+    requireCustomerAuth(() => {
+      onClick()
+    })
+  }
+
   return (
-    <button
-      onClick={onClick}
-      className={cn(
-        'flex h-12 items-center gap-2 rounded-md border px-4 font-medium transition-colors',
-        isActive
-          ? 'border-blue-500 bg-blue-500 text-white'
-          : 'border-gray-600 bg-transparent text-white hover:border-gray-500',
-        className
-      )}
+    <Button
+      onClick={handleClick}
+      variant={isActive ? 'default' : 'outline'}
+      size="lg"
+      className={cn('h-12 gap-2', className)}
     >
       <Bookmark className={cn('h-4 w-4', isActive && 'fill-current')} />
-      My Bookmarks
-    </button>
+      {t('bookmarks.button')}
+    </Button>
   )
 }

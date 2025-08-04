@@ -1,0 +1,21 @@
+{
+  "title": "Produkter",
+  "subtitle": "Upptäck och beställ produkter för ditt företag",
+  "searchPlaceholder": "Sök produkter...",
+  "bookmarks": {
+    "button": "Mina bokmärken"
+  },
+  "navigation": {
+    "backToCategories": "Tillbaka till kategorier",
+    "back": "Tillbaka",
+    "goToCart": "Gå till varukorg",
+    "cart": "Varukorg"
+  },
+  "productCard": {
+    "category": "Kategori",
+    "id": "ID",
+    "unit": "Enhet",
+    "addToCart": "Lägg i varukorg",
+    "currency": "SEK"
+  }
+}

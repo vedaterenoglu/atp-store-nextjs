@@ -21,6 +21,7 @@ interface Product {
   imageUrl?: string
   price: number
   unit: string
+  categoryId: string
 }
 
 interface ProductsGridProps {
@@ -67,6 +68,7 @@ export function ProductsGrid({
                 {...(product.imageUrl && { imageUrl: product.imageUrl })}
                 price={product.price}
                 unit={product.unit}
+                categoryId={product.categoryId}
                 onClick={() => onProductClick?.(product)}
               />
             </GridItem>

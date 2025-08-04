@@ -53,19 +53,15 @@ export function CategoriesGrid({
         {isLoading ? (
           <GridSkeleton count={6} variant="card" />
         ) : (
-          categories.map(category => {
-            const slug = category.name.split(' - ')[0]
-            return (
-              <GridItem key={category.id}>
-                <CategoryCard
-                  id={category.id}
-                  name={category.name}
-                  imageUrl={category.imageUrl}
-                  slug={slug || undefined}
-                />
-              </GridItem>
-            )
-          })
+          categories.map(category => (
+            <GridItem key={category.id}>
+              <CategoryCard
+                id={category.id}
+                name={category.name}
+                imageUrl={category.imageUrl}
+              />
+            </GridItem>
+          ))
         )}
       </div>
     </GridErrorBoundary>

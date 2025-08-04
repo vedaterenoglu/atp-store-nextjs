@@ -1,11 +1,11 @@
 /**
  * GraphQLProvider - App-level GraphQL client context provider
- * 
+ *
  * Features:
  * - Provides urql GraphQL client to entire component tree
  * - Supports client injection for testing
  * - Exposes both urql Provider and custom context for direct client access
- * 
+ *
  * Props: Optional client for dependency injection
  * State: None (uses singleton client instance)
  */
