@@ -1,0 +1,52 @@
+query GetProductPricesQuery(
+  $company_id: String!
+  $customer_id: String!
+  $stock_id: String!
+) {
+  stock(
+    where: {
+      _and: { company_id: { _eq: $company_id }, stock_id: { _eq: $stock_id } }
+    }
+  ) {
+    stock_price
+    stock_price_a
+    stock_price_b
+    stock_price_c
+    stock_price_d
+    stock_price_s
+    stock_price_hra
+    stock_price_hrb
+    stock_price_hrc
+    stock_price_hrd
+    stock_price_z
+    campaign_price
+    is_campaign_active
+  }
+  customer_price_list(
+    where: {
+      _and: {
+        company_id: { _eq: $company_id }
+        customer_id: { _eq: $customer_id }
+        stock_id: { _eq: $stock_id }
+      }
+    }
+  ) {
+    customers_price
+  }
+  customers(
+    where: {
+      _and: {
+        company_id: { _eq: $company_id }
+        customer_id: { _eq: $customer_id }
+      }
+    }
+  ) {
+    customer_price_class
+  }
+}
+
+# {
+#   "company_id": "alfe",
+#   "customer_id": "SE0 1001 1697",
+#   "stock_id": "0000 1002 0002"
+# }

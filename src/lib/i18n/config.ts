@@ -22,14 +22,17 @@ import Backend from 'i18next-http-backend'
 import enCommon from './locales/en/common.json'
 import enAuth from './locales/en/auth.json'
 import enValidation from './locales/en/validation.json'
+import enCategories from './locales/en/categories.json'
 
 import svCommon from './locales/sv/common.json'
 import svAuth from './locales/sv/auth.json'
 import svValidation from './locales/sv/validation.json'
+import svCategories from './locales/sv/categories.json'
 
 import trCommon from './locales/tr/common.json'
 import trAuth from './locales/tr/auth.json'
 import trValidation from './locales/tr/validation.json'
+import trCategories from './locales/tr/categories.json'
 
 export const defaultNS = 'common'
 export const resources = {
@@ -37,16 +40,19 @@ export const resources = {
     common: enCommon,
     auth: enAuth,
     validation: enValidation,
+    categories: enCategories,
   },
   sv: {
     common: svCommon,
     auth: svAuth,
     validation: svValidation,
+    categories: svCategories,
   },
   tr: {
     common: trCommon,
     auth: trAuth,
     validation: trValidation,
+    categories: trCategories,
   },
 } as const
 
@@ -81,7 +87,7 @@ export const initI18n = async () => {
       lng: initialLanguage, // Use stored language or Swedish fallback
       fallbackLng: 'sv', // Fallback to Swedish
       defaultNS,
-      ns: ['common', 'auth', 'validation'],
+      ns: ['common', 'auth', 'validation', 'categories'],
       resources,
 
       interpolation: {
