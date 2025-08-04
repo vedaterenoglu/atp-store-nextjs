@@ -9,8 +9,7 @@
 
 import Link from 'next/link'
 import { Card } from '@/components/ui/schadcn'
-import { ImageContainer } from '../atoms/ImageContainer'
-import { OverlayComponent } from '../atoms/OverlayComponent'
+import { ImageContainer, OverlayComponent } from '../atoms'
 import { cn } from '@/components/ui/utils'
 
 interface CategoryCardProps {

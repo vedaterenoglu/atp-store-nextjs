@@ -12,15 +12,17 @@ import {
   type StockGroup,
 } from '@/lib/graphql/schemas/categories'
 
-// GraphQL query as string
+// GraphQL query as string - matches GetCategoriesQuery.graphql exactly
 const GET_CATEGORIES_QUERY = `
-  query GetCategoriesQuery {
+  query GetCategoriesQuery($company_id: String!) {
     _type_stock_groups(
       order_by: { stock_groups: asc }
-      where: { our_company: { _eq: "alfe" }, willBeListed: { _eq: true } }
+      where: { our_company: { _eq: $company_id }, willBeListed: { _eq: true } }
     ) {
       stock_groups
       our_company
+      image_url
+      alt_text
     }
   }
 `
@@ -29,13 +31,15 @@ const GET_CATEGORIES_QUERY = `
  * Fetch categories using urql with manual types and Zod validation
  * Combines compile-time types with runtime validation
  */
-export async function getCategories(): Promise<StockGroup[]> {
+export async function getCategories(
+  companyId: string = 'alfe'
+): Promise<StockGroup[]> {
   try {
     // Use urql client adapter with manual type
-    const response =
-      await executeGraphQLOperation<GetCategoriesQueryResponse>(
-        GET_CATEGORIES_QUERY
-      )
+    const response = await executeGraphQLOperation<GetCategoriesQueryResponse>(
+      GET_CATEGORIES_QUERY,
+      { company_id: companyId }
+    )
 
     // Validate the response structure with Zod
     const validatedResponse = GetCategoriesQueryResponseSchema.parse(response)

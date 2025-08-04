@@ -7,10 +7,12 @@
 
 import { z } from 'zod'
 
-// Schema for individual stock group
+// Schema for individual stock group - matches GetCategoriesQuery exactly
 export const StockGroupSchema = z.object({
   stock_groups: z.string(),
   our_company: z.string(),
+  image_url: z.string(),
+  alt_text: z.string(),
 })
 
 // Schema for GetCategoriesQuery response
