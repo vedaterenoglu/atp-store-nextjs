@@ -13,12 +13,13 @@
  * Dependencies: GraphQL adapter, products schema, generated GraphQL types
  */
 
-import { serverGraphQLFetch } from '@/lib/graphql/server-fetch'
+import { serverGraphQLFetch } from '@/lib/graphql'
 import {
   validateAndTransformProducts,
   type ProductsArray,
 } from '@/lib/graphql/schemas/products'
 import { env } from '@/lib/config/env'
+import GetProductsListWithPriceQuery from '@/services/graphql/queries/GetProductsListWithPriceQuery.graphql'
 
 // Define the query response type
 interface GetProductsListWithPriceQueryResponse {
@@ -37,29 +38,9 @@ interface GetProductsListWithPriceQueryResponse {
  */
 export async function getProducts(): Promise<ProductsArray> {
   try {
-    // GraphQL query as a string
-    const query = `
-      query GetProductsListWithPriceQuery($company_id: String!) {
-        stock(
-          where: {
-            company_id: { _eq: $company_id }
-            stock_is_active: { _eq: true }
-            _rel_type_stock_group: { willBeListed: { _eq: true } }
-          }
-          order_by: { stock_group: asc }
-        ) {
-          stock_group
-          stock_id
-          stock_name
-          stock_unit
-          stock_price
-        }
-      }
-    `
-
     const { data, error } =
       await serverGraphQLFetch<GetProductsListWithPriceQueryResponse>({
-        document: query,
+        document: GetProductsListWithPriceQuery,
         variables: {
           company_id: env.COMPANY_ID || 'alfe',
         },

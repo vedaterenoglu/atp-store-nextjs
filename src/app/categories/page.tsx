@@ -6,7 +6,7 @@
  */
 
 import { CategoriesPage } from '@/components/categories'
-import { getCategories } from '@/services/categories.service'
+import { getCategories } from '@/services'
 
 export const metadata = {
   title: 'Categories | ATP Store',

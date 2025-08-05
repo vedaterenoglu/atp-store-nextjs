@@ -6,7 +6,14 @@
  */
 
 // Atoms
-export { PageTitle, SearchBox, BookmarksFilterButton } from './atoms'
+export {
+  PageTitle,
+  SearchBox,
+  BookmarksFilterButton,
+  PriceTag,
+  BackToCategoriesButton,
+  GoToCartButton,
+} from './atoms'
 
 // Molecules
 export { ProductCard } from './molecules'

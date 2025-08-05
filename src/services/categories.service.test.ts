@@ -12,11 +12,11 @@ import {
   getCategoryById,
   getCategoriesGrouped,
 } from './categories.service'
-import { executeGraphQLOperation } from '@/lib/graphql/client'
+import { executeGraphQLOperation } from '@/lib/graphql'
 import mockCategoriesData from '@/mock/categories.json'
 
 // Mock dependencies
-jest.mock('@/lib/graphql/client')
+jest.mock('@/lib/graphql')
 jest.mock('@/lib/config/env', () => ({
   env: {
     COMPANY_ID: 'alfe',
@@ -40,7 +40,14 @@ describe('Categories Service', () => {
 
       expect(mockExecuteGraphQLOperation).toHaveBeenCalledTimes(1)
       expect(mockExecuteGraphQLOperation).toHaveBeenCalledWith(
-        expect.stringContaining('query GetCategoriesQuery'),
+        expect.objectContaining({
+          kind: 'Document',
+          loc: expect.objectContaining({
+            source: expect.objectContaining({
+              body: expect.stringContaining('query GetCategoriesQuery'),
+            }),
+          }),
+        }),
         { company_id: 'alfe' }
       )
       expect(result).toHaveLength(13)
@@ -60,7 +67,9 @@ describe('Categories Service', () => {
       const result = await getCategories('custom-company')
 
       expect(mockExecuteGraphQLOperation).toHaveBeenCalledWith(
-        expect.any(String),
+        expect.objectContaining({
+          kind: 'Document',
+        }),
         { company_id: 'custom-company' }
       )
       expect(result).toHaveLength(13)
@@ -319,10 +328,12 @@ describe('Categories Service', () => {
 
       await getCategories()
 
-      const [query] = mockExecuteGraphQLOperation.mock.calls[0] as [
-        string,
-        Record<string, unknown>,
-      ]
+      const callArgs = mockExecuteGraphQLOperation.mock.calls[0]
+      if (!callArgs || callArgs.length < 1) {
+        throw new Error('Mock was not called')
+      }
+      const queryDoc = callArgs[0] as { loc?: { source?: { body?: string } } }
+      const query = queryDoc.loc?.source?.body || ''
       expect(query).toContain('query GetCategoriesQuery')
       expect(query).toContain('_type_stock_groups')
       expect(query).toContain('order_by: { stock_groups: asc }')

@@ -9,11 +9,13 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { SearchBox } from '../atoms/SearchBox'
-import { BookmarksFilterButton } from '../atoms/BookmarksFilterButton'
-import { BackToCategoriesButton } from '../atoms/BackToCategoriesButton'
-import { GoToCartButton } from '../atoms/GoToCartButton'
-import { ProductsGrid } from '../organisms/ProductsGrid'
+import {
+  SearchBox,
+  BookmarksFilterButton,
+  BackToCategoriesButton,
+  GoToCartButton,
+  ProductsGrid,
+} from '@/components/products'
 import { useCategorySearchStore } from '@/lib/stores'
 
 interface Product {

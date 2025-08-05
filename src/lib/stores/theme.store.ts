@@ -1,3 +1,18 @@
+/**
+ * Theme state management with system theme detection and persistence
+ *
+ * Responsibilities:
+ * - Manages user theme preference (light/dark/system)
+ * - Tracks resolved theme based on system preference
+ * - Persists theme choice across sessions
+ * - Provides reactive theme updates
+ *
+ * Architecture:
+ * - SOLID Principles: SRP (theme state only), ISP (focused interface)
+ * - Patterns: Observer (reactive updates), Strategy (theme resolution)
+ *
+ * Dependencies: Zustand state management, localStorage persistence
+ */
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 

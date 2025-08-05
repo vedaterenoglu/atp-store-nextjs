@@ -15,11 +15,11 @@ import {
   useGraphQLProviderCheck,
   GraphQLErrorBoundary,
 } from '../graphql-provider'
-import { getGraphQLClient } from '@/lib/graphql/client'
+import { getGraphQLClient } from '@/lib/graphql'
 import type { Client } from 'urql'
 
 // Mock the GraphQL client module
-jest.mock('@/lib/graphql/client', () => ({
+jest.mock('@/lib/graphql', () => ({
   getGraphQLClient: jest.fn(),
 }))
 

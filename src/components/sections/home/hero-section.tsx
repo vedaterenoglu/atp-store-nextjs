@@ -14,7 +14,7 @@
  */
 'use client'
 
-import { Button } from '@/components/ui/schadcn/button'
+import { Button } from '@/components/ui/schadcn'
 import { ArrowRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import Link from 'next/link'

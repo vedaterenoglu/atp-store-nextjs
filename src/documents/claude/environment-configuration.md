@@ -4,58 +4,70 @@
 
 **Purpose**: Type-safe environment management across all deployment stages
 
-### Environment Schema Definition (Simplified for Portfolio Project)
+### Current Implementation (ATP Store E-commerce Platform)
+
+The project uses a sophisticated environment configuration with separate schemas for server and client variables:
 
 ```typescript
-// lib/config/env.ts - Environment configuration with Zod validation
+// lib/config/env.ts - Current implementation
 import { z } from 'zod'
 
-const environmentSchema = z.object({
-  // App Configuration
-  NODE_ENV: z
-    .enum(['development', 'test', 'production'])
-    .default('development'),
-  PORT: z.string().default('3000'),
-  NEXT_PUBLIC_APP_URL: z.string().url(),
-  NEXT_PUBLIC_APP_NAME: z.string().default('Portfolio Events'),
+// Server-side environment variables (secure, not exposed to client)
+const serverEnvSchema = z.object({
+  // Application
+  NODE_ENV: z.enum(['development', 'test', 'production']),
+  PORT: z.string().default('3081'),
 
-  // Database Configuration (Neon PostgreSQL)
-  DATABASE_URL: z.string().url(),
-  DIRECT_URL: z.string().url().optional(), // For connection pooling if needed
+  // Hasura GraphQL
+  HASURA_GRAPHQL_ADMIN_SECRET: z.string().min(1),
 
-  // Authentication (Optional for portfolio)
-  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().optional(),
-  CLERK_SECRET_KEY: z.string().optional(),
+  // Clerk Authentication
+  CLERK_SECRET_KEY: z.string().min(1),
 
-  // Analytics (Optional for portfolio)
-  NEXT_PUBLIC_POSTHOG_KEY: z.string().optional(),
-  SENTRY_DSN: z.string().optional(),
+  // Database
+  DATABASE_URL: z.string().min(1),
 
-  // Feature Flags (Simplified)
-  NEXT_PUBLIC_ENABLE_ANALYTICS: z
-    .string()
-    .transform(val => val === 'true')
-    .default('false'),
-  NEXT_PUBLIC_ENABLE_MAINTENANCE_MODE: z
-    .string()
-    .transform(val => val === 'true')
-    .default('false'),
+  // Optional services
+  STRIPE_SECRET_KEY: z.string().optional(),
+  REDIS_URL: z.string().optional(),
+  // ... other server-only variables
 })
 
-export type Environment = z.infer<typeof environmentSchema>
+// Client-side environment variables (exposed to browser)
+const clientEnvSchema = z.object({
+  // Application
+  NEXT_PUBLIC_APP_URL: z.string().url(),
 
-// Validate and export environment variables
-export const env = environmentSchema.parse(process.env)
+  // Hasura GraphQL
+  NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT: z.string().url(),
+  NEXT_PUBLIC_HASURA_WS_ENDPOINT: z.string().refine(
+    url => url.startsWith('ws://') || url.startsWith('wss://')
+  ),
 
-// Environment helpers
-export const isDevelopment = env.NODE_ENV === 'development'
-export const isTest = env.NODE_ENV === 'test'
-export const isProduction = env.NODE_ENV === 'production'
+  // Clerk Authentication (public key only)
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 
-// Database configuration
-export const databaseConfig = {
-  url: env.DATABASE_URL,
-  directUrl: env.DIRECT_URL,
+  // Feature Flags
+  NEXT_PUBLIC_ENABLE_ANALYTICS: z.string()
+    .transform(val => val === 'true'),
+  NEXT_PUBLIC_ENABLE_DEBUG: z.string()
+    .transform(val => val === 'true'),
+})
+
+// Hasura configuration helpers following Adapter Pattern
+export const hasuraConfig = {
+  getGraphQLEndpoint: () => env.NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT,
+  getWSEndpoint: () => env.NEXT_PUBLIC_HASURA_WS_ENDPOINT,
+  getAdminSecret: () => {
+    if (typeof window !== 'undefined') {
+      throw new Error('Cannot access admin secret on client')
+    }
+    return env.HASURA_GRAPHQL_ADMIN_SECRET
+  },
+  getAuthHeaders: () => {
+    if (typeof window !== 'undefined') return {}
+    return { 'x-hasura-admin-secret': env.HASURA_GRAPHQL_ADMIN_SECRET }
+  },
 }
 ```
 
@@ -63,135 +75,116 @@ export const databaseConfig = {
 
 ## Environment Files Structure
 
-### .env.example (Portfolio Project Template)
+### .env.example (Current Implementation)
 
 ```bash
-# ===========================================
-# APPLICATION CONFIGURATION
-# ===========================================
+# Environment Variables Template
+# Copy this file to .env.development, .env.test, or .env.production and fill in your values
+
+# ===== APPLICATION CONFIGURATION =====
+# The environment mode (development, test, production)
 NODE_ENV=development
-PORT=3000
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-NEXT_PUBLIC_APP_NAME=Portfolio Events
 
-# ===========================================
-# DATABASE CONFIGURATION (Neon PostgreSQL)
-# ===========================================
-# Get these from your Neon project dashboard
-DATABASE_URL=postgresql://username:password@ep-example.neon.tech/portfolio_events?sslmode=require
-DIRECT_URL=postgresql://username:password@ep-example.neon.tech/portfolio_events?sslmode=require
+# The public URL of your application
+NEXT_PUBLIC_APP_URL=http://localhost:3081
 
-# ===========================================
-# AUTHENTICATION (Optional for Portfolio)
-# ===========================================
-# NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_example-key
-# CLERK_SECRET_KEY=sk_test_example-secret
+# The port your application runs on
+PORT=3081
 
-# ===========================================
-# ANALYTICS & MONITORING (Optional)
-# ===========================================
-# NEXT_PUBLIC_POSTHOG_KEY=phc_example-key
-# SENTRY_DSN=https://example@sentry.io/123456
+# ===== HASURA GRAPHQL API =====
+# Your Hasura GraphQL endpoint
+NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT=http://localhost:8080/v1/graphql
 
-# ===========================================
-# FEATURE FLAGS
-# ===========================================
+# Admin secret for Hasura (keep this secure!)
+HASURA_GRAPHQL_ADMIN_SECRET=your-hasura-admin-secret
+
+# WebSocket endpoint for subscriptions
+NEXT_PUBLIC_HASURA_WS_ENDPOINT=ws://localhost:8080/v1/graphql
+
+# ===== CLERK AUTHENTICATION =====
+# Get these from https://clerk.dev
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your-clerk-publishable-key
+CLERK_SECRET_KEY=sk_test_your-clerk-secret-key
+# NOTE: We don't use custom Clerk sign-in/sign-up URLs - modal authentication in navbar is used instead
+
+# ===== DATABASE =====
+# PostgreSQL connection string
+DATABASE_URL=postgresql://username:password@localhost:5432/database_name
+
+# ===== FEATURE FLAGS =====
+# Enable/disable analytics tracking
 NEXT_PUBLIC_ENABLE_ANALYTICS=false
-NEXT_PUBLIC_ENABLE_MAINTENANCE_MODE=false
+
+# Enable/disable debug mode
+NEXT_PUBLIC_ENABLE_DEBUG=true
+
+# ... (other optional services like Stripe, Redis, etc.)
 ```
 
-### .env.development
+### Environment-Specific Configuration Examples
 
-```bash
-NODE_ENV=development
-PORT=3001
-NEXT_PUBLIC_APP_URL=http://localhost:3001
-NEXT_PUBLIC_APP_NAME=Portfolio Events (Dev)
+#### .env.development
+- Development Hasura endpoint with local or cloud instance
+- Debug mode enabled for better error messages
+- Analytics disabled for development
+- Port 3081 to avoid conflicts
 
-# Hasura development endpoint
-HASURA_GRAPHQL_ENDPOINT=https://dev-hasura-endpoint.hasura.app/v1/graphql
-HASURA_GRAPHQL_ADMIN_SECRET=dev-admin-secret
+#### .env.test
+- Test-specific Hasura endpoint or mocked services
+- Minimal external service dependencies
+- Used for running test suites
 
-# Development features (minimal)
-NEXT_PUBLIC_ENABLE_ANALYTICS=false
-NEXT_PUBLIC_ENABLE_SENTRY=false
-NEXT_PUBLIC_ENABLE_MAINTENANCE_MODE=false
-```
-
-### .env.test
-
-```bash
-NODE_ENV=test
-PORT=3002
-NEXT_PUBLIC_APP_URL=http://localhost:3002
-NEXT_PUBLIC_APP_NAME=Portfolio Events (Test)
-
-# Test Hasura endpoint (or mock)
-HASURA_GRAPHQL_ENDPOINT=https://test-hasura-endpoint.hasura.app/v1/graphql
-HASURA_GRAPHQL_ADMIN_SECRET=test-admin-secret
-
-# Test features (disabled)
-NEXT_PUBLIC_ENABLE_ANALYTICS=false
-NEXT_PUBLIC_ENABLE_SENTRY=false
-NEXT_PUBLIC_ENABLE_MAINTENANCE_MODE=false
-```
-
-### .env.production
-
-```bash
-NODE_ENV=production
-PORT=3000
-NEXT_PUBLIC_APP_URL=https://portfolioevents.com
-NEXT_PUBLIC_APP_NAME=Portfolio Events
-
-# Production Hasura endpoint
-HASURA_GRAPHQL_ENDPOINT=https://prod-hasura-endpoint.hasura.app/v1/graphql
-HASURA_GRAPHQL_ADMIN_SECRET=prod-admin-secret
-HASURA_GRAPHQL_JWT_SECRET=prod-jwt-secret
-
-# Production services
-UPLOADTHING_SECRET=sk_live_prod-secret
-UPLOADTHING_APP_ID=prod-app-id
-RESEND_API_KEY=re_prod-api-key
-
-# Production analytics
-NEXT_PUBLIC_POSTHOG_KEY=phc_prod-key
-SENTRY_DSN=https://prod@sentry.io/123456
-
-# Production features
-NEXT_PUBLIC_ENABLE_ANALYTICS=true
-NEXT_PUBLIC_ENABLE_SENTRY=true
-NEXT_PUBLIC_ENABLE_MAINTENANCE_MODE=false
-```
+#### .env.production
+- Production Hasura endpoint with proper security
+- Full feature flags enabled (analytics, monitoring)
+- Optimized for performance and security
+- All required services configured
 
 ---
 
 ## Current Implementation Status
 
-### ✅ Environment Management Ready
+### ✅ Implemented Features
 
-- **Zod Validation**: Type-safe environment variable access
-- **Multiple Environments**: Development, test, production configurations
-- **Feature Flags**: Environment-specific feature toggling
-- **Neon PostgreSQL**: Cloud database configuration
+- **Zod Validation**: Full type-safe environment variable validation
+- **Server/Client Separation**: Secure handling of sensitive variables
+- **Hasura Integration**: Complete GraphQL configuration with admin secret
+- **Clerk Authentication**: Modal authentication configured (no custom URLs)
+- **Feature Flags**: Analytics and debug mode toggles
+- **Configuration Helpers**: `hasuraConfig` object for easy access
 
-### 🎯 Portfolio Project Focus
+### 🏗️ Architecture Highlights
 
-- **Simplified Configuration**: Only essential environment variables
-- **Neon Database**: Primary focus on database connectivity
-- **Optional Services**: Authentication and analytics marked as optional
-- **Vercel Deployment**: Environment variables configured for Vercel platform
+- **Security**: Server-only variables never exposed to client
+- **Type Safety**: Full TypeScript types generated from Zod schemas
+- **Validation**: Runtime validation with helpful error messages
+- **Adapter Pattern**: Hasura configuration follows adapter pattern
+- **Error Handling**: Proper error messages for missing/invalid variables
 
-### 🔄 Optional Implementations
+### 🎯 Key Configuration Areas
 
-- **Clerk Authentication**: Can be added later if user management needed
-- **Analytics**: PostHog/Sentry for portfolio traffic monitoring
-- **Performance Monitoring**: Basic monitoring sufficient for portfolio
+#### Hasura GraphQL
+- GraphQL endpoint for queries/mutations
+- WebSocket endpoint for subscriptions
+- Admin secret for server-side authentication
+- Automatic header generation for requests
+
+#### Authentication
+- Clerk integration with public/secret keys
+- Modal authentication only (no custom sign-in URLs)
+- Server-side auth validation
+
+#### Optional Services
+- Stripe payment processing
+- Redis caching
+- Sentry error monitoring
+- Email service configuration
+- File storage (S3-compatible)
 
 ### 📝 Usage Notes
 
-- All environment variables are validated at application startup
-- Invalid database configuration will prevent application from starting
-- Environment-specific configurations enable different behaviors per deployment stage
-- Feature flags allow for optional service integration
-- Neon PostgreSQL provides production-ready database without infrastructure management
+- Environment variables are validated at build time
+- Invalid configuration prevents application startup
+- Client variables must be prefixed with `NEXT_PUBLIC_`
+- Server variables are only accessible in server components/API routes
+- Use `hasuraConfig` helpers for consistent Hasura access

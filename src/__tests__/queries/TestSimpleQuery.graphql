@@ -1,0 +1,10 @@
+# Simple test query for basic GraphQL infrastructure testing
+# Used when testing basic query execution without complex structure
+
+query TestSimpleQuery($id: ID!) {
+  test_item(id: $id) {
+    id
+    name
+    description
+  }
+}

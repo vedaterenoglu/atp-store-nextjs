@@ -7,7 +7,7 @@
 
 'use client'
 
-import { CategoryCard } from '../molecules'
+import { CategoryCard } from '@/components/categories'
 import {
   GridErrorBoundary,
   GridSkeleton,
