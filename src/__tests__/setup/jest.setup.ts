@@ -407,6 +407,38 @@ afterAll(() => {
   }
 })
 
+// Mock Clerk hooks
+jest.mock('@clerk/nextjs', () => ({
+  useAuth: jest.fn(() => ({
+    isLoaded: true,
+    isSignedIn: false,
+    userId: null,
+    sessionId: null,
+    sessionClaims: null,
+    actor: null,
+    orgId: null,
+    orgRole: null,
+    orgSlug: null,
+    has: jest.fn(),
+    signOut: jest.fn(),
+    getToken: jest.fn(),
+  })),
+  useUser: jest.fn(() => ({
+    isLoaded: true,
+    isSignedIn: false,
+    user: null,
+  })),
+  useClerk: jest.fn(() => ({
+    openSignIn: jest.fn(),
+  })),
+  SignInButton: jest.fn(({ children }) =>
+    React.createElement('div', { 'data-testid': 'sign-in-button' }, children)
+  ),
+  UserButton: jest.fn(() =>
+    React.createElement('div', { 'data-testid': 'user-button' }, 'User Button')
+  ),
+}))
+
 // Mock Zustand stores
 jest.mock('@/lib/stores', () => {
   let mockLanguageStore = {
@@ -508,3 +540,5 @@ jest.mock('@/lib/stores', () => {
     useThemeStore,
   }
 })
+
+// Toast utility is mocked per-test basis

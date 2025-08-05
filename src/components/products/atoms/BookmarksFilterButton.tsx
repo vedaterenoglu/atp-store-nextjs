@@ -1,8 +1,8 @@
 /**
  * BookmarksFilterButton Atom Component
- * SOLID Principles: Single Responsibility - Toggle bookmarks filter
- * Design Patterns: Toggle Component Pattern
- * Dependencies: shadcn/ui Button, lucide-react icons, react-i18next, customer auth
+ * SOLID Principles: Single Responsibility - Toggle bookmarks filter with auth check
+ * Design Patterns: Toggle Component Pattern with Auth Guard
+ * Dependencies: shadcn/ui Button, lucide-react icons, react-i18next, role auth
  */
 
 'use client'
@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/schadcn'
 import { Bookmark } from 'lucide-react'
 import { cn } from '@/components/ui/utils'
-import { useCustomerAuth } from '@/lib/auth/customer-auth'
+import { useRoleAuth } from '@/lib/auth/role-auth'
 
 interface BookmarksFilterButtonProps {
   isActive: boolean
@@ -25,12 +25,18 @@ export function BookmarksFilterButton({
   className,
 }: BookmarksFilterButtonProps) {
   const { t } = useTranslation('products')
-  const { requireCustomerAuth } = useCustomerAuth()
+  const { requireAuth } = useRoleAuth()
 
   const handleClick = () => {
-    requireCustomerAuth(() => {
-      onClick()
-    })
+    requireAuth(
+      'customer',
+      () => {
+        onClick()
+      },
+      {
+        showToast: true,
+      }
+    )
   }
 
   return (

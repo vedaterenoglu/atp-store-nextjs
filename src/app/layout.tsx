@@ -22,6 +22,7 @@ import {
   ClerkLocaleProvider,
 } from '@/components/providers'
 import { AppLayout } from '@/components/layout'
+import { Toaster } from 'sonner'
 import './globals.css'
 
 const geistSans = Geist({
@@ -53,6 +54,18 @@ export default function RootLayout({
           <ThemeInitializer />
           <I18nProvider>
             <AppLayout>{children}</AppLayout>
+            <Toaster
+              position="bottom-left"
+              toastOptions={{
+                duration: 4000,
+                className: 'sonner-toast',
+                style: {
+                  background: 'hsl(var(--background))',
+                  color: 'hsl(var(--foreground))',
+                  border: '1px solid hsl(var(--border))',
+                },
+              }}
+            />
           </I18nProvider>
         </ClerkLocaleProvider>
       </body>

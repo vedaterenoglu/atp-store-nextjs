@@ -24,18 +24,21 @@ import enAuth from './locales/en/auth.json'
 import enValidation from './locales/en/validation.json'
 import enCategories from './locales/en/categories.json'
 import enProducts from './locales/en/products.json'
+import enAdmin from '../../../public/locales/en/admin.json'
 
 import svCommon from './locales/sv/common.json'
 import svAuth from './locales/sv/auth.json'
 import svValidation from './locales/sv/validation.json'
 import svCategories from './locales/sv/categories.json'
 import svProducts from './locales/sv/products.json'
+import svAdmin from '../../../public/locales/sv/admin.json'
 
 import trCommon from './locales/tr/common.json'
 import trAuth from './locales/tr/auth.json'
 import trValidation from './locales/tr/validation.json'
 import trCategories from './locales/tr/categories.json'
 import trProducts from './locales/tr/products.json'
+import trAdmin from '../../../public/locales/tr/admin.json'
 
 export const defaultNS = 'common'
 export const resources = {
@@ -45,6 +48,7 @@ export const resources = {
     validation: enValidation,
     categories: enCategories,
     products: enProducts,
+    admin: enAdmin,
   },
   sv: {
     common: svCommon,
@@ -52,6 +56,7 @@ export const resources = {
     validation: svValidation,
     categories: svCategories,
     products: svProducts,
+    admin: svAdmin,
   },
   tr: {
     common: trCommon,
@@ -59,6 +64,7 @@ export const resources = {
     validation: trValidation,
     categories: trCategories,
     products: trProducts,
+    admin: trAdmin,
   },
 } as const
 
@@ -93,7 +99,7 @@ export const initI18n = async () => {
       lng: initialLanguage, // Use stored language or Swedish fallback
       fallbackLng: 'sv', // Fallback to Swedish
       defaultNS,
-      ns: ['common', 'auth', 'validation', 'categories', 'products'],
+      ns: ['common', 'auth', 'validation', 'categories', 'products', 'admin'],
       resources,
 
       interpolation: {

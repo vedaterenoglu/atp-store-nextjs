@@ -40,18 +40,16 @@ const clientEnvSchema = z.object({
 
   // Hasura GraphQL
   NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT: z.string().url(),
-  NEXT_PUBLIC_HASURA_WS_ENDPOINT: z.string().refine(
-    url => url.startsWith('ws://') || url.startsWith('wss://')
-  ),
+  NEXT_PUBLIC_HASURA_WS_ENDPOINT: z
+    .string()
+    .refine(url => url.startsWith('ws://') || url.startsWith('wss://')),
 
   // Clerk Authentication (public key only)
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
 
   // Feature Flags
-  NEXT_PUBLIC_ENABLE_ANALYTICS: z.string()
-    .transform(val => val === 'true'),
-  NEXT_PUBLIC_ENABLE_DEBUG: z.string()
-    .transform(val => val === 'true'),
+  NEXT_PUBLIC_ENABLE_ANALYTICS: z.string().transform(val => val === 'true'),
+  NEXT_PUBLIC_ENABLE_DEBUG: z.string().transform(val => val === 'true'),
 })
 
 // Hasura configuration helpers following Adapter Pattern
@@ -124,17 +122,20 @@ NEXT_PUBLIC_ENABLE_DEBUG=true
 ### Environment-Specific Configuration Examples
 
 #### .env.development
+
 - Development Hasura endpoint with local or cloud instance
 - Debug mode enabled for better error messages
 - Analytics disabled for development
 - Port 3081 to avoid conflicts
 
 #### .env.test
+
 - Test-specific Hasura endpoint or mocked services
 - Minimal external service dependencies
 - Used for running test suites
 
 #### .env.production
+
 - Production Hasura endpoint with proper security
 - Full feature flags enabled (analytics, monitoring)
 - Optimized for performance and security
@@ -164,17 +165,20 @@ NEXT_PUBLIC_ENABLE_DEBUG=true
 ### 🎯 Key Configuration Areas
 
 #### Hasura GraphQL
+
 - GraphQL endpoint for queries/mutations
 - WebSocket endpoint for subscriptions
 - Admin secret for server-side authentication
 - Automatic header generation for requests
 
 #### Authentication
+
 - Clerk integration with public/secret keys
 - Modal authentication only (no custom sign-in URLs)
 - Server-side auth validation
 
 #### Optional Services
+
 - Stripe payment processing
 - Redis caching
 - Sentry error monitoring

@@ -17,6 +17,9 @@ import Image from 'next/image'
 import { SignInButton, UserButton, useAuth, useUser } from '@clerk/nextjs'
 import { Button } from '@/components/ui/schadcn'
 import { ThemeToggle, LanguageToggle } from '@/components/ui/custom'
+import { LayoutDashboard } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useRoleAuth } from '@/lib/auth/role-auth'
 
 export function Navbar() {
   return (
@@ -53,10 +56,46 @@ function NavbarBrand() {
 function NavbarActions() {
   return (
     <div className="flex items-center gap-4">
+      <CustomerDashboardButton />
       <LanguageToggle />
       <ThemeToggle />
       <NavbarAuth />
     </div>
+  )
+}
+
+function CustomerDashboardButton() {
+  const { isLoaded, hasRole, requireAuth } = useRoleAuth()
+  const router = useRouter()
+
+  // Only show for signed-in customers
+  if (!isLoaded || !hasRole('customer')) {
+    return null
+  }
+
+  const handleClick = () => {
+    requireAuth(
+      'customer',
+      () => {
+        router.push('/admin/dashboard')
+      },
+      {
+        showToast: true,
+        redirectTo: '/admin/dashboard',
+      }
+    )
+  }
+
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      className="h-9 w-9"
+      aria-label="Customer Dashboard"
+      onClick={handleClick}
+    >
+      <LayoutDashboard className="h-4 w-4" />
+    </Button>
   )
 }
 
