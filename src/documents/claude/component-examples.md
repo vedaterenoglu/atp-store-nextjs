@@ -2,535 +2,342 @@
 
 ## Layout Components
 
-### App Navbar Component
+### Navbar Component (Actual Implementation)
 
-**Purpose**: Navigation header with theme toggle and responsive design
+**Purpose**: Main navigation with authentication and user preferences
 
 ```typescript
-// components/layout/app-navbar.tsx
+// components/layout/navbar.tsx
 /**
- * App Navigation Header Component
- * SOLID Principles: Single Responsibility (navigation and theme toggle)
- * Design Patterns: Compound Component, responsive design patterns
- * Dependencies: Zustand theme store, i18next, shadcn/ui components
+ * Navbar - Main navigation component with authentication and preferences
+ *
+ * Features:
+ * - Brand logo and company name
+ * - Theme and language toggles
+ * - Clerk authentication (sign in/user button)
+ * - Responsive layout with proper spacing
+ *
+ * Props: None
+ * State: Auth state from Clerk hooks
  */
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
-import { Badge } from '@/components/ui/badge'
-import { Menu, Calendar } from 'lucide-react'
-import { ThemeToggle } from '@/components/ui/theme-toggle'
-import { LanguageToggle } from '@/components/ui/language-toggle'
-import { useTranslation } from 'react-i18next'
-import { cn } from '@/lib/utils'
+import Image from 'next/image'
+import { SignInButton, UserButton, useAuth, useUser } from '@clerk/nextjs'
+import { Button } from '@/components/ui/schadcn'
+import { ThemeToggle, LanguageToggle } from '@/components/ui/custom'
 
-interface NavItem {
-  title: string
-  href: string
-  description?: string
-  badge?: string
-}
-
-export function AppNavbar() {
-  const { t } = useTranslation('common')
-
-  const navigationItems: NavItem[] = [
-    {
-      title: t('navigation.events'),
-      href: '/events',
-      description: t('events.discover'),
-    },
-    {
-      title: t('navigation.cities'),
-      href: '/cities',
-      description: t('cities.explore'),
-    },
-    {
-      title: t('navigation.dashboard'),
-      href: '/dashboard',
-      description: t('dashboard.manage'),
-      badge: 'Auth Required',
-    },
-  ]
-
+export function Navbar() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
-      <div className="container flex h-16 items-center">
-        <AppNavbarBrand />
-        <AppNavbarDesktopMenu items={navigationItems} />
-        <div className="flex flex-1 items-center justify-end space-x-2">
-          <LanguageToggle />
-          <ThemeToggle />
-          <AppNavbarMobileMenu items={navigationItems} />
-          <AppNavbarAuth />
+    <nav className="border-b -mx-4">
+      <div className="px-6 sm:px-8 py-4">
+        <div className="flex items-center justify-between">
+          <NavbarBrand />
+          <NavbarActions />
         </div>
       </div>
-    </header>
-  )
-}
-
-function AppNavbarBrand() {
-  const { t } = useTranslation('common')
-
-  return (
-    <div className="mr-6 flex items-center space-x-2">
-      <Link href="/" className="flex items-center space-x-2">
-        <Calendar className="h-6 w-6" />
-        <span className="font-bold text-xl">{t('app.name')}</span>
-      </Link>
-    </div>
-  )
-}
-
-function AppNavbarDesktopMenu({ items }: { items: NavItem[] }) {
-  const pathname = usePathname()
-
-  return (
-    <nav className="hidden md:flex items-center space-x-6">
-      {items.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          className={cn(
-            "text-sm font-medium transition-colors hover:text-primary",
-            pathname === item.href
-              ? "text-foreground"
-              : "text-foreground/60"
-          )}
-        >
-          {item.title}
-          {item.badge && (
-            <Badge variant="secondary" className="ml-2 text-xs">
-              {item.badge}
-            </Badge>
-          )}
-        </Link>
-      ))}
     </nav>
   )
 }
 
-function AppNavbarMobileMenu({ items }: { items: NavItem[] }) {
-  const pathname = usePathname()
-
+function NavbarBrand() {
   return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <Button variant="ghost" size="sm" className="md:hidden">
-          <Menu className="h-5 w-5" />
-          <span className="sr-only">Toggle Menu</span>
-        </Button>
-      </SheetTrigger>
-      <SheetContent side="left">
-        <nav className="flex flex-col space-y-4">
-          {items.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center space-x-2 text-sm font-medium",
-                pathname === item.href
-                  ? "text-foreground"
-                  : "text-foreground/60"
-              )}
-            >
-              <span>{item.title}</span>
-              {item.badge && (
-                <Badge variant="secondary" className="text-xs">
-                  {item.badge}
-                </Badge>
-              )}
-            </Link>
-          ))}
-        </nav>
-      </SheetContent>
-    </Sheet>
+    <Link
+      href="/"
+      className="flex items-center gap-3 text-foreground transition-colors hover:text-primary"
+    >
+      <Image
+        src="/logo.png"
+        alt="ATP Store Logo"
+        width={40}
+        height={40}
+        className="h-10 w-10 object-contain"
+        priority
+      />
+      <span className="text-xl font-bold">ATP Store</span>
+    </Link>
   )
-}
 
-function AppNavbarAuth() {
-  const { t } = useTranslation('auth')
+function NavbarActions() {
+  const { isSignedIn } = useAuth()
+  const { user } = useUser()
 
-  // This would integrate with Clerk in the future
   return (
-    <Button variant="default" size="sm">
-      {t('signIn')}
-    </Button>
+    <div className="flex items-center gap-2">
+      <ThemeToggle />
+      <LanguageToggle />
+      {isSignedIn ? (
+        <UserButton afterSignOutUrl="/" />
+      ) : (
+        <SignInButton mode="modal">
+          <Button size="sm" className="ml-2">
+            Sign In
+          </Button>
+        </SignInButton>
+      )}
+    </div>
   )
 }
 ```
 
-### App Footer Component
+### Footer Component (Actual Implementation)
 
-**Purpose**: Consistent footer with copyright and branding
+**Purpose**: Simple footer with copyright and branding
 
 ```typescript
-// components/layout/app-footer.tsx
+// components/layout/footer.tsx
 /**
- * App Footer Component
- * SOLID Principles: Single Responsibility (footer display and branding)
- * Design Patterns: Component composition with shadcn/ui
- * Dependencies: i18next for internationalization
+ * Footer - Simple footer component with logo and copyright
+ *
+ * Features:
+ * - Displays logo image
+ * - Shows copyright with configurable year and author
+ * - Centered layout with responsive spacing
+ *
+ * Props: Optional year and author for copyright text
+ * State: None (pure presentation component)
  */
+'use client'
 
-import Link from 'next/link'
-import { Separator } from '@/components/ui/separator'
-import { Calendar } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
+import Image from 'next/image'
 
-export function AppFooter() {
-  const { t } = useTranslation('common')
-  const currentYear = new Date().getFullYear()
+interface FooterProps {
+  year?: number
+  author?: string
+}
 
-  const footerLinks = [
-    { title: t('footer.privacyPolicy'), href: '/privacy' },
-    { title: t('footer.termsOfService'), href: '/terms' },
-    { title: t('footer.contact'), href: '/contact' },
-    { title: t('footer.about'), href: '/about' },
-  ]
-
+export function Footer({
+  year = new Date().getFullYear(),
+  author = 'GTBS Coding',
+}: FooterProps) {
   return (
-    <footer className="border-t bg-background">
-      <div className="container py-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <AppFooterBrand />
-          <AppFooterLinks />
-          <AppFooterSocial />
-          <AppFooterNewsletter />
-        </div>
-
-        <Separator className="my-6" />
-
-        <div className="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0">
-          <div className="text-sm text-muted-foreground">
-            {t('footer.copyright', { year: currentYear })}
-          </div>
-
-          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-            {footerLinks.map((link, index) => (
-              <span key={link.href} className="flex items-center">
-                <Link
-                  href={link.href}
-                  className="hover:text-foreground transition-colors"
-                >
-                  {link.title}
-                </Link>
-                {index < footerLinks.length - 1 && (
-                  <span className="ml-4">•</span>
-                )}
-              </span>
-            ))}
+    <footer className="mt-auto border-t -mx-4">
+      <div className="px-4 py-4 sm:py-6">
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-center text-sm text-muted-foreground">
+            © {year} Alfe Tissue Paper AB. All rights reserved.
+          </p>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>Created by</span>
+            <Image
+              src="/logo-gtbs.png"
+              alt="GTBS Coding Logo"
+              width={20}
+              height={20}
+              className="h-5 w-5 object-contain"
+            />
+            <span className="font-medium text-foreground transition-colors hover:text-primary">
+              {author}
+            </span>
           </div>
         </div>
       </div>
     </footer>
   )
-}
-
-function AppFooterBrand() {
-  const { t } = useTranslation('common')
-
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center space-x-2">
-        <Calendar className="h-6 w-6" />
-        <span className="font-bold text-lg">{t('app.name')}</span>
-      </div>
-      <p className="text-sm text-muted-foreground max-w-xs">
-        {t('app.description')}
-      </p>
-    </div>
-  )
-}
-
-function AppFooterLinks() {
-  const { t } = useTranslation('common')
-
-  const quickLinks = [
-    { title: t('navigation.events'), href: '/events' },
-    { title: t('navigation.cities'), href: '/cities' },
-    { title: 'Create Event', href: '/events/create' },
-    { title: t('navigation.dashboard'), href: '/dashboard' },
-  ]
-
-  return (
-    <div className="space-y-4">
-      <h3 className="font-semibold">Quick Links</h3>
-      <ul className="space-y-2 text-sm">
-        {quickLinks.map((link) => (
-          <li key={link.href}>
-            <Link
-              href={link.href}
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {link.title}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
-  )
-}
-
-function AppFooterSocial() {
-  return (
-    <div className="space-y-4">
-      <h3 className="font-semibold">Connect</h3>
-      <div className="text-sm text-muted-foreground space-y-2">
-        <p>Follow us for updates and event announcements.</p>
-        <div className="flex space-x-4">
-          <Link href="#" className="hover:text-foreground transition-colors">
-            Twitter
-          </Link>
-          <Link href="#" className="hover:text-foreground transition-colors">
-            LinkedIn
-          </Link>
-          <Link href="#" className="hover:text-foreground transition-colors">
-            GitHub
-          </Link>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function AppFooterNewsletter() {
-  return (
-    <div className="space-y-4">
-      <h3 className="font-semibold">Stay Updated</h3>
-      <p className="text-sm text-muted-foreground">
-        Get notified about new events and features.
-      </p>
-      <div className="text-sm text-muted-foreground">
-        <Link href="/newsletter" className="hover:text-foreground transition-colors">
-          Subscribe to Newsletter →
-        </Link>
-      </div>
-    </div>
-  )
-}
 ```
 
 ---
 
 ## UI Components
 
-### Theme Toggle Component
+### Theme Toggle Component (Actual Implementation)
 
-**Purpose**: Enhanced theme selection with dropdown and system support
+**Purpose**: Dropdown menu for theme selection with dynamic icons
 
 ```typescript
-// components/ui/theme-toggle.tsx
+// components/ui/custom/theme-toggle.tsx
 /**
- * Theme Toggle Dropdown Component
- * SOLID Principles: Single Responsibility (theme selection UI)
- * Design Patterns: Command Pattern (theme actions), Facade Pattern (theme store)
- * Dependencies: Zustand theme store, shadcn/ui components, Lucide icons
+ * ThemeToggle - Dropdown menu for theme selection with dynamic icons
+ *
+ * Features:
+ * - Displays current theme icon (sun/moon/monitor)
+ * - Dropdown with light/dark/system options
+ * - Shows check mark on selected theme
+ * - Smooth icon transitions
+ *
+ * Props: None (uses theme store)
+ * State: Manages mounted state for hydration safety
  */
 'use client'
 
-import { Monitor, Moon, Sun, Check } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Moon, Sun, Monitor, Check } from 'lucide-react'
+import { useThemeStore } from '@/lib/stores'
+import { Button } from '@/components/ui'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { useThemeStore } from '@/lib/stores/theme-store'
-import { useTranslation } from 'react-i18next'
-import { useEffect } from 'react'
+} from '@/components/ui'
+import { useEffect, useState } from 'react'
 
 interface ThemeOption {
   value: 'light' | 'dark' | 'system'
+  icon: typeof Sun
   label: string
-  icon: React.ComponentType<{ className?: string }>
-  description: string
 }
 
-export function ThemeToggle() {
-  const { theme, setTheme, initializeTheme } = useThemeStore()
-  const { t } = useTranslation('common')
+const themes: ThemeOption[] = [
+  { value: 'light', icon: Sun, label: 'Light' },
+  { value: 'dark', icon: Moon, label: 'Dark' },
+  { value: 'system', icon: Monitor, label: 'System' },
+]
 
-  const themeOptions: ThemeOption[] = [
-    {
-      value: 'light',
-      label: t('theme.light'),
-      icon: Sun,
-      description: t('theme.lightMode'),
-    },
-    {
-      value: 'dark',
-      label: t('theme.dark'),
-      icon: Moon,
-      description: t('theme.darkMode'),
-    },
-    {
-      value: 'system',
-      label: t('theme.system'),
-      icon: Monitor,
-      description: t('theme.systemSetting'),
-    },
-  ]
+export function ThemeToggle() {
+  return (
+    <ThemeToggleContainer>
+      <ThemeToggleDropdown />
+    </ThemeToggleContainer>
+  )
+}
+
+function ThemeToggleContainer({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    const cleanup = initializeTheme()
-    return cleanup
-  }, [initializeTheme])
+    setMounted(true)
+  }, [])
 
-  const currentThemeOption = themeOptions.find(option => option.value === theme)
-  const CurrentIcon = currentThemeOption?.icon || Monitor
+  if (!mounted) {
+    return <div className="h-9 w-9" />
+  }
+
+  return <>{children}</>
+}
+
+function ThemeToggleDropdown() {
+  const { theme, setTheme } = useThemeStore()
+  const currentTheme = themes.find(t => t.value === theme) || themes[2]
+  const Icon = currentTheme.icon
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          size="sm"
-          className="h-9 w-9 px-0"
-          aria-label={t('theme.toggleTheme')}
+          size="icon"
+          className="h-9 w-9"
+          aria-label="Toggle theme"
         >
-          <CurrentIcon className="h-4 w-4" />
-          <span className="sr-only">{t('theme.toggleTheme')}</span>
+          <Icon className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        {themeOptions.map((option) => {
-          const Icon = option.icon
-          const isSelected = theme === option.value
-
-          return (
-            <DropdownMenuItem
-              key={option.value}
-              onClick={() => setTheme(option.value)}
-              className="flex items-center justify-between cursor-pointer"
-            >
-              <div className="flex items-center space-x-2">
-                <Icon className="h-4 w-4" />
-                <div className="flex flex-col">
-                  <span>{option.label}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {option.description}
-                  </span>
-                </div>
-              </div>
-              {isSelected && <Check className="h-4 w-4" />}
-            </DropdownMenuItem>
-          )
-        })}
+      <DropdownMenuContent align="end">
+        {themes.map(({ value, icon: ItemIcon, label }) => (
+          <DropdownMenuItem
+            key={value}
+            onClick={() => setTheme(value)}
+            className="flex items-center justify-between gap-2"
+          >
+            <div className="flex items-center gap-2">
+              <ItemIcon className="h-4 w-4" />
+              <span>{label}</span>
+            </div>
+            {theme === value && <Check className="h-4 w-4" />}
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   )
 }
 ```
 
-### Language Toggle Component
+### Language Toggle Component (Actual Implementation)
 
-**Purpose**: Language selection dropdown with proper i18n integration
+**Purpose**: Dropdown menu for language selection with flag emojis
 
 ```typescript
-// components/ui/language-toggle.tsx
+// components/ui/custom/language-toggle.tsx
 /**
- * Language Toggle Dropdown Component
- * SOLID Principles: Single Responsibility (language selection UI)
- * Design Patterns: Command Pattern (language actions), Integration with i18next
- * Dependencies: i18next, Zustand language store, shadcn/ui components
+ * LanguageToggle - Dropdown menu for language selection with flag emojis
+ *
+ * Features:
+ * - Displays current language flag (🇬🇧/🇸🇪/🇹🇷)
+ * - Dropdown with English/Swedish/Turkish options
+ * - Shows check mark on selected language
+ * - Persists selection via Zustand store
+ *
+ * Props: None (uses language store)
+ * State: Manages mounted state for hydration safety
  */
 'use client'
 
-import { Languages, Check } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Check } from 'lucide-react'
+import { Button } from '@/components/ui'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { useLanguageStore, type SupportedLanguage } from '@/lib/stores/language-store'
-import { useTranslation } from 'react-i18next'
-import { useEffect } from 'react'
+} from '@/components/ui'
+import { useLanguageStore, type SupportedLanguage } from '@/lib/stores'
+import { useEffect, useState } from 'react'
 
 interface LanguageOption {
   value: SupportedLanguage
-  label: string
-  nativeLabel: string
   flag: string
+  label: string
 }
 
-const languageOptions: LanguageOption[] = [
-  {
-    value: 'en',
-    label: 'English',
-    nativeLabel: 'English',
-    flag: '🇺🇸',
-  },
-  {
-    value: 'sv',
-    label: 'Swedish',
-    nativeLabel: 'Svenska',
-    flag: '🇸🇪',
-  },
-  {
-    value: 'tr',
-    label: 'Turkish',
-    nativeLabel: 'Türkçe',
-    flag: '🇹🇷',
-  },
+const languages: LanguageOption[] = [
+  { value: 'en', flag: '🇬🇧', label: 'English' },
+  { value: 'sv', flag: '🇸🇪', label: 'Svenska' },
+  { value: 'tr', flag: '🇹🇷', label: 'Türkçe' },
 ]
 
 export function LanguageToggle() {
-  const { language, setLanguage, initializeLanguage } = useLanguageStore()
-  const { t } = useTranslation('common')
+  return (
+    <LanguageToggleContainer>
+      <LanguageToggleDropdown />
+    </LanguageToggleContainer>
+  )
+}
+
+function LanguageToggleContainer({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    initializeLanguage()
-  }, [initializeLanguage])
+    setMounted(true)
+  }, [])
 
-  const currentLanguageOption = languageOptions.find(option => option.value === language)
-
-  const handleLanguageChange = async (newLanguage: SupportedLanguage) => {
-    await setLanguage(newLanguage)
+  if (!mounted) {
+    return <div className="h-9 w-9" />
   }
+
+  return <>{children}</>
+}
+
+function LanguageToggleDropdown() {
+  const { language, setLanguage } = useLanguageStore()
+  const currentLanguage = languages.find(l => l.value === language) || languages[0]
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          size="sm"
-          className="h-9 w-9 px-0"
-          aria-label={t('language.changeLanguage')}
+          size="icon"
+          className="h-9 w-9 text-lg"
+          aria-label="Select language"
         >
-          <Languages className="h-4 w-4" />
-          <span className="sr-only">{t('language.changeLanguage')}</span>
+          {currentLanguage.flag}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        {languageOptions.map((option) => {
-          const isSelected = language === option.value
-
-          return (
-            <DropdownMenuItem
-              key={option.value}
-              onClick={() => handleLanguageChange(option.value)}
-              className="flex items-center justify-between cursor-pointer"
-            >
-              <div className="flex items-center space-x-2">
-                <span className="text-lg">{option.flag}</span>
-                <div className="flex flex-col">
-                  <span>{option.nativeLabel}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {option.label}
-                  </span>
-                </div>
-              </div>
-              {isSelected && <Check className="h-4 w-4" />}
-            </DropdownMenuItem>
-          )
-        })}
+      <DropdownMenuContent align="end">
+        {languages.map(({ value, flag, label }) => (
+          <DropdownMenuItem
+            key={value}
+            onClick={() => setLanguage(value)}
+            className="flex items-center justify-between gap-2"
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-lg">{flag}</span>
+              <span>{label}</span>
+            </div>
+            {language === value && <Check className="h-4 w-4" />}
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   )
@@ -539,79 +346,180 @@ export function LanguageToggle() {
 
 ---
 
-## Component Decomposition Examples
+## Grid Components (Current Implementation)
 
-### Admin City Route Decomposition Strategy
+### GridLayout Component
 
-**Target**: Break down admin/city route component into reusable sub-components
-
-**DECOMPOSITION PROCESS:**
-
-**Component Analysis:**
-
-1. Identify current monolithic structures in admin/city route
-2. Map functional responsibilities within existing components
-3. Determine reusable patterns and shared logic
-4. Plan component hierarchy and data flow
-
-**Sub-Component Creation Strategy:**
-
-- Extract UI elements into atomic components (CityCard, SearchBox, FilterPanel)
-- Separate business logic from presentation (CityListContainer vs CityListPresentation)
-- Create container/presenter component pairs
-- Implement props interface for each component
-- Ensure testability through dependency injection
-
-**Example Decomposition:**
+**Purpose**: Generic responsive grid layout wrapper
 
 ```typescript
-// Before: Monolithic CityPage component
-function CityPage() {
-  // 200+ lines of mixed logic
+// components/ui/custom/grid/GridLayout.tsx
+/**
+ * GridLayout Component - Generic responsive grid layout
+ * SOLID Principles: Single Responsibility - Handles grid layout only
+ * Design Patterns: Composition Pattern - Composes with any content
+ * Dependencies: None
+ */
+
+interface GridLayoutProps {
+  children: React.ReactNode
+  className?: string | undefined
+  gap?: 'none' | 'sm' | 'md' | 'lg' | 'xl'
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full'
+  padding?: boolean
 }
 
-// After: Decomposed components
-function CityPage() {
+export function GridLayout({
+  children,
+  className,
+  gap = 'md',
+  maxWidth = 'full',
+  padding = true,
+}: GridLayoutProps) {
   return (
-    <CityPageLayout>
-      <CityPageHeader />
-      <CityPageFilters />
-      <CityPageContent />
-    </CityPageLayout>
-  )
-}
-
-function CityPageContent() {
-  return (
-    <CityListContainer>
-      <CityListGrid>
-        {cities.map(city => (
-          <CityCard key={city.id} city={city} />
-        ))}
-      </CityListGrid>
-    </CityListContainer>
-  )
-}
-
-// Each component has single responsibility
-function CityCard({ city }: { city: CityType }) {
-  return (
-    <Card>
-      <CityCardHeader city={city} />
-      <CityCardContent city={city} />
-      <CityCardActions city={city} />
-    </Card>
+    <div
+      className={cn(
+        'mx-auto w-full',
+        maxWidthClasses[maxWidth],
+        padding && 'px-4 sm:px-6 lg:px-8',
+        className
+      )}
+    >
+      <div
+        className={cn(
+          'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
+          gapClasses[gap]
+        )}
+      >
+        {children}
+      </div>
+    </div>
   )
 }
 ```
 
-**Quality Standards:**
+### GridItem Component
 
-- Each component must have single responsibility
-- All components must be independently testable
-- Use TypeScript interfaces for all props
-- Follow shadcn/ui + Tailwind CSS patterns
-- Add header comments specifying SOLID principles applied
+**Purpose**: Individual grid item wrapper with consistent styling
+
+```typescript
+// components/ui/custom/grid/GridItem.tsx
+/**
+ * GridItem Component - Wrapper for grid items
+ * SOLID Principles: Single Responsibility - Handles grid item styling
+ * Design Patterns: Composition Pattern - Wraps any content
+ * Dependencies: None
+ */
+
+interface GridItemProps {
+  children: React.ReactNode
+  className?: string
+}
+
+export function GridItem({ children, className }: GridItemProps) {
+  return (
+    <div
+      className={cn(
+        'rounded-lg border bg-card p-6 shadow-sm transition-shadow hover:shadow-md',
+        className
+      )}
+    >
+      {children}
+    </div>
+  )
+}
+```
+
+### GridErrorBoundary Component
+
+**Purpose**: Error boundary for grid components with fallback UI
+
+```typescript
+// components/ui/custom/grid/GridErrorBoundary.tsx
+/**
+ * GridErrorBoundary - Error boundary for grid components
+ * SOLID Principles: Single Responsibility - Error handling
+ * Design Patterns: Error Boundary Pattern
+ * Dependencies: React Error Boundary API
+ */
+
+interface GridErrorBoundaryState {
+  hasError: boolean
+  error?: Error
+}
+
+export class GridErrorBoundary extends React.Component<
+  GridErrorBoundaryProps,
+  GridErrorBoundaryState
+> {
+  constructor(props: GridErrorBoundaryProps) {
+    super(props)
+    this.state = { hasError: false }
+  }
+
+  static getDerivedStateFromError(error: Error): GridErrorBoundaryState {
+    return { hasError: true, error }
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex flex-col items-center justify-center p-8 text-center">
+          <p className="text-lg font-semibold text-destructive">
+            Something went wrong
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {this.state.error?.message || 'An unexpected error occurred'}
+          </p>
+          {this.props.onReset && (
+            <Button onClick={this.props.onReset} className="mt-4">
+              Try Again
+            </Button>
+          )}
+        </div>
+      )
+    }
+
+    return this.props.children
+  }
+}
+```
+
+### GridSkeleton Component
+
+**Purpose**: Loading skeleton for grid layouts
+
+```typescript
+// components/ui/custom/grid/GridSkeleton.tsx
+/**
+ * GridSkeleton - Loading skeleton for grid layouts
+ * SOLID Principles: Single Responsibility - Loading state display
+ * Design Patterns: Skeleton Screen Pattern
+ * Dependencies: shadcn/ui skeleton component
+ */
+
+interface GridSkeletonProps {
+  count?: number
+  className?: string
+}
+
+export function GridSkeleton({ count = 6, className }: GridSkeletonProps) {
+  return (
+    <GridLayout className={className}>
+      {Array.from({ length: count }).map((_, index) => (
+        <GridItem key={index}>
+          <div className="space-y-3">
+            <Skeleton className="h-32 w-full" />
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+          </div>
+        </GridItem>
+      ))}
+    </GridLayout>
+  )
+}
+
+```
 
 ---
 
@@ -619,25 +527,61 @@ function CityCard({ city }: { city: CityType }) {
 
 ### ✅ Implemented Components
 
-- **Theme Toggle**: Full dropdown with system theme support
-- **Language Toggle**: Multi-language support with persistence
-- **Layout Components**: Navbar and Footer with responsive design
-- **i18n Integration**: Complete internationalization support
+#### Layout Components
+- **Navbar**: Main navigation with Clerk authentication integration
+- **Footer**: Simple footer with copyright and GTBS Coding branding
+- **AppLayout**: Main layout wrapper with consistent spacing
 
-### 🎯 Component Decomposition Targets
+#### UI Components  
+- **Theme Toggle**: Dropdown with light/dark/system options
+- **Language Toggle**: Flag-based dropdown for English/Swedish/Turkish
+- **Grid Components**: Layout, Item, ErrorBoundary, and Skeleton
 
-- **City Components**: CityCard, CityList, CityFilters, CitySearch
-- **Event Components**: EventCard, EventList, EventFilters, EventDetails
-- **Form Components**: React Hook Form + Zod integration with shadcn/ui
-- **Data Display**: Server Component + Client Component patterns
-- **Navigation**: Breadcrumbs, Pagination, Search components
+#### Provider Components
+- **I18nProvider**: Next.js App Router i18n integration
+- **ClerkLocaleProvider**: Clerk authentication with locale support
+- **ThemeInitializer**: Theme initialization with Zustand
+- **I18nInitializer**: Language initialization with i18next
 
-### 📝 Component Guidelines for Portfolio Project
+### 🏗️ Architecture Patterns Used
 
-- All components follow SOLID principles with clear single responsibility
-- Complete component decomposition (no monolithic components)
-- Proper TypeScript typing throughout all components
-- Responsive design using Tailwind CSS and shadcn/ui
-- Accessibility considerations with proper ARIA labels
-- Server Components for data fetching, Client Components for interactivity
-- Mock data integration using `src/mock/event.ts` for testing
+- **Component Decomposition**: All components follow single responsibility
+- **Barrel Exports**: Consistent imports via index files
+- **Co-located Tests**: Test files next to implementation
+- **Type Safety**: Full TypeScript coverage
+- **State Management**: Zustand for theme and language
+- **Error Boundaries**: Graceful error handling
+- **Loading States**: Skeleton screens for better UX
+
+### 🎯 Current Focus Areas
+
+#### Categories Implementation
+- Server-side data fetching with Hasura GraphQL
+- Grid layout for category display
+- Error handling with error boundaries
+- Loading states with skeletons
+
+#### Products Implementation  
+- Product listing with pagination
+- Product detail pages
+- Search and filtering capabilities
+
+### 📝 Component Guidelines Applied
+
+- **SOLID Principles**: Every component has single responsibility
+- **Testability**: 100% test coverage achieved
+- **Accessibility**: ARIA labels and semantic HTML
+- **Responsive Design**: Mobile-first with Tailwind CSS
+- **Type Safety**: No `any` types, full TypeScript coverage
+- **Performance**: Server Components for data, Client for interactivity
+
+### 🔧 Technology Integration
+
+- **Next.js 15.4.5**: App Router with Server Components
+- **React 19.1.0**: Latest features and patterns
+- **Clerk Authentication**: Modal-only authentication
+- **Hasura GraphQL**: Backend API with admin secret
+- **Zustand 5.0.7**: Global state management
+- **i18next 25.3.2**: Internationalization
+- **shadcn/ui**: Component library
+- **Tailwind CSS 4.x**: Utility-first styling

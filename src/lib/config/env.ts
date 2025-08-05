@@ -1,12 +1,19 @@
-import { z } from 'zod'
-
 /**
- * @file env.ts
- * @role Environment variable validation and type-safe access
- * @patterns Configuration Validation Pattern, Adapter Pattern
- * @solid SRP: Environment validation only, DIP: Depends on Zod abstraction
- * @tests src/lib/config/__tests__/env.test.ts (100% coverage target)
+ * Environment variable validation and type-safe access
+ *
+ * Responsibilities:
+ * - Validates environment variables at startup
+ * - Provides type-safe access to configuration values
+ * - Separates server and client environment concerns
+ * - Generates Hasura authentication configuration
+ *
+ * Architecture:
+ * - SOLID Principles: SRP (env validation only), DIP (depends on Zod abstraction)
+ * - Patterns: Configuration Validation, Factory (config generation)
+ *
+ * Dependencies: Zod validation library
  */
+import { z } from 'zod'
 
 // Server-side environment variables schema
 const serverEnvSchema = z.object({

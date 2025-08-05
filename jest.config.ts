@@ -68,6 +68,15 @@ const config = {
     // Handle image imports
     '^.+\\.(png|jpg|jpeg|gif|webp|avif|ico|bmp|svg)$':
       '<rootDir>/src/__tests__/mocks/fileMock.ts',
+    // Handle specific GraphQL file imports with custom mocks
+    // Production queries
+    '^.*/GetCategoriesQuery\\.graphql$':
+      '<rootDir>/src/__tests__/mocks/graphql/GetCategoriesQuery.mock.ts',
+    '^.*/GetProductsListWithPriceQuery\\.graphql$':
+      '<rootDir>/src/__tests__/mocks/graphql/GetProductsListWithPriceQuery.mock.ts',
+    // Test queries
+    '^.*/TestGetCategories\\.graphql$':
+      '<rootDir>/src/__tests__/mocks/graphql/TestGetCategories.mock.ts',
   },
 
   // Transform configuration

@@ -1,0 +1,15 @@
+# Test query for GraphQL infrastructure testing
+# This is a copy of GetCategoriesQuery used exclusively for tests
+# to maintain test isolation from production queries
+
+query TestGetCategories($company_id: String!) {
+  _type_stock_groups(
+    order_by: { stock_groups: asc }
+    where: { our_company: { _eq: $company_id }, willBeListed: { _eq: true } }
+  ) {
+    stock_groups
+    our_company
+    image_url
+    alt_text
+  }
+}

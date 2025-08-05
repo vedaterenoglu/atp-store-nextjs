@@ -8,8 +8,11 @@
 'use client'
 
 import { useTranslation } from 'react-i18next'
-import { PageTitle, ViewAllProductsButton } from '../atoms'
-import { CategoriesGrid } from '../organisms'
+import {
+  PageTitle,
+  ViewAllProductsButton,
+  CategoriesGrid,
+} from '@/components/categories'
 
 interface Category {
   id: string

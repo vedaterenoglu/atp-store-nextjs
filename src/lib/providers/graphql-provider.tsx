@@ -15,7 +15,7 @@ import React, { createContext, useContext, useMemo } from 'react'
 import type { ReactNode } from 'react'
 import { Provider as UrqlProvider } from 'urql'
 import type { Client } from 'urql'
-import { getGraphQLClient } from '@/lib/graphql/client'
+import { getGraphQLClient } from '@/lib/graphql'
 
 // Context for direct client access when needed
 interface GraphQLContextValue {

@@ -14,7 +14,7 @@
  * Dependencies: GraphQL client, Zod validation, categories schema
  */
 
-import { executeGraphQLOperation } from '@/lib/graphql/client'
+import { executeGraphQLOperation } from '@/lib/graphql'
 import {
   GetCategoriesQueryResponseSchema,
   type GetCategoriesQueryResponse,
@@ -23,21 +23,7 @@ import {
   type Category,
 } from '@/lib/graphql/schemas/categories'
 import { env } from '@/lib/config/env'
-
-// GraphQL query as string - matches GetCategoriesQuery.graphql exactly
-const GET_CATEGORIES_QUERY = `
-  query GetCategoriesQuery($company_id: String!) {
-    _type_stock_groups(
-      order_by: { stock_groups: asc }
-      where: { our_company: { _eq: $company_id }, willBeListed: { _eq: true } }
-    ) {
-      stock_groups
-      our_company
-      image_url
-      alt_text
-    }
-  }
-`
+import GetCategoriesQuery from '@/services/graphql/queries/GetCategoriesQuery.graphql'
 
 /**
  * Fetch categories using urql with manual types and Zod validation
@@ -49,7 +35,7 @@ export async function getCategories(
   try {
     // Use urql client adapter with manual type
     const response = await executeGraphQLOperation<GetCategoriesQueryResponse>(
-      GET_CATEGORIES_QUERY,
+      GetCategoriesQuery,
       { company_id: companyId || env.COMPANY_ID || 'alfe' }
     )
 

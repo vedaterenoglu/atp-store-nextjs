@@ -7,7 +7,7 @@
 
 'use client'
 
-import { ProductCard } from '../molecules/ProductCard'
+import { ProductCard } from '@/components/products'
 import {
   GridErrorBoundary,
   GridSkeleton,

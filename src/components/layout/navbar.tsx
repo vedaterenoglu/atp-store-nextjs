@@ -15,9 +15,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { SignInButton, UserButton, useAuth, useUser } from '@clerk/nextjs'
-import { Button } from '@/components/ui/schadcn/button'
-import { ThemeToggle } from '@/components/ui/custom/theme-toggle'
-import { LanguageToggle } from '@/components/ui/custom/language-toggle'
+import { Button } from '@/components/ui/schadcn'
+import { ThemeToggle, LanguageToggle } from '@/components/ui/custom'
 
 export function Navbar() {
   return (

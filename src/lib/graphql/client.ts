@@ -22,6 +22,8 @@ import {
   type AnyVariables,
   type OperationResult,
 } from '@urql/core'
+import { print } from 'graphql'
+import type { DocumentNode } from 'graphql'
 import { env, hasuraConfig } from '@/lib/config/env'
 import { toast } from '@/lib/utils/toast'
 
@@ -116,11 +118,22 @@ export function resetGraphQLClient(): void {
 export async function executeGraphQLOperation<
   TData,
   TVariables extends AnyVariables = AnyVariables,
->(query: string, variables?: TVariables, client?: Client): Promise<TData> {
+>(
+  query: string | DocumentNode,
+  variables?: TVariables,
+  client?: Client
+): Promise<TData> {
   const gqlClient = client || getGraphQLClient()
 
+  // Extract query string from DocumentNode if needed
+  const queryString =
+    typeof query === 'string'
+      ? query
+      : (query as DocumentNode).loc?.source?.body ||
+        print(query as DocumentNode)
+
   const result = await gqlClient
-    .query<TData, TVariables>(query, variables || ({} as TVariables))
+    .query<TData, TVariables>(queryString, variables || ({} as TVariables))
     .toPromise()
 
   if (result.error) {

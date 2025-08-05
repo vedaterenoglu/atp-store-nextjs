@@ -9,7 +9,7 @@
 
 import { useRouter } from 'next/navigation'
 import { Card } from '@/components/ui/schadcn'
-import { ImageContainer, OverlayComponent } from '../atoms'
+import { ImageContainer, OverlayComponent } from '@/components/categories'
 import { cn } from '@/components/ui/utils'
 import { useCategorySearchStore } from '@/lib/stores'
 

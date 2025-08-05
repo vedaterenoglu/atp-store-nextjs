@@ -10,7 +10,7 @@ import {
   getProductsByCategory,
   searchProducts,
 } from './products.service'
-import { serverGraphQLFetch } from '@/lib/graphql/server-fetch'
+import { serverGraphQLFetch } from '@/lib/graphql'
 import mockProductsData from '@/mock/products.json'
 
 // Define the query response type to match the service
@@ -25,7 +25,7 @@ interface GetProductsListWithPriceQueryResponse {
 }
 
 // Mock the dependencies
-jest.mock('@/lib/graphql/server-fetch')
+jest.mock('@/lib/graphql')
 jest.mock('@/lib/config/env', () => ({
   env: {
     COMPANY_ID: 'alfe',
@@ -56,7 +56,16 @@ describe('Products Service', () => {
       const result = await getProducts()
 
       expect(mockServerGraphQLFetch).toHaveBeenCalledWith({
-        document: expect.any(String),
+        document: expect.objectContaining({
+          kind: 'Document',
+          loc: expect.objectContaining({
+            source: expect.objectContaining({
+              body: expect.stringContaining(
+                'query GetProductsListWithPriceQuery'
+              ),
+            }),
+          }),
+        }),
         variables: { company_id: 'alfe' },
       })
 
@@ -108,7 +117,16 @@ describe('Products Service', () => {
       await getProducts()
 
       expect(mockServerGraphQLFetch).toHaveBeenCalledWith({
-        document: expect.any(String),
+        document: expect.objectContaining({
+          kind: 'Document',
+          loc: expect.objectContaining({
+            source: expect.objectContaining({
+              body: expect.stringContaining(
+                'query GetProductsListWithPriceQuery'
+              ),
+            }),
+          }),
+        }),
         variables: { company_id: 'alfe' },
       })
     })

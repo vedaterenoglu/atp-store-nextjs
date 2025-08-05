@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next'
 import { Card, Button } from '@/components/ui/schadcn'
 import Image from 'next/image'
 import { cn } from '@/components/ui/utils'
-import { PriceTag } from '../atoms'
+import { PriceTag } from '@/components/products'
 import { Minus, Plus } from 'lucide-react'
 
 interface ProductCardProps {

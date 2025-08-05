@@ -6,7 +6,7 @@
  */
 
 import { ProductsPage } from '@/components/products'
-import { getProducts } from '@/services/products.service'
+import { getProducts } from '@/services'
 
 export const metadata = {
   title: 'Products | ATP Store',
