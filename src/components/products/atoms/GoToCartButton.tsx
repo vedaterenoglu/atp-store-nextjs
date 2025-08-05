@@ -1,8 +1,8 @@
 /**
  * GoToCartButton Atom Component
- * SOLID Principles: Single Responsibility - Navigate to cart
- * Design Patterns: Navigation Component Pattern
- * Dependencies: shadcn/ui Button, Next.js router, react-i18next, customer auth
+ * SOLID Principles: Single Responsibility - Navigate to cart with auth check
+ * Design Patterns: Navigation Component Pattern with Auth Guard
+ * Dependencies: shadcn/ui Button, Next.js router, react-i18next, role auth
  */
 
 'use client'
@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/schadcn'
 import { ShoppingCart } from 'lucide-react'
 import { cn } from '@/components/ui/utils'
-import { useCustomerAuth } from '@/lib/auth/customer-auth'
+import { useRoleAuth } from '@/lib/auth/role-auth'
 
 interface GoToCartButtonProps {
   className?: string
@@ -21,12 +21,18 @@ interface GoToCartButtonProps {
 export function GoToCartButton({ className }: GoToCartButtonProps) {
   const { t } = useTranslation('products')
   const router = useRouter()
-  const { requireCustomerAuth } = useCustomerAuth()
+  const { requireAuth } = useRoleAuth()
 
   const handleClick = () => {
-    requireCustomerAuth(() => {
-      router.push('/cart')
-    })
+    requireAuth(
+      'customer',
+      () => {
+        router.push('/cart')
+      },
+      {
+        showToast: true,
+      }
+    )
   }
 
   return (

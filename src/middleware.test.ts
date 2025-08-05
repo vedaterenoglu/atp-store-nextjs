@@ -186,12 +186,13 @@ describe('Middleware', () => {
 
   describe('Edge Runtime Compatibility', () => {
     it('should use only Edge Runtime compatible imports', () => {
-      // Should only import from @clerk/nextjs/server
+      // Should only import from @clerk/nextjs/server and next/server
       const importLines = middlewareSource
         .split('\n')
         .filter(line => line.includes('import'))
-      expect(importLines).toHaveLength(1)
+      expect(importLines).toHaveLength(2)
       expect(importLines[0]).toContain('@clerk/nextjs/server')
+      expect(importLines[1]).toContain('next/server')
     })
 
     it('should not use Node.js specific APIs', () => {

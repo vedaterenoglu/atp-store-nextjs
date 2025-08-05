@@ -214,17 +214,20 @@ npm run test:coverage                # Unit tests with coverage report
 ## 📊 Testing Examples in Current Codebase
 
 ### ✅ Component Tests
+
 - **Layout Components**: `navbar.test.tsx`, `footer.test.tsx`, `app-layout.test.tsx`
 - **UI Components**: `theme-toggle.test.tsx`, `language-toggle.test.tsx`
 - **Grid Components**: `GridErrorBoundary.test.tsx`, `GridLayout.test.tsx`
 - **Provider Tests**: `i18n-provider.test.tsx`, `clerk-locale-provider.test.tsx`
 
 ### ✅ Page Tests
+
 - **Route Pages**: `categories/page.test.tsx`, `products/page.test.tsx`
 - **Loading States**: `products/loading.test.tsx`
 - **Error Boundaries**: `products/error.test.tsx`
 
 ### ✅ Service & Library Tests
+
 - **GraphQL Client**: `lib/graphql/client.test.ts`
 - **Schemas**: `lib/graphql/schemas/*.test.ts`
 - **Services**: `services/categories.service.test.ts`

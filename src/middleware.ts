@@ -16,6 +16,7 @@
  */
 
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { NextResponse } from 'next/server'
 
 // Define protected routes that require authentication
 const isProtectedRoute = createRouteMatcher([
@@ -23,13 +24,52 @@ const isProtectedRoute = createRouteMatcher([
   '/profile(.*)',
   '/orders(.*)',
   '/admin(.*)',
+  '/cart(.*)',
 ])
 
+// Define routes that require specific roles
+const roleProtectedRoutes: { pattern: RegExp; requiredRole: string }[] = [
+  { pattern: /^\/admin(.*)/, requiredRole: 'customer' },
+  { pattern: /^\/cart(.*)/, requiredRole: 'customer' },
+]
+
 export default clerkMiddleware(async (auth, req) => {
-  // Protect routes that require authentication
+  const { userId, sessionClaims, redirectToSignIn } = await auth()
+
+  // Check if route requires authentication
   if (isProtectedRoute(req)) {
+    // Not signed in - redirect to sign-in
+    if (!userId) {
+      const signInUrl = new URL('/sign-in', req.url)
+      signInUrl.searchParams.set('redirect_url', req.nextUrl.pathname)
+      return redirectToSignIn({ returnBackUrl: req.nextUrl.pathname })
+    }
+
+    // Check role-based access
+    const pathname = req.nextUrl.pathname
+    for (const { pattern, requiredRole } of roleProtectedRoutes) {
+      if (pattern.test(pathname)) {
+        const metadata = sessionClaims?.['metadata'] as
+          | { role?: string }
+          | undefined
+        const userRole = metadata?.['role']
+
+        // Wrong role - redirect to home with error
+        if (userRole !== requiredRole) {
+          const homeUrl = new URL('/', req.url)
+          homeUrl.searchParams.set('error', 'unauthorized')
+          homeUrl.searchParams.set('required_role', requiredRole)
+          return NextResponse.redirect(homeUrl)
+        }
+      }
+    }
+
+    // Authentication and role check passed
     await auth.protect()
   }
+
+  // For non-protected routes, continue without auth
+  return NextResponse.next()
 })
 
 export const config = {

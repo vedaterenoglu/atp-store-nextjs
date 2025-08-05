@@ -1,0 +1,7 @@
+{
+  "dashboard": "Müşteri Paneli",
+  "pendingOrders": "Bekleyen Siparişler",
+  "deliveries": "İrsaliyeler (Teslimatlar)",
+  "invoices": "Faturalar",
+  "unpaidInvoices": "Ödenmemiş Faturalar"
+}
