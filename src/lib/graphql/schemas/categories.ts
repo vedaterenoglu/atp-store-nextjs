@@ -9,6 +9,7 @@
  */
 
 import { z } from 'zod'
+import type { GetCategoriesQueryQuery } from '@/lib/generated/graphql'
 
 // Schema for individual stock group - matches GetCategoriesQuery exactly
 export const StockGroupSchema = z.object({
@@ -18,10 +19,10 @@ export const StockGroupSchema = z.object({
   alt_text: z.string(),
 })
 
-// Schema for GetCategoriesQuery response
+// Schema for GetCategoriesQuery response - validated to match generated type
 export const GetCategoriesQueryResponseSchema = z.object({
   _type_stock_groups: z.array(StockGroupSchema),
-})
+}) satisfies z.ZodType<GetCategoriesQueryQuery>
 
 // Infer TypeScript types from Zod schemas
 export type StockGroup = z.infer<typeof StockGroupSchema>

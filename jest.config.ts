@@ -41,6 +41,7 @@ const config = {
     '!src/lib/config/**', // Exclude config files - typically don't need unit tests
     '!src/lib/i18n/**', // Exclude i18n config - typically don't need unit tests
     '!src/lib/stores/**', // Exclude until store implementations are ready for testing
+    '!src/lib/generated/**', // Exclude generated files (GraphQL codegen)
     '!src/middleware.ts', // Exclude middleware - Edge Runtime not compatible with Jest
   ],
   coverageThreshold: {

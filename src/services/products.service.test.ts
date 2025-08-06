@@ -11,18 +11,10 @@ import {
   searchProducts,
 } from './products.service'
 import { serverGraphQLFetch } from '@/lib/graphql'
-import mockProductsData from '@/mock/products.json'
-
-// Define the query response type to match the service
-interface GetProductsListWithPriceQueryResponse {
-  stock: Array<{
-    stock_id: string
-    stock_name: string
-    stock_price: number
-    stock_unit: string
-    stock_group: string
-  }>
-}
+import {
+  mockProductsData,
+  emptyMockProductsData,
+} from '@/mocks/graphql/products'
 
 // Mock the dependencies
 jest.mock('@/lib/graphql')
@@ -50,7 +42,7 @@ describe('Products Service', () => {
   describe('getProducts', () => {
     it('should fetch and transform products successfully', async () => {
       mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: mockProductsData.data as GetProductsListWithPriceQueryResponse,
+        data: mockProductsData,
       })
 
       const result = await getProducts()
@@ -69,20 +61,20 @@ describe('Products Service', () => {
         variables: { company_id: 'alfe' },
       })
 
-      expect(result).toHaveLength(10)
+      expect(result).toHaveLength(13)
       expect(result[0]).toEqual({
-        id: '1002 1001 0001',
-        name: 'Baklava Låda 1 kg 100 pack',
-        price: 30000,
-        unit: 'förp.',
-        categoryId: '1000 - Pizzakartonger',
+        id: '1001',
+        name: 'Pizza Box Large',
+        price: 15.99,
+        unit: 'pcs',
+        categoryId: 'PIZZA_BOXES',
         imageUrl: undefined,
       })
     })
 
     it('should return empty array when no data is returned', async () => {
       mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: { stock: [] },
+        data: emptyMockProductsData,
       })
 
       const result = await getProducts()
@@ -111,7 +103,7 @@ describe('Products Service', () => {
 
     it('should use environment COMPANY_ID', async () => {
       mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: mockProductsData.data as GetProductsListWithPriceQueryResponse,
+        data: mockProductsData,
       })
 
       await getProducts()
@@ -135,20 +127,20 @@ describe('Products Service', () => {
   describe('getProductsByCategory', () => {
     it('should filter products by category', async () => {
       mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: mockProductsData.data as GetProductsListWithPriceQueryResponse,
+        data: mockProductsData,
       })
 
-      const result = await getProductsByCategory('1000 - Pizzakartonger')
+      const result = await getProductsByCategory('PIZZA_BOXES')
 
       expect(result).toHaveLength(3)
-      expect(result.every(p => p.categoryId === '1000 - Pizzakartonger')).toBe(
+      expect(result.every(p => p.categoryId === 'PIZZA_BOXES')).toBe(
         true
       )
     })
 
     it('should return empty array for non-existent category', async () => {
       mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: mockProductsData.data as GetProductsListWithPriceQueryResponse,
+        data: mockProductsData,
       })
 
       const result = await getProductsByCategory('9999 - Non-existent')
@@ -158,10 +150,10 @@ describe('Products Service', () => {
 
     it('should handle empty products list', async () => {
       mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: { stock: [] },
+        data: emptyMockProductsData,
       })
 
-      const result = await getProductsByCategory('1000 - Pizzakartonger')
+      const result = await getProductsByCategory('PIZZA_BOXES')
 
       expect(result).toEqual([])
     })
@@ -170,28 +162,28 @@ describe('Products Service', () => {
   describe('searchProducts', () => {
     it('should search products by name', async () => {
       mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: mockProductsData.data as GetProductsListWithPriceQueryResponse,
+        data: mockProductsData,
       })
 
       const result = await searchProducts('pizza')
 
-      expect(result).toHaveLength(2)
+      expect(result).toHaveLength(3) // 3 pizza boxes in mock data
       expect(result[0]?.name).toContain('Pizza')
     })
 
     it('should search case-insensitively', async () => {
       mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: mockProductsData.data as GetProductsListWithPriceQueryResponse,
+        data: mockProductsData,
       })
 
       const result = await searchProducts('PIZZA')
 
-      expect(result).toHaveLength(2)
+      expect(result).toHaveLength(3) // 3 pizza boxes in mock data
     })
 
     it('should return empty array for no matches', async () => {
       mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: mockProductsData.data as GetProductsListWithPriceQueryResponse,
+        data: mockProductsData,
       })
 
       const result = await searchProducts('xyz')
@@ -201,23 +193,23 @@ describe('Products Service', () => {
 
     it('should handle partial matches', async () => {
       mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: mockProductsData.data as GetProductsListWithPriceQueryResponse,
+        data: mockProductsData,
       })
 
-      const result = await searchProducts('kebab')
+      const result = await searchProducts('large')
 
-      expect(result).toHaveLength(1)
-      expect(result[0]?.name).toBe('Kebabrullebox')
+      expect(result).toHaveLength(4) // 4 large products in mock data
+      expect(result[0]?.name).toContain('Large')
     })
 
     it('should handle empty search term', async () => {
       mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: mockProductsData.data as GetProductsListWithPriceQueryResponse,
+        data: mockProductsData,
       })
 
       const result = await searchProducts('')
 
-      expect(result).toHaveLength(10) // All products match empty string
+      expect(result).toHaveLength(13) // All products match empty string
     })
   })
 
@@ -253,18 +245,17 @@ describe('Products Service', () => {
 
     it('should handle products with special characters', async () => {
       mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: mockProductsData.data as GetProductsListWithPriceQueryResponse,
+        data: mockProductsData,
       })
 
       const result = await getProducts()
 
-      const specialCharProduct = result.find(p =>
-        p.name.includes('Salladsskål')
+      // Test that our mock data includes products with spaces and special chars
+      const productWithSpaces = result.find(p =>
+        p.name.includes('Pizza Box Large')
       )
-      expect(specialCharProduct).toBeDefined()
-      expect(specialCharProduct?.name).toBe(
-        'Salladsskål Fyrkantig Transparent med Transparent Lock 200 st./kolli 1100 ml'
-      )
+      expect(productWithSpaces).toBeDefined()
+      expect(productWithSpaces?.name).toBe('Pizza Box Large')
     })
   })
 

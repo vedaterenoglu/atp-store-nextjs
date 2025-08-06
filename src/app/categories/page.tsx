@@ -13,6 +13,9 @@ export const metadata = {
   description: 'Browse our product categories',
 }
 
+// Force dynamic rendering to prevent build-time fetching
+export const dynamic = 'force-dynamic'
+
 export default async function Page() {
   try {
     // Fetch categories from backend

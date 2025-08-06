@@ -1,0 +1,32 @@
+mutation BookmarkProductMutation(
+  $company_id: String!
+  $customer_id: String!
+  $stock_id: String!
+) {
+  insert_customer_bookmarks(
+    objects: {
+      company_id: $company_id
+      customer_id: $customer_id
+      stock_id: $stock_id
+    }
+  ) {
+    returning {
+      company_id
+      customer {
+        customer_id
+        customer_nickname
+      }
+      stock {
+        stock_id
+        stock_name
+      }
+    }
+    affected_rows
+  }
+}
+
+# {
+#   "company_id": "alfe",
+#   "customer_id": "SE0 1001 1697",
+#   "stock_id": "0000 1002 0002"
+# }

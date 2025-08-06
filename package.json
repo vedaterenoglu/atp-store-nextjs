@@ -1,5 +1,5 @@
 {
-  "name": "atp-store-nextjs",
+  "name": "3",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -15,7 +15,8 @@
     "test:unit": "jest",
     "test:unit:coverage": "jest --coverage",
     "codegen": "graphql-codegen --config codegen.yml",
-    "codegen:watch": "graphql-codegen --config codegen.yml --watch"
+    "codegen:watch": "graphql-codegen --config codegen.yml --watch",
+    "codegen:local": "node scripts/run-codegen.js"
   },
   "dependencies": {
     "@clerk/localizations": "^3.20.6",

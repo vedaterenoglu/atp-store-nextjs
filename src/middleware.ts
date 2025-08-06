@@ -25,12 +25,14 @@ const isProtectedRoute = createRouteMatcher([
   '/orders(.*)',
   '/admin(.*)',
   '/cart(.*)',
+  '/favorites(.*)',
 ])
 
 // Define routes that require specific roles
 const roleProtectedRoutes: { pattern: RegExp; requiredRole: string }[] = [
   { pattern: /^\/admin(.*)/, requiredRole: 'customer' },
   { pattern: /^\/cart(.*)/, requiredRole: 'customer' },
+  { pattern: /^\/favorites(.*)/, requiredRole: 'customer' },
 ]
 
 export default clerkMiddleware(async (auth, req) => {
@@ -50,7 +52,7 @@ export default clerkMiddleware(async (auth, req) => {
     for (const { pattern, requiredRole } of roleProtectedRoutes) {
       if (pattern.test(pathname)) {
         const metadata = sessionClaims?.['metadata'] as
-          | { role?: string }
+          | { role?: string; customerid?: string }
           | undefined
         const userRole = metadata?.['role']
 
@@ -59,6 +61,13 @@ export default clerkMiddleware(async (auth, req) => {
           const homeUrl = new URL('/', req.url)
           homeUrl.searchParams.set('error', 'unauthorized')
           homeUrl.searchParams.set('required_role', requiredRole)
+          return NextResponse.redirect(homeUrl)
+        }
+
+        // Special check for favorites - must have customerid
+        if (pathname.startsWith('/favorites') && !metadata?.['customerid']) {
+          const homeUrl = new URL('/', req.url)
+          homeUrl.searchParams.set('error', 'no_customer_id')
           return NextResponse.redirect(homeUrl)
         }
       }

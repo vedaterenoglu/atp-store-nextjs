@@ -22,3 +22,6 @@ export { LanguageToggle } from './language-toggle'
 
 // Grid components
 export { GridLayout, GridErrorBoundary, GridSkeleton, GridItem } from './grid'
+
+// Interactive components
+export { BookmarkButton, BookmarkIndicator } from './bookmark-button'

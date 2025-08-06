@@ -15,22 +15,13 @@
 
 import { serverGraphQLFetch } from '@/lib/graphql'
 import {
+  GetProductsListWithPriceQueryResponseSchema,
   validateAndTransformProducts,
   type ProductsArray,
 } from '@/lib/graphql/schemas/products'
+import type { GetProductsListWithPriceQueryQuery } from '@/lib/generated/graphql'
 import { env } from '@/lib/config/env'
 import GetProductsListWithPriceQuery from '@/services/graphql/queries/GetProductsListWithPriceQuery.graphql'
-
-// Define the query response type
-interface GetProductsListWithPriceQueryResponse {
-  stock: Array<{
-    stock_id: string
-    stock_name: string
-    stock_price: number
-    stock_unit: string
-    stock_group: string
-  }>
-}
 
 /**
  * Fetches all products from the backend
@@ -39,7 +30,7 @@ interface GetProductsListWithPriceQueryResponse {
 export async function getProducts(): Promise<ProductsArray> {
   try {
     const { data, error } =
-      await serverGraphQLFetch<GetProductsListWithPriceQueryResponse>({
+      await serverGraphQLFetch<GetProductsListWithPriceQueryQuery>({
         document: GetProductsListWithPriceQuery,
         variables: {
           company_id: env.COMPANY_ID || 'alfe',
@@ -56,8 +47,11 @@ export async function getProducts(): Promise<ProductsArray> {
       return []
     }
 
-    // Transform and validate the data
-    return validateAndTransformProducts(data.stock)
+    // Validate the response structure with Zod
+    const validatedResponse = GetProductsListWithPriceQueryResponseSchema.parse(data)
+
+    // Transform and return the validated data
+    return validateAndTransformProducts(validatedResponse.stock)
   } catch (error) {
     console.error('Error fetching products:', error)
     throw new Error('Failed to fetch products')
