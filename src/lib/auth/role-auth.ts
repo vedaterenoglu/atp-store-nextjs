@@ -52,7 +52,7 @@ export function useRoleAuth() {
   const { isLoaded, isSignedIn, sessionClaims } = useAuth()
   const { user } = useUser()
   const { openSignIn } = useClerk()
-  const { t } = useTranslation('auth')
+  const { t } = useTranslation('auth', { useSuspense: false })
   const router = useRouter()
 
   /**

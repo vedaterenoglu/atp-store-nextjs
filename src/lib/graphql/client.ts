@@ -132,9 +132,20 @@ export async function executeGraphQLOperation<
       : (query as DocumentNode).loc?.source?.body ||
         print(query as DocumentNode)
 
-  const result = await gqlClient
-    .query<TData, TVariables>(queryString, variables || ({} as TVariables))
-    .toPromise()
+  // Determine if this is a mutation or query
+  const isMutation = queryString.trim().toLowerCase().startsWith('mutation')
+
+  const result = await (
+    isMutation
+      ? gqlClient.mutation<TData, TVariables>(
+          queryString,
+          variables || ({} as TVariables)
+        )
+      : gqlClient.query<TData, TVariables>(
+          queryString,
+          variables || ({} as TVariables)
+        )
+  ).toPromise()
 
   if (result.error) {
     throw result.error

@@ -7,12 +7,15 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Card, Button } from '@/components/ui/schadcn'
 import Image from 'next/image'
 import { cn } from '@/components/ui/utils'
 import { PriceTag } from '@/components/products'
+import { BookmarkButton } from '@/components/ui/custom'
+import { useBookmarkStore } from '@/lib/stores/bookmark-store'
+import { useAuth, useUser } from '@clerk/nextjs'
 import { Minus, Plus } from 'lucide-react'
 
 interface ProductCardProps {
@@ -38,6 +41,53 @@ export function ProductCard({
 }: ProductCardProps) {
   const { t } = useTranslation('products')
   const [quantity, setQuantity] = useState(0)
+  const { isSignedIn, sessionClaims } = useAuth()
+  const { user } = useUser()
+
+  // Get bookmark state from Zustand store
+  const {
+    isBookmarked: checkBookmark,
+    toggleBookmark,
+    initializeBookmarks,
+    isInitialized,
+  } = useBookmarkStore()
+  const isProductBookmarked = checkBookmark(id)
+
+  // Initialize bookmarks on mount if user is signed in
+  useEffect(() => {
+    if (isSignedIn && !isInitialized) {
+      initializeBookmarks()
+    }
+  }, [isSignedIn, isInitialized, initializeBookmarks])
+
+  // Check if user can bookmark (must be signed in, have customer role, and have customerid)
+  const canBookmark = () => {
+    if (!isSignedIn) return false
+
+    // Check role (from session claims or user metadata)
+    const metadata = sessionClaims?.['metadata'] as
+      | Record<string, unknown>
+      | undefined
+    const sessionRole = metadata?.['role'] as string | undefined
+    const publicRole = user?.publicMetadata?.['role'] as string | undefined
+    const userRole = sessionRole || publicRole
+
+    if (userRole !== 'customer') return false
+
+    // Check if customerid exists
+    const sessionCustomerId = metadata?.['customerid'] as string | undefined
+    const publicCustomerId = user?.publicMetadata?.['customerid'] as
+      | string
+      | undefined
+    const hasCustomerId = sessionCustomerId || publicCustomerId
+
+    return !!hasCustomerId
+  }
+
+  // Handle bookmark toggle using store
+  const handleBookmarkToggle = async () => {
+    await toggleBookmark(id)
+  }
 
   const handleDecrease = () => {
     if (quantity > 0) setQuantity(quantity - 1)
@@ -79,21 +129,30 @@ export function ProductCard({
             <span className="text-4xl text-muted-foreground">📦</span>
           </div>
         )}
+        {/* Bookmark Button - Top Left - Only show for customers with customerid */}
+        {canBookmark() && (
+          <BookmarkButton
+            productId={id}
+            isBookmarked={isProductBookmarked}
+            onToggle={handleBookmarkToggle}
+            size="sm"
+          />
+        )}
         {/* Price Tag */}
         <PriceTag price={price} />
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-3">
-        <h3 className="font-medium line-clamp-2">{name}</h3>
-        <div className="space-y-1">
-          <p className="text-sm text-muted-foreground">
+      <div className="p-3 space-y-2">
+        <h3 className="font-medium line-clamp-1 text-sm">{name}</h3>
+        <div className="space-y-0.5">
+          <p className="text-xs text-muted-foreground">
             {t('productCard.category')}: {categoryId}
           </p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             {t('productCard.id')}: {id}
           </p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             {t('productCard.unit')}: {unit}
           </p>
         </div>

@@ -15,7 +15,7 @@ import {
   resetGraphQLClient,
 } from './client'
 import * as toastModule from '@/lib/utils/toast'
-import TestGetCategories from '@/__tests__/queries/TestGetCategories.graphql'
+import GetCategoriesQuery from '@/services/graphql/queries/GetCategoriesQuery.graphql'
 
 // Mock environment
 jest.mock('@/lib/config/env', () => ({
@@ -289,14 +289,14 @@ describe('GraphQL Client', () => {
       }
 
       const result = await executeGraphQLOperation(
-        TestGetCategories,
+        GetCategoriesQuery,
         { company_id: 'test' },
         mockClient as unknown as Client
       )
 
       expect(result).toEqual(mockData)
       expect(mockClient.query).toHaveBeenCalledWith(
-        expect.stringContaining('query TestGetCategories'),
+        expect.stringContaining('query GetCategoriesQuery'),
         { company_id: 'test' }
       )
     })

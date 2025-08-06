@@ -17,29 +17,29 @@
 import { executeGraphQLOperation } from '@/lib/graphql'
 import {
   GetCategoriesQueryResponseSchema,
-  type GetCategoriesQueryResponse,
   validateAndTransformCategories,
   type CategoriesArray,
   type Category,
 } from '@/lib/graphql/schemas/categories'
+import type { GetCategoriesQueryQuery } from '@/lib/generated/graphql'
 import { env } from '@/lib/config/env'
 import GetCategoriesQuery from '@/services/graphql/queries/GetCategoriesQuery.graphql'
 
 /**
- * Fetch categories using urql with manual types and Zod validation
+ * Fetch categories using urql with generated types and Zod validation
  * Returns frontend-friendly Category objects
  */
 export async function getCategories(
   companyId?: string
 ): Promise<CategoriesArray> {
   try {
-    // Use urql client adapter with manual type
-    const response = await executeGraphQLOperation<GetCategoriesQueryResponse>(
+    // Use urql client adapter with generated type
+    const response = await executeGraphQLOperation<GetCategoriesQueryQuery>(
       GetCategoriesQuery,
       { company_id: companyId || env.COMPANY_ID || 'alfe' }
     )
 
-    // Validate the response structure with Zod
+    // Validate the response structure with Zod (this also type-checks at runtime)
     const validatedResponse = GetCategoriesQueryResponseSchema.parse(response)
 
     // Transform and return the validated data

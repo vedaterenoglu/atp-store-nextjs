@@ -13,7 +13,11 @@ import {
   getCategoriesGrouped,
 } from './categories.service'
 import { executeGraphQLOperation } from '@/lib/graphql'
-import mockCategoriesData from '@/mock/categories.json'
+import {
+  mockCategoriesData,
+  emptyMockCategoriesData,
+  singleMockCategoryData,
+} from '@/mocks/graphql/categories'
 
 // Mock dependencies
 jest.mock('@/lib/graphql')
@@ -34,7 +38,7 @@ describe('Categories Service', () => {
 
   describe('getCategories', () => {
     it('should fetch categories successfully with default company ID', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData.data)
+      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData)
 
       const result = await getCategories()
 
@@ -50,19 +54,19 @@ describe('Categories Service', () => {
         }),
         { company_id: 'alfe' }
       )
-      expect(result).toHaveLength(13)
+      expect(result).toHaveLength(6)
       expect(result[0]).toEqual({
-        id: '1000 - Pizzakartonger',
-        name: '1000 - Pizzakartonger',
+        id: 'PIZZA_BOXES',
+        name: 'PIZZA_BOXES',
         companyId: 'alfe',
         imageUrl:
-          'https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg',
-        altText: 'category image',
+          'https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/pizza-boxes.jpg',
+        altText: 'Pizza Boxes Category',
       })
     })
 
     it('should fetch categories with custom company ID', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData.data)
+      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData)
 
       const result = await getCategories('custom-company')
 
@@ -72,13 +76,11 @@ describe('Categories Service', () => {
         }),
         { company_id: 'custom-company' }
       )
-      expect(result).toHaveLength(13)
+      expect(result).toHaveLength(6)
     })
 
     it('should handle empty categories response', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce({
-        _type_stock_groups: [],
-      })
+      mockExecuteGraphQLOperation.mockResolvedValueOnce(emptyMockCategoriesData)
 
       const result = await getCategories()
 
@@ -139,7 +141,7 @@ describe('Categories Service', () => {
     })
 
     it('should cache categories on first call', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData.data)
+      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData)
 
       // First call - should hit the API
       const result1 = await getCategoriesWithCache()
@@ -153,7 +155,7 @@ describe('Categories Service', () => {
     })
 
     it('should refresh cache after expiration', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData.data)
+      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData)
 
       // First call at time 1000000
       await getCategoriesWithCache()
@@ -163,9 +165,7 @@ describe('Categories Service', () => {
       mockNow.mockReturnValue(1000000 + 300001)
 
       // Second call - should hit API again
-      mockExecuteGraphQLOperation.mockResolvedValueOnce({
-        _type_stock_groups: [mockCategoriesData.data._type_stock_groups[0]!],
-      })
+      mockExecuteGraphQLOperation.mockResolvedValueOnce(singleMockCategoryData)
       const result = await getCategoriesWithCache()
 
       expect(mockExecuteGraphQLOperation).toHaveBeenCalledTimes(2)
@@ -181,17 +181,17 @@ describe('Categories Service', () => {
       await expect(getCategoriesWithCache()).rejects.toThrow('Network error')
 
       // Second call should attempt to fetch again
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData.data)
+      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData)
       const result = await getCategoriesWithCache()
 
       expect(mockExecuteGraphQLOperation).toHaveBeenCalledTimes(2)
-      expect(result).toHaveLength(13)
+      expect(result).toHaveLength(6)
     })
   })
 
   describe('clearCategoriesCache', () => {
     it('should clear the cache', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData.data)
+      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData)
 
       // Populate cache
       await getCategoriesWithCache()
@@ -213,7 +213,7 @@ describe('Categories Service', () => {
 
   describe('getCategoryById', () => {
     it('should find category by id', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData.data)
+      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData)
 
       const result = await getCategoryById('1000 - Pizzakartonger')
 
@@ -228,7 +228,7 @@ describe('Categories Service', () => {
     })
 
     it('should return undefined for non-existent id', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData.data)
+      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData)
 
       const result = await getCategoryById('9999 - Non-existent')
 
@@ -248,7 +248,7 @@ describe('Categories Service', () => {
 
   describe('getCategoriesGrouped', () => {
     it('should group categories by first character', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData.data)
+      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData)
 
       const result = await getCategoriesGrouped()
 
@@ -324,7 +324,7 @@ describe('Categories Service', () => {
     })
 
     it('should use proper GraphQL query structure', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData.data)
+      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData)
 
       await getCategories()
 

@@ -9,6 +9,31 @@
  */
 
 import { z } from 'zod'
+import type { GetProductsListWithPriceQueryQuery } from '@/lib/generated/graphql'
+
+/**
+ * Schema for individual stock item from GetProductsListWithPriceQuery
+ */
+export const StockItemSchema = z.object({
+  stock_group: z.string(),
+  stock_id: z.string(),
+  stock_name: z.string(),
+  stock_unit: z.string(),
+  stock_price: z.number(),
+})
+
+/**
+ * Schema for GetProductsListWithPriceQuery response - validated to match generated type
+ */
+export const GetProductsListWithPriceQueryResponseSchema = z.object({
+  stock: z.array(StockItemSchema),
+}) satisfies z.ZodType<GetProductsListWithPriceQueryQuery>
+
+// Infer TypeScript types from Zod schemas
+export type StockItem = z.infer<typeof StockItemSchema>
+export type GetProductsListWithPriceQueryResponse = z.infer<
+  typeof GetProductsListWithPriceQueryResponseSchema
+>
 
 /**
  * Product Schema
@@ -35,13 +60,7 @@ export type ProductsArray = z.infer<typeof ProductsArraySchema>
 /**
  * Transform function to map backend stock data to frontend product model
  */
-export function transformStockToProduct(stock: {
-  stock_id: string
-  stock_name: string
-  stock_price: number
-  stock_unit: string
-  stock_group: string
-}): Product {
+export function transformStockToProduct(stock: StockItem): Product {
   return {
     id: stock.stock_id,
     name: stock.stock_name,
@@ -57,13 +76,7 @@ export function transformStockToProduct(stock: {
  * Validate and transform products array from backend
  */
 export function validateAndTransformProducts(
-  stockData: Array<{
-    stock_id: string
-    stock_name: string
-    stock_price: number
-    stock_unit: string
-    stock_group: string
-  }>
+  stockData: StockItem[]
 ): ProductsArray {
   const products = stockData.map(transformStockToProduct)
   return ProductsArraySchema.parse(products)

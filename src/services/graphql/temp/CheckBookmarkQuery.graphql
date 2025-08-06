@@ -1,0 +1,17 @@
+query CheckBookmark(
+  $company_id: String!
+  $customer_id: String!
+  $stock_id: String!
+) {
+  customer_bookmarks(
+    where: {
+      company_id: { _eq: $company_id }
+      customer_id: { _eq: $customer_id }
+      stock_id: { _eq: $stock_id }
+    }
+  ) {
+    company_id
+    customer_id
+    stock_id
+  }
+}
