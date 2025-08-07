@@ -1,0 +1,170 @@
+{
+  "title": "About ATP Store",
+  "subtitle": "Leading supplier of professional products and services, dedicated to empowering businesses with quality solutions since 2011.",
+  "slider": {
+    "slides": [
+      {
+        "title": "Welcome to ATP Store",
+        "subtitle": "Your Trusted Business Partner Since 2011"
+      },
+      {
+        "title": "Streamlined Ordering",
+        "subtitle": "Efficient Order Processing for Your Business"
+      },
+      {
+        "title": "Professional Excellence",
+        "subtitle": "Complete Office Supply Solutions"
+      },
+      {
+        "title": "Extensive Inventory",
+        "subtitle": "Large Stock Availability for Immediate Delivery"
+      },
+      {
+        "title": "Reliable Logistics",
+        "subtitle": "On-Time Delivery with Our Fleet"
+      },
+      {
+        "title": "Efficient Operations",
+        "subtitle": "Fast and Secure Loading Process"
+      },
+      {
+        "title": "Global Reach",
+        "subtitle": "Serving Businesses Across Multiple Countries"
+      },
+      {
+        "title": "Swift Dispatch",
+        "subtitle": "Quick Processing and Dispatch Services"
+      }
+    ]
+  },
+  "mission": {
+    "title": "Our Mission",
+    "paragraph1": "At ATP Store, we are committed to providing exceptional products and services that help businesses thrive. Our mission is to be the most trusted partner for companies seeking quality, reliability, and innovation in their supply chain solutions.",
+    "paragraph2": "With decades of experience and a deep understanding of various industries, we have built strong relationships with leading manufacturers and suppliers worldwide. This enables us to offer competitive prices, fast delivery, and unmatched customer service."
+  },
+  "history": {
+    "title": "Our History",
+    "paragraphs": [
+      "Founded in 2011 with humble beginnings in Malmö, Alfe Tissue Paper has embarked on an extraordinary journey that has now led us to establish our headquarters in the vibrant city of Lund. As a company deeply committed to excellence and customer satisfaction, we take pride in offering tailored solutions that cater to the unique needs of our valued customers. Our success can be attributed to our extensive network, extending both within our home country and beyond its borders, enabling us to provide exceptional service both nationally and internationally.",
+      "At the heart of our operations lies our expertise in the packaging industry. With a fleet of dedicated vehicles, we offer delivery services to our valued customers in Skåne. Our mission is simple yet deeply heartfelt - to provide high-quality service with unwavering commitment. Through regular visits to our customers, at least once a week, we strive to ensure that our offerings meet their requirements and exceed their expectations.",
+      "In Skåne, we primarily focus on two essential categories: food packaging and hygiene paper. Our dedication to ensuring the safe delivery of essential goods to various establishments sets us apart in the industry. We take great satisfaction in serving hotels where convenience and practicality are of paramount importance, as well as restaurants where presentation and preservation are crucial factors.",
+      "Furthermore, we offer our services to charming cafes that have become an integral part of Skåne's social fabric, where packaging quality complements the delights they serve. Our offerings are also tailored for professional catering services, where efficiency and reliability are essential for a seamless experience. Let's not forget the lively bakeries, where packaging freshness and hygiene are crucial to preserving the delicious flavors.",
+      "Our commitment does not end in Skåne; it forms the foundation for our future endeavors. Our vision is rooted in positive growth and unwavering profitability. We aspire to expand our horizons and reach to make our exceptional products readily accessible to customers across Sweden. As we embark on this ambitious journey, we remain true to our core values of integrity, customer-centricity, and innovation."
+    ]
+  },
+  "values": {
+    "title": "Our Values",
+    "items": {
+      "integrity": {
+        "label": "Integrity",
+        "description": "We conduct business with honesty and transparency"
+      },
+      "innovation": {
+        "label": "Innovation",
+        "description": "We continuously improve our products and services"
+      },
+      "customerFocus": {
+        "label": "Customer Focus",
+        "description": "Your success is our priority"
+      },
+      "sustainability": {
+        "label": "Sustainability",
+        "description": "We care about our environmental impact"
+      }
+    }
+  },
+  "features": {
+    "expertTeam": {
+      "title": "Expert Team",
+      "description": "Skilled professionals with years of expertise working together to serve your business needs and deliver exceptional results that exceed expectations."
+    },
+    "globalPresence": {
+      "title": "Global Presence",
+      "description": "Operating in 3 countries with local expertise and global standards"
+    },
+    "qualityAssured": {
+      "title": "Quality Assured",
+      "description": "Unwavering commitment to excellence and quality in every product we deliver"
+    },
+    "trustedPartner": {
+      "title": "Trusted Partner",
+      "description": "Serving over 600 satisfied businesses worldwide"
+    }
+  },
+  "location": {
+    "title": "Our Location"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "info": {
+      "title": "Get in Touch",
+      "description": "We're here to help! Reach out to us through any of the following channels and we'll get back to you as soon as possible.",
+      "address": {
+        "title": "Address",
+        "company": "Alfe Tissue Paper AB.",
+        "street": "Maskinvägen 1 Port 8",
+        "postal": "227 30 Lund",
+        "country": "Skåne Sweden"
+      },
+      "orderReception": {
+        "title": "Order Reception",
+        "whatsapp": "WhatsApp"
+      },
+      "customerService": {
+        "title": "Customer Service",
+        "whatsapp": "WhatsApp"
+      },
+      "email": {
+        "title": "Email"
+      },
+      "hours": {
+        "title": "Business Hours",
+        "weekdays": "Monday - Friday: 08:00 - 16:00",
+        "weekend": "Saturday - Sunday: Closed"
+      },
+      "website": {
+        "title": "Website"
+      },
+      "social": {
+        "title": "Follow Us"
+      }
+    },
+    "form": {
+      "title": "Send us a Message",
+      "description": "Fill out the form below and we'll respond as soon as possible.",
+      "fields": {
+        "name": {
+          "label": "Name",
+          "placeholder": "Your Name"
+        },
+        "email": {
+          "label": "Email",
+          "placeholder": "your@email.com"
+        },
+        "phone": {
+          "label": "Phone",
+          "placeholder": "+46 70 123 4567"
+        },
+        "subject": {
+          "label": "Subject",
+          "placeholder": "How can we help you?",
+          "options": {
+            "general": "General Inquiry",
+            "sales": "Sales Question",
+            "support": "Technical Support",
+            "partnership": "Partnership",
+            "feedback": "Feedback"
+          }
+        },
+        "message": {
+          "label": "Message",
+          "placeholder": "Tell us more about your inquiry..."
+        }
+      },
+      "submit": "Send Message",
+      "sending": "Sending...",
+      "success": "Message sent successfully! We'll get back to you soon.",
+      "error": "Failed to send message. Please try again later."
+    }
+  }
+}

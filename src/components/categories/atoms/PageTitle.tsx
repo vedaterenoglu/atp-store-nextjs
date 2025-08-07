@@ -5,7 +5,7 @@
  * Dependencies: None
  */
 
-import { cn } from '@/components/ui/utils'
+import { cn } from '@/lib/utils'
 
 interface PageTitleProps {
   children: React.ReactNode

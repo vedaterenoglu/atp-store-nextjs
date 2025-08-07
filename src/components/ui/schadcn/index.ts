@@ -20,6 +20,8 @@ export { Button, buttonVariants } from './button'
 
 export { Input } from './input'
 
+export { Label } from './label'
+
 export { Textarea } from './textarea'
 
 export { Select } from './select'
@@ -37,6 +39,14 @@ export {
 export { Calendar } from './calendar'
 
 export { Skeleton } from './skeleton'
+
+export {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from './carousel'
 
 // Menu components
 export {
@@ -56,3 +66,11 @@ export {
   DropdownMenuSubTrigger,
   DropdownMenuRadioGroup,
 } from './dropdown-menu'
+
+// Tooltip components
+export {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from './tooltip'

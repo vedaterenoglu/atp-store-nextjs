@@ -5,7 +5,7 @@
  * Dependencies: None
  */
 
-import { cn } from '@/components/ui/utils'
+import { cn } from '@/lib/utils'
 
 interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {}
 

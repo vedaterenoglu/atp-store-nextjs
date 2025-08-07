@@ -1,0 +1,30 @@
+{
+  "title": "Favori Ürünlerim ve En Çok Satın Alınan Ürünler",
+  "subtitle": "Tüm fiyatlar KDV hariçtir. Sözleşme fiyatlandırması geçerlidir. Piyasa koşullarına göre değişebilir.",
+  "sections": {
+    "favorites": {
+      "title": "Favori Ürünlerim",
+      "description": "Hızlı erişim için işaretlediğiniz ürünler",
+      "empty": {
+        "title": "Henüz favori ürün yok",
+        "description": "Ürünleri gezin ve favorilerinizi işaretleyerek burada görün"
+      }
+    },
+    "mostPurchased": {
+      "title": "En Çok Satın Alınan Ürünler",
+      "description": "Son {{days}} gündeki tüketiminize göre",
+      "empty": {
+        "title": "Satın alma geçmişi bulunamadı",
+        "description": "Alışverişe başlayın ve en çok satın aldığınız ürünleri burada görün"
+      },
+      "badge": {
+        "top": "En İyi {{rank}}"
+      },
+      "consumed": "Tüketilen: {{units}} birim",
+      "addToCart": "Sepete ekle"
+    }
+  },
+  "navigation": {
+    "backToProducts": "Ürünlere Dön"
+  }
+}

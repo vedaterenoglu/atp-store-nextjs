@@ -5,7 +5,7 @@
  * Dependencies: Tailwind CSS utilities
  */
 
-import { cn } from '@/components/ui/utils'
+import { cn } from '@/lib/utils'
 
 interface OverlayComponentProps {
   title: string

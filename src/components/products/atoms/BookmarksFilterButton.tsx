@@ -10,7 +10,7 @@
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/schadcn'
 import { Bookmark } from 'lucide-react'
-import { cn } from '@/components/ui/utils'
+import { cn } from '@/lib/utils'
 import { useRoleAuth } from '@/lib/auth/role-auth'
 import { useRouter } from 'next/navigation'
 import { useAuth, useUser } from '@clerk/nextjs'

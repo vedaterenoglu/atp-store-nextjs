@@ -11,7 +11,7 @@
  * - Composite Pattern: Combines multiple providers into single layout
  * - Template Method: Defines app structure template for all pages
  *
- * Provider Hierarchy: ClerkProvider → ThemeInitializer → I18nProvider → AppLayout
+ * Provider Hierarchy: ClerkProvider → ThemeInitializer → I18nProvider → ApolloWrapper → AppLayout
  */
 
 import type { Metadata } from 'next'
@@ -22,6 +22,7 @@ import {
   ClerkLocaleProvider,
 } from '@/components/providers'
 import { AppLayout } from '@/components/layout'
+import { ApolloWrapper } from '@/lib/apollo/ApolloWrapper'
 import { Toaster } from 'sonner'
 import './globals.css'
 
@@ -53,7 +54,9 @@ export default function RootLayout({
         <ClerkLocaleProvider>
           <ThemeInitializer />
           <I18nProvider>
-            <AppLayout>{children}</AppLayout>
+            <ApolloWrapper>
+              <AppLayout>{children}</AppLayout>
+            </ApolloWrapper>
             <Toaster
               position="bottom-left"
               toastOptions={{

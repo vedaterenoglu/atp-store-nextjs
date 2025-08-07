@@ -14,6 +14,37 @@ import React from 'react'
 import { render, screen } from '@/__tests__/utils/test-utils'
 import { Navbar } from './navbar'
 
+// Mock react-i18next
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        'tooltips.navbar.home': 'Go to home page',
+        'tooltips.navbar.dashboard': 'Customer dashboard',
+        'tooltips.navbar.theme': 'Change theme',
+        'tooltips.navbar.language': 'Change language',
+        'tooltips.navbar.signIn': 'Sign in to your account',
+        'tooltips.navbar.userMenu': 'User menu',
+        'tooltips.navbar.admin': 'Admin panel',
+      }
+      return translations[key] || key
+    },
+  }),
+}))
+
+// Mock Tooltip components
+jest.mock('@/components/ui/schadcn', () => ({
+  ...jest.requireActual('@/components/ui/schadcn'),
+  Tooltip: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  TooltipTrigger: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
+  TooltipContent: () => null,
+  TooltipProvider: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
+}))
+
 // Mock Next.js components
 jest.mock('next/link', () => ({
   __esModule: true,
@@ -236,10 +267,13 @@ describe('Navbar', () => {
       expect(languageToggle).toBeInTheDocument()
       expect(themeToggle).toBeInTheDocument()
 
-      // Check container structure
-      const actionsContainer = languageToggle.parentElement
+      // The toggles are now wrapped in tooltip divs, so we need to go up more levels
+      // languageToggle -> div (tooltip wrapper) -> div (actions container)
+      const actionsContainer = languageToggle.parentElement?.parentElement
       expect(actionsContainer).toHaveClass('flex', 'items-center', 'gap-4')
-      expect(actionsContainer?.children).toHaveLength(3) // language, theme, auth
+      // Now we have 4 children: CustomerDashboardButton (may be null), LanguageToggleWithTooltip, ThemeToggleWithTooltip, NavbarAuth
+      // Since CustomerDashboardButton may not render, we check for at least 3
+      expect(actionsContainer?.children.length).toBeGreaterThanOrEqual(3)
     })
   })
 
@@ -256,15 +290,12 @@ describe('Navbar', () => {
 
       render(<Navbar />)
 
-      const skeleton = screen.getByTestId('language-toggle').parentElement
-        ?.lastChild as HTMLElement
-      expect(skeleton).toHaveClass(
-        'h-8',
-        'w-8',
-        'rounded-full',
-        'bg-muted',
-        'animate-pulse'
+      // The skeleton is rendered by NavbarAuthSkeleton when auth is loading
+      // Look for an element with the skeleton classes
+      const skeleton = document.querySelector(
+        '.h-8.w-8.rounded-full.bg-muted.animate-pulse'
       )
+      expect(skeleton).toBeInTheDocument()
     })
   })
 
@@ -451,7 +482,8 @@ describe('Navbar', () => {
       render(<Navbar />)
 
       const userButton = screen.getByTestId('user-button')
-      const container = userButton.parentElement
+      // UserButton is now wrapped: userButton -> div (tooltip wrapper) -> div (container with flex)
+      const container = userButton.parentElement?.parentElement
       expect(container).toHaveClass('flex', 'items-center', 'gap-2')
     })
   })

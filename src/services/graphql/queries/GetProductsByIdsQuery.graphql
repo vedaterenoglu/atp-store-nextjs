@@ -1,9 +1,6 @@
 query GetProductsByIds($company_id: String!, $stock_ids: [String!]!) {
   stock(
-    where: {
-      company_id: { _eq: $company_id }
-      stock_id: { _in: $stock_ids }
-    }
+    where: { company_id: { _eq: $company_id }, stock_id: { _in: $stock_ids } }
   ) {
     stock_id
     stock_name

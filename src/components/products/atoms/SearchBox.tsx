@@ -9,7 +9,7 @@
 
 import { Input, Button } from '@/components/ui/schadcn'
 import { Search, X } from 'lucide-react'
-import { cn } from '@/components/ui/utils'
+import { cn } from '@/lib/utils'
 
 interface SearchBoxProps {
   value: string

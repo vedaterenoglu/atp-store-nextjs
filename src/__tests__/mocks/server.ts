@@ -13,6 +13,7 @@
 
 import { setupServer } from 'msw/node'
 import { handlers } from './handlers'
+import { serviceHandlers } from '@/services/__mocks__/graphql-handlers'
 
-// Create MSW server instance with default handlers
-export const server = setupServer(...handlers)
+// Create MSW server instance with default handlers and service handlers
+export const server = setupServer(...handlers, ...serviceHandlers)

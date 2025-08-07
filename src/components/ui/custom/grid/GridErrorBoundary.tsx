@@ -11,7 +11,7 @@ import React, { Component } from 'react'
 import type { ErrorInfo, ReactNode } from 'react'
 import { Button } from '@/components/ui/schadcn'
 import { AlertCircle, RefreshCw } from 'lucide-react'
-import { cn } from '@/components/ui/utils'
+import { cn } from '@/lib/utils'
 
 interface Props {
   children: ReactNode

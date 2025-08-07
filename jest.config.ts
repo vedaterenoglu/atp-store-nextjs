@@ -69,15 +69,11 @@ const config = {
     // Handle image imports
     '^.+\\.(png|jpg|jpeg|gif|webp|avif|ico|bmp|svg)$':
       '<rootDir>/src/__tests__/mocks/fileMock.ts',
-    // Handle specific GraphQL file imports with custom mocks
-    // Production queries
-    '^.*/GetCategoriesQuery\\.graphql$':
-      '<rootDir>/src/__tests__/mocks/graphql/GetCategoriesQuery.mock.ts',
-    '^.*/GetProductsListWithPriceQuery\\.graphql$':
-      '<rootDir>/src/__tests__/mocks/graphql/GetProductsListWithPriceQuery.mock.ts',
-    // Test queries
-    '^.*/TestGetCategories\\.graphql$':
-      '<rootDir>/src/__tests__/mocks/graphql/TestGetCategories.mock.ts',
+    // Handle all GraphQL file imports with a generic mock
+    '\\.graphql$': '<rootDir>/src/__tests__/mocks/graphql/graphql.mock.ts',
+    // Mock Clerk modules
+    '@clerk/nextjs': '<rootDir>/src/__tests__/mocks/clerk.mock.tsx',
+    '@clerk/backend': '<rootDir>/src/__tests__/mocks/clerk.mock.tsx',
   },
 
   // Transform configuration
@@ -110,6 +106,11 @@ const config = {
 
   // Module file extensions
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+
+  // Transform ignore patterns to handle ESM modules
+  transformIgnorePatterns: [
+    'node_modules/(?!(@clerk/backend|@clerk/nextjs|@clerk/shared)/)',
+  ],
 
   // Globals configuration
   globals: {

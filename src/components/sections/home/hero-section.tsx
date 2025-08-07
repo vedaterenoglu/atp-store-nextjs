@@ -74,7 +74,7 @@ function HeroActions() {
   )
 }
 
-function HeroPrimaryAction() {
+export function HeroPrimaryAction() {
   const { t } = useTranslation('common')
 
   return (
@@ -91,8 +91,12 @@ function HeroSecondaryAction() {
   const { t } = useTranslation('common')
 
   return (
-    <Button size="lg" variant="outline">
-      {t('home.hero.learnMore')}
+    <Button
+      size="lg"
+      className="bg-green-600 hover:bg-green-700 text-white border-green-600 hover:border-green-700 cursor-pointer"
+      asChild
+    >
+      <Link href="/about-us">{t('home.hero.aboutUs')}</Link>
     </Button>
   )
 }

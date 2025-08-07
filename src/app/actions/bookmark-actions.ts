@@ -17,7 +17,7 @@
 'use server'
 
 import { auth, currentUser } from '@clerk/nextjs/server'
-import { bookmarkService } from '@/lib/services/bookmark.service'
+import { bookmarkService } from '@/services/bookmark.service'
 import type {
   BookmarkResponse,
   UnbookmarkResponse,
@@ -56,17 +56,10 @@ async function getSecureCustomerId(): Promise<string> {
     return publicCustomerId
   }
 
-  // TEMPORARY: Use test customer ID for development
-  // TODO: Remove this and ensure customer ID is set in Clerk
-  if (process.env.NODE_ENV === 'development') {
-    console.warn(
-      '⚠️ Using TEST customer ID - Set customer ID in Clerk for production!'
-    )
-    return 'SE0 1001 1697' // Test customer ID from GraphQL examples
-  }
-
-  // No customer ID found
-  throw new Error('Customer ID not found. Please contact support.')
+  // No customer ID found - user must have proper metadata set
+  throw new Error(
+    'Customer ID not found. Please contact support to link your account.'
+  )
 }
 
 /**
@@ -97,6 +90,7 @@ export async function bookmarkProduct(
       revalidatePath('/products')
       revalidatePath(`/products/${stockId}`)
       revalidatePath('/bookmarks')
+      revalidatePath('/favorites')
     }
 
     return result
@@ -138,6 +132,7 @@ export async function unbookmarkProduct(
       revalidatePath('/products')
       revalidatePath(`/products/${stockId}`)
       revalidatePath('/bookmarks')
+      revalidatePath('/favorites')
     }
 
     return result
@@ -188,6 +183,7 @@ export async function toggleBookmark(
       revalidatePath('/products')
       revalidatePath(`/products/${stockId}`)
       revalidatePath('/bookmarks')
+      revalidatePath('/favorites')
     }
 
     return result
@@ -226,15 +222,16 @@ export async function isProductBookmarked(stockId: string): Promise<boolean> {
 
 /**
  * Get all bookmarks for the authenticated customer
+ * @param forceRefresh - Force refresh from network instead of cache
  * @returns Array of customer bookmarks
  */
-export async function getCustomerBookmarks() {
+export async function getCustomerBookmarks(forceRefresh = false) {
   try {
     // Get customer ID securely from session
     const customerId = await getSecureCustomerId()
 
     // Get customer bookmarks
-    return await bookmarkService.getCustomerBookmarks(customerId)
+    return await bookmarkService.getCustomerBookmarks(customerId, forceRefresh)
   } catch (error) {
     console.error('Get bookmarks action error:', error)
     return []

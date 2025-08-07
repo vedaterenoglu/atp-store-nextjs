@@ -1,0 +1,170 @@
+{
+  "title": "ATP Store Hakkında",
+  "subtitle": "2011'den beri kaliteli çözümlerle işletmeleri güçlendirmeye adanmış, profesyonel ürün ve hizmetlerin lider tedarikçisi.",
+  "slider": {
+    "slides": [
+      {
+        "title": "ATP Store'a Hoş Geldiniz",
+        "subtitle": "2011'den Beri Güvenilir İş Ortağınız"
+      },
+      {
+        "title": "Kolaylaştırılmış Sipariş",
+        "subtitle": "İşletmeniz İçin Verimli Sipariş İşleme"
+      },
+      {
+        "title": "Profesyonel Mükemmellik",
+        "subtitle": "Eksiksiz Ofis Tedarik Çözümleri"
+      },
+      {
+        "title": "Geniş Envanter",
+        "subtitle": "Hemen Teslimat İçin Büyük Stok Mevcudiyeti"
+      },
+      {
+        "title": "Güvenilir Lojistik",
+        "subtitle": "Filomuzla Zamanında Teslimat"
+      },
+      {
+        "title": "Verimli Operasyonlar",
+        "subtitle": "Hızlı ve Güvenli Yükleme Süreci"
+      },
+      {
+        "title": "Küresel Erişim",
+        "subtitle": "Birçok Ülkede İşletmelere Hizmet"
+      },
+      {
+        "title": "Hızlı Sevkiyat",
+        "subtitle": "Hızlı İşleme ve Sevkiyat Hizmetleri"
+      }
+    ]
+  },
+  "mission": {
+    "title": "Misyonumuz",
+    "paragraph1": "ATP Store'da, işletmelerin gelişmesine yardımcı olan olağanüstü ürün ve hizmetler sunmaya kararlıyız. Misyonumuz, tedarik zinciri çözümlerinde kalite, güvenilirlik ve yenilik arayan şirketler için en güvenilir ortak olmaktır.",
+    "paragraph2": "Onlarca yıllık deneyim ve çeşitli endüstrilere dair derin anlayışımızla, dünya çapında önde gelen üreticiler ve tedarikçilerle güçlü ilişkiler kurduk. Bu, rekabetçi fiyatlar, hızlı teslimat ve eşsiz müşteri hizmeti sunmamızı sağlıyor."
+  },
+  "history": {
+    "title": "Tarihimiz",
+    "paragraphs": [
+      "2011 yılında Malmö'da mütevazi bir başlangıçla kurulan Alfe Tissue Paper, şimdi hayat dolu Lund şehrindeki merkezimizi kurmamıza yol açan olağanüstü bir yolculuğa çıkmıştır. Mükemmeliyet ve müşteri memnuniyetine derinden bağlı bir şirket olarak, değerli müşterilerimizin benzersiz ihtiyaçlarını karşılayan özel çözümler sunmaktan gurur duyuyoruz. Başarımız, hem kendi ülkemizin içinde hem de sınırlarının ötesinde genişleyen geniş ağımıza atfedilebilir, bu da bize hem ulusal hem de uluslararası düzeyde olağanüstü hizmet sunma imkanı sağlıyor.",
+      "İşletmemizin kalbinde ambalaj sektöründeki uzmanlığımız yatmaktadır. Dediğimiz gibi basit ama derinden duygusal bir misyonumuz var - kararlılıkla yüksek kaliteli hizmet sunmak. Müşterilerimize düzenli ziyaretlerle, en azından haftada bir kez, tekliflerimizin gereksinimlerini karşıladığından ve beklentilerini aştığından emin olmaya çalışıyoruz.",
+      "Skåne'de, başta gıda ambalajları ve hijyen kağıtları olmak üzere iki temel kategoriye odaklanıyoruz. Çeşitli kurumlara temel ürünlerin güvenli bir şekilde teslim edilmesini sağlama konusundaki bağlılığımız, bizi sektörde öne çıkarıyor. Konfor ve pratikliğin en önemli olduğu otellerde ve sunum ve muhafazanın önemli faktörler olduğu restoranlarda hizmet vermekten büyük memnuniyet duyuyoruz.",
+      "Ayrıca, ambalaj kalitesi ile servis ettikleri lezzetleri tamamlayan ve Skåne'nin sosyal dokusunun ayrılmaz bir parçası haline gelen zarif kafelere hizmet veriyoruz. Tekliflerimiz ayrıca, kusursuz bir deneyim için verimlilik ve güvenilirliğin önemli olduğu profesyonel catering hizmetleri için de özel olarak hazırlanmıştır. Ve unutmadan, ambalajın tazelik ve hijyeninin lezzetli tatların korunması için en büyük öneme sahip olduğu canlı fırınları da eklemeyi unutmayalım.",
+      "Bağlılığımız Skåne ile sınırlı değildir ve gelecekteki çabalarımızın temelini oluşturmaktadır. Vizyonumuz, olumlu büyüme ve sarsılmaz karlılık temelindedir. İsveç'teki müşterilere olağanüstü ürünlerimizi kolayca erişilebilir hale getirmek için ufkumuzu ve erişimimizi genişletmeyi arzuluyoruz. Bu iddialı yolculuğa çıkarken, dürüstlük, müşteri odaklılık ve inovasyon gibi temel değerlerimize sadık kalıyoruz."
+    ]
+  },
+  "values": {
+    "title": "Değerlerimiz",
+    "items": {
+      "integrity": {
+        "label": "Dürüstlük",
+        "description": "İşlerimizi dürüstlük ve şeffaflıkla yürütüyoruz"
+      },
+      "innovation": {
+        "label": "Yenilik",
+        "description": "Ürün ve hizmetlerimizi sürekli geliştiriyoruz"
+      },
+      "customerFocus": {
+        "label": "Müşteri Odaklılık",
+        "description": "Başarınız bizim önceliğimizdir"
+      },
+      "sustainability": {
+        "label": "Sürdürülebilirlik",
+        "description": "Çevresel etkimizi önemsiyoruz"
+      }
+    }
+  },
+  "features": {
+    "expertTeam": {
+      "title": "Uzman Ekip",
+      "description": "İş ihtiyaçlarınıza hizmet etmek ve beklentileri aşan olağanüstü sonuçlar sunmak için birlikte çalışan yıllarca uzmanlığa sahip yetenekli profesyoneller."
+    },
+    "globalPresence": {
+      "title": "Küresel Varlık",
+      "description": "Yerel uzmanlık ve küresel standartlarla 3 ülkede faaliyet gösteriyoruz"
+    },
+    "qualityAssured": {
+      "title": "Kalite Güvencesi",
+      "description": "Teslim ettiğimiz her üründe mükemmellik ve kaliteye sarsılmaz bağlılık"
+    },
+    "trustedPartner": {
+      "title": "Güvenilir Ortak",
+      "description": "Dünya çapında 600'den fazla memnun işletmeye hizmet veriyoruz"
+    }
+  },
+  "location": {
+    "title": "Konumumuz"
+  },
+  "contact": {
+    "title": "Bize Ulaşın",
+    "info": {
+      "title": "İletişime Geçin",
+      "description": "Size yardımcı olmak için buradayız! Aşağıdaki kanallardan herhangi biri aracılığıyla bize ulaşın, en kısa sürede size geri döneceğiz.",
+      "address": {
+        "title": "Adres",
+        "company": "Alfe Tissue Paper AB.",
+        "street": "Maskinvägen 1 Port 8",
+        "postal": "227 30 Lund",
+        "country": "Skåne İsveç"
+      },
+      "orderReception": {
+        "title": "Sipariş Kabul",
+        "whatsapp": "WhatsApp"
+      },
+      "customerService": {
+        "title": "Müşteri Hizmetleri",
+        "whatsapp": "WhatsApp"
+      },
+      "email": {
+        "title": "E-posta"
+      },
+      "hours": {
+        "title": "Çalışma Saatleri",
+        "weekdays": "Pazartesi - Cuma: 08:00 - 16:00",
+        "weekend": "Cumartesi - Pazar: Kapalı"
+      },
+      "website": {
+        "title": "Web Sitesi"
+      },
+      "social": {
+        "title": "Bizi Takip Edin"
+      }
+    },
+    "form": {
+      "title": "Bize Mesaj Gönderin",
+      "description": "Aşağıdaki formu doldurun, en kısa sürede size geri döneceğiz.",
+      "fields": {
+        "name": {
+          "label": "İsim",
+          "placeholder": "Adınız"
+        },
+        "email": {
+          "label": "E-posta",
+          "placeholder": "sizin@eposta.com"
+        },
+        "phone": {
+          "label": "Telefon",
+          "placeholder": "+46 70 123 4567"
+        },
+        "subject": {
+          "label": "Konu",
+          "placeholder": "Size nasıl yardımcı olabiliriz?",
+          "options": {
+            "general": "Genel Soru",
+            "sales": "Satış Sorusu",
+            "support": "Teknik Destek",
+            "partnership": "Ortaklık",
+            "feedback": "Geri Bildirim"
+          }
+        },
+        "message": {
+          "label": "Mesaj",
+          "placeholder": "Talebiniz hakkında daha fazla bilgi verin..."
+        }
+      },
+      "submit": "Mesaj Gönder",
+      "sending": "Gönderiliyor...",
+      "success": "Mesaj başarıyla gönderildi! En kısa sürede size döneceğiz.",
+      "error": "Mesaj gönderilemedi. Lütfen daha sonra tekrar deneyin."
+    }
+  }
+}

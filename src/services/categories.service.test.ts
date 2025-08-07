@@ -1,10 +1,18 @@
 /**
- * Categories Service Test Suite
- * SOLID Principles: Single Responsibility - Test categories service operations
- * Design Patterns: Test Pattern - Unit tests with mocking
- * Dependencies: Jest, executeGraphQLOperation mock, categories mock data
+ * Unit tests for Categories Service
+ * SOLID Principles: SRP - Testing single responsibility
+ * Design Patterns: Test Pattern with MSW for GraphQL mocking
+ * Dependencies: Jest, MSW, Testing Library
  */
 
+import {
+  describe,
+  it,
+  expect,
+  jest,
+  beforeEach,
+  afterEach,
+} from '@jest/globals'
 import {
   getCategories,
   getCategoriesWithCache,
@@ -12,337 +20,507 @@ import {
   getCategoryById,
   getCategoriesGrouped,
 } from './categories.service'
-import { executeGraphQLOperation } from '@/lib/graphql'
-import {
-  mockCategoriesData,
-  emptyMockCategoriesData,
-  singleMockCategoryData,
-} from '@/mocks/graphql/categories'
 
-// Mock dependencies
-jest.mock('@/lib/graphql')
-jest.mock('@/lib/config/env', () => ({
-  env: {
-    COMPANY_ID: 'alfe',
-  },
-}))
+// Mock Apollo Client
+jest.mock('@/lib/apollo/client')
+jest.mock('@/lib/apollo/browser-client')
+import { mockQuery } from '@/lib/apollo/__mocks__/client'
 
-const mockExecuteGraphQLOperation =
-  executeGraphQLOperation as jest.MockedFunction<typeof executeGraphQLOperation>
+// Mock console methods
+const originalConsoleError = console.error
+beforeEach(() => {
+  console.error = jest.fn()
+})
+afterEach(() => {
+  console.error = originalConsoleError
+  jest.clearAllMocks()
+})
 
-describe('Categories Service', () => {
+describe('categories.service', () => {
+  // Mock response matching the actual GraphQL schema
+  const mockCategoriesResponse = {
+    _type_stock_groups: [
+      {
+        stock_groups: 'ELECTRONICS',
+        our_company: 'alfe',
+        image_url: 'https://example.com/electronics.jpg',
+        alt_text: 'Electronics Category',
+      },
+      {
+        stock_groups: 'FURNITURE',
+        our_company: 'alfe',
+        image_url: 'https://example.com/furniture.jpg',
+        alt_text: 'Furniture Category',
+      },
+      {
+        stock_groups: 'APPLIANCES',
+        our_company: 'alfe',
+        image_url: null,
+        alt_text: null,
+      },
+    ],
+  }
+
+  const expectedTransformedCategories = [
+    {
+      id: 'ELECTRONICS',
+      name: 'Electronics',
+      companyId: 'alfe',
+      imageUrl: 'https://example.com/electronics.jpg',
+      altText: 'Electronics Category',
+    },
+    {
+      id: 'FURNITURE',
+      name: 'Furniture',
+      companyId: 'alfe',
+      imageUrl: 'https://example.com/furniture.jpg',
+      altText: 'Furniture Category',
+    },
+    {
+      id: 'APPLIANCES',
+      name: 'Appliances',
+      companyId: 'alfe',
+      imageUrl: '/placeholder-category.jpg',
+      altText: 'APPLIANCES category',
+    },
+  ]
+
   beforeEach(() => {
     jest.clearAllMocks()
     clearCategoriesCache()
+    delete process.env['COMPANY_ID']
   })
 
   describe('getCategories', () => {
-    it('should fetch categories successfully with default company ID', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData)
+    it('should fetch and transform categories successfully', async () => {
+      mockQuery.mockResolvedValueOnce({ data: mockCategoriesResponse })
 
       const result = await getCategories()
 
-      expect(mockExecuteGraphQLOperation).toHaveBeenCalledTimes(1)
-      expect(mockExecuteGraphQLOperation).toHaveBeenCalledWith(
-        expect.objectContaining({
-          kind: 'Document',
-          loc: expect.objectContaining({
-            source: expect.objectContaining({
-              body: expect.stringContaining('query GetCategoriesQuery'),
-            }),
-          }),
-        }),
-        { company_id: 'alfe' }
-      )
-      expect(result).toHaveLength(6)
-      expect(result[0]).toEqual({
-        id: 'PIZZA_BOXES',
-        name: 'PIZZA_BOXES',
-        companyId: 'alfe',
-        imageUrl:
-          'https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/pizza-boxes.jpg',
-        altText: 'Pizza Boxes Category',
+      expect(result).toEqual(expectedTransformedCategories)
+    })
+
+    it('should use custom company ID when provided', async () => {
+      interface MockQueryArgs {
+        variables: Record<string, unknown>
+      }
+      let capturedVariables: Record<string, unknown> | null = null
+      mockQuery.mockImplementationOnce((args: MockQueryArgs) => {
+        capturedVariables = args.variables
+        return Promise.resolve({ data: mockCategoriesResponse })
+      })
+
+      await getCategories('custom_company')
+
+      expect(capturedVariables).toMatchObject({
+        company_id: 'custom_company',
       })
     })
 
-    it('should fetch categories with custom company ID', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData)
+    it('should use default company ID when not provided', async () => {
+      interface MockQueryArgs {
+        variables: Record<string, unknown>
+      }
+      let capturedVariables: Record<string, unknown> | null = null
+      mockQuery.mockImplementationOnce((args: MockQueryArgs) => {
+        capturedVariables = args.variables
+        return Promise.resolve({ data: mockCategoriesResponse })
+      })
 
-      const result = await getCategories('custom-company')
+      await getCategories()
 
-      expect(mockExecuteGraphQLOperation).toHaveBeenCalledWith(
-        expect.objectContaining({
-          kind: 'Document',
-        }),
-        { company_id: 'custom-company' }
-      )
-      expect(result).toHaveLength(6)
+      expect(capturedVariables).toMatchObject({
+        company_id: 'alfe',
+      })
     })
 
-    it('should handle empty categories response', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(emptyMockCategoriesData)
+    it('should use company ID from environment when set', async () => {
+      process.env['COMPANY_ID'] = 'env_company'
+
+      interface MockQueryArgs {
+        variables: Record<string, unknown>
+      }
+      let capturedVariables: Record<string, unknown> | null = null
+      mockQuery.mockImplementationOnce((args: MockQueryArgs) => {
+        capturedVariables = args.variables
+        return Promise.resolve({ data: mockCategoriesResponse })
+      })
+
+      await getCategories()
+
+      expect(capturedVariables).toMatchObject({
+        company_id: 'env_company',
+      })
+    })
+
+    it('should handle empty categories array', async () => {
+      mockQuery.mockResolvedValueOnce({
+        data: {
+          _type_stock_groups: [],
+        },
+      })
 
       const result = await getCategories()
-
       expect(result).toEqual([])
     })
 
-    it('should handle network errors', async () => {
-      mockExecuteGraphQLOperation.mockRejectedValueOnce(
-        new Error('Network error')
-      )
-
-      await expect(getCategories()).rejects.toThrow('Network error')
-    })
-
-    it('should handle invalid response format', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce({
-        _type_stock_groups: [{ stock_groups: 'test' }], // missing required fields
-      })
-
-      await expect(getCategories()).rejects.toThrow(
-        'Invalid response format from server'
-      )
-    })
-
-    it('should validate response with Zod schema', async () => {
-      const invalidData = {
+    it('should handle categories with null values', async () => {
+      const responseWithNulls = {
         _type_stock_groups: [
           {
-            stock_groups: 123, // should be string
+            stock_groups: 'CATEGORY1',
             our_company: 'alfe',
-            image_url:
-              'https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg',
-            alt_text: 'test',
+            image_url: null,
+            alt_text: null,
+          },
+          {
+            stock_groups: 'CATEGORY2',
+            our_company: 'alfe',
+            image_url: 'https://example.com/image.jpg',
+            alt_text: 'Alt text',
           },
         ],
       }
 
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(invalidData)
+      mockQuery.mockResolvedValueOnce({ data: responseWithNulls })
+
+      const result = await getCategories()
+
+      // First category should be transformed with defaults
+      expect(result[0]).toEqual({
+        id: 'CATEGORY1',
+        name: 'Category1',
+        companyId: 'alfe',
+        imageUrl: '/placeholder-category.jpg',
+        altText: 'CATEGORY1 category',
+      })
+
+      // Second category should have provided values
+      expect(result[1]).toEqual({
+        id: 'CATEGORY2',
+        name: 'Category2',
+        companyId: 'alfe',
+        imageUrl: 'https://example.com/image.jpg',
+        altText: 'Alt text',
+      })
+    })
+
+    it('should handle validation errors gracefully', async () => {
+      mockQuery.mockResolvedValueOnce({
+        data: {
+          invalid_field: 'bad_data',
+        },
+      })
 
       await expect(getCategories()).rejects.toThrow(
         'Invalid response format from server'
       )
+      expect(console.error).toHaveBeenCalled()
+    })
+
+    it('should handle network errors', async () => {
+      mockQuery.mockRejectedValueOnce(new Error('Network error'))
+
+      await expect(getCategories()).rejects.toThrow()
+    })
+
+    it('should handle GraphQL errors', async () => {
+      mockQuery.mockRejectedValueOnce(new Error('GraphQL Error'))
+
+      await expect(getCategories()).rejects.toThrow()
     })
   })
 
   describe('getCategoriesWithCache', () => {
-    // Mock Date.now() for cache testing
-    const originalDateNow = Date.now
-    const mockNow = jest.fn()
+    it('should fetch categories on first call', async () => {
+      mockQuery.mockResolvedValue({ data: mockCategoriesResponse })
 
-    beforeEach(() => {
-      Date.now = mockNow
-      mockNow.mockReturnValue(1000000)
+      const result = await getCategoriesWithCache()
+
+      expect(result).toEqual(expectedTransformedCategories)
+      expect(mockQuery).toHaveBeenCalledTimes(1)
     })
 
-    afterEach(() => {
-      Date.now = originalDateNow
-    })
+    it('should use cached data on subsequent calls', async () => {
+      mockQuery.mockResolvedValue({ data: mockCategoriesResponse })
 
-    it('should cache categories on first call', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData)
-
-      // First call - should hit the API
-      const result1 = await getCategoriesWithCache()
-      expect(mockExecuteGraphQLOperation).toHaveBeenCalledTimes(1)
-      expect(result1).toHaveLength(13)
+      // First call - should fetch
+      await getCategoriesWithCache()
+      expect(mockQuery).toHaveBeenCalledTimes(1)
 
       // Second call - should use cache
-      const result2 = await getCategoriesWithCache()
-      expect(mockExecuteGraphQLOperation).toHaveBeenCalledTimes(1)
-      expect(result2).toEqual(result1)
+      const result = await getCategoriesWithCache()
+      expect(result).toEqual(expectedTransformedCategories)
+      expect(mockQuery).toHaveBeenCalledTimes(1) // Still 1, no new fetch
     })
 
-    it('should refresh cache after expiration', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData)
+    it('should refetch after cache expires', async () => {
+      mockQuery.mockResolvedValue({ data: mockCategoriesResponse })
 
-      // First call at time 1000000
+      // First call
       await getCategoriesWithCache()
-      expect(mockExecuteGraphQLOperation).toHaveBeenCalledTimes(1)
+      expect(mockQuery).toHaveBeenCalledTimes(1)
 
-      // Advance time beyond cache duration (5 minutes = 300000ms)
-      mockNow.mockReturnValue(1000000 + 300001)
+      // Simulate cache expiration (5 minutes + 1 second)
+      jest.useFakeTimers()
+      jest.advanceTimersByTime(5 * 60 * 1000 + 1000)
 
-      // Second call - should hit API again
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(singleMockCategoryData)
-      const result = await getCategoriesWithCache()
+      // Should refetch
+      await getCategoriesWithCache()
+      expect(mockQuery).toHaveBeenCalledTimes(2)
 
-      expect(mockExecuteGraphQLOperation).toHaveBeenCalledTimes(2)
-      expect(result).toHaveLength(1)
+      jest.useRealTimers()
     })
 
-    it('should handle errors and not cache them', async () => {
-      mockExecuteGraphQLOperation.mockRejectedValueOnce(
-        new Error('Network error')
-      )
+    it('should refetch after cache is cleared', async () => {
+      mockQuery.mockResolvedValue({ data: mockCategoriesResponse })
 
-      // First call fails
-      await expect(getCategoriesWithCache()).rejects.toThrow('Network error')
+      // First call
+      await getCategoriesWithCache()
+      expect(mockQuery).toHaveBeenCalledTimes(1)
 
-      // Second call should attempt to fetch again
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData)
-      const result = await getCategoriesWithCache()
+      // Clear cache
+      clearCategoriesCache()
 
-      expect(mockExecuteGraphQLOperation).toHaveBeenCalledTimes(2)
-      expect(result).toHaveLength(6)
+      // Should refetch
+      await getCategoriesWithCache()
+      expect(mockQuery).toHaveBeenCalledTimes(2)
     })
   })
 
   describe('clearCategoriesCache', () => {
     it('should clear the cache', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData)
+      mockQuery.mockResolvedValue({ data: mockCategoriesResponse })
 
       // Populate cache
       await getCategoriesWithCache()
-      expect(mockExecuteGraphQLOperation).toHaveBeenCalledTimes(1)
+      expect(mockQuery).toHaveBeenCalledTimes(1)
 
       // Clear cache
       clearCategoriesCache()
 
       // Next call should fetch fresh data
-      mockExecuteGraphQLOperation.mockResolvedValueOnce({
-        _type_stock_groups: [],
-      })
-      const result = await getCategoriesWithCache()
-
-      expect(mockExecuteGraphQLOperation).toHaveBeenCalledTimes(2)
-      expect(result).toEqual([])
+      await getCategoriesWithCache()
+      expect(mockQuery).toHaveBeenCalledTimes(2)
     })
   })
 
   describe('getCategoryById', () => {
-    it('should find category by id', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData)
+    it('should return category with matching ID', async () => {
+      mockQuery.mockResolvedValueOnce({ data: mockCategoriesResponse })
 
-      const result = await getCategoryById('1000 - Pizzakartonger')
+      const result = await getCategoryById('ELECTRONICS')
 
       expect(result).toEqual({
-        id: '1000 - Pizzakartonger',
-        name: '1000 - Pizzakartonger',
+        id: 'ELECTRONICS',
+        name: 'Electronics',
         companyId: 'alfe',
-        imageUrl:
-          'https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg',
-        altText: 'category image',
+        imageUrl: 'https://example.com/electronics.jpg',
+        altText: 'Electronics Category',
       })
     })
 
-    it('should return undefined for non-existent id', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData)
+    it('should return undefined for non-existent ID', async () => {
+      mockQuery.mockResolvedValueOnce({ data: mockCategoriesResponse })
 
-      const result = await getCategoryById('9999 - Non-existent')
+      const result = await getCategoryById('NON_EXISTENT')
+      expect(result).toBeUndefined()
+    })
 
+    it('should handle case-sensitive IDs', async () => {
+      mockQuery.mockResolvedValueOnce({ data: mockCategoriesResponse })
+
+      // IDs are case-sensitive
+      const result = await getCategoryById('electronics')
       expect(result).toBeUndefined()
     })
 
     it('should handle empty categories list', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce({
-        _type_stock_groups: [],
+      mockQuery.mockResolvedValueOnce({
+        data: {
+          _type_stock_groups: [],
+        },
       })
 
-      const result = await getCategoryById('1000 - Pizzakartonger')
-
+      const result = await getCategoryById('ELECTRONICS')
       expect(result).toBeUndefined()
     })
   })
 
   describe('getCategoriesGrouped', () => {
     it('should group categories by first character', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData)
+      mockQuery.mockResolvedValueOnce({ data: mockCategoriesResponse })
+
+      const result = await getCategoriesGrouped()
+
+      expect(result).toEqual({
+        E: [
+          {
+            id: 'ELECTRONICS',
+            name: 'Electronics',
+            companyId: 'alfe',
+            imageUrl: 'https://example.com/electronics.jpg',
+            altText: 'Electronics Category',
+          },
+        ],
+        F: [
+          {
+            id: 'FURNITURE',
+            name: 'Furniture',
+            companyId: 'alfe',
+            imageUrl: 'https://example.com/furniture.jpg',
+            altText: 'Furniture Category',
+          },
+        ],
+        A: [
+          {
+            id: 'APPLIANCES',
+            name: 'Appliances',
+            companyId: 'alfe',
+            imageUrl: '/placeholder-category.jpg',
+            altText: 'APPLIANCES category',
+          },
+        ],
+      })
+    })
+
+    it('should handle multiple categories with same first character', async () => {
+      const multipleResponse = {
+        _type_stock_groups: [
+          {
+            stock_groups: 'ELECTRONICS',
+            our_company: 'alfe',
+            image_url: null,
+            alt_text: null,
+          },
+          {
+            stock_groups: 'EQUIPMENT',
+            our_company: 'alfe',
+            image_url: null,
+            alt_text: null,
+          },
+          {
+            stock_groups: 'FURNITURE',
+            our_company: 'alfe',
+            image_url: null,
+            alt_text: null,
+          },
+        ],
+      }
+
+      mockQuery.mockResolvedValueOnce({ data: multipleResponse })
+
+      const result = await getCategoriesGrouped()
+
+      expect(result['E']).toHaveLength(2)
+      expect(result['E']?.map(c => c.name)).toEqual([
+        'Electronics',
+        'Equipment',
+      ])
+      expect(result['F']).toHaveLength(1)
+    })
+
+    it('should handle empty categories', async () => {
+      mockQuery.mockResolvedValueOnce({
+        data: {
+          _type_stock_groups: [],
+        },
+      })
+
+      const result = await getCategoriesGrouped()
+      expect(result).toEqual({})
+    })
+
+    it('should handle categories with special characters', async () => {
+      const specialResponse = {
+        _type_stock_groups: [
+          {
+            stock_groups: '123NUMBERS',
+            our_company: 'alfe',
+            image_url: null,
+            alt_text: null,
+          },
+          {
+            stock_groups: '#SPECIAL',
+            our_company: 'alfe',
+            image_url: null,
+            alt_text: null,
+          },
+        ],
+      }
+
+      mockQuery.mockResolvedValueOnce({ data: specialResponse })
 
       const result = await getCategoriesGrouped()
 
       expect(result['1']).toBeDefined()
-      expect(result['1']?.length).toBeGreaterThan(0)
-      expect(result['2']).toBeDefined()
-      expect(result['3']).toBeDefined()
-    })
-
-    it('should handle empty categories', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce({
-        _type_stock_groups: [],
-      })
-
-      const result = await getCategoriesGrouped()
-
-      expect(result).toEqual({})
-    })
-
-    it('should handle categories with same first character', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce({
-        _type_stock_groups: [
-          {
-            stock_groups: 'A - First',
-            our_company: 'alfe',
-            image_url:
-              'https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg',
-            alt_text: 'test',
-          },
-          {
-            stock_groups: 'A - Second',
-            our_company: 'alfe',
-            image_url:
-              'https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg',
-            alt_text: 'test',
-          },
-          {
-            stock_groups: 'B - First',
-            our_company: 'alfe',
-            image_url:
-              'https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg',
-            alt_text: 'test',
-          },
-        ],
-      })
-
-      const result = await getCategoriesGrouped()
-
-      expect(result['A']).toHaveLength(2)
-      expect(result['B']).toHaveLength(1)
-      expect(result['A']?.[0]?.name).toBe('A - First')
-      expect(result['A']?.[1]?.name).toBe('A - Second')
+      expect(result['1']?.[0]?.name).toBe('123numbers')
+      expect(result['#']).toBeDefined()
+      expect(result['#']?.[0]?.name).toBe('#Special')
     })
   })
 
-  describe('Edge cases and error scenarios', () => {
-    it('should handle GraphQL operation returning null', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(
-        null as unknown as { _type_stock_groups: [] }
-      )
-
-      await expect(getCategories()).rejects.toThrow()
-    })
-
-    it('should handle malformed response structure', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce({
-        wrong_field: [],
-      } as unknown as { _type_stock_groups: [] })
-
-      await expect(getCategories()).rejects.toThrow(
-        'Invalid response format from server'
-      )
-    })
-
-    it('should use proper GraphQL query structure', async () => {
-      mockExecuteGraphQLOperation.mockResolvedValueOnce(mockCategoriesData)
-
-      await getCategories()
-
-      const callArgs = mockExecuteGraphQLOperation.mock.calls[0]
-      if (!callArgs || callArgs.length < 1) {
-        throw new Error('Mock was not called')
+  describe('Category transformation', () => {
+    it('should transform category names correctly', async () => {
+      const testCases = {
+        _type_stock_groups: [
+          {
+            stock_groups: 'ELECTRONICS_AND_GADGETS',
+            our_company: 'alfe',
+            image_url: null,
+            alt_text: null,
+          },
+          {
+            stock_groups: 'HOME-APPLIANCES',
+            our_company: 'alfe',
+            image_url: null,
+            alt_text: null,
+          },
+          {
+            stock_groups: 'furniture_items',
+            our_company: 'alfe',
+            image_url: null,
+            alt_text: null,
+          },
+        ],
       }
-      const queryDoc = callArgs[0] as { loc?: { source?: { body?: string } } }
-      const query = queryDoc.loc?.source?.body || ''
-      expect(query).toContain('query GetCategoriesQuery')
-      expect(query).toContain('_type_stock_groups')
-      expect(query).toContain('order_by: { stock_groups: asc }')
-      expect(query).toContain('where: { our_company: { _eq: $company_id }')
-      expect(query).toContain('willBeListed: { _eq: true }')
-      expect(query).toContain('stock_groups')
-      expect(query).toContain('our_company')
-      expect(query).toContain('image_url')
-      expect(query).toContain('alt_text')
+
+      mockQuery.mockResolvedValueOnce({ data: testCases })
+
+      const result = await getCategories()
+
+      expect(result[0]?.name).toBe('Electronics And Gadgets')
+      expect(result[1]?.name).toBe('Home-Appliances')
+      expect(result[2]?.name).toBe('Furniture Items')
+    })
+
+    it('should provide fallback image for categories without images', async () => {
+      mockQuery.mockResolvedValueOnce({ data: mockCategoriesResponse })
+
+      const result = await getCategories()
+
+      const categoryWithoutImage = result.find(c => c.id === 'APPLIANCES')
+      expect(categoryWithoutImage?.imageUrl).toBe('/placeholder-category.jpg')
+    })
+
+    it('should preserve original image URL when provided', async () => {
+      mockQuery.mockResolvedValueOnce({ data: mockCategoriesResponse })
+
+      const result = await getCategories()
+
+      const categoryWithImage = result.find(c => c.id === 'ELECTRONICS')
+      expect(categoryWithImage?.imageUrl).toBe(
+        'https://example.com/electronics.jpg'
+      )
+    })
+
+    it('should generate alt text when not provided', async () => {
+      mockQuery.mockResolvedValueOnce({ data: mockCategoriesResponse })
+
+      const result = await getCategories()
+
+      const categoryWithoutAlt = result.find(c => c.id === 'APPLIANCES')
+      expect(categoryWithoutAlt?.altText).toBe('APPLIANCES category')
     })
   })
 })

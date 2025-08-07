@@ -2,26 +2,45 @@
  * Product data fetching and filtering service
  *
  * Responsibilities:
- * - Fetches product data from Hasura GraphQL API
+ * - Fetches product data from Hasura GraphQL API using Apollo Client
  * - Transforms backend 'stock' terminology to frontend 'products'
  * - Provides product filtering by category and search term
  *
  * Architecture:
  * - SOLID Principles: SRP (focused on product data operations)
- * - Patterns: Repository (data access abstraction), Adapter (GraphQL client wrapper)
+ * - Patterns: Repository (data access abstraction), Service Layer
  *
- * Dependencies: GraphQL adapter, products schema, generated GraphQL types
+ * Dependencies: Apollo Client, products schema, manual types
  */
 
-import { serverGraphQLFetch } from '@/lib/graphql'
+// Dynamic import for client selection based on environment
+import type { ApolloClient } from '@apollo/client'
+
+let getClient: () => ApolloClient<object>
+
+if (typeof window !== 'undefined') {
+  // Browser environment - use browser client
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { getBrowserClient } = require('@/lib/apollo/browser-client')
+  getClient = getBrowserClient
+} else {
+  // Server environment - use server client
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { getClient: getServerClient } = require('@/lib/apollo/client')
+  getClient = getServerClient
+}
+
+import GetProductsListWithPriceQueryDocument from '@/services/graphql/queries/GetProductsListWithPriceQuery.graphql'
+import { validateGetProductsListWithPriceResponse } from '@/services/graphql/queries/GetProductsListWithPriceQuery.schema'
+import type {
+  GetProductsListWithPriceQueryResponse,
+  GetProductsListWithPriceQueryVariables,
+} from '@/services/graphql/queries/GetProductsListWithPriceQuery.types'
 import {
-  GetProductsListWithPriceQueryResponseSchema,
   validateAndTransformProducts,
   type ProductsArray,
-} from '@/lib/graphql/schemas/products'
-import type { GetProductsListWithPriceQueryQuery } from '@/lib/generated/graphql'
+} from './utils/product-transforms'
 import { env } from '@/lib/config/env'
-import GetProductsListWithPriceQuery from '@/services/graphql/queries/GetProductsListWithPriceQuery.graphql'
 
 /**
  * Fetches all products from the backend
@@ -29,18 +48,16 @@ import GetProductsListWithPriceQuery from '@/services/graphql/queries/GetProduct
  */
 export async function getProducts(): Promise<ProductsArray> {
   try {
-    const { data, error } =
-      await serverGraphQLFetch<GetProductsListWithPriceQueryQuery>({
-        document: GetProductsListWithPriceQuery,
-        variables: {
-          company_id: env.COMPANY_ID || 'alfe',
-        },
-      })
-
-    if (error) {
-      console.error('GraphQL error:', error)
-      throw error
-    }
+    const client = getClient()
+    const { data } = await client.query<
+      GetProductsListWithPriceQueryResponse,
+      GetProductsListWithPriceQueryVariables
+    >({
+      query: GetProductsListWithPriceQueryDocument,
+      variables: {
+        company_id: process.env['COMPANY_ID'] || env.COMPANY_ID || 'alfe',
+      },
+    })
 
     if (!data?.stock) {
       console.error('No products data returned from GraphQL')
@@ -48,7 +65,7 @@ export async function getProducts(): Promise<ProductsArray> {
     }
 
     // Validate the response structure with Zod
-    const validatedResponse = GetProductsListWithPriceQueryResponseSchema.parse(data)
+    const validatedResponse = validateGetProductsListWithPriceResponse(data)
 
     // Transform and return the validated data
     return validateAndTransformProducts(validatedResponse.stock)

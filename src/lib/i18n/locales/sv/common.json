@@ -73,7 +73,8 @@
       "subtitle": "från Alfe Tissue Paper",
       "description": "Upplev den perfekta harmonin av mjukhet, styrka och hållbarhet. Premiumprodukter skapade för ditt café, din restaurang, ditt hotell, din pizzeria och alla krävande företag.",
       "browseProducts": "Bläddra produkter",
-      "learnMore": "Läs mer"
+      "learnMore": "Läs mer",
+      "aboutUs": "Om Oss"
     },
     "features": {
       "premiumQuality": {
@@ -92,6 +93,25 @@
         "title": "Miljövänlig",
         "description": "Engagerad i hållbara metoder och miljömedveten produktion"
       }
+    }
+  },
+  "footer": {
+    "copyright": "© {{year}} Alfe Tissue Paper AB. Alla rättigheter förbehållna.",
+    "createdBy": "Skapad av"
+  },
+  "tooltips": {
+    "navbar": {
+      "home": "Gå till startsidan",
+      "dashboard": "Kundinstrumentpanel",
+      "theme": "Ändra tema",
+      "language": "Ändra språk",
+      "signIn": "Logga in på ditt konto",
+      "userMenu": "Användarmeny",
+      "admin": "Administratörspanel"
+    },
+    "footer": {
+      "developerWebsite": "Besök utvecklarens webbplats",
+      "developerEmail": "Kontakta utvecklaren"
     }
   }
 }

@@ -11,7 +11,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Card, Button } from '@/components/ui/schadcn'
 import Image from 'next/image'
-import { cn } from '@/components/ui/utils'
+import { cn } from '@/lib/utils'
 import { PriceTag } from '@/components/products'
 import { BookmarkButton } from '@/components/ui/custom'
 import { useBookmarkStore } from '@/lib/stores/bookmark-store'
@@ -86,7 +86,19 @@ export function ProductCard({
 
   // Handle bookmark toggle using store
   const handleBookmarkToggle = async () => {
-    await toggleBookmark(id)
+    // Pass product data when bookmarking
+    const productData = !isProductBookmarked
+      ? {
+          id,
+          name,
+          price,
+          unit,
+          categoryId,
+          ...(imageUrl && { imageUrl }),
+        }
+      : undefined
+
+    await toggleBookmark(id, productData)
   }
 
   const handleDecrease = () => {

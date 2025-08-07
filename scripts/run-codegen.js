@@ -5,23 +5,28 @@
  * This wrapper executes the local run-codegen.sh script that contains secrets
  */
 
-const { exec } = require('child_process')
-const path = require('path')
+import { exec } from 'child_process'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 const scriptPath = path.join(__dirname, '..', 'run-codegen.sh')
 
-console.log('🚀 Starting GraphQL Codegen...')
+// Starting GraphQL Codegen
 
 exec(`bash ${scriptPath}`, (error, stdout, stderr) => {
   if (error) {
     console.error('❌ Codegen failed:', error.message)
     process.exit(1)
   }
-  
+
   if (stderr) {
     console.error('⚠️ Warnings:', stderr)
   }
-  
-  console.log(stdout)
-  console.log('✅ Codegen completed successfully!')
+
+  // Output captured but not logged
+  if (stdout) {
+    // Success output available
+  }
 })

@@ -9,7 +9,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { cn } from '@/components/ui/utils'
+import { cn } from '@/lib/utils'
 
 interface ImageContainerProps {
   src: string

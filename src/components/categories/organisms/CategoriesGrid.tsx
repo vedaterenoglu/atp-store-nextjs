@@ -13,7 +13,7 @@ import {
   GridSkeleton,
   GridItem,
 } from '@/components/ui/custom/grid'
-import { cn } from '@/components/ui/utils'
+import { cn } from '@/lib/utils'
 
 interface Category {
   id: string
