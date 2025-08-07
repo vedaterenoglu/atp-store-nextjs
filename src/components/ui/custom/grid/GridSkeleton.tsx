@@ -7,7 +7,7 @@
 
 import React from 'react'
 import { Skeleton } from '@/components/ui/schadcn'
-import { cn } from '@/components/ui/utils'
+import { cn } from '@/lib/utils'
 
 interface GridSkeletonProps {
   count?: number

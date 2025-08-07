@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/schadcn'
 import { ShoppingCart } from 'lucide-react'
-import { cn } from '@/components/ui/utils'
+import { cn } from '@/lib/utils'
 import { useRoleAuth } from '@/lib/auth/role-auth'
 
 interface GoToCartButtonProps {

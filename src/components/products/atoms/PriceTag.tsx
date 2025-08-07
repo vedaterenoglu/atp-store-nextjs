@@ -13,7 +13,7 @@
 'use client'
 
 import { useTranslation } from 'react-i18next'
-import { cn } from '@/components/ui/utils'
+import { cn } from '@/lib/utils'
 
 interface PriceTagProps {
   price: number

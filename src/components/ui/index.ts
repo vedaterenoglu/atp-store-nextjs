@@ -23,4 +23,4 @@ export * from './schadcn'
 export * from './custom'
 
 // Re-export all UI utilities
-export * from './utils'
+export * from '@/lib/utils'

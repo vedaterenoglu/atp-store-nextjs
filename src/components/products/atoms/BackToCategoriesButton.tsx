@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/schadcn'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
-import { cn } from '@/components/ui/utils'
+import { cn } from '@/lib/utils'
 
 interface BackToCategoriesButtonProps {
   className?: string

@@ -10,7 +10,7 @@ import { render, screen } from '@testing-library/react'
 import { PageTitle } from '../PageTitle'
 
 // Mock cn utility
-jest.mock('@/components/ui/utils', () => ({
+jest.mock('@/lib/utils', () => ({
   cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
 }))
 

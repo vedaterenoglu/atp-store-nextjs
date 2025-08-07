@@ -6,7 +6,7 @@
  */
 
 import React from 'react'
-import { cn } from '@/components/ui/utils'
+import { cn } from '@/lib/utils'
 
 interface GridItemProps {
   children: React.ReactNode

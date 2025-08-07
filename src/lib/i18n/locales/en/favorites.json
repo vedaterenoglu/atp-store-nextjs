@@ -1,0 +1,30 @@
+{
+  "title": "My Favorite Products & Most Purchased Products",
+  "subtitle": "All prices are exclusive of VAT. Contract pricing applies. Subject to market adjustments.",
+  "sections": {
+    "favorites": {
+      "title": "My Favorite Products",
+      "description": "Products you've bookmarked for quick access",
+      "empty": {
+        "title": "No bookmarked products yet",
+        "description": "Browse products and bookmark your favorites to see them here"
+      }
+    },
+    "mostPurchased": {
+      "title": "Most Purchased Products",
+      "description": "Based on your consumption in the last {{days}} days",
+      "empty": {
+        "title": "No purchase history available",
+        "description": "Start shopping to see your most purchased products here"
+      },
+      "badge": {
+        "top": "Top {{rank}}"
+      },
+      "consumed": "Consumed: {{units}} units",
+      "addToCart": "Add to cart"
+    }
+  },
+  "navigation": {
+    "backToProducts": "Back to Products"
+  }
+}

@@ -14,7 +14,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
-import { cn } from '@/components/ui/utils'
+import { cn } from '@/lib/utils'
 import {
   LayoutDashboard,
   Clock,

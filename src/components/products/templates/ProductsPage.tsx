@@ -90,7 +90,10 @@ export function ProductsPage({
           <div className="space-y-4 text-center">
             <h1 className="text-4xl font-bold">{t('title', 'Products')}</h1>
             <p className="text-lg text-muted-foreground">
-              {t('subtitle', 'Discover and order products for your business')}
+              {t(
+                'subtitle',
+                'All prices are exclusive of VAT. Contract pricing applies. Subject to market adjustments.'
+              )}
             </p>
 
             <div className="mx-auto mt-8 flex max-w-5xl flex-col gap-4 lg:flex-row lg:items-center">

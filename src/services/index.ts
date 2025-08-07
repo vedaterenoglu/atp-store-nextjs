@@ -16,3 +16,11 @@ export {
 
 // Product services
 export { getProducts } from './products.service'
+
+// Price services
+export {
+  getProductPrices,
+  calculateCustomerPrice,
+  getBulkProductPrices,
+  type ProductPriceResult,
+} from './price.service'

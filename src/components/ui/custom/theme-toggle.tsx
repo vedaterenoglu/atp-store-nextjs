@@ -62,7 +62,7 @@ function ThemeToggleSkeleton() {
     <Button
       variant="ghost"
       size="icon"
-      className="w-9 h-9"
+      className="w-9 h-9 cursor-pointer"
       disabled
       aria-label="Loading theme selector"
     >
@@ -104,7 +104,7 @@ function ThemeToggleTrigger({ theme }: { theme: 'light' | 'dark' | 'system' }) {
       <Button
         variant="ghost"
         size="icon"
-        className="w-9 h-9"
+        className="w-9 h-9 cursor-pointer"
         aria-label={`Current theme: ${currentTheme?.label || theme}`}
       >
         <Icon className={`h-[1.2rem] w-[1.2rem] ${getIconColor()}`} />

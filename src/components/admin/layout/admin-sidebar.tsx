@@ -27,7 +27,7 @@ import {
   FileText,
   AlertCircle,
 } from 'lucide-react'
-import { cn } from '@/components/ui/utils'
+import { cn } from '@/lib/utils'
 
 interface NavItem {
   href: string

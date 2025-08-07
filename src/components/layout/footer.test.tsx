@@ -14,6 +14,37 @@ import React from 'react'
 import { render, screen } from '@/__tests__/utils/test-utils'
 import { Footer } from './footer'
 
+// Mock environment variables
+const originalEnv = process.env
+beforeEach(() => {
+  process.env = {
+    ...originalEnv,
+    NEXT_PUBLIC_DEVELOPER_WEB_SITE: 'https://test.dev',
+    NEXT_PUBLIC_DEVELOPER_EMAIL_ADDRESS: 'test@dev.com',
+  }
+})
+
+afterEach(() => {
+  process.env = originalEnv
+})
+
+// Mock react-i18next
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string, options?: { year?: number }) => {
+      if (key === 'footer.copyright') {
+        const year =
+          options?.year !== undefined ? options.year : new Date().getFullYear()
+        return `© ${year} Alfe Tissue Paper AB. All rights reserved.`
+      }
+      if (key === 'footer.createdBy') {
+        return 'Created by'
+      }
+      return key
+    },
+  }),
+}))
+
 // Mock Next.js Image component
 jest.mock('next/image', () => ({
   __esModule: true,
@@ -146,9 +177,16 @@ describe('Footer', () => {
       'text-muted-foreground'
     )
 
-    // Check author name has correct styles
+    // Check that author text exists within the link
     const authorElement = screen.getByText(mockAuthor)
-    expect(authorElement).toHaveClass(
+    expect(authorElement).toBeInTheDocument()
+
+    // The link containing the author should have the hover styles
+    const developerLink = authorElement.closest('a')
+    expect(developerLink).toHaveClass(
+      'flex',
+      'items-center',
+      'gap-2',
       'font-medium',
       'text-foreground',
       'transition-colors',
@@ -182,7 +220,9 @@ describe('Footer', () => {
 
     const authorElement = screen.getByText(longAuthor)
     expect(authorElement).toBeInTheDocument()
-    expect(authorElement).toHaveClass('font-medium')
+    // The author is now inside a link with font-medium class
+    const developerLink = authorElement.closest('a')
+    expect(developerLink).toHaveClass('font-medium')
   })
 
   it('should maintain layout structure with all elements present', () => {
@@ -206,5 +246,48 @@ describe('Footer', () => {
     const attribution = flexContainer?.children[1]
     expect(attribution).toContainElement(screen.getByTestId('next-image'))
     expect(attribution).toHaveTextContent(`Created by${mockAuthor}`)
+  })
+
+  it('should render developer website link with correct attributes', () => {
+    render(<Footer />)
+
+    // Find the link containing the logo and author text
+    const developerLink = screen.getByRole('link', {
+      name: /GTBS Coding Logo GTBS Coding/i,
+    })
+
+    expect(developerLink).toHaveAttribute('href', 'https://test.dev')
+    expect(developerLink).toHaveAttribute('target', '_blank')
+    expect(developerLink).toHaveAttribute('rel', 'noopener noreferrer')
+  })
+
+  it('should render email link with envelope icon', () => {
+    render(<Footer />)
+
+    // Find the email link by its aria-label
+    const emailLink = screen.getByRole('link', { name: /email developer/i })
+
+    expect(emailLink).toHaveAttribute('href', 'mailto:test@dev.com')
+    expect(emailLink).toHaveClass(
+      'text-foreground',
+      'transition-colors',
+      'hover:text-primary'
+    )
+  })
+
+  it('should use fallback values when environment variables are not set', () => {
+    // Reset environment variables
+    delete process.env['NEXT_PUBLIC_DEVELOPER_WEB_SITE']
+    delete process.env['NEXT_PUBLIC_DEVELOPER_EMAIL_ADDRESS']
+
+    render(<Footer />)
+
+    const developerLink = screen.getByRole('link', {
+      name: /GTBS Coding Logo GTBS Coding/i,
+    })
+    expect(developerLink).toHaveAttribute('href', 'https://gtbscoding.com')
+
+    const emailLink = screen.getByRole('link', { name: /email developer/i })
+    expect(emailLink).toHaveAttribute('href', 'mailto:info@gtbscoding.com')
   })
 })

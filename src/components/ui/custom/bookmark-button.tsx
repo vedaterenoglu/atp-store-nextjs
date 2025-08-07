@@ -16,10 +16,10 @@
 
 'use client'
 
+import { useState, useEffect, useTransition } from 'react'
 import { Bookmark, BookmarkCheck, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/schadcn'
-import { cn } from '@/components/ui/utils'
-import { useTransition } from 'react'
+import { cn } from '@/lib/utils'
 import { useBookmarkStore } from '@/lib/stores/bookmark-store'
 
 export interface BookmarkButtonProps {
@@ -52,10 +52,15 @@ export function BookmarkButton({
   ariaLabel,
   showLoading = true,
 }: BookmarkButtonProps) {
-  // Use the passed prop directly - parent manages state
-  const isBookmarked = initialBookmarked
+  // Manage local state for optimistic updates
+  const [isBookmarked, setIsBookmarked] = useState(initialBookmarked)
   const [isPending, startTransition] = useTransition()
   const { isLoading: isInitializing } = useBookmarkStore()
+
+  // Sync with prop changes
+  useEffect(() => {
+    setIsBookmarked(initialBookmarked)
+  }, [initialBookmarked])
 
   const handleClick = async (e: React.MouseEvent) => {
     // Prevent event bubbling to parent card
@@ -65,23 +70,29 @@ export function BookmarkButton({
     // Don't allow clicks while initializing
     if (isInitializing) return
 
-    // Call parent handler with current state
+    // Optimistically update UI
+    const newState = !isBookmarked
+    setIsBookmarked(newState)
+
+    // Call parent handler with new state
     if (onToggle) {
       if (showLoading) {
         startTransition(async () => {
           try {
-            // Parent will handle the state update
-            await onToggle(productId, isBookmarked)
+            await onToggle(productId, newState)
           } catch (error) {
             console.error('Failed to toggle bookmark:', error)
+            // Revert on error
+            setIsBookmarked(!newState)
           }
         })
       } else {
         try {
-          // Parent will handle the state update
-          await onToggle(productId, isBookmarked)
+          await onToggle(productId, newState)
         } catch (error) {
           console.error('Failed to toggle bookmark:', error)
+          // Revert on error
+          setIsBookmarked(!newState)
         }
       }
     }

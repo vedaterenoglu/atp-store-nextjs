@@ -1,8 +1,8 @@
 /**
- * Category data fetching service with client-side caching
+ * Category data fetching service with Apollo Client
  *
  * Responsibilities:
- * - Fetches category data from Hasura GraphQL API
+ * - Fetches category data from Hasura GraphQL API using Apollo
  * - Validates responses using Zod schemas
  * - Transforms backend data to frontend-friendly format
  * - Provides client-side caching with TTL
@@ -11,36 +11,62 @@
  * - SOLID Principles: SRP (focused on category data operations)
  * - Patterns: Repository (data access abstraction), Cache-aside (manual cache management)
  *
- * Dependencies: GraphQL client, Zod validation, categories schema
+ * Dependencies: Apollo Client, Zod validation, categories schema
  */
 
-import { executeGraphQLOperation } from '@/lib/graphql'
+// Dynamic import for client selection based on environment
+import type { ApolloClient } from '@apollo/client'
+
+let getClient: () => ApolloClient<object>
+
+if (typeof window !== 'undefined') {
+  // Browser environment - use browser client
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { getBrowserClient } = require('@/lib/apollo/browser-client')
+  getClient = getBrowserClient
+} else {
+  // Server environment - use server client
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { getClient: getServerClient } = require('@/lib/apollo/client')
+  getClient = getServerClient
+}
+
+import GetCategoriesQueryDocument from '@/services/graphql/queries/GetCategoriesQuery.graphql'
+import { validateGetCategoriesResponse } from '@/services/graphql/queries/GetCategoriesQuery.schema'
+import type {
+  GetCategoriesQueryResponse,
+  GetCategoriesQueryVariables,
+} from '@/services/graphql/queries/GetCategoriesQuery.types'
 import {
-  GetCategoriesQueryResponseSchema,
   validateAndTransformCategories,
   type CategoriesArray,
   type Category,
-} from '@/lib/graphql/schemas/categories'
-import type { GetCategoriesQueryQuery } from '@/lib/generated/graphql'
+} from './utils/category-transforms'
 import { env } from '@/lib/config/env'
-import GetCategoriesQuery from '@/services/graphql/queries/GetCategoriesQuery.graphql'
 
 /**
- * Fetch categories using urql with generated types and Zod validation
+ * Fetch categories using Apollo Client with manual types and Zod validation
  * Returns frontend-friendly Category objects
  */
 export async function getCategories(
   companyId?: string
 ): Promise<CategoriesArray> {
   try {
-    // Use urql client adapter with generated type
-    const response = await executeGraphQLOperation<GetCategoriesQueryQuery>(
-      GetCategoriesQuery,
-      { company_id: companyId || env.COMPANY_ID || 'alfe' }
-    )
+    // Use Apollo Client with manual type assertion
+    const client = getClient()
+    const { data } = await client.query<
+      GetCategoriesQueryResponse,
+      GetCategoriesQueryVariables
+    >({
+      query: GetCategoriesQueryDocument,
+      variables: {
+        company_id:
+          companyId || process.env['COMPANY_ID'] || env.COMPANY_ID || 'alfe',
+      },
+    })
 
     // Validate the response structure with Zod (this also type-checks at runtime)
-    const validatedResponse = GetCategoriesQueryResponseSchema.parse(response)
+    const validatedResponse = validateGetCategoriesResponse(data)
 
     // Transform and return the validated data
     return validateAndTransformCategories(validatedResponse._type_stock_groups)

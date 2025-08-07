@@ -2,64 +2,55 @@
  * MostPurchasedProductsGrid Molecule - Grid layout for most purchased products
  * SOLID Principles: SRP - Single responsibility for grid layout
  * Design Patterns: Molecule Pattern, Grid Layout Pattern
- * Dependencies: ProductCard, GraphQL client, Clerk auth
+ * Dependencies: ProductCard, Most Purchased Service, Clerk auth
  */
 
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ProductCard } from '@/components/products/molecules'
 import {
   GridErrorBoundary,
   GridSkeleton,
   GridItem,
 } from '@/components/ui/custom/grid'
-import { cn } from '@/components/ui/utils'
-// TODO: Uncomment when backend is ready
-// import { executeGraphQLOperation } from '@/lib/graphql/client'
-// import GetMostPurchasedProductsClientQuery from '@/services/graphql/queries/GetMostPurchasedProductsClientQuery.graphql'
+import { cn } from '@/lib/utils'
+import {
+  mostPurchasedService,
+  type MostPurchasedProduct,
+} from '@/services/most-purchased.service'
 import { useAuth, useUser } from '@clerk/nextjs'
+import { Button } from '@/components/ui/schadcn/button'
+import { Minus, Plus } from 'lucide-react'
+import { useBookmarkStore } from '@/lib/stores/bookmark-store'
 
-interface Product {
-  id: string
-  name: string
-  imageUrl?: string
-  price: number
-  unit: string
-  categoryId: string
-  consumptionQuantity?: number
+interface ProductWithQuantity extends MostPurchasedProduct {
+  selectedQuantity: number
 }
 
-// TODO: Uncomment when backend is ready
-// interface GoodsTransaction {
-//   goods_transactions_stock_rel: {
-//     stock_id: string
-//     stock_name: string
-//   }
-//   goods_transaction_goods_transaction_rel_aggregate: {
-//     aggregate: {
-//       sum: {
-//         amount_credit: number | null
-//       }
-//     }
-//   }
-// }
-
-// interface GetMostPurchasedResponse {
-//   goods_transactions: GoodsTransaction[]
-//   goods_transactions_aggregate: {
-//     aggregate: {
-//       count: number
-//     }
-//   }
-// }
-
 export function MostPurchasedProductsGrid() {
-  const [products, setProducts] = useState<Product[]>([])
+  const { t } = useTranslation('favorites')
+  const [products, setProducts] = useState<ProductWithQuantity[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [consumptionPeriod, setConsumptionPeriod] = useState<number>(90)
-  const { sessionClaims } = useAuth()
+  const { sessionClaims, isSignedIn } = useAuth()
   const { user } = useUser()
+
+  // Subscribe to bookmark store changes to trigger re-render when bookmarks change
+  // This ensures bookmark buttons update when bookmarks are toggled
+  useBookmarkStore(state => state.bookmarkedProducts)
+  const initializeBookmarks = useBookmarkStore(
+    state => state.initializeBookmarks
+  )
+  const isInitialized = useBookmarkStore(state => state.isInitialized)
+
+  // Initialize bookmarks on mount if signed in
+  useEffect(() => {
+    if (isSignedIn && !isInitialized) {
+      initializeBookmarks()
+    }
+  }, [isSignedIn, isInitialized, initializeBookmarks])
 
   useEffect(() => {
     async function fetchMostPurchasedProducts() {
@@ -82,130 +73,25 @@ export function MostPurchasedProductsGrid() {
           return
         }
 
-        // Get consumption period from environment variable
-        const period = parseInt(
-          process.env['NEXT_PUBLIC_CONSUMPTION_PERIOD_IN_DAYS'] || '90',
-          10
-        )
+        // Get consumption period from service
+        const period = mostPurchasedService.getConsumptionPeriodInDays()
         setConsumptionPeriod(period)
 
-        // TODO: Uncomment when backend is ready
-        // Calculate date range (ed = today, bd = today - consumption period)
-        // const today = new Date()
-        // const year = today.getFullYear()
-        // const month = String(today.getMonth() + 1).padStart(2, '0')
-        // const day = String(today.getDate()).padStart(2, '0')
-        // const endDate = `${year}-${month}-${day}` // YYYY-MM-DD format
+        // Fetch most purchased products from service
+        const mostPurchased =
+          await mostPurchasedService.getMostPurchasedProducts(customerId)
 
-        // const beginDate = new Date(today)
-        // beginDate.setDate(beginDate.getDate() - period)
-        // const beginYear = beginDate.getFullYear()
-        // const beginMonth = String(beginDate.getMonth() + 1).padStart(2, '0')
-        // const beginDay = String(beginDate.getDate()).padStart(2, '0')
-        // const startDate = `${beginYear}-${beginMonth}-${beginDay}` // YYYY-MM-DD format
-
-        // Variables would be used for real query
-        // const variables = {
-        //   company_id: 'alfe',
-        //   customer_id: customerId,
-        //   bd: startDate,
-        //   ed: endDate,
-        // }
-
-        // TODO: Enable real GraphQL query when backend is configured
-        // Mock implementation for testing UI
-        await new Promise(resolve => setTimeout(resolve, 500)) // Simulate API delay
-
-        const mockProducts: Product[] = [
-          {
-            id: '1001',
-            name: 'Pizza Box Large',
-            imageUrl: '/images/products/placeholder.jpg',
-            price: 15.99,
-            unit: 'pcs',
-            categoryId: 'cat-1',
-            consumptionQuantity: 150,
-          },
-          {
-            id: '1002',
-            name: 'Pizza Box Medium',
-            imageUrl: '/images/products/placeholder.jpg',
-            price: 12.99,
-            unit: 'pcs',
-            categoryId: 'cat-1',
-            consumptionQuantity: 120,
-          },
-          {
-            id: '2001',
-            name: 'Napkins Pack',
-            imageUrl: '/images/products/placeholder.jpg',
-            price: 5.99,
-            unit: 'pack',
-            categoryId: 'cat-2',
-            consumptionQuantity: 95,
-          },
-          {
-            id: '2002',
-            name: 'Plastic Cups',
-            imageUrl: '/images/products/placeholder.jpg',
-            price: 8.99,
-            unit: 'pack',
-            categoryId: 'cat-2',
-            consumptionQuantity: 80,
-          },
-          {
-            id: '3001',
-            name: 'Delivery Bags',
-            imageUrl: '/images/products/placeholder.jpg',
-            price: 3.99,
-            unit: 'pcs',
-            categoryId: 'cat-3',
-            consumptionQuantity: 75,
-          },
-          {
-            id: '3002',
-            name: 'Food Containers',
-            imageUrl: '/images/products/placeholder.jpg',
-            price: 10.99,
-            unit: 'pack',
-            categoryId: 'cat-3',
-            consumptionQuantity: 60,
-          },
-        ]
-        setProducts(mockProducts)
-
-        /* Real implementation - uncomment when backend is ready
-        const data = await executeGraphQLOperation<GetMostPurchasedResponse>(
-          GetMostPurchasedProductsClientQuery,
-          variables
+        // Transform to include selected quantity for cart
+        const productsWithQuantity: ProductWithQuantity[] = mostPurchased.map(
+          product => ({
+            ...product,
+            selectedQuantity: 0,
+          })
         )
 
-        if (data?.goods_transactions) {
-          // Map and sort products by consumption quantity
-          const mappedProducts: Product[] = data.goods_transactions
-            .filter(item => item.goods_transactions_stock_rel)
-            .map(item => ({
-              id: item.goods_transactions_stock_rel.stock_id,
-              name: item.goods_transactions_stock_rel.stock_name,
-              imageUrl: `/images/products/${item.goods_transactions_stock_rel.stock_id.toLowerCase()}.jpg`,
-              price: 0, // Price not available in this query
-              unit: 'pcs', // Unit not available in this query
-              categoryId: '', // Category not available in this query
-              consumptionQuantity:
-                item.goods_transaction_goods_transaction_rel_aggregate.aggregate
-                  .sum.amount_credit || 0,
-            }))
-            .sort(
-              (a, b) =>
-                (b.consumptionQuantity || 0) - (a.consumptionQuantity || 0)
-            )
-          // Show all products without pagination - company policy
-
-          setProducts(mappedProducts)
-        }
-        */
-      } catch {
-        // Failed to fetch most purchased products
+        setProducts(productsWithQuantity)
+      } catch (error) {
+        console.error('Failed to fetch most purchased products:', error)
         setProducts([])
       } finally {
         setIsLoading(false)
@@ -213,67 +99,136 @@ export function MostPurchasedProductsGrid() {
     }
 
     fetchMostPurchasedProducts()
-  }, [sessionClaims, user])
+  }, [sessionClaims, user]) // Only fetch on initial load or auth change
+
+  const handleQuantityChange = (productId: string, delta: number) => {
+    setProducts(prevProducts =>
+      prevProducts.map(product =>
+        product.stockId === productId
+          ? {
+              ...product,
+              selectedQuantity: Math.max(0, product.selectedQuantity + delta),
+            }
+          : product
+      )
+    )
+  }
+
+  const handleAddToCart = (product: ProductWithQuantity) => {
+    if (product.selectedQuantity > 0) {
+      // TODO: Implement add to cart functionality
+      // Will dispatch to cart store when implemented
+
+      // Reset quantity after adding to cart
+      handleQuantityChange(product.stockId, -product.selectedQuantity)
+    }
+  }
 
   return (
-    <div className="space-y-2">
-      {products.length > 0 && (
-        <div className="text-sm text-muted-foreground px-4 sm:px-6 lg:px-8">
-          Based on your consumption in the last {consumptionPeriod} days
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-semibold">
+            {t('sections.mostPurchased.title')}
+          </h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            {t('sections.mostPurchased.description', {
+              days: consumptionPeriod,
+            })}
+          </p>
         </div>
-      )}
-      <GridErrorBoundary>
-        <div
-          className={cn(
-            'mx-auto grid w-full max-w-7xl gap-4',
-            'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
-            'px-4 sm:px-6 lg:px-8'
-          )}
-        >
-          {isLoading ? (
-            <GridSkeleton count={6} variant="card" />
-          ) : products.length === 0 ? (
-            <div className="col-span-full py-12 text-center">
-              <p className="text-muted-foreground">
-                No purchase history available
-              </p>
-              <p className="text-sm text-muted-foreground mt-2">
-                Start shopping to see your most purchased products here
-              </p>
-            </div>
-          ) : (
-            products.map((product, index) => (
-              <GridItem key={product.id}>
-                <div className="relative">
-                  {/* Show badge for top 3 most consumed */}
-                  {index < 3 &&
-                    product.consumptionQuantity &&
-                    product.consumptionQuantity > 0 && (
+        <GridErrorBoundary>
+          <div
+            className={cn(
+              'grid w-full gap-4',
+              'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+            )}
+          >
+            {isLoading ? (
+              <GridSkeleton count={6} variant="card" />
+            ) : products.length === 0 ? (
+              <div className="col-span-full py-12 text-center">
+                <p className="text-muted-foreground">
+                  {t('sections.mostPurchased.empty.title')}
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  {t('sections.mostPurchased.empty.description')}
+                </p>
+              </div>
+            ) : (
+              products.map(product => (
+                <GridItem key={product.stockId}>
+                  <div className="relative space-y-2">
+                    {/* Show badge for top 3 most consumed */}
+                    {product.rank && (
                       <div className="absolute top-2 right-2 z-10 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
-                        Top {index + 1}
+                        {t('sections.mostPurchased.badge.top', {
+                          rank: product.rank,
+                        })}
                       </div>
                     )}
-                  <ProductCard
-                    id={product.id}
-                    name={product.name}
-                    {...(product.imageUrl && { imageUrl: product.imageUrl })}
-                    price={product.price}
-                    unit={product.unit}
-                    categoryId={product.categoryId}
-                  />
-                  {/* Show consumption quantity */}
-                  {product.consumptionQuantity &&
-                    product.consumptionQuantity > 0 && (
-                      <div className="text-center text-sm text-muted-foreground mt-1">
-                        Consumed: {product.consumptionQuantity.toFixed(0)} units
+
+                    {/* Product Card */}
+                    <ProductCard
+                      id={product.stockId}
+                      name={product.name}
+                      {...(product.imageUrl && { imageUrl: product.imageUrl })}
+                      price={product.price}
+                      unit={product.unit}
+                      categoryId={product.categoryId}
+                    />
+
+                    {/* Show consumption quantity */}
+                    <div className="text-center text-sm text-muted-foreground">
+                      {t('sections.mostPurchased.consumed', {
+                        units: product.consumedUnits,
+                      })}
+                    </div>
+
+                    {/* Quantity selector and Add to Cart */}
+                    <div className="flex items-center justify-between px-2">
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() =>
+                            handleQuantityChange(product.stockId, -1)
+                          }
+                          disabled={product.selectedQuantity === 0}
+                        >
+                          <Minus className="h-4 w-4" />
+                        </Button>
+                        <span className="w-12 text-center font-medium">
+                          {product.selectedQuantity}
+                        </span>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() =>
+                            handleQuantityChange(product.stockId, 1)
+                          }
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
                       </div>
-                    )}
-                </div>
-              </GridItem>
-            ))
-          )}
-        </div>
-      </GridErrorBoundary>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => handleAddToCart(product)}
+                        disabled={product.selectedQuantity === 0}
+                      >
+                        {t('sections.mostPurchased.addToCart')}
+                      </Button>
+                    </div>
+                  </div>
+                </GridItem>
+              ))
+            )}
+          </div>
+        </GridErrorBoundary>
+      </div>
     </div>
   )
 }

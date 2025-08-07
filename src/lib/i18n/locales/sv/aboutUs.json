@@ -1,0 +1,170 @@
+{
+  "title": "Om ATP Store",
+  "subtitle": "Ledande leverantör av professionella produkter och tjänster, dedikerad till att stärka företag med kvalitetslösningar sedan 2011.",
+  "slider": {
+    "slides": [
+      {
+        "title": "Välkommen till ATP Store",
+        "subtitle": "Din pålitliga affärspartner sedan 2011"
+      },
+      {
+        "title": "Strömlinjeformad beställning",
+        "subtitle": "Effektiv orderhantering för ditt företag"
+      },
+      {
+        "title": "Professionell excellens",
+        "subtitle": "Kompletta kontorslösningar"
+      },
+      {
+        "title": "Omfattande lager",
+        "subtitle": "Stort lager tillgängligt för omedelbar leverans"
+      },
+      {
+        "title": "Pålitlig logistik",
+        "subtitle": "Leverans i tid med vår flotta"
+      },
+      {
+        "title": "Effektiv drift",
+        "subtitle": "Snabb och säker lastningsprocess"
+      },
+      {
+        "title": "Global räckvidd",
+        "subtitle": "Betjänar företag i flera länder"
+      },
+      {
+        "title": "Snabb utskick",
+        "subtitle": "Snabb bearbetning och utskickningstjänster"
+      }
+    ]
+  },
+  "mission": {
+    "title": "Vår Mission",
+    "paragraph1": "På ATP Store är vi engagerade i att tillhandahålla exceptionella produkter och tjänster som hjälper företag att blomstra. Vår mission är att vara den mest betrodda partnern för företag som söker kvalitet, tillförlitlighet och innovation i sina leveranskedjelösningar.",
+    "paragraph2": "Med årtionden av erfarenhet och en djup förståelse för olika branscher har vi byggt starka relationer med ledande tillverkare och leverantörer världen över. Detta gör det möjligt för oss att erbjuda konkurrenskraftiga priser, snabb leverans och oöverträffad kundservice."
+  },
+  "history": {
+    "title": "Vår Historia",
+    "paragraphs": [
+      "Grundat år 2011 med ödmjuka början i Malmö, har Alfe Tissue Paper gett sig ut på en enastående resa som nu har lett oss till att etablera vårt huvudkontor i den livfulla staden Lund. Som ett företag som djupt förpliktigar sig till excellens och kundnöjdhet är vi stolta över att erbjuda skräddarsydda lösningar som tillgodoser de unika behoven hos våra värderade kunder. Vår framgång kan tillskrivas vårt omfattande nätverk, som sträcker sig både inom vårt hemland och bortom dess gränser, vilket gör det möjligt för oss att erbjuda enastående service både nationellt och internationellt.",
+      "I hjärtat av vår verksamhet ligger vår expertis inom förpackningsbranschen. Med en flotta av dedikerade fordon erbjuder vi leveranstjänster till våra uppskattade kunder i Skåne. Vår mission är enkel men djupt känsloladdad - att erbjuda högkvalitativ service med outtröttlig engagemang. Genom regelbundna besök hos våra kunder åtminstone en gång i veckan strävar vi efter att säkerställa att våra erbjudanden möter deras krav och överträffar deras förväntningar.",
+      "Inom Skåne fokuserar vi huvudsakligen på två väsentliga kategorier: matförpackningar och hygienpapper. Vår dedikation till att säkerställa den trygga leveransen av väsentliga varor till olika etableringar särskiljer oss i branschen. Vi tar stor tillfredsställelse i att betjäna hotell där bekvämlighet och prakt är av yttersta vikt, liksom restauranger där presentation och bevarande är avgörande faktorer.",
+      "Utöver detta erbjuder vi våra tjänster till charmiga caféer som har blivit en integrerad del av Skånes sociala sammanhang, där förpackningens kvalitet kompletterar de läckerheter de serverar. Våra erbjudanden är också skräddarsydda för professionella cateringtjänster, där effektivitet och tillförlitlighet är avgörande för en sömlös upplevelse. Och inte att förglömma de livliga bagerierna, där förpackningens fräschör och hygien är av största vikt för att bevara de läckra smakerna.",
+      "Vår förpliktelse slutar inte med Skåne; det är grunden för våra framtida strävanden. Vår vision grundar sig i positiv tillväxt och outtröttlig lönsamhet. Vi strävar efter att utvidga våra horisonter och vår räckvidd för att göra våra exceptionella produkter lättillgängliga för kunder över hela Sverige. När vi ger oss ut på den här ambitiösa resan förblir vi trogna våra kärnvärden av integritet, kundorientering och innovation."
+    ]
+  },
+  "values": {
+    "title": "Våra Värderingar",
+    "items": {
+      "integrity": {
+        "label": "Integritet",
+        "description": "Vi bedriver affärer med ärlighet och transparens"
+      },
+      "innovation": {
+        "label": "Innovation",
+        "description": "Vi förbättrar kontinuerligt våra produkter och tjänster"
+      },
+      "customerFocus": {
+        "label": "Kundfokus",
+        "description": "Din framgång är vår prioritet"
+      },
+      "sustainability": {
+        "label": "Hållbarhet",
+        "description": "Vi bryr oss om vår miljöpåverkan"
+      }
+    }
+  },
+  "features": {
+    "expertTeam": {
+      "title": "Expertteam",
+      "description": "Skickliga proffs med års expertis som arbetar tillsammans för att betjäna dina affärsbehov och leverera exceptionella resultat som överträffar förväntningarna."
+    },
+    "globalPresence": {
+      "title": "Global Närvaro",
+      "description": "Verksam i 3 länder med lokal expertis och globala standarder"
+    },
+    "qualityAssured": {
+      "title": "Kvalitetssäkrad",
+      "description": "Orubbligt engagemang för excellens och kvalitet i varje produkt vi levererar"
+    },
+    "trustedPartner": {
+      "title": "Pålitlig Partner",
+      "description": "Betjänar över 600 nöjda företag världen över"
+    }
+  },
+  "location": {
+    "title": "Vår Plats"
+  },
+  "contact": {
+    "title": "Kontakta Oss",
+    "info": {
+      "title": "Ta Kontakt",
+      "description": "Vi är här för att hjälpa! Nå oss genom någon av följande kanaler så återkommer vi så snart som möjligt.",
+      "address": {
+        "title": "Adress",
+        "company": "Alfe Tissue Paper AB.",
+        "street": "Maskinvägen 1 Port 8",
+        "postal": "227 30 Lund",
+        "country": "Skåne Sverige"
+      },
+      "orderReception": {
+        "title": "Ordermottagning",
+        "whatsapp": "WhatsApp"
+      },
+      "customerService": {
+        "title": "Kundtjänst",
+        "whatsapp": "WhatsApp"
+      },
+      "email": {
+        "title": "E-post"
+      },
+      "hours": {
+        "title": "Öppettider",
+        "weekdays": "Måndag - Fredag: 08:00 - 16:00",
+        "weekend": "Lördag - Söndag: Stängt"
+      },
+      "website": {
+        "title": "Webbplats"
+      },
+      "social": {
+        "title": "Följ Oss"
+      }
+    },
+    "form": {
+      "title": "Skicka ett Meddelande",
+      "description": "Fyll i formuläret nedan så återkommer vi så snart som möjligt.",
+      "fields": {
+        "name": {
+          "label": "Namn",
+          "placeholder": "Ditt Namn"
+        },
+        "email": {
+          "label": "E-post",
+          "placeholder": "din@epost.com"
+        },
+        "phone": {
+          "label": "Telefon",
+          "placeholder": "+46 70 123 4567"
+        },
+        "subject": {
+          "label": "Ämne",
+          "placeholder": "Hur kan vi hjälpa dig?",
+          "options": {
+            "general": "Allmän förfrågan",
+            "sales": "Försäljningsfråga",
+            "support": "Teknisk support",
+            "partnership": "Partnerskap",
+            "feedback": "Feedback"
+          }
+        },
+        "message": {
+          "label": "Meddelande",
+          "placeholder": "Berätta mer om din förfrågan..."
+        }
+      },
+      "submit": "Skicka Meddelande",
+      "sending": "Skickar...",
+      "success": "Meddelandet skickades! Vi återkommer snart.",
+      "error": "Det gick inte att skicka meddelandet. Försök igen senare."
+    }
+  }
+}

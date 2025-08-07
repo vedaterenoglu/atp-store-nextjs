@@ -5,7 +5,7 @@
  * Dependencies: shadcn Badge component
  */
 
-import { cn } from '@/components/ui/utils'
+import { cn } from '@/lib/utils'
 
 interface PriceTagProps {
   price: number

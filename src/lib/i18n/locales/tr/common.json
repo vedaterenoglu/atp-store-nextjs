@@ -73,7 +73,8 @@
       "subtitle": "Alfe Tissue Paper'dan",
       "description": "Yumuşaklık, dayanaklılık ve sürdürülebilirliğin mükemmel uyumunu deneyimleyin. Kafeniz, restoranınız, oteliniz, pizzerianız ve diğer seçici işletmeler için özel olarak tasarlanmış premium ürünler.",
       "browseProducts": "Ürünleri Görüntüle",
-      "learnMore": "Daha Fazla Bilgi"
+      "learnMore": "Daha Fazla Bilgi",
+      "aboutUs": "Hakkımızda"
     },
     "features": {
       "premiumQuality": {
@@ -92,6 +93,25 @@
         "title": "Çevre Dostu",
         "description": "Sürdürülebilir uygulamalar ve çevre bilincine sahip üretime bağlıdır"
       }
+    }
+  },
+  "footer": {
+    "copyright": "© {{year}} Alfe Tissue Paper AB. Tüm hakları saklıdır.",
+    "createdBy": "Oluşturan"
+  },
+  "tooltips": {
+    "navbar": {
+      "home": "Ana sayfaya git",
+      "dashboard": "Müşteri paneli",
+      "theme": "Temayı değiştir",
+      "language": "Dili değiştir",
+      "signIn": "Hesabınıza giriş yapın",
+      "userMenu": "Kullanıcı menüsü",
+      "admin": "Yönetici paneli"
+    },
+    "footer": {
+      "developerWebsite": "Geliştirici web sitesini ziyaret et",
+      "developerEmail": "Geliştirici ile iletişime geç"
     }
   }
 }

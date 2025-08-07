@@ -1,0 +1,30 @@
+{
+  "title": "Mina Favoritprodukter och Mest Köpta Produkter",
+  "subtitle": "Alla priser är exklusive moms. Avtalsbaserad prissättning gäller. Med förbehåll för marknadsjusteringar.",
+  "sections": {
+    "favorites": {
+      "title": "Mina Favoritprodukter",
+      "description": "Produkter du har bokmärkt för snabb åtkomst",
+      "empty": {
+        "title": "Inga bokmärkta produkter ännu",
+        "description": "Bläddra bland produkter och bokmärk dina favoriter för att se dem här"
+      }
+    },
+    "mostPurchased": {
+      "title": "Mest Köpta Produkter",
+      "description": "Baserat på din konsumtion de senaste {{days}} dagarna",
+      "empty": {
+        "title": "Ingen köphistorik tillgänglig",
+        "description": "Börja handla för att se dina mest köpta produkter här"
+      },
+      "badge": {
+        "top": "Topp {{rank}}"
+      },
+      "consumed": "Förbrukat: {{units}} enheter",
+      "addToCart": "Lägg i varukorg"
+    }
+  },
+  "navigation": {
+    "backToProducts": "Tillbaka till Produkter"
+  }
+}

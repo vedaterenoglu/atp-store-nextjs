@@ -1,294 +1,491 @@
 /**
- * Products Service Test Suite
- * SOLID Principles: Single Responsibility - Test products service operations
- * Design Patterns: Test Pattern - Unit tests with mocking
- * Dependencies: Jest, serverGraphQLFetch mock, products mock data
+ * Unit tests for Products Service
+ * SOLID Principles: SRP - Testing single responsibility
+ * Design Patterns: Test Pattern with MSW for GraphQL mocking
+ * Dependencies: Jest, MSW, Testing Library
  */
 
+import {
+  describe,
+  it,
+  expect,
+  jest,
+  beforeEach,
+  afterEach,
+} from '@jest/globals'
 import {
   getProducts,
   getProductsByCategory,
   searchProducts,
 } from './products.service'
-import { serverGraphQLFetch } from '@/lib/graphql'
-import {
-  mockProductsData,
-  emptyMockProductsData,
-} from '@/mocks/graphql/products'
 
-// Mock the dependencies
-jest.mock('@/lib/graphql')
-jest.mock('@/lib/config/env', () => ({
-  env: {
-    COMPANY_ID: 'alfe',
-    NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT: 'http://localhost:8080/v1/graphql',
-  },
-  hasuraConfig: {
-    getAuthHeaders: () => ({
-      'x-hasura-admin-secret': 'test-secret',
-    }),
-  },
-}))
+// Mock Apollo Client
+jest.mock('@/lib/apollo/client')
+jest.mock('@/lib/apollo/browser-client')
+import { mockQuery } from '@/lib/apollo/__mocks__/client'
 
-const mockServerGraphQLFetch = serverGraphQLFetch as jest.MockedFunction<
-  typeof serverGraphQLFetch
->
+// Mock console methods
+const originalConsoleError = console.error
+beforeEach(() => {
+  console.error = jest.fn()
+})
+afterEach(() => {
+  console.error = originalConsoleError
+  jest.clearAllMocks()
+})
 
-describe('Products Service', () => {
+describe('products.service', () => {
+  // Mock response matching the actual GraphQL schema
+  const mockProductsResponse = {
+    stock: [
+      {
+        stock_id: 'PROD001',
+        stock_name: 'Premium Widget',
+        stock_group: 'ELECTRONICS',
+        stock_price: 99.99,
+        stock_unit: 'EA',
+        available_stock: 50,
+        stock_image_link: 'https://example.com/widget.jpg',
+      },
+      {
+        stock_id: 'PROD002',
+        stock_name: 'Standard Gadget',
+        stock_group: 'FURNITURE',
+        stock_price: 49.99,
+        stock_unit: 'PCS',
+        available_stock: 100,
+        stock_image_link: null,
+      },
+      {
+        stock_id: 'PROD003',
+        stock_name: 'Basic Tool',
+        stock_group: 'TOOLS',
+        stock_price: 24.99,
+        stock_unit: 'KG',
+        available_stock: 0,
+        stock_image_link: 'https://example.com/tool.jpg',
+      },
+    ],
+  }
+
+  const expectedTransformedProducts = [
+    {
+      id: 'PROD001',
+      name: 'Premium Widget',
+      categoryId: 'ELECTRONICS',
+      price: 99.99,
+      unit: 'EA',
+      stock: 50,
+      imageUrl: 'https://example.com/widget.jpg',
+    },
+    {
+      id: 'PROD002',
+      name: 'Standard Gadget',
+      categoryId: 'FURNITURE',
+      price: 49.99,
+      unit: 'PCS',
+      stock: 100,
+      imageUrl: '/placeholder-product.png',
+    },
+    {
+      id: 'PROD003',
+      name: 'Basic Tool',
+      categoryId: 'TOOLS',
+      price: 24.99,
+      unit: 'KG',
+      stock: 0,
+      imageUrl: 'https://example.com/tool.jpg',
+    },
+  ]
+
   beforeEach(() => {
     jest.clearAllMocks()
+    delete process.env['COMPANY_ID']
   })
 
   describe('getProducts', () => {
     it('should fetch and transform products successfully', async () => {
-      mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: mockProductsData,
-      })
+      mockQuery.mockResolvedValueOnce({ data: mockProductsResponse })
 
       const result = await getProducts()
 
-      expect(mockServerGraphQLFetch).toHaveBeenCalledWith({
-        document: expect.objectContaining({
-          kind: 'Document',
-          loc: expect.objectContaining({
-            source: expect.objectContaining({
-              body: expect.stringContaining(
-                'query GetProductsListWithPriceQuery'
-              ),
-            }),
-          }),
-        }),
-        variables: { company_id: 'alfe' },
-      })
-
-      expect(result).toHaveLength(13)
-      expect(result[0]).toEqual({
-        id: '1001',
-        name: 'Pizza Box Large',
-        price: 15.99,
-        unit: 'pcs',
-        categoryId: 'PIZZA_BOXES',
-        imageUrl: undefined,
-      })
+      expect(result).toEqual(expectedTransformedProducts)
     })
 
-    it('should return empty array when no data is returned', async () => {
-      mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: emptyMockProductsData,
-      })
-
-      const result = await getProducts()
-
-      expect(result).toEqual([])
-    })
-
-    it('should return empty array when data is null', async () => {
-      mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: null,
-      })
-
-      const result = await getProducts()
-
-      expect(result).toEqual([])
-    })
-
-    it('should throw error when GraphQL request fails', async () => {
-      const error = new Error('GraphQL error')
-      mockServerGraphQLFetch.mockResolvedValueOnce({
-        error,
-      })
-
-      await expect(getProducts()).rejects.toThrow('Failed to fetch products')
-    })
-
-    it('should use environment COMPANY_ID', async () => {
-      mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: mockProductsData,
+    it('should use default company ID when env not set', async () => {
+      interface MockQueryArgs {
+        variables: Record<string, unknown>
+      }
+      let capturedVariables: Record<string, unknown> | null = null
+      mockQuery.mockImplementationOnce((args: MockQueryArgs) => {
+        capturedVariables = args.variables
+        return Promise.resolve({ data: mockProductsResponse })
       })
 
       await getProducts()
 
-      expect(mockServerGraphQLFetch).toHaveBeenCalledWith({
-        document: expect.objectContaining({
-          kind: 'Document',
-          loc: expect.objectContaining({
-            source: expect.objectContaining({
-              body: expect.stringContaining(
-                'query GetProductsListWithPriceQuery'
-              ),
-            }),
-          }),
-        }),
-        variables: { company_id: 'alfe' },
+      expect(capturedVariables).toMatchObject({
+        company_id: 'alfe', // Default company ID
       })
+    })
+
+    it('should use company ID from environment when set', async () => {
+      process.env['COMPANY_ID'] = 'test_company'
+
+      interface MockQueryArgs {
+        variables: Record<string, unknown>
+      }
+      let capturedVariables: Record<string, unknown> | null = null
+      mockQuery.mockImplementationOnce((args: MockQueryArgs) => {
+        capturedVariables = args.variables
+        return Promise.resolve({ data: mockProductsResponse })
+      })
+
+      await getProducts()
+
+      expect(capturedVariables).toMatchObject({
+        company_id: 'test_company',
+      })
+    })
+
+    it('should handle empty stock array', async () => {
+      mockQuery.mockResolvedValueOnce({ data: { stock: [] } })
+
+      const result = await getProducts()
+      expect(result).toEqual([])
+    })
+
+    it('should handle missing stock field', async () => {
+      mockQuery.mockResolvedValueOnce({ data: {} })
+
+      const result = await getProducts()
+      expect(result).toEqual([])
+      expect(console.error).toHaveBeenCalledWith(
+        'No products data returned from GraphQL'
+      )
+    })
+
+    it('should handle null data response', async () => {
+      mockQuery.mockResolvedValueOnce({ data: null })
+
+      const result = await getProducts()
+      expect(result).toEqual([])
+      expect(console.error).toHaveBeenCalledWith(
+        'No products data returned from GraphQL'
+      )
+    })
+
+    it('should handle products with null values', async () => {
+      const responseWithNulls = {
+        stock: [
+          {
+            stock_id: 'PROD001',
+            stock_name: null,
+            stock_group: null,
+            stock_price: null,
+            stock_unit: null,
+            available_stock: null,
+            stock_image_link: null,
+          },
+        ],
+      }
+
+      mockQuery.mockResolvedValueOnce({ data: responseWithNulls })
+
+      const result = await getProducts()
+
+      expect(result).toEqual([
+        {
+          id: 'PROD001',
+          name: 'Unknown Product',
+          categoryId: 'uncategorized',
+          price: 0,
+          unit: 'EA',
+          stock: 0,
+          imageUrl: '/placeholder-product.png',
+        },
+      ])
+    })
+
+    it('should handle network errors', async () => {
+      mockQuery.mockRejectedValueOnce(new Error('Network error'))
+
+      await expect(getProducts()).rejects.toThrow('Failed to fetch products')
+      expect(console.error).toHaveBeenCalled()
+    })
+
+    it('should handle GraphQL errors', async () => {
+      mockQuery.mockRejectedValueOnce(new Error('GraphQL Error'))
+
+      await expect(getProducts()).rejects.toThrow('Failed to fetch products')
+      expect(console.error).toHaveBeenCalled()
+    })
+
+    it('should handle validation errors', async () => {
+      mockQuery.mockResolvedValueOnce({
+        data: {
+          stock: [{ invalid_field: 'bad_data' }],
+        },
+      })
+
+      await expect(getProducts()).rejects.toThrow('Failed to fetch products')
+      expect(console.error).toHaveBeenCalled()
     })
   })
 
   describe('getProductsByCategory', () => {
     it('should filter products by category', async () => {
-      mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: mockProductsData,
-      })
+      mockQuery.mockResolvedValueOnce({ data: mockProductsResponse })
 
-      const result = await getProductsByCategory('PIZZA_BOXES')
+      const result = await getProductsByCategory('ELECTRONICS')
 
-      expect(result).toHaveLength(3)
-      expect(result.every(p => p.categoryId === 'PIZZA_BOXES')).toBe(
-        true
-      )
+      expect(result).toEqual([
+        {
+          id: 'PROD001',
+          name: 'Premium Widget',
+          categoryId: 'ELECTRONICS',
+          price: 99.99,
+          unit: 'EA',
+          stock: 50,
+          imageUrl: 'https://example.com/widget.jpg',
+        },
+      ])
     })
 
     it('should return empty array for non-existent category', async () => {
-      mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: mockProductsData,
-      })
+      mockQuery.mockResolvedValueOnce({ data: mockProductsResponse })
 
-      const result = await getProductsByCategory('9999 - Non-existent')
-
+      const result = await getProductsByCategory('NON_EXISTENT')
       expect(result).toEqual([])
     })
 
-    it('should handle empty products list', async () => {
-      mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: emptyMockProductsData,
-      })
+    it('should handle category filtering with empty products', async () => {
+      mockQuery.mockResolvedValueOnce({ data: { stock: [] } })
 
-      const result = await getProductsByCategory('PIZZA_BOXES')
-
+      const result = await getProductsByCategory('ELECTRONICS')
       expect(result).toEqual([])
+    })
+
+    it('should filter multiple products in same category', async () => {
+      const multiCategoryResponse = {
+        stock: [
+          {
+            stock_id: 'PROD001',
+            stock_name: 'Product 1',
+            stock_group: 'ELECTRONICS',
+            stock_price: 10,
+            stock_unit: 'EA',
+            available_stock: 5,
+            stock_image_link: null,
+          },
+          {
+            stock_id: 'PROD002',
+            stock_name: 'Product 2',
+            stock_group: 'ELECTRONICS',
+            stock_price: 20,
+            stock_unit: 'EA',
+            available_stock: 10,
+            stock_image_link: null,
+          },
+          {
+            stock_id: 'PROD003',
+            stock_name: 'Product 3',
+            stock_group: 'FURNITURE',
+            stock_price: 30,
+            stock_unit: 'EA',
+            available_stock: 15,
+            stock_image_link: null,
+          },
+        ],
+      }
+
+      mockQuery.mockResolvedValueOnce({ data: multiCategoryResponse })
+
+      const result = await getProductsByCategory('ELECTRONICS')
+      expect(result).toHaveLength(2)
+      expect(result.every(p => p.categoryId === 'ELECTRONICS')).toBe(true)
     })
   })
 
   describe('searchProducts', () => {
     it('should search products by name', async () => {
-      mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: mockProductsData,
-      })
+      mockQuery.mockResolvedValueOnce({ data: mockProductsResponse })
 
-      const result = await searchProducts('pizza')
+      const result = await searchProducts('widget')
 
-      expect(result).toHaveLength(3) // 3 pizza boxes in mock data
-      expect(result[0]?.name).toContain('Pizza')
+      expect(result).toEqual([
+        {
+          id: 'PROD001',
+          name: 'Premium Widget',
+          categoryId: 'ELECTRONICS',
+          price: 99.99,
+          unit: 'EA',
+          stock: 50,
+          imageUrl: 'https://example.com/widget.jpg',
+        },
+      ])
     })
 
-    it('should search case-insensitively', async () => {
-      mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: mockProductsData,
-      })
+    it('should perform case-insensitive search', async () => {
+      mockQuery.mockResolvedValueOnce({ data: mockProductsResponse })
 
-      const result = await searchProducts('PIZZA')
+      const result = await searchProducts('GADGET')
 
-      expect(result).toHaveLength(3) // 3 pizza boxes in mock data
+      expect(result).toEqual([
+        {
+          id: 'PROD002',
+          name: 'Standard Gadget',
+          categoryId: 'FURNITURE',
+          price: 49.99,
+          unit: 'PCS',
+          stock: 100,
+          imageUrl: '/placeholder-product.png',
+        },
+      ])
+    })
+
+    it('should search with partial matches', async () => {
+      mockQuery.mockResolvedValueOnce({ data: mockProductsResponse })
+
+      const result = await searchProducts('Tool')
+
+      expect(result).toEqual([
+        {
+          id: 'PROD003',
+          name: 'Basic Tool',
+          categoryId: 'TOOLS',
+          price: 24.99,
+          unit: 'KG',
+          stock: 0,
+          imageUrl: 'https://example.com/tool.jpg',
+        },
+      ])
     })
 
     it('should return empty array for no matches', async () => {
-      mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: mockProductsData,
-      })
+      mockQuery.mockResolvedValueOnce({ data: mockProductsResponse })
 
-      const result = await searchProducts('xyz')
-
+      const result = await searchProducts('xyz123')
       expect(result).toEqual([])
     })
 
-    it('should handle partial matches', async () => {
-      mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: mockProductsData,
-      })
-
-      const result = await searchProducts('large')
-
-      expect(result).toHaveLength(4) // 4 large products in mock data
-      expect(result[0]?.name).toContain('Large')
-    })
-
-    it('should handle empty search term', async () => {
-      mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: mockProductsData,
-      })
+    it('should return all products for empty search term', async () => {
+      mockQuery.mockResolvedValueOnce({ data: mockProductsResponse })
 
       const result = await searchProducts('')
-
-      expect(result).toHaveLength(13) // All products match empty string
+      expect(result).toEqual(expectedTransformedProducts)
     })
-  })
 
-  describe('Data transformation', () => {
-    it('should correctly map backend fields to frontend fields', async () => {
-      const singleProductData = {
+    it('should find multiple matching products', async () => {
+      const searchableResponse = {
         stock: [
           {
-            stock_group: '1000 - Pizzakartonger',
-            stock_id: '1001 1009 0042',
-            stock_name: 'Pizzakartong 42*42*4 50 st./förp.',
-            stock_unit: 'förp.',
-            stock_price: 29000,
+            stock_id: 'PROD001',
+            stock_name: 'Premium Product',
+            stock_group: 'CAT1',
+            stock_price: 10,
+            stock_unit: 'EA',
+            available_stock: 5,
+            stock_image_link: null,
+          },
+          {
+            stock_id: 'PROD002',
+            stock_name: 'Standard Product',
+            stock_group: 'CAT2',
+            stock_price: 20,
+            stock_unit: 'EA',
+            available_stock: 10,
+            stock_image_link: null,
+          },
+          {
+            stock_id: 'PROD003',
+            stock_name: 'Basic Item',
+            stock_group: 'CAT3',
+            stock_price: 30,
+            stock_unit: 'EA',
+            available_stock: 15,
+            stock_image_link: null,
           },
         ],
       }
 
-      mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: singleProductData,
-      })
+      mockQuery.mockResolvedValueOnce({ data: searchableResponse })
 
-      const result = await getProducts()
-
-      expect(result[0]).toEqual({
-        id: '1001 1009 0042',
-        name: 'Pizzakartong 42*42*4 50 st./förp.',
-        price: 29000,
-        unit: 'förp.',
-        categoryId: '1000 - Pizzakartonger',
-        imageUrl: undefined,
-      })
+      const result = await searchProducts('Product')
+      expect(result).toHaveLength(2)
+      expect(result.every(p => p.name.includes('Product'))).toBe(true)
     })
 
-    it('should handle products with special characters', async () => {
-      mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: mockProductsData,
-      })
+    it('should handle search with special characters', async () => {
+      const specialResponse = {
+        stock: [
+          {
+            stock_id: 'PROD001',
+            stock_name: 'Product (Special)',
+            stock_group: 'CAT1',
+            stock_price: 10,
+            stock_unit: 'EA',
+            available_stock: 5,
+            stock_image_link: null,
+          },
+        ],
+      }
 
-      const result = await getProducts()
+      mockQuery.mockResolvedValueOnce({ data: specialResponse })
 
-      // Test that our mock data includes products with spaces and special chars
-      const productWithSpaces = result.find(p =>
-        p.name.includes('Pizza Box Large')
-      )
-      expect(productWithSpaces).toBeDefined()
-      expect(productWithSpaces?.name).toBe('Pizza Box Large')
+      const result = await searchProducts('(Special)')
+      expect(result).toHaveLength(1)
+      expect(result[0]?.name).toBe('Product (Special)')
     })
   })
 
-  describe('Error handling', () => {
-    it('should log error when no products data returned', async () => {
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
+  describe('Product transformation', () => {
+    it('should provide fallback image for products without images', async () => {
+      mockQuery.mockResolvedValueOnce({ data: mockProductsResponse })
 
-      mockServerGraphQLFetch.mockResolvedValueOnce({
-        data: {},
-      })
+      const result = await getProducts()
 
-      await getProducts()
-
-      expect(consoleSpy).toHaveBeenCalledWith(
-        'No products data returned from GraphQL'
-      )
-
-      consoleSpy.mockRestore()
+      const productWithoutImage = result.find(p => p.id === 'PROD002')
+      expect(productWithoutImage?.imageUrl).toBe('/placeholder-product.png')
     })
 
-    it('should log and throw error on GraphQL failure', async () => {
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
-      const error = new Error('Network error')
+    it('should preserve original image URL when provided', async () => {
+      mockQuery.mockResolvedValueOnce({ data: mockProductsResponse })
 
-      mockServerGraphQLFetch.mockResolvedValueOnce({
-        error,
+      const result = await getProducts()
+
+      const productWithImage = result.find(p => p.id === 'PROD001')
+      expect(productWithImage?.imageUrl).toBe('https://example.com/widget.jpg')
+    })
+
+    it('should handle all null/undefined optional fields gracefully', async () => {
+      const minimalResponse = {
+        stock: [
+          {
+            stock_id: 'MINIMAL001',
+            stock_name: 'Minimal Product',
+            stock_group: 'CATEGORY',
+            stock_price: 15.99,
+            stock_unit: 'EA',
+            available_stock: 25,
+            stock_image_link: null,
+          },
+        ],
+      }
+
+      mockQuery.mockResolvedValueOnce({ data: minimalResponse })
+
+      const result = await getProducts()
+
+      expect(result?.[0]).toEqual({
+        id: 'MINIMAL001',
+        name: 'Minimal Product',
+        categoryId: 'CATEGORY',
+        price: 15.99,
+        unit: 'EA',
+        stock: 25,
+        imageUrl: '/placeholder-product.png',
       })
-
-      await expect(getProducts()).rejects.toThrow('Failed to fetch products')
-
-      expect(consoleSpy).toHaveBeenCalledWith('Error fetching products:', error)
-
-      consoleSpy.mockRestore()
     })
   })
 })

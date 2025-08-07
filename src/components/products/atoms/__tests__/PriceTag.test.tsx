@@ -22,7 +22,7 @@ jest.mock('react-i18next', () => ({
 }))
 
 // Mock cn utility
-jest.mock('@/components/ui/utils', () => ({
+jest.mock('@/lib/utils', () => ({
   cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
 }))
 

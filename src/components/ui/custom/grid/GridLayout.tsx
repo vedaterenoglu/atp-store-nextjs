@@ -5,7 +5,7 @@
  * Dependencies: None
  */
 
-import { cn } from '@/components/ui/utils'
+import { cn } from '@/lib/utils'
 import React from 'react'
 
 interface GridLayoutProps {

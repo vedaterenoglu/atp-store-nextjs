@@ -10,7 +10,7 @@
 import { useRouter } from 'next/navigation'
 import { Card } from '@/components/ui/schadcn'
 import { ImageContainer, OverlayComponent } from '@/components/categories'
-import { cn } from '@/components/ui/utils'
+import { cn } from '@/lib/utils'
 import { useCategorySearchStore } from '@/lib/stores'
 
 interface CategoryCardProps {

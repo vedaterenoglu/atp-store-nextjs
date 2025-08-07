@@ -73,7 +73,8 @@
       "subtitle": "by Alfe Tissue Paper",
       "description": "Experience the perfect harmony of softness, strength, and sustainability. Premium products crafted for your café, restaurant, hotel, pizzeria, and every discerning business.",
       "browseProducts": "Browse Products",
-      "learnMore": "Learn More"
+      "learnMore": "Learn More",
+      "aboutUs": "About Us"
     },
     "features": {
       "premiumQuality": {
@@ -92,6 +93,25 @@
         "title": "Eco-Friendly",
         "description": "Committed to sustainable practices and environmentally conscious production"
       }
+    }
+  },
+  "footer": {
+    "copyright": "© {{year}} Alfe Tissue Paper AB. All rights reserved.",
+    "createdBy": "Created by"
+  },
+  "tooltips": {
+    "navbar": {
+      "home": "Go to home page",
+      "dashboard": "Customer dashboard",
+      "theme": "Change theme",
+      "language": "Change language",
+      "signIn": "Sign in to your account",
+      "userMenu": "User menu",
+      "admin": "Admin panel"
+    },
+    "footer": {
+      "developerWebsite": "Visit developer website",
+      "developerEmail": "Contact developer"
     }
   }
 }

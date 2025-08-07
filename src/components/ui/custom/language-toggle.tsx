@@ -62,7 +62,7 @@ function LanguageToggleSkeleton() {
     <Button
       variant="ghost"
       size="icon"
-      className="w-9 h-9"
+      className="w-9 h-9 cursor-pointer"
       disabled
       aria-label="Loading language selector"
     >
@@ -100,7 +100,7 @@ function LanguageToggleTrigger({
       <Button
         variant="ghost"
         size="icon"
-        className="w-9 h-9"
+        className="w-9 h-9 cursor-pointer"
         disabled={isLoading}
         aria-label={`Current language: ${currentLanguage?.label || language}`}
       >

@@ -37,15 +37,8 @@ afterAll(() => {
 // Type the mock
 const mockGetProducts = getProducts as jest.MockedFunction<typeof getProducts>
 
-// Define product type
-interface Product {
-  id: string
-  name: string
-  price: number
-  unit: string
-  categoryId: string
-  imageUrl?: string
-}
+// Import the correct Product type
+import type { Product } from '@/services/utils/product-transforms'
 
 describe('Products Page', () => {
   const fallbackImageUrl =
@@ -65,6 +58,8 @@ describe('Products Page', () => {
           price: 100,
           unit: 'pcs',
           categoryId: 'cat1',
+          stock: 10,
+          imageUrl: '/placeholder-product.png',
         },
         {
           id: '1002',
@@ -72,6 +67,7 @@ describe('Products Page', () => {
           price: 200,
           unit: 'pcs',
           categoryId: 'cat2',
+          stock: 5,
           imageUrl: 'https://example.com/product2.jpg',
         },
       ]
@@ -100,7 +96,8 @@ describe('Products Page', () => {
           price: 100,
           unit: 'pcs',
           categoryId: 'cat1',
-          // No imageUrl
+          stock: 15,
+          imageUrl: '',
         },
         {
           id: '1002',
@@ -108,6 +105,7 @@ describe('Products Page', () => {
           price: 200,
           unit: 'pcs',
           categoryId: 'cat2',
+          stock: 8,
           imageUrl: 'https://example.com/existing.jpg',
         },
       ]
@@ -116,7 +114,7 @@ describe('Products Page', () => {
 
       const { findByTestId } = render(await Page())
 
-      // Check first product has fallback image
+      // Check first product has fallback image applied by page component
       const product1 = await findByTestId('product-1001')
       expect(product1).toHaveTextContent(fallbackImageUrl)
 
@@ -148,9 +146,8 @@ describe('Products Page', () => {
           price: (i + 1) * 100,
           unit: 'pcs',
           categoryId: `cat-${i}`,
-        }
-        if (i % 2 !== 0) {
-          product.imageUrl = `https://example.com/prod-${i}.jpg`
+          stock: i * 5,
+          imageUrl: i % 2 === 0 ? '' : `https://example.com/prod-${i}.jpg`,
         }
         return product
       })
@@ -167,7 +164,7 @@ describe('Products Page', () => {
       for (let i = 0; i < 5; i++) {
         const product = await findByTestId(`product-prod-${i}`)
         if (i % 2 === 0) {
-          // Even indices should have fallback image
+          // Even indices should have fallback image (empty string gets fallback)
           expect(product).toHaveTextContent(fallbackImageUrl)
         } else {
           // Odd indices should have original image
@@ -246,7 +243,7 @@ describe('Products Page', () => {
   })
 
   describe('Image URL fallback logic', () => {
-    it('should use fallback when imageUrl is undefined', async () => {
+    it('should use fallback when imageUrl is empty', async () => {
       const mockProducts: Product[] = [
         {
           id: '1',
@@ -254,7 +251,8 @@ describe('Products Page', () => {
           price: 100,
           unit: 'pcs',
           categoryId: 'cat1',
-          // No imageUrl property
+          stock: 0,
+          imageUrl: '',
         },
       ]
 
@@ -274,6 +272,7 @@ describe('Products Page', () => {
           price: 100,
           unit: 'pcs',
           categoryId: 'cat1',
+          stock: 0,
           imageUrl: '',
         },
       ]
@@ -295,6 +294,7 @@ describe('Products Page', () => {
           price: 100,
           unit: 'pcs',
           categoryId: 'cat1',
+          stock: 0,
           imageUrl: customImageUrl,
         },
       ]

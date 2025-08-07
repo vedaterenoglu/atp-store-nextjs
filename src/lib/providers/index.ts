@@ -6,11 +6,5 @@
  * @tests N/A - Export file only
  */
 
-// GraphQL Provider
-export {
-  GraphQLProvider,
-  useGraphQLClient,
-  useGraphQLProviderCheck,
-  GraphQLErrorBoundary,
-} from './graphql-provider'
-export type { Client } from './graphql-provider'
+// Apollo Provider for GraphQL
+export { ApolloWrapper } from '@/lib/apollo/ApolloWrapper'

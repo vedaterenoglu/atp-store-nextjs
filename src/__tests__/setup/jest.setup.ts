@@ -407,6 +407,10 @@ afterAll(() => {
   }
 })
 
+// Mock Apollo Client modules
+jest.mock('@/lib/apollo/client')
+jest.mock('@/lib/apollo/browser-client')
+
 // Mock Clerk hooks
 jest.mock('@clerk/nextjs', () => ({
   useAuth: jest.fn(() => ({
