@@ -28,3 +28,18 @@ export interface CampaignSectionProps {
   products?: CampaignProduct[]
   isLoading?: boolean
 }
+
+// Type guard functions for runtime type checking
+export function isCampaignProduct(obj: unknown): obj is CampaignProduct {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    'stock_id' in obj &&
+    'stock_name' in obj &&
+    'stock_group' in obj &&
+    'stock_image_link' in obj &&
+    'stock_unit' in obj &&
+    'stock_price' in obj &&
+    'campaign_price' in obj
+  )
+}

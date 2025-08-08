@@ -29,6 +29,22 @@ jest.mock('@/lib/auth/role-auth', () => ({
   }),
 }))
 
+// Mock next/navigation
+const mockPush = jest.fn()
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: mockPush,
+  }),
+}))
+
+// Mock Clerk hooks
+const mockUseAuth = jest.fn()
+const mockUseUser = jest.fn()
+jest.mock('@clerk/nextjs', () => ({
+  useAuth: () => mockUseAuth(),
+  useUser: () => mockUseUser(),
+}))
+
 // Mock lucide-react icons
 jest.mock('lucide-react', () => ({
   Bookmark: ({ className }: { className?: string }) => (
@@ -78,6 +94,14 @@ describe('BookmarksFilterButton', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    // Default mock returns for Clerk hooks (not signed in)
+    mockUseAuth.mockReturnValue({
+      isSignedIn: false,
+      sessionClaims: undefined,
+    })
+    mockUseUser.mockReturnValue({
+      user: null,
+    })
   })
 
   it('should render with inactive state', () => {
@@ -187,5 +211,241 @@ describe('BookmarksFilterButton', () => {
 
     icon = screen.getByTestId('bookmark-icon')
     expect(icon).toHaveClass('fill-current')
+  })
+
+  describe('Navigation for signed-in customers', () => {
+    it('should navigate to /favorites when signed-in customer with customerid from sessionClaims', () => {
+      mockUseAuth.mockReturnValue({
+        isSignedIn: true,
+        sessionClaims: {
+          metadata: {
+            role: 'customer',
+            customerid: 'customer-123',
+          },
+        },
+      })
+      mockUseUser.mockReturnValue({
+        user: {
+          publicMetadata: {},
+        },
+      })
+
+      render(<BookmarksFilterButton isActive={false} onClick={mockOnClick} />)
+
+      const button = screen.getByTestId('button')
+      fireEvent.click(button)
+
+      // Should navigate to favorites page
+      expect(mockPush).toHaveBeenCalledWith('/favorites')
+      // Should NOT call requireAuth or onClick
+      expect(mockRequireAuth).not.toHaveBeenCalled()
+      expect(mockOnClick).not.toHaveBeenCalled()
+    })
+
+    it('should navigate to /favorites when signed-in customer with customerid from publicMetadata', () => {
+      mockUseAuth.mockReturnValue({
+        isSignedIn: true,
+        sessionClaims: {
+          metadata: {},
+        },
+      })
+      mockUseUser.mockReturnValue({
+        user: {
+          publicMetadata: {
+            role: 'customer',
+            customerid: 'customer-456',
+          },
+        },
+      })
+
+      render(<BookmarksFilterButton isActive={false} onClick={mockOnClick} />)
+
+      const button = screen.getByTestId('button')
+      fireEvent.click(button)
+
+      // Should navigate to favorites page
+      expect(mockPush).toHaveBeenCalledWith('/favorites')
+      // Should NOT call requireAuth or onClick
+      expect(mockRequireAuth).not.toHaveBeenCalled()
+      expect(mockOnClick).not.toHaveBeenCalled()
+    })
+
+    it('should navigate when role is from publicMetadata and customerid from sessionClaims', () => {
+      mockUseAuth.mockReturnValue({
+        isSignedIn: true,
+        sessionClaims: {
+          metadata: {
+            customerid: 'customer-789',
+          },
+        },
+      })
+      mockUseUser.mockReturnValue({
+        user: {
+          publicMetadata: {
+            role: 'customer',
+          },
+        },
+      })
+
+      render(<BookmarksFilterButton isActive={false} onClick={mockOnClick} />)
+
+      const button = screen.getByTestId('button')
+      fireEvent.click(button)
+
+      // Should navigate to favorites page
+      expect(mockPush).toHaveBeenCalledWith('/favorites')
+      expect(mockRequireAuth).not.toHaveBeenCalled()
+      expect(mockOnClick).not.toHaveBeenCalled()
+    })
+
+    it('should not navigate when signed-in but not a customer role', () => {
+      mockUseAuth.mockReturnValue({
+        isSignedIn: true,
+        sessionClaims: {
+          metadata: {
+            role: 'admin',
+            customerid: 'customer-123',
+          },
+        },
+      })
+      mockUseUser.mockReturnValue({
+        user: {
+          publicMetadata: {},
+        },
+      })
+
+      mockRequireAuth.mockImplementation((_, callback) => {
+        callback()
+      })
+
+      render(<BookmarksFilterButton isActive={false} onClick={mockOnClick} />)
+
+      const button = screen.getByTestId('button')
+      fireEvent.click(button)
+
+      // Should NOT navigate
+      expect(mockPush).not.toHaveBeenCalled()
+      // Should call requireAuth for customer role
+      expect(mockRequireAuth).toHaveBeenCalledWith(
+        'customer',
+        expect.any(Function),
+        { showToast: true }
+      )
+      expect(mockOnClick).toHaveBeenCalledTimes(1)
+    })
+
+    it('should not navigate when customer role but no customerid', () => {
+      mockUseAuth.mockReturnValue({
+        isSignedIn: true,
+        sessionClaims: {
+          metadata: {
+            role: 'customer',
+          },
+        },
+      })
+      mockUseUser.mockReturnValue({
+        user: {
+          publicMetadata: {},
+        },
+      })
+
+      mockRequireAuth.mockImplementation((_, callback) => {
+        callback()
+      })
+
+      render(<BookmarksFilterButton isActive={false} onClick={mockOnClick} />)
+
+      const button = screen.getByTestId('button')
+      fireEvent.click(button)
+
+      // Should NOT navigate
+      expect(mockPush).not.toHaveBeenCalled()
+      // Should call requireAuth
+      expect(mockRequireAuth).toHaveBeenCalledWith(
+        'customer',
+        expect.any(Function),
+        { showToast: true }
+      )
+      expect(mockOnClick).toHaveBeenCalledTimes(1)
+    })
+
+    it('should handle undefined metadata gracefully', () => {
+      mockUseAuth.mockReturnValue({
+        isSignedIn: true,
+        sessionClaims: undefined,
+      })
+      mockUseUser.mockReturnValue({
+        user: null,
+      })
+
+      mockRequireAuth.mockImplementation((_, callback) => {
+        callback()
+      })
+
+      render(<BookmarksFilterButton isActive={false} onClick={mockOnClick} />)
+
+      const button = screen.getByTestId('button')
+      fireEvent.click(button)
+
+      // Should NOT navigate
+      expect(mockPush).not.toHaveBeenCalled()
+      // Should fall back to requireAuth
+      expect(mockRequireAuth).toHaveBeenCalledWith(
+        'customer',
+        expect.any(Function),
+        { showToast: true }
+      )
+      expect(mockOnClick).toHaveBeenCalledTimes(1)
+    })
+
+    it('should handle null sessionClaims gracefully', () => {
+      mockUseAuth.mockReturnValue({
+        isSignedIn: true,
+        sessionClaims: null,
+      })
+      mockUseUser.mockReturnValue({
+        user: {
+          publicMetadata: null,
+        },
+      })
+
+      mockRequireAuth.mockImplementation((_, callback) => {
+        callback()
+      })
+
+      render(<BookmarksFilterButton isActive={false} onClick={mockOnClick} />)
+
+      const button = screen.getByTestId('button')
+      fireEvent.click(button)
+
+      // Should NOT navigate
+      expect(mockPush).not.toHaveBeenCalled()
+      // Should fall back to requireAuth
+      expect(mockRequireAuth).toHaveBeenCalledWith(
+        'customer',
+        expect.any(Function),
+        { showToast: true }
+      )
+      expect(mockOnClick).toHaveBeenCalledTimes(1)
+    })
+
+    it('should not call onClick when onClick prop is not provided and requireAuth succeeds', () => {
+      mockRequireAuth.mockImplementation((_, callback) => {
+        callback()
+      })
+
+      render(<BookmarksFilterButton isActive={false} />)
+
+      const button = screen.getByTestId('button')
+      fireEvent.click(button)
+
+      expect(mockRequireAuth).toHaveBeenCalledWith(
+        'customer',
+        expect.any(Function),
+        { showToast: true }
+      )
+      // No onClick prop provided, so it shouldn't error
+      expect(mockOnClick).not.toHaveBeenCalled()
+    })
   })
 })
