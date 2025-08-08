@@ -1,0 +1,81 @@
+{
+  "cart": {
+    "title": "Warenkorbverwaltung",
+    "subtitle": "Verwalten Sie Kundenwarenkörbe und stellen Sie verlassene Warenkörbe wieder her",
+    "empty": {
+      "title": "Keine Warenkörbe gefunden",
+      "description": "Es gibt keine Warenkörbe, die Ihren Kriterien entsprechen",
+      "action": "Filter löschen"
+    },
+    "status": {
+      "active": "Aktiv",
+      "pending": "Ausstehend",
+      "checkedOut": "Ausgecheckt",
+      "abandoned": "Verlassen",
+      "expired": "Abgelaufen"
+    },
+    "filter": {
+      "title": "Filter",
+      "search": "Nach Benutzer, Kunde oder Unternehmen suchen...",
+      "status": "Nach Status filtern",
+      "dateRange": "Datumsbereich",
+      "totalRange": "Gesamtbereich",
+      "from": "Von",
+      "to": "Bis",
+      "min": "Min",
+      "max": "Max",
+      "clearAll": "Alle löschen",
+      "apply": "Filter anwenden"
+    },
+    "sort": {
+      "recentlyUpdated": "Kürzlich aktualisiert",
+      "oldestUpdated": "Älteste aktualisiert",
+      "recentlyCreated": "Kürzlich erstellt",
+      "oldestCreated": "Älteste erstellt",
+      "highestTotal": "Höchste Summe",
+      "lowestTotal": "Niedrigste Summe",
+      "mostItems": "Meiste Artikel",
+      "fewestItems": "Wenigste Artikel"
+    },
+    "detail": {
+      "customerInfo": "Kundeninformationen",
+      "userId": "Benutzer-ID",
+      "customerId": "Kunden-ID",
+      "companyId": "Unternehmen",
+      "timeline": "Zeitleiste",
+      "created": "Erstellt",
+      "updated": "Zuletzt aktualisiert",
+      "expires": "Läuft ab",
+      "notes": "Notizen",
+      "items": "Warenkorbartikel",
+      "summary": "Bestellübersicht",
+      "subtotal": "Zwischensumme",
+      "discount": "Rabatt",
+      "tax": "Steuer",
+      "shipping": "Versand",
+      "total": "Gesamt",
+      "itemCount": "Artikel",
+      "uniqueItems": "einzigartige"
+    },
+    "actions": {
+      "refresh": "Aktualisieren",
+      "export": "Exportieren",
+      "convertToOrder": "In Bestellung umwandeln",
+      "delete": "Löschen",
+      "removeItem": "Artikel entfernen",
+      "updateQuantity": "Menge aktualisieren",
+      "selectCart": "Wählen Sie einen Warenkorb aus, um Details anzuzeigen"
+    },
+    "messages": {
+      "updateSuccess": "Warenkorb erfolgreich aktualisiert",
+      "updateError": "Warenkorb konnte nicht aktualisiert werden",
+      "deleteSuccess": "Warenkorb erfolgreich gelöscht",
+      "deleteError": "Warenkorb konnte nicht gelöscht werden",
+      "exportSuccess": "Warenkorb erfolgreich exportiert",
+      "exportError": "Warenkorb konnte nicht exportiert werden",
+      "convertSuccess": "Warenkorb erfolgreich in Bestellung umgewandelt",
+      "convertError": "Warenkorb konnte nicht in Bestellung umgewandelt werden",
+      "itemUnavailable": "Dieser Artikel ist derzeit nicht verfügbar"
+    }
+  }
+}

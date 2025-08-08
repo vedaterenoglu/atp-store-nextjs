@@ -27,6 +27,7 @@ import enProducts from './locales/en/products.json'
 import enFavorites from './locales/en/favorites.json'
 import enAboutUs from './locales/en/aboutUs.json'
 import enCampaign from './locales/en/campaign.json'
+import enCart from './locales/en/cart.json'
 import enAdmin from '../../../public/locales/en/admin.json'
 
 import svCommon from './locales/sv/common.json'
@@ -37,6 +38,7 @@ import svProducts from './locales/sv/products.json'
 import svFavorites from './locales/sv/favorites.json'
 import svAboutUs from './locales/sv/aboutUs.json'
 import svCampaign from './locales/sv/campaign.json'
+import svCart from './locales/sv/cart.json'
 import svAdmin from '../../../public/locales/sv/admin.json'
 
 import trCommon from './locales/tr/common.json'
@@ -47,6 +49,7 @@ import trProducts from './locales/tr/products.json'
 import trFavorites from './locales/tr/favorites.json'
 import trAboutUs from './locales/tr/aboutUs.json'
 import trCampaign from './locales/tr/campaign.json'
+import trCart from './locales/tr/cart.json'
 import trAdmin from '../../../public/locales/tr/admin.json'
 
 import daCommon from './locales/da/common.json'
@@ -57,6 +60,7 @@ import daProducts from './locales/da/products.json'
 import daFavorites from './locales/da/favorites.json'
 import daAboutUs from './locales/da/aboutUs.json'
 import daCampaign from './locales/da/campaign.json'
+import daCart from './locales/da/cart.json'
 import daAdmin from '../../../public/locales/da/admin.json'
 
 import deCommon from './locales/de/common.json'
@@ -67,6 +71,7 @@ import deProducts from './locales/de/products.json'
 import deFavorites from './locales/de/favorites.json'
 import deAboutUs from './locales/de/aboutUs.json'
 import deCampaign from './locales/de/campaign.json'
+import deCart from './locales/de/cart.json'
 import deAdmin from '../../../public/locales/de/admin.json'
 
 export const defaultNS = 'common'
@@ -80,6 +85,7 @@ export const resources = {
     favorites: enFavorites,
     aboutUs: enAboutUs,
     campaign: enCampaign,
+    cart: enCart,
     admin: enAdmin,
   },
   sv: {
@@ -91,6 +97,7 @@ export const resources = {
     favorites: svFavorites,
     aboutUs: svAboutUs,
     campaign: svCampaign,
+    cart: svCart,
     admin: svAdmin,
   },
   tr: {
@@ -102,6 +109,7 @@ export const resources = {
     favorites: trFavorites,
     aboutUs: trAboutUs,
     campaign: trCampaign,
+    cart: trCart,
     admin: trAdmin,
   },
   da: {
@@ -113,6 +121,7 @@ export const resources = {
     favorites: daFavorites,
     aboutUs: daAboutUs,
     campaign: daCampaign,
+    cart: daCart,
     admin: daAdmin,
   },
   de: {
@@ -124,6 +133,7 @@ export const resources = {
     favorites: deFavorites,
     aboutUs: deAboutUs,
     campaign: deCampaign,
+    cart: deCart,
     admin: deAdmin,
   },
 } as const
@@ -168,6 +178,7 @@ export const initI18n = async () => {
         'favorites',
         'aboutUs',
         'campaign',
+        'cart',
         'admin',
       ],
       resources,

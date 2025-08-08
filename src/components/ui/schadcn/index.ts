@@ -26,7 +26,18 @@ export { Label } from './label'
 
 export { Textarea } from './textarea'
 
-export { Select } from './select'
+export {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectScrollDownButton,
+  SelectScrollUpButton,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from './select'
 
 // UI components
 export {
@@ -76,3 +87,35 @@ export {
   TooltipContent,
   TooltipProvider,
 } from './tooltip'
+
+// Layout components
+export { Separator } from './separator'
+
+export { ScrollArea, ScrollBar } from './scroll-area'
+
+export {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from './resizable'
+
+// Overlay components
+export {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverAnchor,
+} from './popover'
+
+export {
+  Dialog,
+  DialogPortal,
+  DialogOverlay,
+  DialogClose,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from './dialog'

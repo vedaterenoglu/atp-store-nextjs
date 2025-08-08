@@ -1,0 +1,81 @@
+{
+  "cart": {
+    "title": "Kurvadministration",
+    "subtitle": "Administrer kundekurve og genoprette forladte kurve",
+    "empty": {
+      "title": "Ingen kurve fundet",
+      "description": "Der er ingen kurve der matcher dine kriterier",
+      "action": "Ryd filtre"
+    },
+    "status": {
+      "active": "Aktiv",
+      "pending": "Afventende",
+      "checkedOut": "Tjekket ud",
+      "abandoned": "Forladt",
+      "expired": "Udløbet"
+    },
+    "filter": {
+      "title": "Filtre",
+      "search": "Søg efter bruger, kunde eller virksomhed...",
+      "status": "Filtrer efter status",
+      "dateRange": "Datoområde",
+      "totalRange": "Total område",
+      "from": "Fra",
+      "to": "Til",
+      "min": "Min",
+      "max": "Maks",
+      "clearAll": "Ryd alle",
+      "apply": "Anvend filtre"
+    },
+    "sort": {
+      "recentlyUpdated": "Senest opdateret",
+      "oldestUpdated": "Ældst opdateret",
+      "recentlyCreated": "Senest oprettet",
+      "oldestCreated": "Ældst oprettet",
+      "highestTotal": "Højeste total",
+      "lowestTotal": "Laveste total",
+      "mostItems": "Flest elementer",
+      "fewestItems": "Færrest elementer"
+    },
+    "detail": {
+      "customerInfo": "Kundeoplysninger",
+      "userId": "Bruger ID",
+      "customerId": "Kunde ID",
+      "companyId": "Virksomhed",
+      "timeline": "Tidslinje",
+      "created": "Oprettet",
+      "updated": "Sidst opdateret",
+      "expires": "Udløber",
+      "notes": "Noter",
+      "items": "Kurvelementer",
+      "summary": "Ordreoversigt",
+      "subtotal": "Subtotal",
+      "discount": "Rabat",
+      "tax": "Skat",
+      "shipping": "Forsendelse",
+      "total": "Total",
+      "itemCount": "Elementer",
+      "uniqueItems": "unikke"
+    },
+    "actions": {
+      "refresh": "Opdater",
+      "export": "Eksporter",
+      "convertToOrder": "Konverter til ordre",
+      "delete": "Slet",
+      "removeItem": "Fjern element",
+      "updateQuantity": "Opdater antal",
+      "selectCart": "Vælg en kurv for at se detaljer"
+    },
+    "messages": {
+      "updateSuccess": "Kurv opdateret succesfuldt",
+      "updateError": "Kunne ikke opdatere kurv",
+      "deleteSuccess": "Kurv slettet succesfuldt",
+      "deleteError": "Kunne ikke slette kurv",
+      "exportSuccess": "Kurv eksporteret succesfuldt",
+      "exportError": "Kunne ikke eksportere kurv",
+      "convertSuccess": "Kurv konverteret til ordre succesfuldt",
+      "convertError": "Kunne ikke konvertere kurv til ordre",
+      "itemUnavailable": "Dette element er i øjeblikket ikke tilgængeligt"
+    }
+  }
+}

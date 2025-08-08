@@ -20,6 +20,7 @@ import {
   ThemeInitializer,
   I18nProvider,
   ClerkLocaleProvider,
+  CartProvider,
 } from '@/components/providers'
 import { AppLayout } from '@/components/layout'
 import { ApolloWrapper } from '@/lib/apollo/ApolloWrapper'
@@ -54,9 +55,11 @@ export default function RootLayout({
         <ClerkLocaleProvider>
           <ThemeInitializer />
           <I18nProvider>
-            <ApolloWrapper>
-              <AppLayout>{children}</AppLayout>
-            </ApolloWrapper>
+            <CartProvider>
+              <ApolloWrapper>
+                <AppLayout>{children}</AppLayout>
+              </ApolloWrapper>
+            </CartProvider>
             <Toaster
               position="bottom-left"
               toastOptions={{

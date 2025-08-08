@@ -12,16 +12,17 @@ import { Button } from '@/components/ui/schadcn/button'
 import { ShoppingCart } from 'lucide-react'
 import { QuantityCounter } from '../atoms'
 import { useTranslation } from 'react-i18next'
+import type { CampaignProduct } from '@/types/campaign'
 
 interface CardActionsProps {
-  stockId: string
+  product: CampaignProduct
   disabled?: boolean
-  onAddToCart?: (stockId: string, quantity: number) => void
+  onAddToCart?: (product: CampaignProduct, quantity: number) => void
   className?: string
 }
 
 export function CardActions({
-  stockId,
+  product,
   disabled = false,
   onAddToCart,
   className = '',
@@ -39,7 +40,7 @@ export function CardActions({
 
   const handleAddToCart = () => {
     if (onAddToCart && quantity > 0) {
-      onAddToCart(stockId, quantity)
+      onAddToCart(product, quantity)
       // Reset quantity after adding to cart
       setQuantity(0)
     }

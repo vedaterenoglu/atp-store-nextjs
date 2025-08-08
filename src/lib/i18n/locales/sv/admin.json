@@ -1,0 +1,81 @@
+{
+  "cart": {
+    "title": "Kundvagnshantering",
+    "subtitle": "Hantera kundvagnar och övergivna vagnar",
+    "empty": {
+      "title": "Inga kundvagnar hittades",
+      "description": "Det finns inga kundvagnar som matchar dina kriterier",
+      "action": "Rensa filter"
+    },
+    "status": {
+      "active": "Aktiv",
+      "pending": "Väntande",
+      "checkedOut": "Utcheckad",
+      "abandoned": "Övergiven",
+      "expired": "Utgången"
+    },
+    "filter": {
+      "title": "Filter",
+      "search": "Sök efter användare, kund eller företag...",
+      "status": "Filtrera efter status",
+      "dateRange": "Datumintervall",
+      "totalRange": "Totalintervall",
+      "from": "Från",
+      "to": "Till",
+      "min": "Min",
+      "max": "Max",
+      "clearAll": "Rensa alla",
+      "apply": "Tillämpa filter"
+    },
+    "sort": {
+      "recentlyUpdated": "Senast uppdaterad",
+      "oldestUpdated": "Äldst uppdaterad",
+      "recentlyCreated": "Senast skapad",
+      "oldestCreated": "Äldst skapad",
+      "highestTotal": "Högsta total",
+      "lowestTotal": "Lägsta total",
+      "mostItems": "Flest artiklar",
+      "fewestItems": "Minst artiklar"
+    },
+    "detail": {
+      "customerInfo": "Kundinformation",
+      "userId": "Användar-ID",
+      "customerId": "Kund-ID",
+      "companyId": "Företag",
+      "timeline": "Tidslinje",
+      "created": "Skapad",
+      "updated": "Senast uppdaterad",
+      "expires": "Utgår",
+      "notes": "Anteckningar",
+      "items": "Kundvagnsartiklar",
+      "summary": "Ordersammanfattning",
+      "subtotal": "Delsumma",
+      "discount": "Rabatt",
+      "tax": "Moms",
+      "shipping": "Frakt",
+      "total": "Totalt",
+      "itemCount": "Artiklar",
+      "uniqueItems": "unika"
+    },
+    "actions": {
+      "refresh": "Uppdatera",
+      "export": "Exportera",
+      "convertToOrder": "Konvertera till order",
+      "delete": "Ta bort",
+      "removeItem": "Ta bort artikel",
+      "updateQuantity": "Uppdatera antal",
+      "selectCart": "Välj en kundvagn för att visa detaljer"
+    },
+    "messages": {
+      "updateSuccess": "Kundvagn uppdaterad",
+      "updateError": "Kunde inte uppdatera kundvagn",
+      "deleteSuccess": "Kundvagn borttagen",
+      "deleteError": "Kunde inte ta bort kundvagn",
+      "exportSuccess": "Kundvagn exporterad",
+      "exportError": "Kunde inte exportera kundvagn",
+      "convertSuccess": "Kundvagn konverterad till order",
+      "convertError": "Kunde inte konvertera kundvagn till order",
+      "itemUnavailable": "Denna artikel är för närvarande inte tillgänglig"
+    }
+  }
+}

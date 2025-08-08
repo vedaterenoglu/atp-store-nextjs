@@ -26,3 +26,13 @@ export type { SupportedLanguage } from './language.store'
 
 // Category search prefix store
 export { useCategorySearchStore } from './category-search.store'
+
+// Cart management store
+export {
+  useCartStore,
+  useCartItem,
+  useCartSummary,
+  useCartItems,
+  useCartCount,
+  useIsCartEmpty,
+} from './cart.store'

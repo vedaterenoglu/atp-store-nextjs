@@ -1,74 +1,174 @@
 {
-  "hero": {
-    "title": "Om ATP Store",
-    "subtitle": "Din betroede partner for kvalitets tissue papir produkter",
-    "description": "Vi har leveret premium tissue papir løsninger til virksomheder og forbrugere siden 2010"
+  "title": "Om ATP Store",
+  "subtitle": "Førende leverandør af professionelle produkter og tjenester, dedikeret til at styrke virksomheder med kvalitetsløsninger siden 2011.",
+  "slider": {
+    "slides": [
+      {
+        "title": "Velkommen til ATP Store",
+        "subtitle": "Din betroede forretningspartner siden 2011"
+      },
+      {
+        "title": "Strømlinet bestilling",
+        "subtitle": "Effektiv ordrebehandling for din virksomhed"
+      },
+      {
+        "title": "Professionel ekspertise",
+        "subtitle": "Komplette kontorforsyningsløsninger"
+      },
+      {
+        "title": "Omfattende lager",
+        "subtitle": "Stort lager til omgående levering"
+      },
+      {
+        "title": "Pålidelig logistik",
+        "subtitle": "Rettidig levering med vores flåde"
+      },
+      {
+        "title": "Effektiv drift",
+        "subtitle": "Hurtig og sikker læsseproces"
+      },
+      {
+        "title": "Global rækkevidde",
+        "subtitle": "Betjener virksomheder i flere lande"
+      },
+      {
+        "title": "Hurtig forsendelse",
+        "subtitle": "Hurtig behandling og forsendelsestjenester"
+      }
+    ]
   },
   "mission": {
-    "title": "Vores Mission",
-    "description": "At levere exceptionel kvalitet og bæredygtige tissue papir produkter der forbedrer hverdagskomfort og hygiejne for vores kunder."
+    "title": "Vores mission",
+    "paragraph1": "Hos ATP Store er vi forpligtet til at levere exceptionelle produkter og tjenester, der hjælper virksomheder med at trives. Vores mission er at være den mest betroede partner for virksomheder, der søger kvalitet, pålidelighed og innovation i deres forsyningskædeløsninger.",
+    "paragraph2": "Med årtiers erfaring og en dyb forståelse af forskellige industrier har vi opbygget stærke relationer med førende producenter og leverandører verden over. Dette gør os i stand til at tilbyde konkurrencedygtige priser, hurtig levering og uovertruffen kundeservice."
+  },
+  "history": {
+    "title": "Vores historie",
+    "paragraphs": [
+      "Grundlagt i 2011 med ydmyge begyndelser i Malmö, har Alfe Tissue Paper påbegyndt en ekstraordinær rejse, der nu har ført os til at etablere vores hovedkontor i den levende by Lund. Som et firma dybt forpligtet til ekspertise og kundetilfredshed, er vi stolte af at tilbyde skræddersyede løsninger, der imødekommer vores værdsatte kunders unikke behov. Vores succes kan tilskrives vores omfattende netværk, der strækker sig både inden for vores hjemland og ud over dets grænser, hvilket gør os i stand til at levere exceptionel service både nationalt og internationalt.",
+      "I hjertet af vores drift ligger vores ekspertise inden for emballageindustrien. Med en flåde af dedikerede køretøjer tilbyder vi leveringstjenester til vores værdsatte kunder i Skåne. Vores mission er enkel, men dybt hjertefelt - at levere service af høj kvalitet med urokkelig forpligtelse. Gennem regelmæssige besøg hos vores kunder, mindst en gang om ugen, stræber vi efter at sikre, at vores tilbud opfylder deres krav og overgår deres forventninger.",
+      "I Skåne fokuserer vi primært på to væsentlige kategorier: fødevareemballage og hygiejnepapir. Vores dedikation til at sikre sikker levering af væsentlige varer til forskellige etablissementer adskiller os i branchen. Vi finder stor tilfredsstillelse i at betjene hoteller, hvor bekvemmelighed og praktisk anvendelighed er af afgørende betydning, såvel som restauranter, hvor præsentation og konservering er afgørende faktorer.",
+      "Desuden tilbyder vi vores tjenester til charmerende caféer, der er blevet en integreret del af Skånes sociale struktur, hvor emballagekvalitet komplementerer de lækkerier, de serverer. Vores tilbud er også skræddersyet til professionelle cateringtjenester, hvor effektivitet og pålidelighed er afgørende for en problemfri oplevelse. Lad os ikke glemme de livlige bagerier, hvor emballagens friskhed og hygiejne er afgørende for at bevare de lækre smage.",
+      "Vores forpligtelse slutter ikke i Skåne; den danner grundlaget for vores fremtidige bestræbelser. Vores vision er forankret i positiv vækst og urokkelig rentabilitet. Vi stræber efter at udvide vores horisonter og rækkevidde for at gøre vores exceptionelle produkter let tilgængelige for kunder over hele Sverige. Mens vi begiver os ud på denne ambitiøse rejse, forbliver vi tro mod vores kerneværdier: integritet, kundefokus og innovation."
+    ]
   },
   "values": {
-    "title": "Vores Værdier",
-    "quality": {
-      "title": "Kvalitet",
-      "description": "Vi går aldrig på kompromis med produktkvalitet og sikrer de højeste standarder i hver eneste produkt."
-    },
-    "sustainability": {
-      "title": "Bæredygtighed",
-      "description": "Forpligtet til miljøvenlige praksisser og bæredygtige indkøbsmetoder."
-    },
-    "innovation": {
-      "title": "Innovation",
-      "description": "Konstant innoverende for at møde udviklende kundebehov og markedstrends."
-    },
-    "service": {
-      "title": "Service",
-      "description": "Dedikeret til at levere exceptionel kundeservice og support."
+    "title": "Vores værdier",
+    "items": {
+      "integrity": {
+        "label": "Integritet",
+        "description": "Vi driver forretning med ærlighed og gennemsigtighed"
+      },
+      "innovation": {
+        "label": "Innovation",
+        "description": "Vi forbedrer løbende vores produkter og tjenester"
+      },
+      "customerFocus": {
+        "label": "Kundefokus",
+        "description": "Din succes er vores prioritet"
+      },
+      "sustainability": {
+        "label": "Bæredygtighed",
+        "description": "Vi bekymrer os om vores miljømæssige påvirkning"
+      }
     }
   },
-  "stats": {
-    "yearsInBusiness": "År i Branchen",
-    "happyCustomers": "Tilfredse Kunder",
-    "productsAvailable": "Tilgængelige Produkter",
-    "countriesServed": "Betjente Lande"
+  "features": {
+    "expertTeam": {
+      "title": "Ekspertteam",
+      "description": "Dygtige fagfolk med års ekspertise, der arbejder sammen for at betjene dine forretningsbehov og levere exceptionelle resultater, der overgår forventningerne."
+    },
+    "globalPresence": {
+      "title": "Global tilstedeværelse",
+      "description": "Opererer i 3 lande med lokal ekspertise og globale standarder"
+    },
+    "qualityAssured": {
+      "title": "Kvalitetssikret",
+      "description": "Urokkelig forpligtelse til ekspertise og kvalitet i hvert produkt vi leverer"
+    },
+    "trustedPartner": {
+      "title": "Betroet partner",
+      "description": "Betjener over 600 tilfredse virksomheder verden over"
+    }
   },
-  "team": {
-    "title": "Mød Vores Team",
-    "description": "Dedikerede professionelle forpligtet til din tilfredshed"
+  "location": {
+    "title": "Vores placering"
   },
   "contact": {
-    "title": "Kontakt Os",
-    "description": "Vi vil gerne høre fra dig",
+    "title": "Kontakt os",
+    "info": {
+      "title": "Kom i kontakt",
+      "description": "Vi er her for at hjælpe! Kontakt os gennem en af følgende kanaler, og vi vender tilbage så hurtigt som muligt.",
+      "address": {
+        "title": "Adresse",
+        "company": "Alfe Tissue Paper AB.",
+        "street": "Maskinvägen 1 Port 8",
+        "postal": "227 30 Lund",
+        "country": "Skåne Sverige"
+      },
+      "orderReception": {
+        "title": "Ordremodtagelse",
+        "whatsapp": "WhatsApp"
+      },
+      "customerService": {
+        "title": "Kundeservice",
+        "whatsapp": "WhatsApp"
+      },
+      "email": {
+        "title": "E-mail"
+      },
+      "hours": {
+        "title": "Åbningstider",
+        "weekdays": "Mandag - Fredag: 08:00 - 16:00",
+        "weekend": "Lørdag - Søndag: Lukket"
+      },
+      "website": {
+        "title": "Hjemmeside"
+      },
+      "social": {
+        "title": "Følg os"
+      }
+    },
     "form": {
-      "name": "Dit Navn",
-      "email": "Din E-mail",
-      "subject": "Emne",
-      "message": "Besked",
-      "send": "Send Besked",
-      "sending": "Sender...",
-      "success": "Besked sendt succesfuldt!",
-      "error": "Kunne ikke sende besked. Prøv venligst igen.",
+      "title": "Send os en besked",
+      "description": "Udfyld formularen nedenfor, og vi svarer så hurtigt som muligt.",
       "fields": {
+        "name": {
+          "label": "Navn",
+          "placeholder": "Dit navn"
+        },
+        "email": {
+          "label": "E-mail",
+          "placeholder": "din@email.com"
+        },
+        "phone": {
+          "label": "Telefon",
+          "placeholder": "+46 70 123 4567"
+        },
+        "subject": {
+          "label": "Emne",
+          "placeholder": "Hvordan kan vi hjælpe dig?",
+          "options": {
+            "general": "Generel forespørgsel",
+            "sales": "Salgsspørgsmål",
+            "support": "Teknisk support",
+            "partnership": "Partnerskab",
+            "feedback": "Feedback"
+          }
+        },
         "customerId": {
           "label": "Kunde-ID",
           "helper": "Dit firmas registreringsnummer"
+        },
+        "message": {
+          "label": "Besked",
+          "placeholder": "Fortæl os mere om din forespørgsel..."
         }
-      }
-    },
-    "info": {
-      "address": "Adresse",
-      "phone": "Telefon",
-      "email": "E-mail",
-      "hours": "Åbningstider",
-      "weekdays": "Mandag - Fredag: 9:00 - 18:00",
-      "weekend": "Lørdag - Søndag: 10:00 - 16:00"
+      },
+      "submit": "Send besked",
+      "sending": "Sender...",
+      "success": "Besked sendt succesfuldt! Vi vender tilbage snart.",
+      "error": "Kunne ikke sende besked. Prøv venligst igen senere."
     }
-  },
-  "cta": {
-    "title": "Klar til at komme i gang?",
-    "description": "Gennemse vores omfattende udvalg af kvalitets tissue papir produkter",
-    "browseProducts": "Gennemse Produkter",
-    "contactSales": "Kontakt Salg"
   }
 }

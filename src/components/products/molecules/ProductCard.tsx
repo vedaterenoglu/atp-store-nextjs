@@ -15,8 +15,10 @@ import { cn } from '@/lib/utils'
 import { PriceTag } from '@/components/products'
 import { BookmarkButton } from '@/components/ui/custom'
 import { useBookmarkStore } from '@/lib/stores/bookmark-store'
+import { useCartStore } from '@/lib/stores/cart.store'
 import { useAuth, useUser } from '@clerk/nextjs'
-import { Minus, Plus } from 'lucide-react'
+import { Minus, Plus, ShoppingCart } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface ProductCardProps {
   id: string
@@ -43,6 +45,11 @@ export function ProductCard({
   const [quantity, setQuantity] = useState(0)
   const { isSignedIn, sessionClaims } = useAuth()
   const { user } = useUser()
+
+  // Get cart state from Zustand store
+  const addToCart = useCartStore(state => state.addToCart)
+  const cartItem = useCartStore(state => state.findCartItem(id))
+  const cartQuantity = cartItem?.quantity || 0
 
   // Get bookmark state from Zustand store
   const {
@@ -111,8 +118,23 @@ export function ProductCard({
 
   const handleAddToCart = () => {
     if (quantity > 0) {
-      // TODO: Implement add to cart functionality
-      // Will be implemented when cart functionality is added
+      try {
+        addToCart(
+          id,
+          name,
+          price,
+          quantity,
+          imageUrl,
+          categoryId, // using categoryId as productGroup
+          unit,
+          99 // max quantity
+        )
+        toast.success(`Added ${quantity} ${name} to cart`)
+        setQuantity(0) // Reset quantity after adding
+      } catch (error) {
+        toast.error('Failed to add to cart')
+        console.error('Error adding to cart:', error)
+      }
     }
   }
 
@@ -206,7 +228,14 @@ export function ProductCard({
             }}
             disabled={quantity === 0}
           >
-            {t('productCard.addToCart')}
+            {cartQuantity > 0 ? (
+              <>
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                {t('productCard.addToCart')} ({cartQuantity} in cart)
+              </>
+            ) : (
+              t('productCard.addToCart')
+            )}
           </Button>
         </div>
       </div>

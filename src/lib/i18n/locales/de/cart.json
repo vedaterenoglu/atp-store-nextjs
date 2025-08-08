@@ -1,0 +1,44 @@
+{
+  "title": "Warenkorb",
+  "emptyCart": {
+    "title": "Ihr Warenkorb ist leer",
+    "description": "Es sieht so aus, als hätten Sie noch keine Artikel zu Ihrem Warenkorb hinzugefügt",
+    "action": "Weiter einkaufen"
+  },
+  "summary": {
+    "title": "Bestellübersicht",
+    "items": "Artikel",
+    "item": "Artikel",
+    "items_plural": "Artikel",
+    "unique": "einzigartig",
+    "subtotal": "Zwischensumme",
+    "discount": "Rabatt",
+    "tax": "Steuer",
+    "shipping": "Versand",
+    "total": "Gesamt",
+    "includingVat": "Inklusive MwSt."
+  },
+  "actions": {
+    "continueShopping": "Weiter einkaufen",
+    "submitOrder": "Bestellung absenden",
+    "processing": "Verarbeitung...",
+    "remove": "Entfernen",
+    "updateQuantity": "Menge aktualisieren"
+  },
+  "messages": {
+    "cartUpdated": "Warenkorb aktualisiert",
+    "itemRemoved": "Artikel aus Warenkorb entfernt",
+    "checkoutSuccess": "Zahlung erfolgreich!",
+    "checkoutFailed": "Zahlung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "checkoutError": "Bei der Zahlung ist ein Fehler aufgetreten",
+    "updateFailed": "Menge konnte nicht aktualisiert werden",
+    "removeFailed": "Artikel konnte nicht entfernt werden"
+  },
+  "product": {
+    "inStock": "Auf Lager",
+    "outOfStock": "Ausverkauft",
+    "price": "Preis",
+    "quantity": "Menge",
+    "total": "Gesamt"
+  }
+}

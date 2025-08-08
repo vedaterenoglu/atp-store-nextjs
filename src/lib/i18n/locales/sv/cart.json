@@ -1,0 +1,44 @@
+{
+  "title": "Kundvagn",
+  "emptyCart": {
+    "title": "Din kundvagn är tom",
+    "description": "Det verkar som att du inte har lagt till några varor i din kundvagn än",
+    "action": "Fortsätt handla"
+  },
+  "summary": {
+    "title": "Ordersammanfattning",
+    "items": "Artiklar",
+    "item": "artikel",
+    "items_plural": "artiklar",
+    "unique": "unika",
+    "subtotal": "Delsumma",
+    "discount": "Rabatt",
+    "tax": "Moms",
+    "shipping": "Frakt",
+    "total": "Totalt",
+    "includingVat": "Inklusive moms"
+  },
+  "actions": {
+    "continueShopping": "Fortsätt handla",
+    "submitOrder": "Skicka beställning",
+    "processing": "Bearbetar...",
+    "remove": "Ta bort",
+    "updateQuantity": "Uppdatera antal"
+  },
+  "messages": {
+    "cartUpdated": "Kundvagn uppdaterad",
+    "itemRemoved": "Artikel borttagen från kundvagn",
+    "checkoutSuccess": "Beställning genomförd!",
+    "checkoutFailed": "Beställning misslyckades. Försök igen.",
+    "checkoutError": "Ett fel uppstod vid beställning",
+    "updateFailed": "Kunde inte uppdatera antal",
+    "removeFailed": "Kunde inte ta bort artikel"
+  },
+  "product": {
+    "inStock": "I lager",
+    "outOfStock": "Slut i lager",
+    "price": "Pris",
+    "quantity": "Antal",
+    "total": "Totalt"
+  }
+}

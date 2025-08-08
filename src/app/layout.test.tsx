@@ -31,6 +31,11 @@ import RootLayout, { metadata } from './layout'
 // Mock CSS import
 jest.mock('./globals.css', () => ({}))
 
+// Mock sonner
+jest.mock('sonner', () => ({
+  Toaster: jest.fn(() => null),
+}))
+
 // Mock all provider components
 jest.mock('@/components/providers', () => ({
   ThemeInitializer: jest.fn(() => null),
@@ -42,6 +47,16 @@ jest.mock('@/components/providers', () => ({
       <div data-testid="clerk-locale-provider">{children}</div>
     )
   ),
+  CartProvider: jest.fn(({ children }: { children: React.ReactNode }) => (
+    <div data-testid="cart-provider">{children}</div>
+  )),
+}))
+
+// Mock ApolloWrapper
+jest.mock('@/lib/apollo/ApolloWrapper', () => ({
+  ApolloWrapper: jest.fn(({ children }: { children: React.ReactNode }) => (
+    <div data-testid="apollo-wrapper">{children}</div>
+  )),
 }))
 
 // Mock AppLayout component
@@ -161,9 +176,11 @@ describe('RootLayout', () => {
 
   it('should pass children prop correctly through all providers', () => {
     const providers = jest.requireMock('@/components/providers')
-    const { I18nProvider, ClerkLocaleProvider } = providers
+    const { I18nProvider, ClerkLocaleProvider, CartProvider } = providers
     const layout = jest.requireMock('@/components/layout')
     const { AppLayout } = layout
+    const apollo = jest.requireMock('@/lib/apollo/ApolloWrapper')
+    const { ApolloWrapper } = apollo
 
     const { element } = renderLayout(mockChildren)
     const bodyElement = React.Children.toArray(element.props.children).find(
@@ -176,6 +193,8 @@ describe('RootLayout', () => {
     // Verify each provider was called
     expect(ClerkLocaleProvider).toHaveBeenCalled()
     expect(I18nProvider).toHaveBeenCalled()
+    expect(CartProvider).toHaveBeenCalled()
+    expect(ApolloWrapper).toHaveBeenCalled()
     expect(AppLayout).toHaveBeenCalled()
 
     // Verify AppLayout receives the mock children

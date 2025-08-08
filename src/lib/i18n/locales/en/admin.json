@@ -1,0 +1,81 @@
+{
+  "cart": {
+    "title": "Cart Management",
+    "subtitle": "Manage customer carts and abandoned cart recovery",
+    "empty": {
+      "title": "No carts found",
+      "description": "There are no carts matching your criteria",
+      "action": "Clear filters"
+    },
+    "status": {
+      "active": "Active",
+      "pending": "Pending",
+      "checkedOut": "Checked Out",
+      "abandoned": "Abandoned",
+      "expired": "Expired"
+    },
+    "filter": {
+      "title": "Filters",
+      "search": "Search by user, customer, or company...",
+      "status": "Filter by Status",
+      "dateRange": "Date Range",
+      "totalRange": "Total Range",
+      "from": "From",
+      "to": "To",
+      "min": "Min",
+      "max": "Max",
+      "clearAll": "Clear All",
+      "apply": "Apply Filters"
+    },
+    "sort": {
+      "recentlyUpdated": "Recently Updated",
+      "oldestUpdated": "Oldest Updated",
+      "recentlyCreated": "Recently Created",
+      "oldestCreated": "Oldest Created",
+      "highestTotal": "Highest Total",
+      "lowestTotal": "Lowest Total",
+      "mostItems": "Most Items",
+      "fewestItems": "Fewest Items"
+    },
+    "detail": {
+      "customerInfo": "Customer Information",
+      "userId": "User ID",
+      "customerId": "Customer ID",
+      "companyId": "Company",
+      "timeline": "Timeline",
+      "created": "Created",
+      "updated": "Last updated",
+      "expires": "Expires",
+      "notes": "Notes",
+      "items": "Cart Items",
+      "summary": "Order Summary",
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "tax": "Tax",
+      "shipping": "Shipping",
+      "total": "Total",
+      "itemCount": "Items",
+      "uniqueItems": "unique"
+    },
+    "actions": {
+      "refresh": "Refresh",
+      "export": "Export",
+      "convertToOrder": "Convert to Order",
+      "delete": "Delete",
+      "removeItem": "Remove item",
+      "updateQuantity": "Update quantity",
+      "selectCart": "Select a cart to view details"
+    },
+    "messages": {
+      "updateSuccess": "Cart updated successfully",
+      "updateError": "Failed to update cart",
+      "deleteSuccess": "Cart deleted successfully",
+      "deleteError": "Failed to delete cart",
+      "exportSuccess": "Cart exported successfully",
+      "exportError": "Failed to export cart",
+      "convertSuccess": "Cart converted to order successfully",
+      "convertError": "Failed to convert cart to order",
+      "itemUnavailable": "This item is currently unavailable"
+    }
+  }
+}

@@ -19,7 +19,7 @@
     "edit": "Rediger",
     "create": "Opret",
     "search": "Søg",
-    "filter": "Filtrer",
+    "filter": "Filter",
     "sort": "Sorter",
     "view": "Vis",
     "close": "Luk",
@@ -27,7 +27,7 @@
     "back": "Tilbage",
     "next": "Næste",
     "previous": "Forrige",
-    "submit": "Indsend",
+    "submit": "Send",
     "add": "Tilføj",
     "remove": "Fjern",
     "update": "Opdater",
@@ -44,8 +44,6 @@
     "en": "Engelsk",
     "sv": "Svensk",
     "tr": "Tyrkisk",
-    "da": "Dansk",
-    "de": "Tysk",
     "selectLanguage": "Vælg sprog"
   },
   "status": {
@@ -53,63 +51,69 @@
     "error": "Fejl",
     "success": "Succes",
     "warning": "Advarsel",
-    "info": "Information",
-    "pending": "Afventer",
-    "completed": "Fuldført",
-    "failed": "Fejlet"
-  },
-  "messages": {
-    "welcome": "Velkommen",
-    "goodbye": "Farvel",
-    "thankYou": "Tak",
-    "sorry": "Beklager",
-    "pleaseWait": "Vent venligst",
+    "info": "Info",
     "noData": "Ingen data tilgængelig",
-    "noResults": "Ingen resultater fundet",
-    "errorOccurred": "Der opstod en fejl",
-    "tryAgain": "Prøv igen",
-    "contactSupport": "Kontakt support"
+    "notFound": "Ikke fundet",
+    "offline": "Du er offline",
+    "online": "Du er online"
   },
-  "footer": {
-    "copyright": "© 2024 GTBS Coding. Alle rettigheder forbeholdes.",
-    "privacyPolicy": "Privatlivspolitik",
-    "termsOfService": "Servicevilkår",
-    "contactUs": "Kontakt os"
+  "errors": {
+    "generic": "Noget gik galt",
+    "network": "Netværksfejl",
+    "unauthorized": "Uautoriseret",
+    "forbidden": "Forbudt",
+    "notFound": "Ikke fundet",
+    "serverError": "Serverfejl",
+    "timeout": "Anmodning timeout",
+    "validation": "Valideringsfejl"
   },
   "home": {
     "hero": {
-      "title": "Premium Produkter",
+      "title": "Premium produkter",
       "subtitle": "af Alfe Tissue Paper",
-      "description": "Oplev den ultimative kvalitet og komfort med vores premium udvalg af tissue papir produkter.",
-      "browseProducts": "Gennemse Produkter",
-      "aboutUs": "Om Os",
-      "goToCampaignPage": "Gå til Kampagnesiden"
+      "description": "Oplev den perfekte harmoni mellem blødhed, styrke og bæredygtighed. Premium produkter skabt til din café, restaurant, hotel, pizzeria og enhver kræsen virksomhed.",
+      "browseProducts": "Gennemse produkter",
+      "learnMore": "Lær mere",
+      "aboutUs": "Om os",
+      "goToCampaignPage": "Gå til kampagneside"
     },
     "features": {
-      "qualityAssurance": {
-        "title": "Kvalitetsgaranti",
-        "description": "Premium produkter med garanteret kvalitet og kundetilfredshed"
+      "premiumQuality": {
+        "title": "Premium kvalitet",
+        "description": "Fremstillet af de fineste materialer for overlegen blødhed og styrke"
       },
       "fastDelivery": {
-        "title": "Hurtig Levering",
-        "description": "Hurtig og pålidelig levering til din dør"
+        "title": "Hurtig levering",
+        "description": "Hurtig og pålidelig forsendelse til din dør på tværs af Skåne"
       },
-      "customerSupport": {
-        "title": "24/7 Support",
-        "description": "Dedikeret kundesupport klar til at hjælpe når som helst"
+      "trustedBrand": {
+        "title": "Betroet brand",
+        "description": "Betjener kunder med ekspertise og pålidelighed siden etablering"
       },
-      "securePayment": {
-        "title": "Sikker Betaling",
-        "description": "Sikre og krypterede betalingsmuligheder"
+      "ecoFriendly": {
+        "title": "Miljøvenlig",
+        "description": "Forpligtet til bæredygtige praksis og miljøbevidst produktion"
       }
     }
   },
+  "footer": {
+    "copyright": "© {{year}} Alfe Tissue Paper AB. Alle rettigheder forbeholdes.",
+    "createdBy": "Skabt af"
+  },
   "tooltips": {
     "navbar": {
-      "dashboard": "Gå til dashboard",
+      "home": "Gå til hjemmeside",
+      "dashboard": "Kunde dashboard",
+      "cart": "Se indkøbskurv",
+      "theme": "Skift tema",
+      "language": "Skift sprog",
       "signIn": "Log ind på din konto",
-      "admin": "Adminpanel",
-      "userMenu": "Brugerindstillinger og konto"
+      "userMenu": "Brugermenu",
+      "admin": "Admin panel"
+    },
+    "footer": {
+      "developerWebsite": "Besøg udvikler hjemmeside",
+      "developerEmail": "Kontakt udvikler"
     }
   }
 }

@@ -1,0 +1,44 @@
+{
+  "title": "Alışveriş Sepeti",
+  "emptyCart": {
+    "title": "Sepetiniz boş",
+    "description": "Henüz sepetinize ürün eklememişsiniz",
+    "action": "Alışverişe Devam Et"
+  },
+  "summary": {
+    "title": "Sipariş Özeti",
+    "items": "Ürünler",
+    "item": "ürün",
+    "items_plural": "ürün",
+    "unique": "benzersiz",
+    "subtotal": "Ara Toplam",
+    "discount": "İndirim",
+    "tax": "KDV",
+    "shipping": "Kargo",
+    "total": "Toplam",
+    "includingVat": "KDV dahil"
+  },
+  "actions": {
+    "continueShopping": "Alışverişe Devam Et",
+    "submitOrder": "Siparişi Gönder",
+    "processing": "İşleniyor...",
+    "remove": "Kaldır",
+    "updateQuantity": "Miktarı güncelle"
+  },
+  "messages": {
+    "cartUpdated": "Sepet güncellendi",
+    "itemRemoved": "Ürün sepetten kaldırıldı",
+    "checkoutSuccess": "Sipariş başarılı!",
+    "checkoutFailed": "Sipariş başarısız. Lütfen tekrar deneyin.",
+    "checkoutError": "Sipariş sırasında bir hata oluştu",
+    "updateFailed": "Miktar güncellenemedi",
+    "removeFailed": "Ürün kaldırılamadı"
+  },
+  "product": {
+    "inStock": "Stokta var",
+    "outOfStock": "Stokta yok",
+    "price": "Fiyat",
+    "quantity": "Miktar",
+    "total": "Toplam"
+  }
+}

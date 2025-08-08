@@ -1,0 +1,44 @@
+{
+  "title": "Shopping Cart",
+  "emptyCart": {
+    "title": "Your cart is empty",
+    "description": "Looks like you haven't added any items to your cart yet",
+    "action": "Continue Shopping"
+  },
+  "summary": {
+    "title": "Order Summary",
+    "items": "Items",
+    "item": "item",
+    "items_plural": "items",
+    "unique": "unique",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "tax": "Tax",
+    "shipping": "Shipping",
+    "total": "Total",
+    "includingVat": "Including VAT"
+  },
+  "actions": {
+    "continueShopping": "Continue Shopping",
+    "submitOrder": "Submit the Order",
+    "processing": "Processing...",
+    "remove": "Remove",
+    "updateQuantity": "Update quantity"
+  },
+  "messages": {
+    "cartUpdated": "Cart updated",
+    "itemRemoved": "Item removed from cart",
+    "checkoutSuccess": "Checkout successful!",
+    "checkoutFailed": "Checkout failed. Please try again.",
+    "checkoutError": "An error occurred during checkout",
+    "updateFailed": "Failed to update quantity",
+    "removeFailed": "Failed to remove item"
+  },
+  "product": {
+    "inStock": "In stock",
+    "outOfStock": "Out of stock",
+    "price": "Price",
+    "quantity": "Quantity",
+    "total": "Total"
+  }
+}

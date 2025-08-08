@@ -127,7 +127,7 @@ describe('ApolloWrapper', () => {
     it('should create HttpLink with environment variables', () => {
       process.env['NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT'] =
         'https://test-endpoint.com/graphql'
-      process.env['NEXT_PUBLIC_HASURA_GRAPHQL_ADMIN_SECRET'] = 'test-secret'
+      process.env['NEXT_PUBLIC_HASURA_ADMIN_SECRET'] = 'test-secret'
 
       render(
         <ApolloWrapper>
@@ -153,7 +153,7 @@ describe('ApolloWrapper', () => {
 
     it('should use default values when environment variables are not set', () => {
       delete process.env['NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT']
-      delete process.env['NEXT_PUBLIC_HASURA_GRAPHQL_ADMIN_SECRET']
+      delete process.env['NEXT_PUBLIC_HASURA_ADMIN_SECRET']
 
       render(
         <ApolloWrapper>
