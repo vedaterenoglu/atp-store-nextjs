@@ -73,9 +73,9 @@ interface MockPriceDisplayProps {
 }
 
 interface MockCardActionsProps {
-  stockId: string
+  product: CampaignProduct
   disabled: boolean
-  onAddToCart?: (stockId: string, quantity: number) => void
+  onAddToCart?: (product: CampaignProduct, quantity: number) => void
   className?: string
 }
 
@@ -111,19 +111,19 @@ jest.mock('../molecules', () => ({
     </div>
   ),
   CardActions: ({
-    stockId,
+    product,
     disabled,
     onAddToCart,
     className,
   }: MockCardActionsProps) => (
     <div
       data-testid="card-actions"
-      data-stock-id={stockId}
+      data-stock-id={product?.stock_id}
       data-disabled={disabled}
       data-has-callback={!!onAddToCart}
       className={className}
     >
-      <button onClick={() => onAddToCart?.(stockId, 1)}>Add to Cart</button>
+      <button onClick={() => onAddToCart?.(product, 1)}>Add to Cart</button>
     </div>
   ),
 }))
@@ -299,7 +299,7 @@ describe('CampaignProductCard', () => {
       const button = screen.getByText('Add to Cart')
       button.click()
 
-      expect(mockOnAddToCart).toHaveBeenCalledWith('PROD-123', 1)
+      expect(mockOnAddToCart).toHaveBeenCalledWith(mockProduct, 1)
     })
   })
 

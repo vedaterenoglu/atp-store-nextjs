@@ -23,7 +23,7 @@ function makeClient() {
       'https://gtbs-crm-backend-app.herokuapp.com/v1/graphql',
     headers: {
       'x-hasura-admin-secret':
-        process.env['NEXT_PUBLIC_HASURA_GRAPHQL_ADMIN_SECRET'] || '',
+        process.env['NEXT_PUBLIC_HASURA_ADMIN_SECRET'] || '',
       'x-hasura-role': 'admin',
     },
   })

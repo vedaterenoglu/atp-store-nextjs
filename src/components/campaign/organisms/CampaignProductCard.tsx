@@ -19,7 +19,7 @@ import type { CampaignProduct } from '@/types/campaign'
 
 interface CampaignProductCardProps {
   product: CampaignProduct
-  onAddToCart?: (stockId: string, quantity: number) => void
+  onAddToCart?: (product: CampaignProduct, quantity: number) => void
   className?: string
 }
 
@@ -66,7 +66,7 @@ export function CampaignProductCard({
       <CardFooter className="p-4 pt-0">
         {/* Action Button */}
         <CardActions
-          stockId={product.stock_id}
+          product={product}
           disabled={false}
           {...(onAddToCart && { onAddToCart })}
           className="w-full"

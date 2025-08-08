@@ -20,7 +20,7 @@ interface CampaignProductsGridProps {
   products?: CampaignProduct[]
   isLoading?: boolean
   error?: Error | null
-  onAddToCart?: (stockId: string, quantity: number) => void
+  onAddToCart?: (product: CampaignProduct, quantity: number) => void
   onRetry?: () => void
   skeletonCount?: number
   className?: string

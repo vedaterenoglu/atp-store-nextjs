@@ -1,42 +1,42 @@
 {
   "page": {
-    "title": "Særlige Kampagner",
-    "description": "Gå ikke glip af vores eksklusive tilbud og tidsbegrænsede kampagner!",
-    "goToAllProducts": "Gå til Alle Produkter"
+    "title": "Særlige kampagner",
+    "description": "Gå ikke glip af vores eksklusive tilbud og tidsbegrænsede tilbud!",
+    "goToAllProducts": "Gå til alle produkter"
   },
   "card": {
-    "addToCart": "Læg i Kurv",
-    "viewDetails": "Se Detaljer",
+    "addToCart": "Tilføj til kurv",
+    "viewDetails": "Se detaljer",
     "outOfStock": "Udsolgt"
   },
   "slider": {
-    "previousSlide": "Forrige slide",
-    "nextSlide": "Næste slide",
-    "goToSlide": "Gå til slide"
+    "previousSlide": "Forrige lysbillede",
+    "nextSlide": "Næste lysbillede",
+    "goToSlide": "Gå til lysbillede"
   },
   "messages": {
     "noCampaigns": "Ingen kampagneprodukter tilgængelige",
     "checkBackSoon": "Kom tilbage snart for spændende kampagnetilbud!",
-    "addedToCart": "Tilføjede {{count}} vare til kurv",
-    "addedToCartPlural": "Tilføjede {{count}} varer til kurv",
+    "addedToCart": "Tilføjede {{count}} vare til kurven",
+    "addedToCartPlural": "Tilføjede {{count}} varer til kurven",
     "viewingDetails": "Viser detaljer for {{product}}",
     "loadingCampaigns": "Indlæser kampagner..."
   },
   "errors": {
     "loadFailed": "Kunne ikke indlæse kampagneprodukter",
-    "tryAgain": "Prøv Igen",
+    "tryAgain": "Prøv igen",
     "somethingWentWrong": "Noget gik galt",
     "errorMessage": "Der opstod en fejl under indlæsning af kampagneprodukter. Prøv venligst igen senere."
   },
   "discount": {
     "badge": "-{{percentage}}%",
-    "originalPrice": "Original pris",
+    "originalPrice": "Oprindelig pris",
     "campaignPrice": "Kampagnepris",
     "saveAmount": "Spar {{amount}}",
     "limitedTime": "Tidsbegrænset tilbud"
   },
   "quantity": {
-    "decrease": "Reducer antal",
+    "decrease": "Formindsk antal",
     "increase": "Øg antal",
     "current": "Nuværende antal: {{value}}"
   }

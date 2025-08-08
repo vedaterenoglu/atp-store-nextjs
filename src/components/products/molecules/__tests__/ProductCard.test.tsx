@@ -353,9 +353,9 @@ describe('ProductCard', () => {
     // Click add to cart
     fireEvent.click(addToCartButton)
 
-    // This test verifies the behavior - add to cart functionality
+    // After adding to cart, quantity resets to 0
     // The actual component stops propagation, preventing card click
-    expect(screen.getByText('1')).toBeInTheDocument()
+    expect(screen.getByText('0')).toBeInTheDocument()
   })
 
   it('should render with custom className', () => {
@@ -390,9 +390,8 @@ describe('ProductCard', () => {
     // Click add to cart
     fireEvent.click(addToCartButton)
 
-    // In real implementation, this would trigger cart addition
-    // For now, it's a TODO in the component
-    expect(screen.getByText('3')).toBeInTheDocument()
+    // After adding to cart, quantity resets to 0
+    expect(screen.getByText('0')).toBeInTheDocument()
   })
 
   describe('Bookmark functionality', () => {

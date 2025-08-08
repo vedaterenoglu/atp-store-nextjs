@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/schadcn'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useCartStore } from '@/lib/stores/cart.store'
 
 interface CampaignPageContentProps {
   products: CampaignProduct[]
@@ -23,14 +24,31 @@ interface CampaignPageContentProps {
 export function CampaignPageContent({ products }: CampaignPageContentProps) {
   const { t } = useTranslation('campaign')
   const [error] = useState<Error | null>(null)
+  const addToCart = useCartStore(state => state.addToCart)
 
-  const handleAddToCart = (_stockId: string, quantity: number) => {
-    // TODO: Implement actual add to cart functionality with stockId
-    const message =
-      quantity > 1
-        ? t('messages.addedToCartPlural', { count: quantity })
-        : t('messages.addedToCart', { count: quantity })
-    toast.success(message)
+  const handleAddToCart = (product: CampaignProduct, quantity: number) => {
+    try {
+      // Add to cart using campaign price
+      addToCart(
+        product.stock_id,
+        product.stock_name,
+        product.campaign_price, // Use campaign price instead of stock price
+        quantity,
+        product.stock_image_link,
+        product.stock_group,
+        product.stock_unit,
+        99 // max quantity
+      )
+
+      const message =
+        quantity > 1
+          ? t('messages.addedToCartPlural', { count: quantity })
+          : t('messages.addedToCart', { count: quantity })
+      toast.success(message)
+    } catch (error) {
+      toast.error('Failed to add to cart')
+      console.error('Error adding to cart:', error)
+    }
   }
 
   const handleRetry = () => {

@@ -108,7 +108,8 @@
       "language": "Sprache ändern",
       "signIn": "In Ihr Konto einloggen",
       "userMenu": "Benutzermenü",
-      "admin": "Admin-Panel"
+      "admin": "Admin-Panel",
+      "cart": "Warenkorb anzeigen"
     },
     "footer": {
       "developerWebsite": "Entwickler-Website besuchen",

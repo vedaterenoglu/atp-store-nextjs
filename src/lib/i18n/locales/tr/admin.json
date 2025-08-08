@@ -1,0 +1,81 @@
+{
+  "cart": {
+    "title": "Sepet Yönetimi",
+    "subtitle": "Müşteri sepetlerini ve terk edilmiş sepetleri yönetin",
+    "empty": {
+      "title": "Sepet bulunamadı",
+      "description": "Kriterlerinize uyan sepet bulunmamaktadır",
+      "action": "Filtreleri temizle"
+    },
+    "status": {
+      "active": "Aktif",
+      "pending": "Beklemede",
+      "checkedOut": "Ödeme Yapıldı",
+      "abandoned": "Terk Edilmiş",
+      "expired": "Süresi Dolmuş"
+    },
+    "filter": {
+      "title": "Filtreler",
+      "search": "Kullanıcı, müşteri veya şirket ara...",
+      "status": "Duruma göre filtrele",
+      "dateRange": "Tarih Aralığı",
+      "totalRange": "Tutar Aralığı",
+      "from": "Başlangıç",
+      "to": "Bitiş",
+      "min": "Min",
+      "max": "Maks",
+      "clearAll": "Tümünü Temizle",
+      "apply": "Filtreleri Uygula"
+    },
+    "sort": {
+      "recentlyUpdated": "Son Güncellenen",
+      "oldestUpdated": "İlk Güncellenen",
+      "recentlyCreated": "Son Oluşturulan",
+      "oldestCreated": "İlk Oluşturulan",
+      "highestTotal": "En Yüksek Tutar",
+      "lowestTotal": "En Düşük Tutar",
+      "mostItems": "En Çok Ürün",
+      "fewestItems": "En Az Ürün"
+    },
+    "detail": {
+      "customerInfo": "Müşteri Bilgileri",
+      "userId": "Kullanıcı ID",
+      "customerId": "Müşteri ID",
+      "companyId": "Şirket",
+      "timeline": "Zaman Çizelgesi",
+      "created": "Oluşturulma",
+      "updated": "Son güncelleme",
+      "expires": "Süre sonu",
+      "notes": "Notlar",
+      "items": "Sepet Ürünleri",
+      "summary": "Sipariş Özeti",
+      "subtotal": "Ara Toplam",
+      "discount": "İndirim",
+      "tax": "KDV",
+      "shipping": "Kargo",
+      "total": "Toplam",
+      "itemCount": "Ürün",
+      "uniqueItems": "benzersiz"
+    },
+    "actions": {
+      "refresh": "Yenile",
+      "export": "Dışa Aktar",
+      "convertToOrder": "Siparişe Dönüştür",
+      "delete": "Sil",
+      "removeItem": "Ürünü kaldır",
+      "updateQuantity": "Miktarı güncelle",
+      "selectCart": "Detayları görüntülemek için bir sepet seçin"
+    },
+    "messages": {
+      "updateSuccess": "Sepet güncellendi",
+      "updateError": "Sepet güncellenemedi",
+      "deleteSuccess": "Sepet silindi",
+      "deleteError": "Sepet silinemedi",
+      "exportSuccess": "Sepet dışa aktarıldı",
+      "exportError": "Sepet dışa aktarılamadı",
+      "convertSuccess": "Sepet siparişe dönüştürüldü",
+      "convertError": "Sepet siparişe dönüştürülemedi",
+      "itemUnavailable": "Bu ürün şu anda mevcut değil"
+    }
+  }
+}

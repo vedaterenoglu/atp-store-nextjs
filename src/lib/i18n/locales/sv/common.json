@@ -108,7 +108,8 @@
       "language": "Ändra språk",
       "signIn": "Logga in på ditt konto",
       "userMenu": "Användarmeny",
-      "admin": "Administratörspanel"
+      "admin": "Administratörspanel",
+      "cart": "Visa kundvagn"
     },
     "footer": {
       "developerWebsite": "Besök utvecklarens webbplats",

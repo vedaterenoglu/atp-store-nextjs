@@ -21,6 +21,17 @@ query GetProductPricesQuery(
     stock_price_z
     campaign_price
     is_campaign_active
+    stock_moms
+  }
+  customers(
+    where: {
+      _and: {
+        company_id: { _eq: $company_id }
+        customer_id: { _eq: $customer_id }
+      }
+    }
+  ) {
+    customer_price_class
   }
   customer_price_list(
     where: {
@@ -33,20 +44,45 @@ query GetProductPricesQuery(
   ) {
     customers_price
   }
-  customers(
-    where: {
-      _and: {
-        company_id: { _eq: $company_id }
-        customer_id: { _eq: $customer_id }
-      }
-    }
-  ) {
-    customer_price_class
-  }
 }
 
 # {
 #   "company_id": "alfe",
 #   "customer_id": "SE0 1001 1697",
 #   "stock_id": "0000 1002 0002"
+# }
+
+# todo: response 
+
+# {
+#   "data": {
+#     "stock": [
+#       {
+#         "stock_price": 25000,
+#         "stock_price_a": 19000,
+#         "stock_price_b": 19000,
+#         "stock_price_c": 19000,
+#         "stock_price_d": 19000,
+#         "stock_price_s": 19000,
+#         "stock_price_hra": 19000,
+#         "stock_price_hrb": 19000,
+#         "stock_price_hrc": 19000,
+#         "stock_price_hrd": 19000,
+#         "stock_price_z": 19000,
+#         "campaign_price": 0,
+#         "is_campaign_active": false,
+#         "stock_moms": 25
+#       }
+#     ],
+#     "customers": [
+#       {
+#         "customer_price_class": "c"
+#       }
+#     ],
+#     "customer_price_list": [
+#       {
+#         "customers_price": 18500
+#       }
+#     ]
+#   }
 # }

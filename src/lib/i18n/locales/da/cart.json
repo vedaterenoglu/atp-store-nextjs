@@ -1,0 +1,44 @@
+{
+  "title": "Indkøbskurv",
+  "emptyCart": {
+    "title": "Din kurv er tom",
+    "description": "Det ser ud til, at du ikke har tilføjet nogen varer til din kurv endnu",
+    "action": "Fortsæt med at handle"
+  },
+  "summary": {
+    "title": "Ordreoversigt",
+    "items": "Varer",
+    "item": "vare",
+    "items_plural": "varer",
+    "unique": "unikke",
+    "subtotal": "Subtotal",
+    "discount": "Rabat",
+    "tax": "Skat",
+    "shipping": "Forsendelse",
+    "total": "Total",
+    "includingVat": "Inklusive moms"
+  },
+  "actions": {
+    "continueShopping": "Fortsæt med at handle",
+    "submitOrder": "Afgiv ordren",
+    "processing": "Behandler...",
+    "remove": "Fjern",
+    "updateQuantity": "Opdater antal"
+  },
+  "messages": {
+    "cartUpdated": "Kurv opdateret",
+    "itemRemoved": "Vare fjernet fra kurv",
+    "checkoutSuccess": "Betaling gennemført!",
+    "checkoutFailed": "Betaling mislykkedes. Prøv venligst igen.",
+    "checkoutError": "Der opstod en fejl under betaling",
+    "updateFailed": "Kunne ikke opdatere antal",
+    "removeFailed": "Kunne ikke fjerne vare"
+  },
+  "product": {
+    "inStock": "På lager",
+    "outOfStock": "Udsolgt",
+    "price": "Pris",
+    "quantity": "Antal",
+    "total": "Total"
+  }
+}

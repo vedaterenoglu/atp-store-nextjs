@@ -23,10 +23,12 @@ import {
   ControlledTooltip,
   ControlledTooltipProvider,
 } from '@/components/ui/custom'
-import { LayoutDashboard } from 'lucide-react'
+import { LayoutDashboard, ShoppingCart } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useRoleAuth } from '@/lib/auth/role-auth'
 import { useTranslation } from 'react-i18next'
+import { useCartCount } from '@/lib/stores/cart.store'
+import { CartBadge } from '@/components/cart/atoms/CartBadge'
 
 export function Navbar() {
   return (
@@ -69,11 +71,44 @@ function NavbarBrand() {
 function NavbarActions() {
   return (
     <div className="flex items-center gap-4">
+      <CartButton />
       <CustomerDashboardButton />
       <LanguageToggleWithTooltip />
       <ThemeToggleWithTooltip />
       <NavbarAuth />
     </div>
+  )
+}
+
+function CartButton() {
+  const router = useRouter()
+  const cartCount = useCartCount()
+  const { t } = useTranslation('common')
+  const { isSignedIn } = useAuth()
+  const { hasRole } = useRoleAuth()
+
+  // Only show cart for signed-in customers
+  if (!isSignedIn || !hasRole('customer')) {
+    return null
+  }
+
+  return (
+    <ControlledTooltip content={<p>{t('tooltips.navbar.cart')}</p>}>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-9 w-9 relative"
+        aria-label="Shopping Cart"
+        onClick={() => router.push('/cart')}
+      >
+        <ShoppingCart className="h-4 w-4" />
+        {cartCount > 0 && (
+          <div className="absolute -top-1 -right-1">
+            <CartBadge count={cartCount} variant="destructive" size="sm" />
+          </div>
+        )}
+      </Button>
+    </ControlledTooltip>
   )
 }
 
@@ -196,7 +231,7 @@ function NavbarUserButton({
       )}
       <ControlledTooltip content={<p>{t('tooltips.navbar.userMenu')}</p>}>
         <div>
-          <UserButton afterSignOutUrl="/" />
+          <UserButton />
         </div>
       </ControlledTooltip>
     </div>

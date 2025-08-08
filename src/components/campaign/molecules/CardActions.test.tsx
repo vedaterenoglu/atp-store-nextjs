@@ -7,6 +7,7 @@
 
 import { render, screen, fireEvent } from '@testing-library/react'
 import { CardActions } from './CardActions'
+import type { CampaignProduct } from '@/types/campaign'
 
 // Mock react-i18next
 jest.mock('react-i18next', () => ({
@@ -103,8 +104,19 @@ jest.mock('../atoms', () => ({
 }))
 
 describe('CardActions', () => {
+  const mockProduct: CampaignProduct = {
+    stock_id: 'test-stock-123',
+    stock_name: 'Test Product',
+    stock_group: 'Test Group',
+    stock_image_link: 'https://example.com/image.jpg',
+    stock_unit: 'pcs',
+    stock_price: 100,
+    campaign_price: 80,
+    discount_percentage: 20,
+  }
+
   const mockProps = {
-    stockId: 'test-stock-123',
+    product: mockProduct,
     disabled: false,
     onAddToCart: jest.fn(),
     className: '',
@@ -236,7 +248,7 @@ describe('CardActions', () => {
       fireEvent.click(screen.getByTestId('add-to-cart-button'))
 
       // Assert
-      expect(mockOnAddToCart).toHaveBeenCalledWith('test-stock-123', 1)
+      expect(mockOnAddToCart).toHaveBeenCalledWith(mockProduct, 1)
     })
 
     it('resets quantity to 0 after adding to cart', () => {
@@ -293,7 +305,7 @@ describe('CardActions', () => {
       fireEvent.click(screen.getByTestId('add-to-cart-button'))
 
       // Assert
-      expect(mockOnAddToCart).toHaveBeenCalledWith('test-stock-123', 3)
+      expect(mockOnAddToCart).toHaveBeenCalledWith(mockProduct, 3)
     })
   })
 
@@ -374,12 +386,15 @@ describe('CardActions', () => {
 
   // Test prop variations
   describe('Prop variations', () => {
-    it('works with different stockId values', () => {
+    it('works with different product values', () => {
       // Arrange
       const mockOnAddToCart = jest.fn()
-      const customStockId = 'custom-stock-456'
+      const customProduct: CampaignProduct = {
+        ...mockProduct,
+        stock_id: 'custom-stock-456',
+      }
       render(
-        <CardActions stockId={customStockId} onAddToCart={mockOnAddToCart} />
+        <CardActions product={customProduct} onAddToCart={mockOnAddToCart} />
       )
       fireEvent.click(screen.getByTestId('increase-button'))
 
@@ -387,12 +402,12 @@ describe('CardActions', () => {
       fireEvent.click(screen.getByTestId('add-to-cart-button'))
 
       // Assert
-      expect(mockOnAddToCart).toHaveBeenCalledWith(customStockId, 1)
+      expect(mockOnAddToCart).toHaveBeenCalledWith(customProduct, 1)
     })
 
     it('handles missing onAddToCart gracefully', () => {
       // Arrange & Act
-      render(<CardActions stockId="test" />)
+      render(<CardActions product={mockProduct} />)
       fireEvent.click(screen.getByTestId('increase-button'))
 
       // Assert - Should not throw error
@@ -416,7 +431,7 @@ describe('CardActions', () => {
       fireEvent.click(screen.getByTestId('increase-button'))
 
       // Assert
-      expect(mockOnAddToCart).toHaveBeenCalledWith('test-stock-123', 2)
+      expect(mockOnAddToCart).toHaveBeenCalledWith(mockProduct, 2)
       expect(screen.getByTestId('quantity-display')).toHaveTextContent('1')
     })
   })

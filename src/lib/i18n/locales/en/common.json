@@ -104,6 +104,7 @@
     "navbar": {
       "home": "Go to home page",
       "dashboard": "Customer dashboard",
+      "cart": "View shopping cart",
       "theme": "Change theme",
       "language": "Change language",
       "signIn": "Sign in to your account",
