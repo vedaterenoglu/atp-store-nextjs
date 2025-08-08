@@ -62,7 +62,7 @@ function ThemeToggleSkeleton() {
     <Button
       variant="ghost"
       size="icon"
-      className="w-9 h-9 cursor-pointer"
+      className="w-9 h-9"
       disabled
       aria-label="Loading theme selector"
     >
@@ -99,13 +99,22 @@ function ThemeToggleTrigger({ theme }: { theme: 'light' | 'dark' | 'system' }) {
     }
   }
 
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    // Remove focus after click to hide tooltip
+    setTimeout(() => {
+      ;(e.currentTarget as HTMLButtonElement).blur()
+    }, 100)
+  }
+
   return (
     <DropdownMenuTrigger asChild>
       <Button
         variant="ghost"
         size="icon"
-        className="w-9 h-9 cursor-pointer"
+        className="w-9 h-9 focus:outline-none focus:ring-0"
         aria-label={`Current theme: ${currentTheme?.label || theme}`}
+        onClick={handleClick}
+        onMouseDown={e => e.preventDefault()}
       >
         <Icon className={`h-[1.2rem] w-[1.2rem] ${getIconColor()}`} />
       </Button>
@@ -146,11 +155,17 @@ function ThemeMenuItem({
   const handleClick = () => {
     if (!isSelected) {
       onSelect(option.value)
+      // Blur any focused element to close tooltip
+      setTimeout(() => {
+        if (document.activeElement instanceof HTMLElement) {
+          document.activeElement.blur()
+        }
+      }, 50)
     }
   }
 
   return (
-    <DropdownMenuItem onClick={handleClick} className="cursor-pointer">
+    <DropdownMenuItem onClick={handleClick}>
       <ThemeMenuItemContent option={option} isSelected={isSelected} />
     </DropdownMenuItem>
   )

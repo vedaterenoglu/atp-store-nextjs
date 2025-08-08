@@ -156,6 +156,10 @@
             "feedback": "Feedback"
           }
         },
+        "customerId": {
+          "label": "Kund-ID",
+          "helper": "Ditt företags organisationsnummer"
+        },
         "message": {
           "label": "Meddelande",
           "placeholder": "Berätta mer om din förfrågan..."

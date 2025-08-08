@@ -28,11 +28,14 @@ interface ClerkLocaleProviderProps {
 }
 
 // Map i18next language codes to Clerk locale objects
-const CLERK_LOCALES = {
+// Note: Danish and German default to English until Clerk adds support
+const CLERK_LOCALES: Record<SupportedLanguage, typeof enUS> = {
   en: enUS,
   sv: svSE,
   tr: trTR,
-} as const
+  da: enUS, // Danish not yet supported by Clerk, default to English
+  de: enUS, // German not yet supported by Clerk, default to English
+}
 
 export function ClerkLocaleProvider({ children }: ClerkLocaleProviderProps) {
   // Get language from store

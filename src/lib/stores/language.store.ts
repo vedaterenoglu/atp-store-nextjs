@@ -12,12 +12,12 @@
  * - State Pattern: Manages language state transitions
  *
  * Architecture: Zustand store that manages language preferences with i18next
- * integration and localStorage persistence for English, Swedish, and Turkish
+ * integration and localStorage persistence for English, Swedish, Turkish, Danish, and German
  */
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
-export type SupportedLanguage = 'en' | 'sv' | 'tr'
+export type SupportedLanguage = 'en' | 'sv' | 'tr' | 'da' | 'de'
 
 interface LanguageStore {
   language: SupportedLanguage
@@ -52,7 +52,7 @@ export const useLanguageStore = create<LanguageStore>()(
         }
       },
 
-      getAvailableLanguages: () => ['en', 'sv', 'tr'] as const,
+      getAvailableLanguages: () => ['en', 'sv', 'tr', 'da', 'de'] as const,
     }),
     {
       name: 'language-storage',

@@ -1,0 +1,118 @@
+{
+  "app": {
+    "name": "ATP Store",
+    "description": "Ihr vertrauensvoller Online-Shopping-Destination"
+  },
+  "navigation": {
+    "home": "Startseite",
+    "products": "Produkte",
+    "categories": "Kategorien",
+    "cart": "Warenkorb",
+    "profile": "Profil",
+    "settings": "Einstellungen",
+    "admin": "Admin"
+  },
+  "actions": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "create": "Erstellen",
+    "search": "Suchen",
+    "filter": "Filtern",
+    "sort": "Sortieren",
+    "view": "Anzeigen",
+    "close": "Schließen",
+    "confirm": "Bestätigen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "previous": "Vorherige",
+    "submit": "Übermitteln",
+    "add": "Hinzufügen",
+    "remove": "Entfernen",
+    "update": "Aktualisieren",
+    "refresh": "Aktualisieren",
+    "loadMore": "Mehr laden"
+  },
+  "theme": {
+    "light": "Hell",
+    "dark": "Dunkel",
+    "system": "System",
+    "toggleTheme": "Theme wechseln"
+  },
+  "language": {
+    "en": "Englisch",
+    "sv": "Schwedisch",
+    "tr": "Türkisch",
+    "selectLanguage": "Sprache auswählen"
+  },
+  "status": {
+    "loading": "Laden...",
+    "error": "Fehler",
+    "success": "Erfolgreich",
+    "warning": "Warnung",
+    "info": "Info",
+    "noData": "Keine Daten verfügbar",
+    "notFound": "Nicht gefunden",
+    "offline": "Sie sind offline",
+    "online": "Sie sind online"
+  },
+  "errors": {
+    "generic": "Etwas ist schiefgelaufen",
+    "network": "Netzwerkfehler",
+    "unauthorized": "Nicht autorisiert",
+    "forbidden": "Verboten",
+    "notFound": "Nicht gefunden",
+    "serverError": "Serverfehler",
+    "timeout": "Anfrage-Timeout",
+    "validation": "Validierungsfehler"
+  },
+  "home": {
+    "hero": {
+      "title": "Premium Produkte",
+      "subtitle": "von Alfe Tissue Paper",
+      "description": "Erleben Sie die perfekte Harmonie aus Weichheit, Stärke und Nachhaltigkeit. Premium-Produkte für Ihr Café, Restaurant, Hotel, Pizzeria und jedes anspruchsvolle Unternehmen.",
+      "browseProducts": "Produkte durchstöbern",
+      "learnMore": "Mehr erfahren",
+      "aboutUs": "Über uns",
+      "goToCampaignPage": "Zur Kampagnenseite"
+    },
+    "features": {
+      "premiumQuality": {
+        "title": "Premium Qualität",
+        "description": "Aus den besten Materialien für überlegene Weichheit und Stärke gefertigt"
+      },
+      "fastDelivery": {
+        "title": "Schnelle Lieferung",
+        "description": "Schnelle und zuverlässige Lieferung vor Ihre Haustür in ganz Skåne"
+      },
+      "trustedBrand": {
+        "title": "Vertrauensmarke",
+        "description": "Seit der Gründung bedienen wir Kunden mit Exzellenz und Zuverlässigkeit"
+      },
+      "ecoFriendly": {
+        "title": "Umweltfreundlich",
+        "description": "Verpflichtet zu nachhaltigen Praktiken und umweltbewusster Produktion"
+      }
+    }
+  },
+  "footer": {
+    "copyright": "© {{year}} Alfe Tissue Paper AB. Alle Rechte vorbehalten.",
+    "createdBy": "Erstellt von"
+  },
+  "tooltips": {
+    "navbar": {
+      "home": "Zur Startseite gehen",
+      "dashboard": "Kunden-Dashboard",
+      "theme": "Theme ändern",
+      "language": "Sprache ändern",
+      "signIn": "In Ihr Konto einloggen",
+      "userMenu": "Benutzermenü",
+      "admin": "Admin-Panel"
+    },
+    "footer": {
+      "developerWebsite": "Entwickler-Website besuchen",
+      "developerEmail": "Entwickler kontaktieren"
+    }
+  }
+}

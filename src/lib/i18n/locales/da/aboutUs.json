@@ -1,0 +1,74 @@
+{
+  "hero": {
+    "title": "Om ATP Store",
+    "subtitle": "Din betroede partner for kvalitets tissue papir produkter",
+    "description": "Vi har leveret premium tissue papir løsninger til virksomheder og forbrugere siden 2010"
+  },
+  "mission": {
+    "title": "Vores Mission",
+    "description": "At levere exceptionel kvalitet og bæredygtige tissue papir produkter der forbedrer hverdagskomfort og hygiejne for vores kunder."
+  },
+  "values": {
+    "title": "Vores Værdier",
+    "quality": {
+      "title": "Kvalitet",
+      "description": "Vi går aldrig på kompromis med produktkvalitet og sikrer de højeste standarder i hver eneste produkt."
+    },
+    "sustainability": {
+      "title": "Bæredygtighed",
+      "description": "Forpligtet til miljøvenlige praksisser og bæredygtige indkøbsmetoder."
+    },
+    "innovation": {
+      "title": "Innovation",
+      "description": "Konstant innoverende for at møde udviklende kundebehov og markedstrends."
+    },
+    "service": {
+      "title": "Service",
+      "description": "Dedikeret til at levere exceptionel kundeservice og support."
+    }
+  },
+  "stats": {
+    "yearsInBusiness": "År i Branchen",
+    "happyCustomers": "Tilfredse Kunder",
+    "productsAvailable": "Tilgængelige Produkter",
+    "countriesServed": "Betjente Lande"
+  },
+  "team": {
+    "title": "Mød Vores Team",
+    "description": "Dedikerede professionelle forpligtet til din tilfredshed"
+  },
+  "contact": {
+    "title": "Kontakt Os",
+    "description": "Vi vil gerne høre fra dig",
+    "form": {
+      "name": "Dit Navn",
+      "email": "Din E-mail",
+      "subject": "Emne",
+      "message": "Besked",
+      "send": "Send Besked",
+      "sending": "Sender...",
+      "success": "Besked sendt succesfuldt!",
+      "error": "Kunne ikke sende besked. Prøv venligst igen.",
+      "fields": {
+        "customerId": {
+          "label": "Kunde-ID",
+          "helper": "Dit firmas registreringsnummer"
+        }
+      }
+    },
+    "info": {
+      "address": "Adresse",
+      "phone": "Telefon",
+      "email": "E-mail",
+      "hours": "Åbningstider",
+      "weekdays": "Mandag - Fredag: 9:00 - 18:00",
+      "weekend": "Lørdag - Søndag: 10:00 - 16:00"
+    }
+  },
+  "cta": {
+    "title": "Klar til at komme i gang?",
+    "description": "Gennemse vores omfattende udvalg af kvalitets tissue papir produkter",
+    "browseProducts": "Gennemse Produkter",
+    "contactSales": "Kontakt Salg"
+  }
+}

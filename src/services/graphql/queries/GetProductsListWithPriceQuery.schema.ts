@@ -25,7 +25,6 @@ export const StockItemSchema = z.object({
   stock_name: z.string().nullable(),
   stock_unit: z.string().nullable(),
   stock_price: z.number().nullable(),
-  available_stock: z.number().nullable(),
   stock_image_link: z.string().nullable(),
 })
 

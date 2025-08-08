@@ -1,0 +1,130 @@
+query GetCampaignProductsWithPrices($company_id: String!) {
+  stock(
+    where: {
+      company_id: { _eq: $company_id }
+      is_campaign_active: { _eq: true }
+    }
+  ) {
+    is_campaign_active
+    stock_id
+    stock_name
+    stock_group
+    stock_image_link
+    stock_unit
+    stock_price
+    campaign_price
+    is_campaign_active
+  }
+}
+
+# {
+#   "company_id": "alfe"
+# }
+
+# todo: response
+# {
+#   "data": {
+#     "stock": [
+#       {
+#         "is_campaign_active": true,
+#         "stock_id": "8501 1001 0002",
+#         "stock_name": "Gaffel Premium 100 pack.",
+#         "stock_group": "8500 - Engångs produkter",
+#         "stock_image_link": "https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg",
+#         "stock_unit": "förp.",
+#         "stock_price": 6000,
+#         "campaign_price": 0
+#       },
+#       {
+#         "is_campaign_active": true,
+#         "stock_id": "6001 1019 1018",
+#         "stock_name": "Handsprit",
+#         "stock_group": "6000 - Rengöringskem. & Rengöringstillbehör",
+#         "stock_image_link": "https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg",
+#         "stock_unit": "st.",
+#         "stock_price": 5600,
+#         "campaign_price": 0
+#       },
+#       {
+#         "is_campaign_active": true,
+#         "stock_id": "6001 1014 0001",
+#         "stock_name": "Fönsterputs / Snabbrent Spray 500 ml.",
+#         "stock_group": "6000 - Rengöringskem. & Rengöringstillbehör",
+#         "stock_image_link": "https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg",
+#         "stock_unit": "st.",
+#         "stock_price": 1900,
+#         "campaign_price": 0
+#       },
+#       {
+#         "is_campaign_active": true,
+#         "stock_id": "8501 1016 1015",
+#         "stock_name": "Pizzabärare",
+#         "stock_group": "8500 - Engångs produkter",
+#         "stock_image_link": "https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg",
+#         "stock_unit": "förp.",
+#         "stock_price": 5900,
+#         "campaign_price": 0
+#       },
+#       {
+#         "is_campaign_active": true,
+#         "stock_id": "2001 1010 L002",
+#         "stock_name": "Lock till Kaffebägare 8 Oz 1000 st./kolli ",
+#         "stock_group": "2000 - Bägare",
+#         "stock_image_link": "https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg",
+#         "stock_unit": "kolli",
+#         "stock_price": 27000,
+#         "campaign_price": 0
+#       },
+#       {
+#         "is_campaign_active": true,
+#         "stock_id": "1501 1007 0006",
+#         "stock_name": "Hamburgareficka PREMIUM 500 st./förp.",
+#         "stock_group": "1500 - Wellpap & Smörpapper",
+#         "stock_image_link": "https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg",
+#         "stock_unit": "förp.",
+#         "stock_price": 19900,
+#         "campaign_price": 0
+#       },
+#       {
+#         "is_campaign_active": true,
+#         "stock_id": "2001 1001 E200",
+#         "stock_name": "Salladsbägare med Lock ECO 200 ml 500 st/.kolli",
+#         "stock_group": "2000 - Bägare",
+#         "stock_image_link": "https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg",
+#         "stock_unit": "förp.",
+#         "stock_price": 24900,
+#         "campaign_price": 0
+#       },
+#       {
+#         "is_campaign_active": true,
+#         "stock_id": "1501 1009 1008",
+#         "stock_name": "Falafelpapper ",
+#         "stock_group": "1500 - Wellpap & Smörpapper",
+#         "stock_image_link": "https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg",
+#         "stock_unit": "förp.",
+#         "stock_price": 29900,
+#         "campaign_price": 0
+#       },
+#       {
+#         "is_campaign_active": true,
+#         "stock_id": "2001 1004 0100",
+#         "stock_name": "Såsbägare med Lock 100 ml 1000 st./kolli",
+#         "stock_group": "2000 - Bägare",
+#         "stock_image_link": "https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg",
+#         "stock_unit": "kolli",
+#         "stock_price": 49900,
+#         "campaign_price": 0
+#       },
+#       {
+#         "is_campaign_active": true,
+#         "stock_id": "2001 1001 0200",
+#         "stock_name": "Salladsbägare med Lock 200 ml 400 st/.kolli",
+#         "stock_group": "2000 - Bägare",
+#         "stock_image_link": "https://res.cloudinary.com/dnptbuf0s/image/upload/v1754299206/samples/atp-store-customer/alfe-fallback_nopd5j.jpg",
+#         "stock_unit": "kolli",
+#         "stock_price": 24400,
+#         "campaign_price": 0
+#       }
+#     ]
+#   }
+# }

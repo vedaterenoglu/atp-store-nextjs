@@ -12,7 +12,6 @@ query GetProductsListWithPriceQuery($company_id: String!) {
     stock_name
     stock_unit
     stock_price
-    available_stock
     stock_image_link
   }
 }

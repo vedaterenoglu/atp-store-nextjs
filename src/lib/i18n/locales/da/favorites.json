@@ -1,0 +1,40 @@
+{
+  "title": "Mine Favoritter",
+  "description": "Dine gemte produkter og favoritter",
+  "tabs": {
+    "bookmarked": "Bogmærkede",
+    "mostPurchased": "Mest Købte",
+    "recentlyViewed": "Nyligt Set"
+  },
+  "bookmarked": {
+    "title": "Bogmærkede Produkter",
+    "empty": "Du har ingen bogmærkede produkter endnu",
+    "emptyDescription": "Start med at bogmærke produkter du kan lide for nem adgang senere"
+  },
+  "mostPurchased": {
+    "title": "Dine Mest Købte Produkter",
+    "empty": "Ingen købshistorik tilgængelig",
+    "emptyDescription": "Produkter du ofte køber vil blive vist her",
+    "purchaseCount": "Købt {{count}} gang",
+    "purchaseCount_plural": "Købt {{count}} gange"
+  },
+  "recentlyViewed": {
+    "title": "Nyligt Sete Produkter",
+    "empty": "Ingen nyligt sete produkter",
+    "emptyDescription": "Produkter du har set for nylig vil blive vist her"
+  },
+  "actions": {
+    "removeBookmark": "Fjern bogmærke",
+    "addToCart": "Læg i kurv",
+    "viewDetails": "Se detaljer",
+    "clearAll": "Ryd alle",
+    "backToProducts": "Tilbage til produkter"
+  },
+  "messages": {
+    "bookmarkRemoved": "Bogmærke fjernet",
+    "addedToCart": "Tilføjet til kurv",
+    "clearedAll": "Alle favoritter ryddet",
+    "loading": "Indlæser favoritter...",
+    "error": "Kunne ikke indlæse favoritter"
+  }
+}

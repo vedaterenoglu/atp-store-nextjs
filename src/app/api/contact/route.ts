@@ -7,7 +7,11 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import sgMail from '@sendgrid/mail'
-import { getEmailTemplates, getApiMessage } from '@/lib/email-templates'
+import {
+  generateEmailTemplates,
+  getApiMessage,
+  type SupportedLanguage,
+} from '@/lib/email-templates-v2'
 
 // Initialize SendGrid
 sgMail.setApiKey(process.env['SENDGRID_API_KEY']!)
@@ -54,6 +58,7 @@ export async function POST(request: NextRequest) {
       phone,
       subject,
       message,
+      customerid,
       language: userLanguage = 'en',
     } = body
     language = userLanguage // Update the outer scope language variable
@@ -83,30 +88,27 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Get timestamp with appropriate locale
-    const localeMap: { [key: string]: string } = {
-      en: 'en-SE',
-      sv: 'sv-SE',
-      tr: 'tr-TR',
-    }
-    const locale = localeMap[language] || 'en-SE'
-    const timestamp = new Date().toLocaleString(locale, {
+    // Always use Swedish timestamp for admin email
+    const timestamp = new Date().toLocaleString('sv-SE', {
       timeZone: 'Europe/Stockholm',
       dateStyle: 'full',
       timeStyle: 'short',
     })
 
-    // Get email templates based on language
-    const emailTemplates = getEmailTemplates(language, {
+    // Generate email templates using new dynamic system
+    // Admin always gets Swedish, customer gets their selected language
+    const emailTemplates = generateEmailTemplates({
       name,
       email,
       phone,
       subject,
       message,
-      timestamp,
+      timestamp, // Swedish timestamp for admin
+      customerid,
+      language: language as SupportedLanguage,
     })
 
-    // Send email to admin (use collector mail if available, fallback to EMAIL_TO)
+    // Send email to admin (ALWAYS in Swedish)
     const adminMsg = {
       to: process.env['NEXT_PUBLIC_COLLECTOR_MAIL'] || process.env['EMAIL_TO']!,
       from: process.env['EMAIL_FROM']!,
@@ -114,12 +116,12 @@ export async function POST(request: NextRequest) {
       html: emailTemplates.admin.html,
     }
 
-    // Send auto-reply to user
+    // Send auto-reply to customer (in their selected language)
     const userMsg = {
       to: email,
       from: process.env['EMAIL_FROM']!,
-      subject: emailTemplates.user.subject,
-      html: emailTemplates.user.html,
+      subject: emailTemplates.customer.subject,
+      html: emailTemplates.customer.html,
     }
 
     // Send both emails

@@ -75,7 +75,7 @@ describe('products.service', () => {
       categoryId: 'ELECTRONICS',
       price: 99.99,
       unit: 'EA',
-      stock: 50,
+      stock: 0,
       imageUrl: 'https://example.com/widget.jpg',
     },
     {
@@ -84,7 +84,7 @@ describe('products.service', () => {
       categoryId: 'FURNITURE',
       price: 49.99,
       unit: 'PCS',
-      stock: 100,
+      stock: 0,
       imageUrl: '/placeholder-product.png',
     },
     {
@@ -246,7 +246,7 @@ describe('products.service', () => {
           categoryId: 'ELECTRONICS',
           price: 99.99,
           unit: 'EA',
-          stock: 50,
+          stock: 0,
           imageUrl: 'https://example.com/widget.jpg',
         },
       ])
@@ -320,7 +320,7 @@ describe('products.service', () => {
           categoryId: 'ELECTRONICS',
           price: 99.99,
           unit: 'EA',
-          stock: 50,
+          stock: 0,
           imageUrl: 'https://example.com/widget.jpg',
         },
       ])
@@ -338,7 +338,7 @@ describe('products.service', () => {
           categoryId: 'FURNITURE',
           price: 49.99,
           unit: 'PCS',
-          stock: 100,
+          stock: 0,
           imageUrl: '/placeholder-product.png',
         },
       ])
@@ -483,7 +483,7 @@ describe('products.service', () => {
         categoryId: 'CATEGORY',
         price: 15.99,
         unit: 'EA',
-        stock: 25,
+        stock: 0,
         imageUrl: '/placeholder-product.png',
       })
     })

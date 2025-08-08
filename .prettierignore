@@ -7,4 +7,5 @@ coverage/
 build/
 .next/
 src/components/ui/schadcn/
-src/generated/
+CLAUDE.md
+src/documents/ignore/**

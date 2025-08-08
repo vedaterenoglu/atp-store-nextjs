@@ -1,0 +1,43 @@
+{
+  "page": {
+    "title": "Særlige Kampagner",
+    "description": "Gå ikke glip af vores eksklusive tilbud og tidsbegrænsede kampagner!",
+    "goToAllProducts": "Gå til Alle Produkter"
+  },
+  "card": {
+    "addToCart": "Læg i Kurv",
+    "viewDetails": "Se Detaljer",
+    "outOfStock": "Udsolgt"
+  },
+  "slider": {
+    "previousSlide": "Forrige slide",
+    "nextSlide": "Næste slide",
+    "goToSlide": "Gå til slide"
+  },
+  "messages": {
+    "noCampaigns": "Ingen kampagneprodukter tilgængelige",
+    "checkBackSoon": "Kom tilbage snart for spændende kampagnetilbud!",
+    "addedToCart": "Tilføjede {{count}} vare til kurv",
+    "addedToCartPlural": "Tilføjede {{count}} varer til kurv",
+    "viewingDetails": "Viser detaljer for {{product}}",
+    "loadingCampaigns": "Indlæser kampagner..."
+  },
+  "errors": {
+    "loadFailed": "Kunne ikke indlæse kampagneprodukter",
+    "tryAgain": "Prøv Igen",
+    "somethingWentWrong": "Noget gik galt",
+    "errorMessage": "Der opstod en fejl under indlæsning af kampagneprodukter. Prøv venligst igen senere."
+  },
+  "discount": {
+    "badge": "-{{percentage}}%",
+    "originalPrice": "Original pris",
+    "campaignPrice": "Kampagnepris",
+    "saveAmount": "Spar {{amount}}",
+    "limitedTime": "Tidsbegrænset tilbud"
+  },
+  "quantity": {
+    "decrease": "Reducer antal",
+    "increase": "Øg antal",
+    "current": "Nuværende antal: {{value}}"
+  }
+}

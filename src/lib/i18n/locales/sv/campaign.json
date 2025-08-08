@@ -1,0 +1,43 @@
+{
+  "page": {
+    "title": "Särskilda Kampanjer",
+    "description": "Missa inte våra exklusiva erbjudanden och tidsbegränsade kampanjer!",
+    "goToAllProducts": "Gå till Alla Produkter"
+  },
+  "card": {
+    "addToCart": "Lägg i Kundvagn",
+    "viewDetails": "Visa Detaljer",
+    "outOfStock": "Slut i Lager"
+  },
+  "slider": {
+    "previousSlide": "Föregående bild",
+    "nextSlide": "Nästa bild",
+    "goToSlide": "Gå till bild"
+  },
+  "messages": {
+    "noCampaigns": "Inga kampanjprodukter tillgängliga",
+    "checkBackSoon": "Kom tillbaka snart för spännande kampanjerbjudanden!",
+    "addedToCart": "Lade till {{count}} artikel i kundvagnen",
+    "addedToCartPlural": "Lade till {{count}} artiklar i kundvagnen",
+    "viewingDetails": "Visar detaljer för {{product}}",
+    "loadingCampaigns": "Laddar kampanjer..."
+  },
+  "errors": {
+    "loadFailed": "Misslyckades med att ladda kampanjprodukter",
+    "tryAgain": "Försök Igen",
+    "somethingWentWrong": "Något gick fel",
+    "errorMessage": "Ett fel uppstod vid laddning av kampanjprodukter. Vänligen försök igen senare."
+  },
+  "discount": {
+    "badge": "-{{percentage}}%",
+    "originalPrice": "Ordinarie pris",
+    "campaignPrice": "Kampanjpris",
+    "saveAmount": "Spara {{amount}}",
+    "limitedTime": "Tidsbegränsat erbjudande"
+  },
+  "quantity": {
+    "decrease": "Minska antal",
+    "increase": "Öka antal",
+    "current": "Nuvarande antal: {{value}}"
+  }
+}

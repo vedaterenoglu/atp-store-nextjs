@@ -22,7 +22,6 @@ export interface StockItem {
   stock_name: string | null
   stock_unit: string | null
   stock_price: number | null
-  available_stock: number | null
   stock_image_link: string | null
 }
 

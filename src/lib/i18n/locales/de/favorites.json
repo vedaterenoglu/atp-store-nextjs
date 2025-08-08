@@ -1,0 +1,30 @@
+{
+  "title": "Meine Lieblingsprodukte & Meist gekaufte Produkte",
+  "subtitle": "Alle Preise verstehen sich exklusive Mehrwertsteuer. Vertragspreise gelten. Marktanpassungen vorbehalten.",
+  "sections": {
+    "favorites": {
+      "title": "Meine Lieblingsprodukte",
+      "description": "Produkte, die Sie für schnellen Zugriff als Lesezeichen gesetzt haben",
+      "empty": {
+        "title": "Noch keine Produkte als Lesezeichen gesetzt",
+        "description": "Durchstöbern Sie Produkte und setzen Sie Ihre Favoriten als Lesezeichen, um sie hier zu sehen"
+      }
+    },
+    "mostPurchased": {
+      "title": "Meist gekaufte Produkte",
+      "description": "Basierend auf Ihrem Verbrauch in den letzten {{days}} Tagen",
+      "empty": {
+        "title": "Keine Kaufhistorie verfügbar",
+        "description": "Beginnen Sie mit dem Einkaufen, um Ihre meist gekauften Produkte hier zu sehen"
+      },
+      "badge": {
+        "top": "Top {{rank}}"
+      },
+      "consumed": "Verbraucht: {{units}} Einheiten",
+      "addToCart": "In den Warenkorb"
+    }
+  },
+  "navigation": {
+    "backToProducts": "Zurück zu Produkten"
+  }
+}

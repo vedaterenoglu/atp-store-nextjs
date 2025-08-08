@@ -1,0 +1,43 @@
+{
+  "page": {
+    "title": "Özel Kampanyalar",
+    "description": "Özel fırsatlarımızı ve sınırlı süreli tekliflerimizi kaçırmayın!",
+    "goToAllProducts": "Tüm Ürünlere Git"
+  },
+  "card": {
+    "addToCart": "Sepete Ekle",
+    "viewDetails": "Detayları Görüntüle",
+    "outOfStock": "Stokta Yok"
+  },
+  "slider": {
+    "previousSlide": "Önceki slayt",
+    "nextSlide": "Sonraki slayt",
+    "goToSlide": "Slayta git"
+  },
+  "messages": {
+    "noCampaigns": "Kampanyalı ürün bulunmuyor",
+    "checkBackSoon": "Heyecan verici kampanya teklifleri için yakında tekrar kontrol edin!",
+    "addedToCart": "{{count}} ürün sepete eklendi",
+    "addedToCartPlural": "{{count}} ürün sepete eklendi",
+    "viewingDetails": "{{product}} için detaylar görüntüleniyor",
+    "loadingCampaigns": "Kampanyalar yükleniyor..."
+  },
+  "errors": {
+    "loadFailed": "Kampanya ürünleri yüklenemedi",
+    "tryAgain": "Tekrar Dene",
+    "somethingWentWrong": "Bir şeyler ters gitti",
+    "errorMessage": "Kampanya ürünleri yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin."
+  },
+  "discount": {
+    "badge": "-%{{percentage}}",
+    "originalPrice": "Normal fiyat",
+    "campaignPrice": "Kampanya fiyatı",
+    "saveAmount": "{{amount}} tasarruf edin",
+    "limitedTime": "Sınırlı süreli teklif"
+  },
+  "quantity": {
+    "decrease": "Miktarı azalt",
+    "increase": "Miktarı artır",
+    "current": "Mevcut miktar: {{value}}"
+  }
+}

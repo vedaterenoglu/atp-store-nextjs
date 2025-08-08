@@ -1,0 +1,32 @@
+{
+  "required": "Dette felt er påkrævet",
+  "email": "Indtast venligst en gyldig e-mailadresse",
+  "min": "Skal være mindst {{min}} tegn",
+  "max": "Må højst være {{max}} tegn",
+  "minValue": "Skal være mindst {{min}}",
+  "maxValue": "Må højst være {{max}}",
+  "pattern": "Ugyldig format",
+  "url": "Indtast venligst en gyldig URL",
+  "number": "Skal være et tal",
+  "integer": "Skal være et heltal",
+  "positive": "Skal være et positivt tal",
+  "alphanumeric": "Må kun indeholde bogstaver og tal",
+  "passwordStrength": "Adgangskoden skal indeholde mindst 8 tegn, et stort bogstav, et lille bogstav og et tal",
+  "phoneNumber": "Indtast venligst et gyldigt telefonnummer",
+  "postalCode": "Indtast venligst et gyldigt postnummer",
+  "date": "Indtast venligst en gyldig dato",
+  "futureDate": "Datoen skal være i fremtiden",
+  "pastDate": "Datoen skal være i fortiden",
+  "fileSize": "Filstørrelsen må ikke overstige {{max}} MB",
+  "fileType": "Filtypen er ikke tilladt",
+  "imageRequired": "Billede er påkrævet",
+  "unique": "Denne værdi eksisterer allerede",
+  "matchField": "Felterne matcher ikke",
+  "termsRequired": "Du skal acceptere vilkårene og betingelserne",
+  "oneOf": "Vælg venligst en af mulighederne",
+  "custom": {
+    "organizationNumber": "Ugyldigt organisationsnummer",
+    "vatNumber": "Ugyldigt momsnummer",
+    "bankAccount": "Ugyldigt kontonummer"
+  }
+}

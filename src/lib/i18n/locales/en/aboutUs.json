@@ -156,6 +156,10 @@
             "feedback": "Feedback"
           }
         },
+        "customerId": {
+          "label": "Customer ID",
+          "helper": "Your company registration number"
+        },
         "message": {
           "label": "Message",
           "placeholder": "Tell us more about your inquiry..."

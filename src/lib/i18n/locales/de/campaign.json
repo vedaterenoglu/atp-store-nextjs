@@ -1,0 +1,43 @@
+{
+  "page": {
+    "title": "Spezielle Kampagnen",
+    "description": "Verpassen Sie nicht unsere exklusiven Angebote und zeitlich begrenzten Aktionen!",
+    "goToAllProducts": "Zu allen Produkten"
+  },
+  "card": {
+    "addToCart": "In den Warenkorb",
+    "viewDetails": "Details anzeigen",
+    "outOfStock": "Nicht vorrätig"
+  },
+  "slider": {
+    "previousSlide": "Vorherige Folie",
+    "nextSlide": "Nächste Folie",
+    "goToSlide": "Zur Folie gehen"
+  },
+  "messages": {
+    "noCampaigns": "Keine Kampagnenprodukte verfügbar",
+    "checkBackSoon": "Schauen Sie bald wieder vorbei für aufregende Kampagnenangebote!",
+    "addedToCart": "{{count}} Artikel in den Warenkorb gelegt",
+    "addedToCartPlural": "{{count}} Artikel in den Warenkorb gelegt",
+    "viewingDetails": "Details anzeigen für {{product}}",
+    "loadingCampaigns": "Kampagnen werden geladen..."
+  },
+  "errors": {
+    "loadFailed": "Kampagnenprodukte konnten nicht geladen werden",
+    "tryAgain": "Erneut versuchen",
+    "somethingWentWrong": "Etwas ist schiefgelaufen",
+    "errorMessage": "Ein Fehler ist beim Laden der Kampagnenprodukte aufgetreten. Bitte versuchen Sie es später erneut."
+  },
+  "discount": {
+    "badge": "-{{percentage}}%",
+    "originalPrice": "Originalpreis",
+    "campaignPrice": "Kampagnenpreis",
+    "saveAmount": "Sparen Sie {{amount}}",
+    "limitedTime": "Zeitlich begrenztes Angebot"
+  },
+  "quantity": {
+    "decrease": "Menge verringern",
+    "increase": "Menge erhöhen",
+    "current": "Aktuelle Menge: {{value}}"
+  }
+}

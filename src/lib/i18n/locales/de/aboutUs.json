@@ -1,0 +1,174 @@
+{
+  "title": "Über ATP Store",
+  "subtitle": "Führender Anbieter von professionellen Produkten und Dienstleistungen, der sich seit 2011 dafür einsetzt, Unternehmen mit Qualitätslösungen zu stärken.",
+  "slider": {
+    "slides": [
+      {
+        "title": "Willkommen bei ATP Store",
+        "subtitle": "Ihr vertrauensvoller Geschäftspartner seit 2011"
+      },
+      {
+        "title": "Rationelle Bestellung",
+        "subtitle": "Effiziente Auftragsabwicklung für Ihr Unternehmen"
+      },
+      {
+        "title": "Professionelle Exzellenz",
+        "subtitle": "Komplette Büroausstattungslösungen"
+      },
+      {
+        "title": "Umfangreiches Inventar",
+        "subtitle": "Große Lagerverfügbarkeit für sofortige Lieferung"
+      },
+      {
+        "title": "Zuverlässige Logistik",
+        "subtitle": "Pünktliche Lieferung mit unserer Flotte"
+      },
+      {
+        "title": "Effiziente Abläufe",
+        "subtitle": "Schneller und sicherer Ladeprozess"
+      },
+      {
+        "title": "Globale Reichweite",
+        "subtitle": "Bedienung von Unternehmen in mehreren Ländern"
+      },
+      {
+        "title": "Schneller Versand",
+        "subtitle": "Schnelle Bearbeitung und Versanddienstleistungen"
+      }
+    ]
+  },
+  "mission": {
+    "title": "Unsere Mission",
+    "paragraph1": "Bei ATP Store sind wir verpflichtet, außergewöhnliche Produkte und Dienstleistungen zu bieten, die Unternehmen zum Erfolg verhelfen. Unsere Mission ist es, der vertrauenswürdigste Partner für Unternehmen zu sein, die Qualität, Zuverlässigkeit und Innovation in ihren Lieferkettenlösungen suchen.",
+    "paragraph2": "Mit jahrzehntelanger Erfahrung und einem tiefen Verständnis verschiedener Branchen haben wir starke Beziehungen zu führenden Herstellern und Lieferanten weltweit aufgebaut. Dies ermöglicht es uns, wettbewerbsfähige Preise, schnelle Lieferung und unvergleichlichen Kundenservice zu bieten."
+  },
+  "history": {
+    "title": "Unsere Geschichte",
+    "paragraphs": [
+      "Gegründet im Jahr 2011 mit bescheidenen Anfängen in Malmö, hat sich Alfe Tissue Paper auf eine außergewöhnliche Reise begeben, die uns nun dazu geführt hat, unseren Hauptsitz in der lebendigen Stadt Lund zu etablieren. Als Unternehmen, das sich zutiefst für Exzellenz und Kundenzufriedenheit einsetzt, sind wir stolz darauf, maßgeschneiderte Lösungen anzubieten, die den einzigartigen Bedürfnissen unserer geschätzten Kunden gerecht werden. Unser Erfolg ist auf unser umfangreiches Netzwerk zurückzuführen, das sich sowohl innerhalb unseres Heimatlandes als auch über dessen Grenzen hinaus erstreckt und es uns ermöglicht, sowohl national als auch international außergewöhnlichen Service zu bieten.",
+      "Im Herzen unserer Geschäftstätigkeit liegt unsere Expertise in der Verpackungsindustrie. Mit einer Flotte von engagierten Fahrzeugen bieten wir Lieferservices für unsere geschätzten Kunden in Skåne an. Unsere Mission ist einfach, aber zutiefst aufrichtig - qualitativ hochwertigen Service mit unerschütterlichem Engagement zu bieten. Durch regelmäßige Besuche bei unseren Kunden, mindestens einmal pro Woche, streben wir danach sicherzustellen, dass unsere Angebote ihre Anforderungen erfüllen und ihre Erwartungen übertreffen.",
+      "In Skåne konzentrieren wir uns hauptsächlich auf zwei wesentliche Kategorien: Lebensmittelverpackungen und Hygienepapier. Unser Engagement für die sichere Lieferung von wesentlichen Gütern an verschiedene Einrichtungen zeichnet uns in der Branche aus. Wir sind sehr zufrieden damit, Hotels zu bedienen, wo Bequemlichkeit und Praktikabilität von größter Bedeutung sind, sowie Restaurants, wo Präsentation und Haltbarkeit entscheidende Faktoren sind.",
+      "Darüber hinaus bieten wir unsere Dienstleistungen für charmante Cafés an, die zu einem integralen Bestandteil von Skånes sozialer Struktur geworden sind, wo die Verpackungsqualität die von ihnen servierten Köstlichkeiten ergänzt. Unsere Angebote sind auch für professionelle Catering-Services maßgeschneidert, wo Effizienz und Zuverlässigkeit für eine nahtlose Erfahrung unerlässlich sind. Vergessen wir nicht die lebhaften Bäckereien, wo Verpackungsfrische und Hygiene entscheidend sind, um die köstlichen Aromen zu bewahren.",
+      "Unser Engagement endet nicht in Skåne; es bildet die Grundlage für unsere zukünftigen Bestrebungen. Unsere Vision wurzelt in positivem Wachstum und unerschütterlicher Rentabilität. Wir streben danach, unsere Horizonte und Reichweite zu erweitern, um unsere außergewöhnlichen Produkte für Kunden in ganz Schweden leicht zugänglich zu machen. Während wir uns auf diese ehrgeizige Reise begeben, bleiben wir unseren Kernwerten von Integrität, Kundenzentrierung und Innovation treu."
+    ]
+  },
+  "values": {
+    "title": "Unsere Werte",
+    "items": {
+      "integrity": {
+        "label": "Integrität",
+        "description": "Wir führen Geschäfte mit Ehrlichkeit und Transparenz"
+      },
+      "innovation": {
+        "label": "Innovation",
+        "description": "Wir verbessern kontinuierlich unsere Produkte und Dienstleistungen"
+      },
+      "customerFocus": {
+        "label": "Kundenorientierung",
+        "description": "Ihr Erfolg ist unsere Priorität"
+      },
+      "sustainability": {
+        "label": "Nachhaltigkeit",
+        "description": "Wir kümmern uns um unsere Umweltauswirkungen"
+      }
+    }
+  },
+  "features": {
+    "expertTeam": {
+      "title": "Expertenteam",
+      "description": "Qualifizierte Fachkräfte mit jahrelanger Expertise arbeiten zusammen, um Ihre Geschäftsbedürfnisse zu bedienen und außergewöhnliche Ergebnisse zu liefern, die die Erwartungen übertreffen."
+    },
+    "globalPresence": {
+      "title": "Globale Präsenz",
+      "description": "Tätig in 3 Ländern mit lokaler Expertise und globalen Standards"
+    },
+    "qualityAssured": {
+      "title": "Qualität garantiert",
+      "description": "Unerschütterliches Engagement für Exzellenz und Qualität in jedem Produkt, das wir liefern"
+    },
+    "trustedPartner": {
+      "title": "Vertrauenspartner",
+      "description": "Bedienung von über 600 zufriedenen Unternehmen weltweit"
+    }
+  },
+  "location": {
+    "title": "Unser Standort"
+  },
+  "contact": {
+    "title": "Kontaktieren Sie uns",
+    "info": {
+      "title": "In Kontakt treten",
+      "description": "Wir sind hier, um zu helfen! Kontaktieren Sie uns über einen der folgenden Kanäle und wir werden uns so schnell wie möglich bei Ihnen melden.",
+      "address": {
+        "title": "Adresse",
+        "company": "Alfe Tissue Paper AB.",
+        "street": "Maskinvägen 1 Port 8",
+        "postal": "227 30 Lund",
+        "country": "Skåne Schweden"
+      },
+      "orderReception": {
+        "title": "Auftragsannahme",
+        "whatsapp": "WhatsApp"
+      },
+      "customerService": {
+        "title": "Kundenservice",
+        "whatsapp": "WhatsApp"
+      },
+      "email": {
+        "title": "E-Mail"
+      },
+      "hours": {
+        "title": "Geschäftszeiten",
+        "weekdays": "Montag - Freitag: 08:00 - 16:00",
+        "weekend": "Samstag - Sonntag: Geschlossen"
+      },
+      "website": {
+        "title": "Website"
+      },
+      "social": {
+        "title": "Folgen Sie uns"
+      }
+    },
+    "form": {
+      "title": "Senden Sie uns eine Nachricht",
+      "description": "Füllen Sie das untenstehende Formular aus und wir werden so schnell wie möglich antworten.",
+      "fields": {
+        "name": {
+          "label": "Name",
+          "placeholder": "Ihr Name"
+        },
+        "email": {
+          "label": "E-Mail",
+          "placeholder": "ihre@email.com"
+        },
+        "phone": {
+          "label": "Telefon",
+          "placeholder": "+46 70 123 4567"
+        },
+        "subject": {
+          "label": "Betreff",
+          "placeholder": "Wie können wir Ihnen helfen?",
+          "options": {
+            "general": "Allgemeine Anfrage",
+            "sales": "Verkaufsfrage",
+            "support": "Technischer Support",
+            "partnership": "Partnerschaft",
+            "feedback": "Feedback"
+          }
+        },
+        "message": {
+          "label": "Nachricht",
+          "placeholder": "Erzählen Sie uns mehr über Ihre Anfrage..."
+        },
+        "customerId": {
+          "label": "Kundennummer",
+          "helper": "Ihre Firmenregistrierungsnummer"
+        }
+      },
+      "submit": "Nachricht senden",
+      "sending": "Sende...",
+      "success": "Nachricht erfolgreich gesendet! Wir werden uns bald bei Ihnen melden.",
+      "error": "Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es später erneut."
+    }
+  }
+}

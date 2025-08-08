@@ -7,8 +7,9 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useUser } from '@clerk/nextjs'
 import {
   Card,
   CardContent,
@@ -30,6 +31,7 @@ import { Send, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
 
 export function ContactForm() {
   const { t, ready, i18n } = useTranslation('aboutUs')
+  const { user } = useUser()
 
   const [formData, setFormData] = useState({
     name: '',
@@ -44,6 +46,17 @@ export function ContactForm() {
   >('idle')
   const [statusMessage, setStatusMessage] = useState('')
 
+  // Pre-fill form with user data if logged in
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        name: user.fullName || prev.name || '',
+        email: user.primaryEmailAddress?.emailAddress || prev.email || '',
+      }))
+    }
+  }, [user])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setStatus('loading')
@@ -57,6 +70,9 @@ export function ContactForm() {
         },
         body: JSON.stringify({
           ...formData,
+          customerid: user?.publicMetadata?.['customerid'] as
+            | string
+            | undefined, // Send company registration number from Clerk metadata
           language: i18n.language, // Send the current language
         }),
       })
@@ -202,6 +218,27 @@ export function ContactForm() {
               </Select>
             </div>
           </div>
+
+          {/* Display Customer ID if available in Clerk metadata */}
+          {user?.publicMetadata?.['customerid'] && (
+            <div className="space-y-2">
+              <Label htmlFor="customerId">
+                {t('contact.form.fields.customerId.label', 'Customer ID')}
+              </Label>
+              <Input
+                id="customerId"
+                value={user.publicMetadata['customerid'] as string}
+                disabled
+                className="bg-muted"
+              />
+              <p className="text-xs text-muted-foreground">
+                {t(
+                  'contact.form.fields.customerId.helper',
+                  'Your company registration number'
+                )}
+              </p>
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="message">
