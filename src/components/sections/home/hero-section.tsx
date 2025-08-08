@@ -93,7 +93,7 @@ function HeroSecondaryAction() {
   return (
     <Button
       size="lg"
-      className="bg-green-600 hover:bg-green-700 text-white border-green-600 hover:border-green-700 cursor-pointer"
+      className="bg-green-600 hover:bg-green-700 text-white border-green-600 hover:border-green-700"
       asChild
     >
       <Link href="/about-us">{t('home.hero.aboutUs')}</Link>

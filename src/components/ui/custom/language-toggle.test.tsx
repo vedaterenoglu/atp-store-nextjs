@@ -200,7 +200,7 @@ describe('LanguageToggle', () => {
         const hiddenChecks = checkIcons.filter(icon =>
           icon.className?.includes('opacity-0')
         )
-        expect(hiddenChecks).toHaveLength(2) // English and Turkish should be hidden
+        expect(hiddenChecks).toHaveLength(4) // All languages except Swedish should be hidden
       })
     })
 
@@ -211,7 +211,7 @@ describe('LanguageToggle', () => {
         const content = screen.getByTestId('dropdown-menu-content')
         expect(content).toHaveAttribute('data-align', 'end')
         expect(content).toHaveClass(
-          '!w-[80px]',
+          '!w-[100px]',
           'min-w-0',
           'bg-popover',
           'border-border'
@@ -355,7 +355,7 @@ describe('LanguageToggle', () => {
         expect(screen.getByTestId('dropdown-menu')).toBeInTheDocument()
         expect(screen.getByTestId('dropdown-menu-trigger')).toBeInTheDocument()
         expect(screen.getByTestId('dropdown-menu-content')).toBeInTheDocument()
-        expect(screen.getAllByTestId('dropdown-menu-item')).toHaveLength(3)
+        expect(screen.getAllByTestId('dropdown-menu-item')).toHaveLength(5)
       })
     })
 
@@ -376,10 +376,9 @@ describe('LanguageToggle', () => {
 
       await waitFor(() => {
         const menuItems = screen.getAllByTestId('dropdown-menu-item')
-        expect(menuItems).toHaveLength(3)
+        expect(menuItems).toHaveLength(5)
 
         menuItems.forEach(item => {
-          expect(item).toHaveClass('cursor-pointer')
           expect(item).toHaveAttribute('role', 'menuitem')
         })
       })

@@ -542,7 +542,6 @@ describe('GetProductsListWithPriceQuery', () => {
             stock_price: 99.99,
             stock_unit: 'pcs',
             stock_group: 'GROUP',
-            available_stock: 10,
             stock_image_link: 'https://example.com/product.jpg',
           },
         ],
@@ -561,7 +560,6 @@ describe('GetProductsListWithPriceQuery', () => {
             stock_price: null,
             stock_unit: null,
             stock_group: null,
-            available_stock: null,
             stock_image_link: null,
           },
         ],
@@ -636,7 +634,6 @@ describe('GetProductsListWithPriceQuery', () => {
         stock_price: null,
         stock_unit: null,
         stock_group: null,
-        available_stock: null,
         stock_image_link: null,
       }
       const response: GetProductsListWithPriceQueryResponse = {

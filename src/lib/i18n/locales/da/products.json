@@ -1,0 +1,73 @@
+{
+  "title": "Produkter",
+  "description": "Gennemse vores omfattende produktudvalg",
+  "search": {
+    "placeholder": "Søg produkter...",
+    "button": "Søg",
+    "clear": "Ryd",
+    "noResults": "Ingen produkter fundet for \"{{query}}\""
+  },
+  "filters": {
+    "title": "Filtre",
+    "category": "Kategori",
+    "priceRange": "Prisinterval",
+    "availability": "Tilgængelighed",
+    "inStock": "På lager",
+    "outOfStock": "Udsolgt",
+    "clearAll": "Ryd alle",
+    "apply": "Anvend",
+    "bookmarked": "Viser kun bogmærkede produkter",
+    "showBookmarked": "Vis kun bogmærker",
+    "showAll": "Vis alle produkter"
+  },
+  "sorting": {
+    "label": "Sorter efter",
+    "relevance": "Relevans",
+    "priceAsc": "Pris: Lav til Høj",
+    "priceDesc": "Pris: Høj til Lav",
+    "nameAsc": "Navn: A til Å",
+    "nameDesc": "Navn: Å til A",
+    "newest": "Nyeste først",
+    "oldest": "Ældste først"
+  },
+  "card": {
+    "addToCart": "Læg i kurv",
+    "viewDetails": "Se detaljer",
+    "quickView": "Hurtig visning",
+    "inStock": "På lager",
+    "outOfStock": "Udsolgt",
+    "limitedStock": "Begrænset lager",
+    "price": "Pris",
+    "from": "Fra",
+    "unit": "pr. {{unit}}"
+  },
+  "details": {
+    "description": "Beskrivelse",
+    "specifications": "Specifikationer",
+    "reviews": "Anmeldelser",
+    "relatedProducts": "Relaterede produkter"
+  },
+  "actions": {
+    "bookmark": "Bogmærk produkt",
+    "unbookmark": "Fjern bogmærke",
+    "share": "Del",
+    "compare": "Sammenlign"
+  },
+  "messages": {
+    "loading": "Indlæser produkter...",
+    "error": "Kunne ikke indlæse produkter",
+    "noProducts": "Ingen produkter tilgængelige",
+    "addedToCart": "Produkt tilføjet til kurv",
+    "removedFromCart": "Produkt fjernet fra kurv",
+    "bookmarked": "Produkt bogmærket",
+    "unbookmarked": "Bogmærke fjernet",
+    "backToCategories": "Tilbage til kategorier",
+    "goToCart": "Gå til kurv"
+  },
+  "pagination": {
+    "showing": "Viser {{from}} til {{to}} af {{total}} produkter",
+    "previous": "Forrige",
+    "next": "Næste",
+    "page": "Side {{page}}"
+  }
+}

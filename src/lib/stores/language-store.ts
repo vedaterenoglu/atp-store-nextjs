@@ -16,7 +16,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-export type SupportedLanguage = 'en' | 'sv' | 'tr'
+export type SupportedLanguage = 'en' | 'sv' | 'tr' | 'da' | 'de'
 
 // Extend window interface for i18n and Clerk
 declare global {

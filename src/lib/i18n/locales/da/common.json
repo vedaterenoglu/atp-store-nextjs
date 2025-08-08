@@ -1,0 +1,115 @@
+{
+  "app": {
+    "name": "ATP Store",
+    "description": "Din betroede online shopping destination"
+  },
+  "navigation": {
+    "home": "Hjem",
+    "products": "Produkter",
+    "categories": "Kategorier",
+    "cart": "Kurv",
+    "profile": "Profil",
+    "settings": "Indstillinger",
+    "admin": "Admin"
+  },
+  "actions": {
+    "save": "Gem",
+    "cancel": "Annuller",
+    "delete": "Slet",
+    "edit": "Rediger",
+    "create": "Opret",
+    "search": "Søg",
+    "filter": "Filtrer",
+    "sort": "Sorter",
+    "view": "Vis",
+    "close": "Luk",
+    "confirm": "Bekræft",
+    "back": "Tilbage",
+    "next": "Næste",
+    "previous": "Forrige",
+    "submit": "Indsend",
+    "add": "Tilføj",
+    "remove": "Fjern",
+    "update": "Opdater",
+    "refresh": "Opdater",
+    "loadMore": "Indlæs mere"
+  },
+  "theme": {
+    "light": "Lys",
+    "dark": "Mørk",
+    "system": "System",
+    "toggleTheme": "Skift tema"
+  },
+  "language": {
+    "en": "Engelsk",
+    "sv": "Svensk",
+    "tr": "Tyrkisk",
+    "da": "Dansk",
+    "de": "Tysk",
+    "selectLanguage": "Vælg sprog"
+  },
+  "status": {
+    "loading": "Indlæser...",
+    "error": "Fejl",
+    "success": "Succes",
+    "warning": "Advarsel",
+    "info": "Information",
+    "pending": "Afventer",
+    "completed": "Fuldført",
+    "failed": "Fejlet"
+  },
+  "messages": {
+    "welcome": "Velkommen",
+    "goodbye": "Farvel",
+    "thankYou": "Tak",
+    "sorry": "Beklager",
+    "pleaseWait": "Vent venligst",
+    "noData": "Ingen data tilgængelig",
+    "noResults": "Ingen resultater fundet",
+    "errorOccurred": "Der opstod en fejl",
+    "tryAgain": "Prøv igen",
+    "contactSupport": "Kontakt support"
+  },
+  "footer": {
+    "copyright": "© 2024 GTBS Coding. Alle rettigheder forbeholdes.",
+    "privacyPolicy": "Privatlivspolitik",
+    "termsOfService": "Servicevilkår",
+    "contactUs": "Kontakt os"
+  },
+  "home": {
+    "hero": {
+      "title": "Premium Produkter",
+      "subtitle": "af Alfe Tissue Paper",
+      "description": "Oplev den ultimative kvalitet og komfort med vores premium udvalg af tissue papir produkter.",
+      "browseProducts": "Gennemse Produkter",
+      "aboutUs": "Om Os",
+      "goToCampaignPage": "Gå til Kampagnesiden"
+    },
+    "features": {
+      "qualityAssurance": {
+        "title": "Kvalitetsgaranti",
+        "description": "Premium produkter med garanteret kvalitet og kundetilfredshed"
+      },
+      "fastDelivery": {
+        "title": "Hurtig Levering",
+        "description": "Hurtig og pålidelig levering til din dør"
+      },
+      "customerSupport": {
+        "title": "24/7 Support",
+        "description": "Dedikeret kundesupport klar til at hjælpe når som helst"
+      },
+      "securePayment": {
+        "title": "Sikker Betaling",
+        "description": "Sikre og krypterede betalingsmuligheder"
+      }
+    }
+  },
+  "tooltips": {
+    "navbar": {
+      "dashboard": "Gå til dashboard",
+      "signIn": "Log ind på din konto",
+      "admin": "Adminpanel",
+      "userMenu": "Brugerindstillinger og konto"
+    }
+  }
+}

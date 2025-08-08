@@ -1,0 +1,43 @@
+{
+  "page": {
+    "title": "Special Campaigns",
+    "description": "Don't miss out on our exclusive deals and limited-time offers!",
+    "goToAllProducts": "Go to All Products"
+  },
+  "card": {
+    "addToCart": "Add to Cart",
+    "viewDetails": "View Details",
+    "outOfStock": "Out of Stock"
+  },
+  "slider": {
+    "previousSlide": "Previous slide",
+    "nextSlide": "Next slide",
+    "goToSlide": "Go to slide"
+  },
+  "messages": {
+    "noCampaigns": "No campaign products available",
+    "checkBackSoon": "Check back soon for exciting campaign offers!",
+    "addedToCart": "Added {{count}} item to cart",
+    "addedToCartPlural": "Added {{count}} items to cart",
+    "viewingDetails": "Viewing details for {{product}}",
+    "loadingCampaigns": "Loading campaigns..."
+  },
+  "errors": {
+    "loadFailed": "Failed to load campaign products",
+    "tryAgain": "Try Again",
+    "somethingWentWrong": "Something went wrong",
+    "errorMessage": "An error occurred while loading campaign products. Please try again later."
+  },
+  "discount": {
+    "badge": "-{{percentage}}%",
+    "originalPrice": "Original price",
+    "campaignPrice": "Campaign price",
+    "saveAmount": "Save {{amount}}",
+    "limitedTime": "Limited time offer"
+  },
+  "quantity": {
+    "decrease": "Decrease quantity",
+    "increase": "Increase quantity",
+    "current": "Current quantity: {{value}}"
+  }
+}

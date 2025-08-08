@@ -141,6 +141,37 @@ export async function calculateCustomerPrice(
 }
 
 /**
+ * Calculate discount percentage between original and discounted price
+ * Returns an integer percentage value (e.g., 25 for 25% discount)
+ * @param originalPrice - Original price in öre
+ * @param discountedPrice - Discounted price in öre
+ * @returns Integer percentage discount or 0 if no discount
+ */
+export function calculateDiscountPercentage(
+  originalPrice: number,
+  discountedPrice: number
+): number {
+  // Return 0 if original price is invalid
+  if (originalPrice <= 0) {
+    return 0
+  }
+
+  // Return 0 if no discount (prices are equal or discounted is higher)
+  if (discountedPrice >= originalPrice) {
+    return 0
+  }
+
+  // Handle FREE products (campaign_price = 0)
+  if (discountedPrice === 0) {
+    return 100
+  }
+
+  // Calculate percentage and round to integer
+  const discount = ((originalPrice - discountedPrice) / originalPrice) * 100
+  return Math.round(discount)
+}
+
+/**
  * Get bulk prices for multiple products
  * Useful for cart or product list calculations
  */

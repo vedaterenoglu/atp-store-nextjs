@@ -24,7 +24,6 @@ describe('product-transforms', () => {
           stock_price: 999.99,
           stock_unit: 'piece',
           stock_group: 'ELECTRONICS',
-          available_stock: 10,
           stock_image_link: 'https://example.com/laptop.jpg',
         },
         {
@@ -33,7 +32,6 @@ describe('product-transforms', () => {
           stock_price: 299.5,
           stock_unit: 'unit',
           stock_group: 'FURNITURE',
-          available_stock: 25,
           stock_image_link: null,
         },
       ]
@@ -49,7 +47,7 @@ describe('product-transforms', () => {
         price: 999.99,
         unit: 'piece',
         categoryId: 'ELECTRONICS',
-        stock: 10,
+        stock: 0,
         imageUrl: 'https://example.com/laptop.jpg',
       })
       expect(result[1]).toEqual({
@@ -58,7 +56,7 @@ describe('product-transforms', () => {
         price: 299.5,
         unit: 'unit',
         categoryId: 'FURNITURE',
-        stock: 25,
+        stock: 0,
         imageUrl: '/placeholder-product.png',
       })
     })
@@ -72,7 +70,6 @@ describe('product-transforms', () => {
           stock_price: 49.99,
           stock_unit: 'box',
           stock_group: 'SUPPLIES',
-          available_stock: null,
           stock_image_link: null,
         },
       ]
@@ -102,7 +99,6 @@ describe('product-transforms', () => {
           stock_price: null,
           stock_unit: 'kg',
           stock_group: 'FOOD',
-          available_stock: 5,
           stock_image_link: 'https://example.com/test.jpg',
         },
       ]
@@ -118,7 +114,7 @@ describe('product-transforms', () => {
         price: 0,
         unit: 'kg',
         categoryId: 'FOOD',
-        stock: 5,
+        stock: 0,
         imageUrl: 'https://example.com/test.jpg',
       })
     })
@@ -132,7 +128,6 @@ describe('product-transforms', () => {
           stock_price: 25.0,
           stock_unit: null,
           stock_group: 'GENERAL',
-          available_stock: 20,
           stock_image_link: null,
         },
       ]
@@ -148,7 +143,7 @@ describe('product-transforms', () => {
         price: 25.0,
         unit: 'EA',
         categoryId: 'GENERAL',
-        stock: 20,
+        stock: 0,
         imageUrl: '/placeholder-product.png',
       })
     })
@@ -162,7 +157,6 @@ describe('product-transforms', () => {
           stock_price: 15.75,
           stock_unit: 'pack',
           stock_group: null,
-          available_stock: 0,
           stock_image_link: null,
         },
       ]
@@ -192,7 +186,6 @@ describe('product-transforms', () => {
           stock_price: null,
           stock_unit: null,
           stock_group: null,
-          available_stock: null,
           stock_image_link: null,
         },
       ]
@@ -234,7 +227,6 @@ describe('product-transforms', () => {
           stock_price: 0,
           stock_unit: 'sample',
           stock_group: 'SAMPLES',
-          available_stock: 100,
           stock_image_link: null,
         },
       ]
@@ -250,7 +242,7 @@ describe('product-transforms', () => {
         price: 0,
         unit: 'sample',
         categoryId: 'SAMPLES',
-        stock: 100,
+        stock: 0,
         imageUrl: '/placeholder-product.png',
       })
     })
@@ -264,7 +256,6 @@ describe('product-transforms', () => {
           stock_price: -10.5,
           stock_unit: 'item',
           stock_group: 'DISCOUNTS',
-          available_stock: 50,
           stock_image_link: 'https://example.com/discount.jpg',
         },
       ]
@@ -280,7 +271,7 @@ describe('product-transforms', () => {
         price: -10.5,
         unit: 'item',
         categoryId: 'DISCOUNTS',
-        stock: 50,
+        stock: 0,
         imageUrl: 'https://example.com/discount.jpg',
       })
     })
@@ -294,7 +285,6 @@ describe('product-transforms', () => {
           stock_price: 100,
           stock_unit: '',
           stock_group: '',
-          available_stock: 0,
           stock_image_link: null,
         },
       ]
@@ -324,7 +314,6 @@ describe('product-transforms', () => {
           stock_price: 50.0,
           stock_unit: 'box',
           stock_group: 'CAT_A',
-          available_stock: 10,
           stock_image_link: null,
         },
         {
@@ -333,7 +322,6 @@ describe('product-transforms', () => {
           stock_price: null,
           stock_unit: null,
           stock_group: null,
-          available_stock: null,
           stock_image_link: null,
         },
         {
@@ -342,7 +330,6 @@ describe('product-transforms', () => {
           stock_price: 0,
           stock_unit: '',
           stock_group: '',
-          available_stock: 5,
           stock_image_link: '',
         },
       ]
@@ -375,7 +362,6 @@ describe('product-transforms', () => {
           stock_price: 99.99,
           stock_unit: 'test_unit',
           stock_group: 'TEST_GROUP',
-          available_stock: null,
           stock_image_link: null,
         },
       ]
@@ -406,7 +392,6 @@ describe('product-transforms', () => {
           stock_price: 999999.99,
           stock_unit: longString,
           stock_group: longString,
-          available_stock: null,
           stock_image_link: null,
         },
       ]
@@ -434,7 +419,6 @@ describe('product-transforms', () => {
           stock_price: 75.0,
           stock_unit: 'piece',
           stock_group: 'CATEGORY',
-          available_stock: null,
           stock_image_link: null,
         },
       ]

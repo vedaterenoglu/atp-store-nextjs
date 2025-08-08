@@ -1,0 +1,21 @@
+{
+  "title": "Produkte",
+  "subtitle": "Alle Preise verstehen sich exklusive Mehrwertsteuer. Vertragspreise gelten. Marktanpassungen vorbehalten.",
+  "searchPlaceholder": "Produkte suchen...",
+  "bookmarks": {
+    "button": "Meine Lesezeichen"
+  },
+  "navigation": {
+    "backToCategories": "Zurück zu Kategorien",
+    "back": "Zurück",
+    "goToCart": "Zum Warenkorb",
+    "cart": "Warenkorb"
+  },
+  "productCard": {
+    "category": "Kategorie",
+    "id": "ID",
+    "unit": "Einheit",
+    "addToCart": "In den Warenkorb",
+    "currency": "SEK"
+  }
+}

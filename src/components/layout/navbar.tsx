@@ -16,14 +16,13 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { SignInButton, UserButton, useAuth, useUser } from '@clerk/nextjs'
+import { Button } from '@/components/ui/schadcn'
 import {
-  Button,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/schadcn'
-import { ThemeToggle, LanguageToggle } from '@/components/ui/custom'
+  ThemeToggle,
+  LanguageToggle,
+  ControlledTooltip,
+  ControlledTooltipProvider,
+} from '@/components/ui/custom'
 import { LayoutDashboard } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useRoleAuth } from '@/lib/auth/role-auth'
@@ -31,7 +30,7 @@ import { useTranslation } from 'react-i18next'
 
 export function Navbar() {
   return (
-    <TooltipProvider>
+    <ControlledTooltipProvider>
       <nav className="border-b -mx-4">
         <div className="px-6 sm:px-8 py-4">
           <div className="flex items-center justify-between">
@@ -40,7 +39,7 @@ export function Navbar() {
           </div>
         </div>
       </nav>
-    </TooltipProvider>
+    </ControlledTooltipProvider>
   )
 }
 
@@ -48,27 +47,22 @@ function NavbarBrand() {
   const { t } = useTranslation('common')
 
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Link
-          href="/"
-          className="flex items-center gap-3 text-foreground transition-colors hover:text-primary"
-        >
-          <Image
-            src="/logo.png"
-            alt="ATP Store Logo"
-            width={40}
-            height={40}
-            className="h-10 w-10 object-contain"
-            priority
-          />
-          <span className="text-xl font-bold">ATP Store</span>
-        </Link>
-      </TooltipTrigger>
-      <TooltipContent>
-        <p>{t('tooltips.navbar.home')}</p>
-      </TooltipContent>
-    </Tooltip>
+    <ControlledTooltip content={<p>{t('tooltips.navbar.home')}</p>}>
+      <Link
+        href="/"
+        className="flex items-center gap-3 text-foreground transition-colors hover:text-primary"
+      >
+        <Image
+          src="/logo.png"
+          alt="ATP Store Logo"
+          width={40}
+          height={40}
+          className="h-10 w-10 object-contain"
+          priority
+        />
+        <span className="text-xl font-bold">ATP Store</span>
+      </Link>
+    </ControlledTooltip>
   )
 }
 
@@ -87,16 +81,11 @@ function ThemeToggleWithTooltip() {
   const { t } = useTranslation('common')
 
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <div>
-          <ThemeToggle />
-        </div>
-      </TooltipTrigger>
-      <TooltipContent>
-        <p>{t('tooltips.navbar.theme')}</p>
-      </TooltipContent>
-    </Tooltip>
+    <ControlledTooltip content={<p>{t('tooltips.navbar.theme')}</p>}>
+      <div>
+        <ThemeToggle />
+      </div>
+    </ControlledTooltip>
   )
 }
 
@@ -104,16 +93,11 @@ function LanguageToggleWithTooltip() {
   const { t } = useTranslation('common')
 
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <div>
-          <LanguageToggle />
-        </div>
-      </TooltipTrigger>
-      <TooltipContent>
-        <p>{t('tooltips.navbar.language')}</p>
-      </TooltipContent>
-    </Tooltip>
+    <ControlledTooltip content={<p>{t('tooltips.navbar.language')}</p>}>
+      <div>
+        <LanguageToggle />
+      </div>
+    </ControlledTooltip>
   )
 }
 
@@ -141,22 +125,17 @@ function CustomerDashboardButton() {
   }
 
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-9 w-9 cursor-pointer"
-          aria-label="Customer Dashboard"
-          onClick={handleClick}
-        >
-          <LayoutDashboard className="h-4 w-4" />
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent>
-        <p>{t('tooltips.navbar.dashboard')}</p>
-      </TooltipContent>
-    </Tooltip>
+    <ControlledTooltip content={<p>{t('tooltips.navbar.dashboard')}</p>}>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-9 w-9"
+        aria-label="Customer Dashboard"
+        onClick={handleClick}
+      >
+        <LayoutDashboard className="h-4 w-4" />
+      </Button>
+    </ControlledTooltip>
   )
 }
 
@@ -186,18 +165,13 @@ function NavbarSignIn() {
   const { t } = useTranslation('common')
 
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <SignInButton mode="modal">
-          <Button variant="default" size="sm">
-            Sign In
-          </Button>
-        </SignInButton>
-      </TooltipTrigger>
-      <TooltipContent>
-        <p>{t('tooltips.navbar.signIn')}</p>
-      </TooltipContent>
-    </Tooltip>
+    <ControlledTooltip content={<p>{t('tooltips.navbar.signIn')}</p>}>
+      <SignInButton mode="modal">
+        <Button variant="default" size="sm">
+          Sign In
+        </Button>
+      </SignInButton>
+    </ControlledTooltip>
   )
 }
 
@@ -212,29 +186,19 @@ function NavbarUserButton({
   return (
     <div className="flex items-center gap-2">
       {isAdmin && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Link href="/admin">
-              <Button variant="ghost" size="sm">
-                Admin
-              </Button>
-            </Link>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>{t('tooltips.navbar.admin')}</p>
-          </TooltipContent>
-        </Tooltip>
+        <ControlledTooltip content={<p>{t('tooltips.navbar.admin')}</p>}>
+          <Link href="/admin">
+            <Button variant="ghost" size="sm">
+              Admin
+            </Button>
+          </Link>
+        </ControlledTooltip>
       )}
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div>
-            <UserButton afterSignOutUrl="/" />
-          </div>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{t('tooltips.navbar.userMenu')}</p>
-        </TooltipContent>
-      </Tooltip>
+      <ControlledTooltip content={<p>{t('tooltips.navbar.userMenu')}</p>}>
+        <div>
+          <UserButton afterSignOutUrl="/" />
+        </div>
+      </ControlledTooltip>
     </div>
   )
 }

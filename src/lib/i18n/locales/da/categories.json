@@ -1,0 +1,27 @@
+{
+  "title": "Produktkategorier",
+  "description": "Gennemse vores udvalg af kvalitetsprodukter",
+  "allProducts": "Alle Produkter",
+  "viewAll": "Se Alle Produkter",
+  "productCount": "{{count}} produkt",
+  "productCount_plural": "{{count}} produkter",
+  "loading": "Indlæser kategorier...",
+  "error": "Kunne ikke indlæse kategorier",
+  "noCategories": "Ingen kategorier tilgængelige",
+  "searchPlaceholder": "Søg kategorier...",
+  "filters": {
+    "all": "Alle",
+    "active": "Aktive",
+    "inactive": "Inaktive"
+  },
+  "actions": {
+    "view": "Se Produkter",
+    "edit": "Rediger Kategori",
+    "delete": "Slet Kategori"
+  },
+  "messages": {
+    "loadingProducts": "Indlæser produkter...",
+    "noProducts": "Ingen produkter i denne kategori",
+    "error": "Kunne ikke indlæse produkter"
+  }
+}

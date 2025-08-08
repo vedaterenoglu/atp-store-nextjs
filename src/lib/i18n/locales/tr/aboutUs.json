@@ -159,6 +159,10 @@
         "message": {
           "label": "Mesaj",
           "placeholder": "Talebiniz hakkında daha fazla bilgi verin..."
+        },
+        "customerId": {
+          "label": "Müşteri Numarası",
+          "helper": "Şirket kayıt numaranız"
         }
       },
       "submit": "Mesaj Gönder",

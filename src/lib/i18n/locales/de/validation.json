@@ -1,0 +1,20 @@
+{
+  "required": "{{field}} ist erforderlich",
+  "email": "Bitte geben Sie eine gültige E-Mail ein",
+  "min": "{{field}} muss mindestens {{min}} Zeichen lang sein",
+  "max": "{{field}} darf höchstens {{max}} Zeichen lang sein",
+  "pattern": "{{field}} Format ist ungültig",
+  "passwordMatch": "Passwörter stimmen nicht überein",
+  "number": "{{field}} muss eine Zahl sein",
+  "positive": "{{field}} muss positiv sein",
+  "integer": "{{field}} muss eine ganze Zahl sein",
+  "url": "Bitte geben Sie eine gültige URL ein",
+  "date": "Bitte geben Sie ein gültiges Datum ein",
+  "future": "{{field}} muss in der Zukunft liegen",
+  "past": "{{field}} muss in der Vergangenheit liegen",
+  "unique": "{{field}} existiert bereits",
+  "minItems": "Wählen Sie mindestens {{min}} Elemente aus",
+  "maxItems": "Wählen Sie höchstens {{max}} Elemente aus",
+  "fileSize": "Dateigröße muss weniger als {{max}} betragen",
+  "fileType": "Ungültiger Dateityp"
+}

@@ -33,6 +33,8 @@ const languages: LanguageOption[] = [
   { value: 'en', flag: '🇬🇧', label: 'English' },
   { value: 'sv', flag: '🇸🇪', label: 'Svenska' },
   { value: 'tr', flag: '🇹🇷', label: 'Türkçe' },
+  { value: 'da', flag: '🇩🇰', label: 'Dansk' },
+  { value: 'de', flag: '🇩🇪', label: 'Deutsch' },
 ]
 
 export function LanguageToggle() {
@@ -62,7 +64,7 @@ function LanguageToggleSkeleton() {
     <Button
       variant="ghost"
       size="icon"
-      className="w-9 h-9 cursor-pointer"
+      className="w-9 h-9"
       disabled
       aria-label="Loading language selector"
     >
@@ -100,7 +102,7 @@ function LanguageToggleTrigger({
       <Button
         variant="ghost"
         size="icon"
-        className="w-9 h-9 cursor-pointer"
+        className="w-9 h-9"
         disabled={isLoading}
         aria-label={`Current language: ${currentLanguage?.label || language}`}
       >
@@ -122,7 +124,7 @@ function LanguageToggleContent({
   return (
     <DropdownMenuContent
       align="end"
-      className="!w-[80px] min-w-0 bg-popover border-border"
+      className="!w-[100px] min-w-0 bg-popover border-border"
     >
       {languages.map(lang => (
         <LanguageMenuItem
@@ -155,11 +157,7 @@ function LanguageMenuItem({
   }
 
   return (
-    <DropdownMenuItem
-      onClick={handleClick}
-      className="cursor-pointer"
-      disabled={isLoading}
-    >
+    <DropdownMenuItem onClick={handleClick} disabled={isLoading}>
       <LanguageMenuItemContent option={option} isSelected={isSelected} />
     </DropdownMenuItem>
   )

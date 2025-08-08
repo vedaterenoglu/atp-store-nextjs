@@ -35,7 +35,7 @@ export function validateAndTransformProducts(
     price: item.stock_price || 0,
     unit: item.stock_unit || 'EA',
     categoryId: item.stock_group || 'uncategorized',
-    stock: item.available_stock || 0,
+    stock: 0, // Stock information not available from GraphQL
     imageUrl: item.stock_image_link || '/placeholder-product.png',
   }))
 }
