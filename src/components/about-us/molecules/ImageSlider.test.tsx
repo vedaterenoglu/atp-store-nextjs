@@ -18,7 +18,6 @@ jest.mock('react-i18next', () => ({
 // Mock Next.js Image component
 jest.mock('next/image', () => ({
   __esModule: true,
-  // eslint-disable-next-line @next/next/no-img-element
   default: ({
     src,
     alt,

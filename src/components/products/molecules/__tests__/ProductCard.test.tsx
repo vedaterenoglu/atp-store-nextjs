@@ -121,6 +121,54 @@ jest.mock('@/lib/utils', () => ({
   cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
 }))
 
+// Mock BookmarkButton component
+jest.mock('@/components/ui/custom', () => ({
+  BookmarkButton: ({
+    productId,
+    isBookmarked,
+    onToggle,
+    size,
+  }: {
+    productId: string
+    isBookmarked: boolean
+    onToggle: () => void
+    size?: string
+  }) => (
+    <button
+      data-testid="bookmark-button"
+      data-product-id={productId}
+      data-bookmarked={isBookmarked}
+      data-size={size}
+      onClick={onToggle}
+    >
+      Bookmark
+    </button>
+  ),
+}))
+
+// Mock Bookmark Store
+const mockToggleBookmark = jest.fn()
+const mockInitializeBookmarks = jest.fn()
+const mockIsBookmarked = jest.fn()
+
+jest.mock('@/lib/stores/bookmark-store', () => ({
+  useBookmarkStore: () => ({
+    isBookmarked: mockIsBookmarked,
+    toggleBookmark: mockToggleBookmark,
+    initializeBookmarks: mockInitializeBookmarks,
+    isInitialized: false,
+  }),
+}))
+
+// Mock Clerk hooks
+const mockUseAuth = jest.fn()
+const mockUseUser = jest.fn()
+
+jest.mock('@clerk/nextjs', () => ({
+  useAuth: () => mockUseAuth(),
+  useUser: () => mockUseUser(),
+}))
+
 describe('ProductCard', () => {
   const mockProps = {
     id: 'PROD001',
@@ -134,6 +182,16 @@ describe('ProductCard', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    // Default mock returns for Clerk hooks (not signed in)
+    mockUseAuth.mockReturnValue({
+      isSignedIn: false,
+      sessionClaims: undefined,
+    })
+    mockUseUser.mockReturnValue({
+      user: null,
+    })
+    // Default bookmark store mocks
+    mockIsBookmarked.mockReturnValue(false)
   })
 
   it('should render with all required props', () => {
@@ -335,5 +393,295 @@ describe('ProductCard', () => {
     // In real implementation, this would trigger cart addition
     // For now, it's a TODO in the component
     expect(screen.getByText('3')).toBeInTheDocument()
+  })
+
+  describe('Bookmark functionality', () => {
+    it('should show bookmark button for signed-in customer with customerid', () => {
+      mockUseAuth.mockReturnValue({
+        isSignedIn: true,
+        sessionClaims: {
+          metadata: {
+            role: 'customer',
+            customerid: 'customer-123',
+          },
+        },
+      })
+      mockUseUser.mockReturnValue({
+        user: {
+          publicMetadata: {},
+        },
+      })
+
+      render(<ProductCard {...mockProps} />)
+
+      expect(screen.getByTestId('bookmark-button')).toBeInTheDocument()
+    })
+
+    it('should show bookmark button when role from publicMetadata', () => {
+      mockUseAuth.mockReturnValue({
+        isSignedIn: true,
+        sessionClaims: {
+          metadata: {},
+        },
+      })
+      mockUseUser.mockReturnValue({
+        user: {
+          publicMetadata: {
+            role: 'customer',
+            customerid: 'customer-456',
+          },
+        },
+      })
+
+      render(<ProductCard {...mockProps} />)
+
+      expect(screen.getByTestId('bookmark-button')).toBeInTheDocument()
+    })
+
+    it('should not show bookmark button for non-customer role', () => {
+      mockUseAuth.mockReturnValue({
+        isSignedIn: true,
+        sessionClaims: {
+          metadata: {
+            role: 'admin',
+            customerid: 'customer-123',
+          },
+        },
+      })
+      mockUseUser.mockReturnValue({
+        user: {
+          publicMetadata: {},
+        },
+      })
+
+      render(<ProductCard {...mockProps} />)
+
+      expect(screen.queryByTestId('bookmark-button')).not.toBeInTheDocument()
+    })
+
+    it('should not show bookmark button when customer has no customerid', () => {
+      mockUseAuth.mockReturnValue({
+        isSignedIn: true,
+        sessionClaims: {
+          metadata: {
+            role: 'customer',
+          },
+        },
+      })
+      mockUseUser.mockReturnValue({
+        user: {
+          publicMetadata: {},
+        },
+      })
+
+      render(<ProductCard {...mockProps} />)
+
+      expect(screen.queryByTestId('bookmark-button')).not.toBeInTheDocument()
+    })
+
+    it('should not show bookmark button when not signed in', () => {
+      mockUseAuth.mockReturnValue({
+        isSignedIn: false,
+        sessionClaims: undefined,
+      })
+      mockUseUser.mockReturnValue({
+        user: null,
+      })
+
+      render(<ProductCard {...mockProps} />)
+
+      expect(screen.queryByTestId('bookmark-button')).not.toBeInTheDocument()
+    })
+
+    it('should handle bookmark toggle when product is not bookmarked', async () => {
+      mockUseAuth.mockReturnValue({
+        isSignedIn: true,
+        sessionClaims: {
+          metadata: {
+            role: 'customer',
+            customerid: 'customer-123',
+          },
+        },
+      })
+      mockUseUser.mockReturnValue({
+        user: {
+          publicMetadata: {},
+        },
+      })
+      mockIsBookmarked.mockReturnValue(false)
+
+      render(
+        <ProductCard
+          {...mockProps}
+          imageUrl="https://example.com/product.jpg"
+        />
+      )
+
+      const bookmarkButton = screen.getByTestId('bookmark-button')
+      fireEvent.click(bookmarkButton)
+
+      // Should be called with product data when bookmarking
+      expect(mockToggleBookmark).toHaveBeenCalledWith('PROD001', {
+        id: 'PROD001',
+        name: 'Test Product',
+        price: 1500,
+        unit: 'kg',
+        categoryId: 'CAT001',
+        imageUrl: 'https://example.com/product.jpg',
+      })
+    })
+
+    it('should handle bookmark toggle when product is already bookmarked', async () => {
+      mockUseAuth.mockReturnValue({
+        isSignedIn: true,
+        sessionClaims: {
+          metadata: {
+            role: 'customer',
+            customerid: 'customer-123',
+          },
+        },
+      })
+      mockUseUser.mockReturnValue({
+        user: {
+          publicMetadata: {},
+        },
+      })
+      mockIsBookmarked.mockReturnValue(true)
+
+      render(<ProductCard {...mockProps} />)
+
+      const bookmarkButton = screen.getByTestId('bookmark-button')
+      fireEvent.click(bookmarkButton)
+
+      // Should be called with undefined when unbookmarking
+      expect(mockToggleBookmark).toHaveBeenCalledWith('PROD001', undefined)
+    })
+
+    it('should handle bookmark toggle without imageUrl', async () => {
+      mockUseAuth.mockReturnValue({
+        isSignedIn: true,
+        sessionClaims: {
+          metadata: {
+            role: 'customer',
+            customerid: 'customer-123',
+          },
+        },
+      })
+      mockUseUser.mockReturnValue({
+        user: {
+          publicMetadata: {},
+        },
+      })
+      mockIsBookmarked.mockReturnValue(false)
+
+      render(<ProductCard {...mockProps} />)
+
+      const bookmarkButton = screen.getByTestId('bookmark-button')
+      fireEvent.click(bookmarkButton)
+
+      // Should not include imageUrl when not provided
+      expect(mockToggleBookmark).toHaveBeenCalledWith('PROD001', {
+        id: 'PROD001',
+        name: 'Test Product',
+        price: 1500,
+        unit: 'kg',
+        categoryId: 'CAT001',
+      })
+    })
+
+    it('should initialize bookmarks when signed in and not initialized', () => {
+      const { rerender } = render(<ProductCard {...mockProps} />)
+
+      // Initially not signed in
+      expect(mockInitializeBookmarks).not.toHaveBeenCalled()
+
+      // Sign in
+      mockUseAuth.mockReturnValue({
+        isSignedIn: true,
+        sessionClaims: {
+          metadata: {
+            role: 'customer',
+            customerid: 'customer-123',
+          },
+        },
+      })
+      mockUseUser.mockReturnValue({
+        user: {
+          publicMetadata: {},
+        },
+      })
+
+      rerender(<ProductCard {...mockProps} />)
+
+      expect(mockInitializeBookmarks).toHaveBeenCalled()
+    })
+
+    it('should check bookmark status correctly', () => {
+      mockUseAuth.mockReturnValue({
+        isSignedIn: true,
+        sessionClaims: {
+          metadata: {
+            role: 'customer',
+            customerid: 'customer-123',
+          },
+        },
+      })
+      mockUseUser.mockReturnValue({
+        user: {
+          publicMetadata: {},
+        },
+      })
+      mockIsBookmarked.mockReturnValue(true)
+
+      render(<ProductCard {...mockProps} />)
+
+      expect(mockIsBookmarked).toHaveBeenCalledWith('PROD001')
+      const bookmarkButton = screen.getByTestId('bookmark-button')
+      expect(bookmarkButton).toHaveAttribute('data-bookmarked', 'true')
+    })
+
+    it('should check customer role with publicMetadata fallback', () => {
+      mockUseAuth.mockReturnValue({
+        isSignedIn: true,
+        sessionClaims: {
+          metadata: {
+            customerid: 'customer-789',
+          },
+        },
+      })
+      mockUseUser.mockReturnValue({
+        user: {
+          publicMetadata: {
+            role: 'customer',
+          },
+        },
+      })
+
+      render(<ProductCard {...mockProps} />)
+
+      expect(screen.getByTestId('bookmark-button')).toBeInTheDocument()
+    })
+
+    it('should check customerid with publicMetadata fallback', () => {
+      mockUseAuth.mockReturnValue({
+        isSignedIn: true,
+        sessionClaims: {
+          metadata: {
+            role: 'customer',
+          },
+        },
+      })
+      mockUseUser.mockReturnValue({
+        user: {
+          publicMetadata: {
+            customerid: 'customer-999',
+          },
+        },
+      })
+
+      render(<ProductCard {...mockProps} />)
+
+      expect(screen.getByTestId('bookmark-button')).toBeInTheDocument()
+    })
   })
 })
