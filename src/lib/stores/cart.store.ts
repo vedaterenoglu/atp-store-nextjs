@@ -39,8 +39,8 @@ interface CartStore {
     maxQuantity?: number,
     discount?: number
   ) => Promise<void>
-  updateQuantity: (itemId: string, quantity: number) => void
-  removeFromCart: (itemId: string) => void
+  updateQuantity: (itemId: string, quantity: number) => Promise<void>
+  removeFromCart: (itemId: string) => Promise<void>
   clearCart: () => void
   setCartStatus: (status: CartStatus) => void
   checkout: () => Promise<boolean>
@@ -227,11 +227,14 @@ export const useCartStore = create<CartStore>()(
         }
       },
 
-      // Update item quantity
-      updateQuantity: (itemId: string, quantity: number) => {
+      // Update item quantity with SSOT pattern - fetch fresh prices for ALL items
+      updateQuantity: async (itemId: string, quantity: number) => {
+        const { cart } = get()
+        if (!cart) return
+
+        // First, update the quantity locally for immediate UI feedback
         set(state => {
           if (!state.cart) return
-
           const item = state.cart.items.find((i: CartItem) => i.id === itemId)
           if (!item) return
 
@@ -241,24 +244,17 @@ export const useCartStore = create<CartStore>()(
               (i: CartItem) => i.id !== itemId
             )
           } else {
-            // Update quantity
+            // Update quantity only (not prices yet)
             item.quantity = Math.min(quantity, item.maxQuantity)
-            item.totalPrice = item.unitPrice * item.quantity
-            if (item.discount) {
-              item.discountedPrice = item.totalPrice * (1 - item.discount / 100)
-            }
-            item.updatedAt = new Date()
           }
-
-          state.cart.updatedAt = new Date()
         })
 
-        // Recalculate summary after updating
-        get().recalculateSummary()
+        // Now fetch fresh prices for ALL items from backend (SSOT)
+        await get().refreshPrices()
       },
 
-      // Remove item from cart
-      removeFromCart: (itemId: string) => {
+      // Remove item from cart with SSOT pattern
+      removeFromCart: async (itemId: string) => {
         set(state => {
           if (!state.cart) return
 
@@ -268,27 +264,14 @@ export const useCartStore = create<CartStore>()(
           state.cart.updatedAt = new Date()
         })
 
-        // Recalculate summary after removing
-        get().recalculateSummary()
-      },
-
-      // Clear all items from cart
-      clearCart: () => {
-        set(state => {
-          if (!state.cart) return
-
-          state.cart.items = []
-          state.cart.summary = {
-            subtotal: 0,
-            totalDiscount: 0,
-            tax: 0,
-            shipping: 0,
-            total: 0,
-            itemCount: 0,
-            uniqueItemCount: 0,
-          }
-          state.cart.updatedAt = new Date()
-        })
+        // Fetch fresh prices for remaining items (SSOT)
+        const { cart } = get()
+        if (cart && cart.items.length > 0) {
+          await get().refreshPrices()
+        } else {
+          // If cart is empty, just recalculate summary
+          get().recalculateSummary()
+        }
       },
 
       // Set cart status
@@ -366,6 +349,24 @@ export const useCartStore = create<CartStore>()(
       findCartItem: (productId: string) => {
         const { cart } = get()
         return cart?.items.find(item => item.productId === productId)
+      },
+
+      // Clear all items from cart
+      clearCart: () => {
+        set(state => {
+          if (!state.cart) return
+
+          state.cart.items = []
+          state.cart.summary = {
+            itemCount: 0,
+            uniqueItemCount: 0,
+            subtotal: 0,
+            tax: 0,
+            shipping: 0,
+            total: 0,
+            totalDiscount: 0,
+          }
+        })
       },
 
       // Helper to recalculate cart summary

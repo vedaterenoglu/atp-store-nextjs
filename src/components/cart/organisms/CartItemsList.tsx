@@ -76,8 +76,8 @@ export function CartItemsList({
 
   return (
     <div className={clsx('', className)}>
-      {/* Mobile: No scroll area, natural scrolling. Desktop: ScrollArea for long lists */}
-      <div className="space-y-3 lg:max-h-[600px] lg:overflow-y-auto lg:pr-2">
+      {/* Natural scrolling for all screen sizes */}
+      <div className="space-y-3">
         {items.map(item => (
           <div
             key={item.id}

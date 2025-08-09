@@ -3,7 +3,16 @@
   "emptyCart": {
     "title": "Din kurv er tom",
     "description": "Det ser ud til, at du ikke har tilføjet nogen varer til din kurv endnu",
-    "action": "Fortsæt med at handle"
+    "action": "Fortsæt med at handle",
+    "button": "Tøm kurv",
+    "confirmTitle": "Tøm kurven?",
+    "confirmDescription": "Er du sikker på, at du vil fjerne alle varer fra din kurv? Denne handling kan ikke fortrydes.",
+    "cancel": "Annuller",
+    "confirm": "Tøm kurv",
+    "success": "Kurv tømt",
+    "successDescription": "Alle varer er blevet fjernet fra din kurv.",
+    "alreadyEmpty": "Kurven er allerede tom",
+    "noItems": "Der er ingen varer at fjerne."
   },
   "summary": {
     "title": "Ordreoversigt",
