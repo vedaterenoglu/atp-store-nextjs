@@ -125,9 +125,9 @@ export function CartItemCard({
 
             {/* Mobile: Price and Quantity in columns */}
             <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              {/* Quantity Controls - Full width on mobile */}
+              {/* Quantity Controls - Compact spacing */}
               {showActions && !readonly ? (
-                <div className="flex items-center justify-between sm:justify-start sm:gap-1">
+                <div className="flex items-center gap-2 sm:gap-1">
                   <Button
                     variant="outline"
                     size="icon"
@@ -137,7 +137,7 @@ export function CartItemCard({
                   >
                     <Minus className="h-4 w-4 sm:h-3 sm:w-3" />
                   </Button>
-                  <span className="w-16 text-center text-base font-medium sm:w-12 sm:text-sm">
+                  <span className="w-12 text-center text-base font-medium sm:w-10 sm:text-sm">
                     {quantity}
                   </span>
                   <Button

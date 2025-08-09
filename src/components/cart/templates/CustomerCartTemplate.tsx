@@ -14,13 +14,14 @@ import { useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { CartItemsList } from '../organisms'
 import { CartSummaryCard } from '../molecules'
-import { CartEmptyState } from '../atoms'
+import { CartEmptyState, EmptyCartButton } from '../atoms'
 import { Button } from '@/components/ui/schadcn'
 import {
   useCartStore,
   useCartItems,
   useCartSummary,
 } from '@/lib/stores/cart.store'
+import { useCartSync } from '@/hooks/useCartSync'
 import { toast } from 'sonner'
 import { formatPrice } from '@/lib/utils/price'
 
@@ -28,6 +29,9 @@ export function CustomerCartTemplate() {
   const router = useRouter()
   const { t } = useTranslation('cart')
   const [isUpdating, setIsUpdating] = useState(false)
+
+  // Sync cart with backend on mount (SSOT pattern)
+  useCartSync({ syncOnMount: true })
 
   // Get cart data from Zustand store
   const cart = useCartStore(state => state.cart)
@@ -41,7 +45,7 @@ export function CustomerCartTemplate() {
   const handleQuantityChange = async (itemId: string, quantity: number) => {
     setIsUpdating(true)
     try {
-      updateQuantity(itemId, quantity)
+      await updateQuantity(itemId, quantity)
       toast.success(t('messages.cartUpdated'))
     } catch (error) {
       toast.error(t('messages.updateFailed'))
@@ -54,7 +58,7 @@ export function CustomerCartTemplate() {
   const handleRemoveItem = async (itemId: string) => {
     setIsUpdating(true)
     try {
-      removeFromCart(itemId)
+      await removeFromCart(itemId)
       toast.success(t('messages.itemRemoved'))
     } catch (error) {
       toast.error(t('messages.removeFailed'))
@@ -136,16 +140,23 @@ export function CustomerCartTemplate() {
                   )
                 </span>
               </h1>
-              <Link href="/products" className="w-full sm:w-auto">
-                <Button
+              <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
+                <Link href="/products" className="w-full sm:w-auto">
+                  <Button
+                    variant="outline"
+                    className="w-full gap-2 sm:w-auto"
+                    size="sm"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    {t('actions.continueShopping')}
+                  </Button>
+                </Link>
+                <EmptyCartButton
                   variant="outline"
-                  className="w-full gap-2 sm:w-auto"
                   size="sm"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  {t('actions.continueShopping')}
-                </Button>
-              </Link>
+                  className="w-full sm:w-auto"
+                />
+              </div>
             </div>
           </div>
 

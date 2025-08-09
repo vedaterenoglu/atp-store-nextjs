@@ -196,7 +196,7 @@ describe('Navbar', () => {
       expect(nav).toHaveClass('border-b', '-mx-4')
 
       const innerContainer = nav?.firstChild as HTMLElement
-      expect(innerContainer).toHaveClass('px-6', 'sm:px-8', 'py-4')
+      expect(innerContainer).toHaveClass('px-4', 'sm:px-8', 'py-3', 'sm:py-4')
 
       const flexContainer = innerContainer?.firstChild as HTMLElement
       expect(flexContainer).toHaveClass(
@@ -228,7 +228,13 @@ describe('Navbar', () => {
       expect(logo).toHaveAttribute('alt', 'ATP Store Logo')
       expect(logo).toHaveAttribute('width', '40')
       expect(logo).toHaveAttribute('height', '40')
-      expect(logo).toHaveClass('h-10', 'w-10', 'object-contain')
+      expect(logo).toHaveClass(
+        'h-8',
+        'w-8',
+        'sm:h-10',
+        'sm:w-10',
+        'object-contain'
+      )
       expect(logo).toHaveAttribute('data-priority', 'true')
     })
 
@@ -240,7 +246,8 @@ describe('Navbar', () => {
       expect(brandLink).toHaveClass(
         'flex',
         'items-center',
-        'gap-3',
+        'gap-2',
+        'sm:gap-3',
         'text-foreground',
         'transition-colors',
         'hover:text-primary'
@@ -252,7 +259,7 @@ describe('Navbar', () => {
       render(<Navbar />)
 
       const brandText = screen.getByText('ATP Store')
-      expect(brandText).toHaveClass('text-xl', 'font-bold')
+      expect(brandText).toHaveClass('text-lg', 'sm:text-xl', 'font-bold')
     })
   })
 
@@ -267,13 +274,18 @@ describe('Navbar', () => {
       expect(languageToggle).toBeInTheDocument()
       expect(themeToggle).toBeInTheDocument()
 
-      // The toggles are now wrapped in tooltip divs, so we need to go up more levels
-      // languageToggle -> div (tooltip wrapper) -> div (actions container)
-      const actionsContainer = languageToggle.parentElement?.parentElement
-      expect(actionsContainer).toHaveClass('flex', 'items-center', 'gap-4')
-      // Now we have 4 children: CustomerDashboardButton (may be null), LanguageToggleWithTooltip, ThemeToggleWithTooltip, NavbarAuth
+      // The toggles are now in a desktop-only container
+      // languageToggle -> div (tooltip wrapper) -> div (desktop container) -> div (actions container)
+      const desktopContainer = languageToggle.parentElement?.parentElement
+      expect(desktopContainer).toHaveClass(
+        'hidden',
+        'sm:flex',
+        'items-center',
+        'gap-4'
+      )
+      // Desktop container has: CustomerDashboardButton (may be null), LanguageToggleWithTooltip, ThemeToggleWithTooltip, NavbarAuth
       // Since CustomerDashboardButton may not render, we check for at least 3
-      expect(actionsContainer?.children.length).toBeGreaterThanOrEqual(3)
+      expect(desktopContainer?.children.length).toBeGreaterThanOrEqual(3)
     })
   })
 
@@ -305,13 +317,18 @@ describe('Navbar', () => {
 
       render(<Navbar />)
 
-      const signInButton = screen.getByTestId('sign-in-button')
-      expect(signInButton).toBeInTheDocument()
+      // Auth is rendered twice (desktop and mobile), so we get all instances
+      const signInButtons = screen.getAllByTestId('sign-in-button')
+      expect(signInButtons).toHaveLength(2) // One for desktop, one for mobile
 
-      const button = screen.getByTestId('button')
-      expect(button).toHaveTextContent('Sign In')
-      expect(button).toHaveAttribute('data-variant', 'default')
-      expect(button).toHaveAttribute('data-size', 'sm')
+      const buttons = screen.getAllByTestId('button')
+      // Filter to get only Sign In buttons
+      const signInBtns = buttons.filter(btn => btn.textContent === 'Sign In')
+      expect(signInBtns).toHaveLength(2)
+      signInBtns.forEach(button => {
+        expect(button).toHaveAttribute('data-variant', 'default')
+        expect(button).toHaveAttribute('data-size', 'sm')
+      })
     })
 
     it('should pass correct props to SignInButton', () => {
@@ -320,9 +337,9 @@ describe('Navbar', () => {
       render(<Navbar />)
 
       // Check that SignInButton was rendered with correct props
-      const signInButton = screen.getByTestId('sign-in-button')
-      expect(signInButton).toBeInTheDocument()
-      expect(mockSignInButton).toHaveBeenCalled()
+      const signInButtons = screen.getAllByTestId('sign-in-button')
+      expect(signInButtons).toHaveLength(2) // Desktop and mobile
+      expect(mockSignInButton).toHaveBeenCalledTimes(2)
     })
   })
 
@@ -348,10 +365,10 @@ describe('Navbar', () => {
 
       render(<Navbar />)
 
-      const userButton = screen.getByTestId('user-button')
-      expect(userButton).toBeInTheDocument()
-      // Check that UserButton was rendered
-      expect(mockUserButton).toHaveBeenCalled()
+      const userButtons = screen.getAllByTestId('user-button')
+      expect(userButtons).toHaveLength(2) // Desktop and mobile
+      // Check that UserButton was rendered twice
+      expect(mockUserButton).toHaveBeenCalledTimes(2)
     })
 
     it('should not show admin button for regular users', () => {
@@ -399,15 +416,18 @@ describe('Navbar', () => {
 
       render(<Navbar />)
 
-      const adminLink = screen.getByText('Admin')
-      expect(adminLink).toBeInTheDocument()
+      // Admin button appears twice (desktop and mobile)
+      const adminLinks = screen.getAllByText('Admin')
+      expect(adminLinks).toHaveLength(2)
 
-      const adminButton = adminLink.closest('[data-testid="button"]')
-      expect(adminButton).toHaveAttribute('data-variant', 'ghost')
-      expect(adminButton).toHaveAttribute('data-size', 'sm')
+      adminLinks.forEach(adminLink => {
+        const adminButton = adminLink.closest('[data-testid="button"]')
+        expect(adminButton).toHaveAttribute('data-variant', 'ghost')
+        expect(adminButton).toHaveAttribute('data-size', 'sm')
 
-      const linkWrapper = adminLink.closest('[data-testid="next-link"]')
-      expect(linkWrapper).toHaveAttribute('href', '/admin')
+        const linkWrapper = adminLink.closest('[data-testid="next-link"]')
+        expect(linkWrapper).toHaveAttribute('href', '/admin')
+      })
     })
 
     it('should handle user with null publicMetadata', () => {
@@ -432,7 +452,8 @@ describe('Navbar', () => {
       render(<Navbar />)
 
       expect(screen.queryByText('Admin')).not.toBeInTheDocument()
-      expect(screen.getByTestId('user-button')).toBeInTheDocument()
+      const userButtons = screen.getAllByTestId('user-button')
+      expect(userButtons).toHaveLength(2) // Desktop and mobile
     })
 
     it('should handle user with empty publicMetadata', () => {
@@ -457,7 +478,8 @@ describe('Navbar', () => {
       render(<Navbar />)
 
       expect(screen.queryByText('Admin')).not.toBeInTheDocument()
-      expect(screen.getByTestId('user-button')).toBeInTheDocument()
+      const userButtons = screen.getAllByTestId('user-button')
+      expect(userButtons).toHaveLength(2) // Desktop and mobile
     })
 
     it('should render user button container with correct styles', () => {
@@ -481,10 +503,13 @@ describe('Navbar', () => {
 
       render(<Navbar />)
 
-      const userButton = screen.getByTestId('user-button')
-      // UserButton is now wrapped: userButton -> div (tooltip wrapper) -> div (container with flex)
-      const container = userButton.parentElement?.parentElement
-      expect(container).toHaveClass('flex', 'items-center', 'gap-2')
+      const userButtons = screen.getAllByTestId('user-button')
+      // Check both desktop and mobile instances
+      userButtons.forEach(userButton => {
+        // UserButton is now wrapped: userButton -> div (tooltip wrapper) -> div (container with flex)
+        const container = userButton.parentElement?.parentElement
+        expect(container).toHaveClass('flex', 'items-center', 'gap-2')
+      })
     })
   })
 
@@ -511,7 +536,8 @@ describe('Navbar', () => {
       render(<Navbar />)
 
       // Should still render user button even with null user
-      expect(screen.getByTestId('user-button')).toBeInTheDocument()
+      const userButtons = screen.getAllByTestId('user-button')
+      expect(userButtons).toHaveLength(2) // Desktop and mobile
     })
 
     it('should handle undefined publicMetadata properties', () => {
@@ -536,7 +562,8 @@ describe('Navbar', () => {
       render(<Navbar />)
 
       expect(screen.queryByText('Admin')).not.toBeInTheDocument()
-      expect(screen.getByTestId('user-button')).toBeInTheDocument()
+      const userButtons = screen.getAllByTestId('user-button')
+      expect(userButtons).toHaveLength(2) // Desktop and mobile
     })
 
     it('should handle different role values', () => {
@@ -564,7 +591,8 @@ describe('Navbar', () => {
         const { rerender } = render(<Navbar />)
 
         expect(screen.queryByText('Admin')).not.toBeInTheDocument()
-        expect(screen.getByTestId('user-button')).toBeInTheDocument()
+        const userButtons = screen.getAllByTestId('user-button')
+        expect(userButtons).toHaveLength(2) // Desktop and mobile
 
         rerender(<></>)
       })

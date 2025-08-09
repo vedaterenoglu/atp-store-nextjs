@@ -3,7 +3,16 @@
   "emptyCart": {
     "title": "Sepetiniz boş",
     "description": "Henüz sepetinize ürün eklememişsiniz",
-    "action": "Alışverişe Devam Et"
+    "action": "Alışverişe Devam Et",
+    "button": "Sepeti Boşalt",
+    "confirmTitle": "Sepeti Boşalt?",
+    "confirmDescription": "Sepetinizdeki tüm ürünleri kaldırmak istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+    "cancel": "İptal",
+    "confirm": "Sepeti Boşalt",
+    "success": "Sepet Boşaltıldı",
+    "successDescription": "Tüm ürünler sepetinizden kaldırıldı.",
+    "alreadyEmpty": "Sepet zaten boş",
+    "noItems": "Kaldırılacak ürün yok."
   },
   "summary": {
     "title": "Sipariş Özeti",

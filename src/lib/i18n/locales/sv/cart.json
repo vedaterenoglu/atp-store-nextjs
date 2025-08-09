@@ -3,7 +3,16 @@
   "emptyCart": {
     "title": "Din kundvagn är tom",
     "description": "Det verkar som att du inte har lagt till några varor i din kundvagn än",
-    "action": "Fortsätt handla"
+    "action": "Fortsätt handla",
+    "button": "Töm kundvagn",
+    "confirmTitle": "Töm kundvagnen?",
+    "confirmDescription": "Är du säker på att du vill ta bort alla varor från din kundvagn? Denna åtgärd kan inte ångras.",
+    "cancel": "Avbryt",
+    "confirm": "Töm kundvagn",
+    "success": "Kundvagn tömd",
+    "successDescription": "Alla varor har tagits bort från din kundvagn.",
+    "alreadyEmpty": "Kundvagnen är redan tom",
+    "noItems": "Det finns inga varor att ta bort."
   },
   "summary": {
     "title": "Ordersammanfattning",

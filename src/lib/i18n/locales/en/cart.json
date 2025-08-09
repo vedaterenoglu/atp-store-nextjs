@@ -3,7 +3,16 @@
   "emptyCart": {
     "title": "Your cart is empty",
     "description": "Looks like you haven't added any items to your cart yet",
-    "action": "Continue Shopping"
+    "action": "Continue Shopping",
+    "button": "Empty Cart",
+    "confirmTitle": "Empty Your Cart?",
+    "confirmDescription": "Are you sure you want to remove all items from your cart? This action cannot be undone.",
+    "cancel": "Cancel",
+    "confirm": "Empty Cart",
+    "success": "Cart Emptied",
+    "successDescription": "All items have been removed from your cart.",
+    "alreadyEmpty": "Cart is already empty",
+    "noItems": "There are no items to remove."
   },
   "summary": {
     "title": "Order Summary",

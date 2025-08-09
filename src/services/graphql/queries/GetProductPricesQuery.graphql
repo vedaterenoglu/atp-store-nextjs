@@ -52,7 +52,7 @@ query GetProductPricesQuery(
 #   "stock_id": "0000 1002 0002"
 # }
 
-# todo: response 
+# todo: response
 
 # {
 #   "data": {

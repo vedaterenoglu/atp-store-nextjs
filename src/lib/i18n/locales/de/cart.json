@@ -3,7 +3,16 @@
   "emptyCart": {
     "title": "Ihr Warenkorb ist leer",
     "description": "Es sieht so aus, als hätten Sie noch keine Artikel zu Ihrem Warenkorb hinzugefügt",
-    "action": "Weiter einkaufen"
+    "action": "Weiter einkaufen",
+    "button": "Warenkorb leeren",
+    "confirmTitle": "Warenkorb leeren?",
+    "confirmDescription": "Sind Sie sicher, dass Sie alle Artikel aus Ihrem Warenkorb entfernen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "cancel": "Abbrechen",
+    "confirm": "Warenkorb leeren",
+    "success": "Warenkorb geleert",
+    "successDescription": "Alle Artikel wurden aus Ihrem Warenkorb entfernt.",
+    "alreadyEmpty": "Warenkorb ist bereits leer",
+    "noItems": "Es gibt keine Artikel zu entfernen."
   },
   "summary": {
     "title": "Bestellübersicht",

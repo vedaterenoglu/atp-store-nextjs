@@ -62,7 +62,8 @@ const config = {
   // Module name mapper for path aliases
   moduleNameMapper: {
     // Mock react-resizable-panels to avoid ESM parsing errors
-    '^react-resizable-panels$': '<rootDir>/src/__tests__/mocks/react-resizable-panels.mock.ts',
+    '^react-resizable-panels$':
+      '<rootDir>/src/__tests__/mocks/react-resizable-panels.mock.ts',
     '^@/(.*)$': '<rootDir>/src/$1',
     // Handle CSS imports (CSS modules)
     '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',

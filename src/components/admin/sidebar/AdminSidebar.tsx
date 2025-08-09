@@ -57,16 +57,27 @@ const navItems: NavItem[] = [
   },
 ]
 
-export function AdminSidebar() {
+interface AdminSidebarProps {
+  onClose?: () => void
+}
+
+export function AdminSidebar({ onClose }: AdminSidebarProps) {
   const pathname = usePathname()
   const { t } = useTranslation('admin')
 
+  const handleLinkClick = () => {
+    // Close sidebar on mobile after navigation
+    if (onClose) {
+      onClose()
+    }
+  }
+
   return (
-    <aside className="w-64 border-r bg-card">
-      <div className="p-6">
-        <h2 className="text-lg font-semibold">{t('dashboard')}</h2>
+    <aside className="w-64 h-full border-r bg-card">
+      <div className="p-4 sm:p-6 border-b">
+        <h2 className="text-base sm:text-lg font-semibold">{t('dashboard')}</h2>
       </div>
-      <nav className="space-y-1 px-3">
+      <nav className="space-y-1 p-3">
         {navItems.map(item => {
           const Icon = item.icon
           const isActive = pathname === item.href
@@ -75,8 +86,9 @@ export function AdminSidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={handleLinkClick}
               className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors',
+                'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors',
                 isActive
                   ? 'bg-primary text-primary-foreground'
                   : 'hover:bg-accent hover:text-accent-foreground'
