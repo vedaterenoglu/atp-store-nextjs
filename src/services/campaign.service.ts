@@ -2,27 +2,13 @@
  * Campaign Service - Fetches campaign products from GraphQL
  * SOLID Principles: SRP - Manages campaign data fetching
  * Design Patterns: Service Pattern, Repository Pattern
- * Dependencies: Apollo Client, GraphQL
+ * Dependencies: GraphQL Client (API Route Proxy)
  * Note: This service should only be used on the server-side
  */
 
-import 'server-only' // Ensure this only runs on server
-import apolloClient from '@/lib/apollo/client'
 import type { CampaignProduct } from '@/types/campaign'
-import GetCampaignProductsWithPricesDocument from '@/services/graphql/queries/GetCampaignProductsWithPrices.graphql'
-
-interface GetCampaignProductsResponse {
-  stock: Array<{
-    stock_id: string
-    stock_name: string
-    stock_group: string
-    stock_image_link: string | null
-    stock_unit: string
-    stock_price: number
-    campaign_price: number | null
-    is_campaign_active?: boolean
-  }>
-}
+import { validateGetCampaignProductsWithPricesResponse } from '@/services/graphql/queries/GetCampaignProductsWithPrices.schema'
+import type { GetCampaignProductsWithPricesQueryResponse } from '@/services/graphql/queries/GetCampaignProductsWithPrices.types'
 
 /**
  * Fetches active campaign products for a company
@@ -33,19 +19,40 @@ export async function getCampaignProducts(
   companyId: string
 ): Promise<CampaignProduct[]> {
   try {
-    const { data } = await apolloClient.query<GetCampaignProductsResponse>({
-      query: GetCampaignProductsWithPricesDocument,
-      variables: { company_id: companyId },
-      fetchPolicy: 'network-only', // Always fetch fresh data
-    })
+    // Construct absolute URL for Server Components
+    const baseUrl =
+      typeof window === 'undefined'
+        ? process.env['NEXT_PUBLIC_APP_URL'] || 'http://localhost:3081'
+        : ''
+
+    // Use new API route facade
+    const response = await fetch(
+      `${baseUrl}/api/campaign-products?company_id=${companyId}`
+    )
+
+    if (!response.ok) {
+      console.error('Failed to fetch campaign products:', response.statusText)
+      return []
+    }
+
+    const data: GetCampaignProductsWithPricesQueryResponse =
+      await response.json()
+
+    if (!data) {
+      return []
+    }
+
+    // Validate response with Zod
+    const validatedResponse =
+      validateGetCampaignProductsWithPricesResponse(data)
 
     // Return empty array if no campaign products
-    if (!data?.stock || data.stock.length === 0) {
+    if (!validatedResponse.stock || validatedResponse.stock.length === 0) {
       return []
     }
 
     // Transform to CampaignProduct type
-    return data.stock.map(product => ({
+    return validatedResponse.stock.map(product => ({
       stock_id: product.stock_id,
       stock_name: product.stock_name,
       stock_group: product.stock_group,

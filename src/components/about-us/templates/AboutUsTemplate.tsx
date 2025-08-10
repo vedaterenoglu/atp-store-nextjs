@@ -14,29 +14,43 @@ import { AboutContent } from '@/components/about-us/molecules/AboutContent'
 import { GoogleMapsEmbed } from '@/components/about-us/molecules/GoogleMapsEmbed'
 import { ContactForm } from '@/components/about-us/organisms/ContactForm'
 import { ContactInfo } from '@/components/about-us/molecules/ContactInfo'
+import {
+  getPageClasses,
+  getContainerClasses,
+  getSpacingClasses,
+  getGridClasses,
+} from '@/lib/styles/utilities'
+import { cn } from '@/lib/utils'
 
 export function AboutUsTemplate() {
   const { t } = useTranslation('aboutUs')
 
   return (
-    <div className="min-h-screen">
+    <div className={getPageClasses({ section: 'container' })}>
       {/* Hero Section with Image Slider */}
-      <section className="relative w-full">
+      <section className={cn('relative w-full')}>
         <ImageSlider />
       </section>
 
       {/* About Us Content Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
+      <section
+        className={cn(
+          getPageClasses({ section: 'section' }),
+          getSpacingClasses({ y: 'xl' })
+        )}
+      >
+        <div
+          className={getContainerClasses({ size: 'xl', withPadding: false })}
+        >
           <AboutTitle />
           <AboutContent />
         </div>
       </section>
 
       {/* Location Section */}
-      <section className="py-16 bg-muted/50">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-8">
+      <section className={cn(getSpacingClasses({ y: 'xl' }), 'bg-muted/50')}>
+        <div className={getContainerClasses({ size: 'xl' })}>
+          <h2 className={cn('text-3xl font-bold text-center mb-8')}>
             {t('location.title')}
           </h2>
           <GoogleMapsEmbed />
@@ -44,12 +58,24 @@ export function AboutUsTemplate() {
       </section>
 
       {/* Contact Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
-          <h2 className="text-3xl font-bold text-center mb-12">
+      <section
+        className={cn(
+          getPageClasses({ section: 'section' }),
+          getSpacingClasses({ y: 'xl' })
+        )}
+      >
+        <div
+          className={getContainerClasses({ size: 'xl', withPadding: false })}
+        >
+          <h2 className={cn('text-3xl font-bold text-center mb-12')}>
             {t('contact.title')}
           </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div
+            className={cn(
+              getGridClasses({ gap: 'lg', responsive: false }),
+              'grid-cols-1 lg:grid-cols-2'
+            )}
+          >
             <ContactInfo />
             <ContactForm />
           </div>

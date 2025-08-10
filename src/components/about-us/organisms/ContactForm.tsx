@@ -1,15 +1,19 @@
 /**
- * ContactForm Organism - Contact form component
- * SOLID Principles: SRP - Manages contact form functionality
- * Design Patterns: Organism Pattern
- * Dependencies: shadcn Form components, SendGrid API, i18next
+ * ContactForm Organism - Contact form component with React Hook Form
+ * SOLID Principles: SRP - Manages contact form functionality with validation
+ * Design Patterns: Organism Pattern, Form Validation Pattern
+ * Dependencies: React Hook Form, Zod, shadcn Form components, SendGrid API, i18next
  */
 
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
-import { useUser } from '@clerk/nextjs'
+import { useAuthService } from '@/lib/auth/use-auth-service'
+import { submitContactForm } from '@/app/actions/contact.action'
 import {
   Card,
   CardContent,
@@ -28,89 +32,96 @@ import {
   SelectValue,
 } from '@/components/ui/schadcn/select'
 import { Send, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/schadcn/form'
+
+// Define the validation schema using Zod
+const contactFormSchema = z.object({
+  name: z.string().min(2, {
+    message: 'Name must be at least 2 characters',
+  }),
+  email: z.string().email({
+    message: 'Please enter a valid email address',
+  }),
+  phone: z.string().optional(),
+  subject: z
+    .enum(['general', 'sales', 'support', 'partnership', 'feedback'])
+    .refine(val => val !== undefined, { message: 'Please select a subject' }),
+  message: z.string().min(10, {
+    message: 'Message must be at least 10 characters',
+  }),
+})
+
+type ContactFormValues = z.infer<typeof contactFormSchema>
 
 export function ContactForm() {
   const { t, ready, i18n } = useTranslation('aboutUs')
-  const { user } = useUser()
+  const { user } = useAuthService()
 
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: '',
+  // Initialize React Hook Form with Zod validation
+  const form = useForm<ContactFormValues>({
+    resolver: zodResolver(contactFormSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      subject: 'general' as const,
+      message: '',
+    },
   })
 
-  const [status, setStatus] = useState<
-    'idle' | 'loading' | 'success' | 'error'
-  >('idle')
-  const [statusMessage, setStatusMessage] = useState('')
+  const {
+    formState: { isSubmitting, isSubmitSuccessful },
+    setError,
+    reset,
+    setValue,
+  } = form
 
   // Pre-fill form with user data if logged in
   useEffect(() => {
     if (user) {
-      setFormData(prev => ({
-        ...prev,
-        name: user.fullName || prev.name || '',
-        email: user.primaryEmailAddress?.emailAddress || prev.email || '',
-      }))
+      if (user.name) {
+        setValue('name', user.name)
+      }
+      if (user.email) {
+        setValue('email', user.email)
+      }
     }
-  }, [user])
+  }, [user, setValue])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setStatus('loading')
-    setStatusMessage('')
-
+  // Handle form submission using Server Action
+  const onSubmit = async (data: ContactFormValues) => {
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...formData,
-          customerid: user?.publicMetadata?.['customerid'] as
-            | string
-            | undefined, // Send company registration number from Clerk metadata
-          language: i18n.language, // Send the current language
-        }),
+      // Call the Server Action directly
+      const result = await submitContactForm({
+        ...data,
+        customerid: user?.customerId || undefined, // Send customer ID if available
+        language: i18n.language, // Send the current language
       })
 
-      const data = await response.json()
-
-      if (response.ok) {
-        setStatus('success')
-        setStatusMessage(data.message || t('contact.form.success'))
-        // Reset form after success
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          subject: '',
-          message: '',
-        })
-        // Hide success message after 5 seconds
-        setTimeout(() => {
-          setStatus('idle')
-          setStatusMessage('')
-        }, 5000)
-      } else {
-        setStatus('error')
-        setStatusMessage(data.error || t('contact.form.error'))
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to send message')
       }
-    } catch {
-      setStatus('error')
-      setStatusMessage(t('contact.form.error'))
-    }
-  }
 
-  const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-    // Clear error when user starts typing
-    if (status === 'error') {
-      setStatus('idle')
-      setStatusMessage('')
+      // Reset form after successful submission
+      reset()
+
+      // Reset success state after 5 seconds
+      setTimeout(() => {
+        form.clearErrors()
+      }, 5000)
+    } catch (error) {
+      setError('root', {
+        type: 'manual',
+        message:
+          error instanceof Error ? error.message : t('contact.form.error'),
+      })
     }
   }
 
@@ -143,151 +154,189 @@ export function ContactForm() {
         <p className="text-muted-foreground mb-6">
           {t('contact.form.description')}
         </p>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">
-                {t('contact.form.fields.name.label')} *
-              </Label>
-              <Input
-                id="name"
-                placeholder={t('contact.form.fields.name.placeholder')}
-                value={formData.name}
-                onChange={e => handleChange('name', e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">
-                {t('contact.form.fields.email.label')} *
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder={t('contact.form.fields.email.placeholder')}
-                value={formData.email}
-                onChange={e => handleChange('email', e.target.value)}
-                required
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="phone">
-                {t('contact.form.fields.phone.label')}
-              </Label>
-              <Input
-                id="phone"
-                type="tel"
-                placeholder={t('contact.form.fields.phone.placeholder')}
-                value={formData.phone}
-                onChange={e => handleChange('phone', e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="subject">
-                {t('contact.form.fields.subject.label')} *
-              </Label>
-              <Select
-                value={formData.subject}
-                onValueChange={value => handleChange('subject', value)}
-              >
-                <SelectTrigger id="subject">
-                  <SelectValue
-                    placeholder={t('contact.form.fields.subject.placeholder')}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="general">
-                    {t('contact.form.fields.subject.options.general')}
-                  </SelectItem>
-                  <SelectItem value="sales">
-                    {t('contact.form.fields.subject.options.sales')}
-                  </SelectItem>
-                  <SelectItem value="support">
-                    {t('contact.form.fields.subject.options.support')}
-                  </SelectItem>
-                  <SelectItem value="partnership">
-                    {t('contact.form.fields.subject.options.partnership')}
-                  </SelectItem>
-                  <SelectItem value="feedback">
-                    {t('contact.form.fields.subject.options.feedback')}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Display Customer ID if available in Clerk metadata */}
-          {user?.publicMetadata?.['customerid'] && (
-            <div className="space-y-2">
-              <Label htmlFor="customerId">
-                {t('contact.form.fields.customerId.label', 'Customer ID')}
-              </Label>
-              <Input
-                id="customerId"
-                value={user.publicMetadata['customerid'] as string}
-                disabled
-                className="bg-muted"
-              />
-              <p className="text-xs text-muted-foreground">
-                {t(
-                  'contact.form.fields.customerId.helper',
-                  'Your company registration number'
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {t('contact.form.fields.name.label')} *
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder={t('contact.form.fields.name.placeholder')}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
-              </p>
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {t('contact.form.fields.email.label')} *
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder={t('contact.form.fields.email.placeholder')}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
-          )}
 
-          <div className="space-y-2">
-            <Label htmlFor="message">
-              {t('contact.form.fields.message.label')} *
-            </Label>
-            <Textarea
-              id="message"
-              placeholder={t('contact.form.fields.message.placeholder')}
-              value={formData.message}
-              onChange={e => handleChange('message', e.target.value)}
-              required
-              className="min-h-[500px]"
-            />
-          </div>
-
-          {/* Status Messages */}
-          {status === 'success' && (
-            <div className="flex items-center gap-2 p-4 bg-green-50 text-green-800 rounded-md">
-              <CheckCircle className="h-5 w-5 flex-shrink-0" />
-              <p className="text-sm">{statusMessage}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {t('contact.form.fields.phone.label')}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="tel"
+                        placeholder={t('contact.form.fields.phone.placeholder')}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="subject"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {t('contact.form.fields.subject.label')} *
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue
+                            placeholder={t(
+                              'contact.form.fields.subject.placeholder'
+                            )}
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="general">
+                          {t('contact.form.fields.subject.options.general')}
+                        </SelectItem>
+                        <SelectItem value="sales">
+                          {t('contact.form.fields.subject.options.sales')}
+                        </SelectItem>
+                        <SelectItem value="support">
+                          {t('contact.form.fields.subject.options.support')}
+                        </SelectItem>
+                        <SelectItem value="partnership">
+                          {t('contact.form.fields.subject.options.partnership')}
+                        </SelectItem>
+                        <SelectItem value="feedback">
+                          {t('contact.form.fields.subject.options.feedback')}
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
-          )}
 
-          {status === 'error' && (
-            <div className="flex items-center gap-2 p-4 bg-red-50 text-red-800 rounded-md">
-              <AlertCircle className="h-5 w-5 flex-shrink-0" />
-              <p className="text-sm">{statusMessage}</p>
-            </div>
-          )}
-
-          <Button
-            type="submit"
-            size="lg"
-            className="w-full"
-            disabled={status === 'loading'}
-          >
-            {status === 'loading' ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                {t('contact.form.sending')}
-              </>
-            ) : (
-              <>
-                <Send className="h-4 w-4 mr-2" />
-                {t('contact.form.submit')}
-              </>
+            {/* Display Customer ID if available */}
+            {user?.customerId && (
+              <div className="space-y-2">
+                <Label htmlFor="customerId">
+                  {t('contact.form.fields.customerId.label', 'Customer ID')}
+                </Label>
+                <Input
+                  id="customerId"
+                  value={user.customerId}
+                  disabled
+                  className="bg-muted"
+                />
+                <p className="text-xs text-muted-foreground">
+                  {t(
+                    'contact.form.fields.customerId.helper',
+                    'Your company registration number'
+                  )}
+                </p>
+              </div>
             )}
-          </Button>
-        </form>
+
+            <FormField
+              control={form.control}
+              name="message"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    {t('contact.form.fields.message.label')} *
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder={t('contact.form.fields.message.placeholder')}
+                      className="min-h-[500px]"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Status Messages */}
+            {isSubmitSuccessful && !form.formState.errors.root && (
+              <div className="flex items-center gap-2 p-4 bg-green-50 text-green-800 rounded-md">
+                <CheckCircle className="h-5 w-5 flex-shrink-0" />
+                <p className="text-sm">{t('contact.form.success')}</p>
+              </div>
+            )}
+
+            {form.formState.errors.root && (
+              <div className="flex items-center gap-2 p-4 bg-red-50 text-red-800 rounded-md">
+                <AlertCircle className="h-5 w-5 flex-shrink-0" />
+                <p className="text-sm">{form.formState.errors.root.message}</p>
+              </div>
+            )}
+
+            <Button
+              type="submit"
+              size="lg"
+              className="w-full"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  {t('contact.form.sending')}
+                </>
+              ) : (
+                <>
+                  <Send className="h-4 w-4 mr-2" />
+                  {t('contact.form.submit')}
+                </>
+              )}
+            </Button>
+          </form>
+        </Form>
       </CardContent>
     </Card>
   )

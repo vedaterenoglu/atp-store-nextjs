@@ -21,7 +21,7 @@ import {
   type MostPurchasedProduct,
 } from '@/services/most-purchased.service'
 import { useAuth, useUser } from '@clerk/nextjs'
-import { Button } from '@/components/ui/schadcn/button'
+import { Button } from '@/components/ui/schadcn'
 import { Minus, Plus } from 'lucide-react'
 import { useBookmarkStore } from '@/lib/stores/bookmark-store'
 

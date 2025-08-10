@@ -103,7 +103,7 @@ export const useCartStore = create<CartStore>()(
             customerId,
             companyId: state.companyId,
             status: 'ACTIVE' as CartStatus,
-            items: [],
+            items: [], // Always start with empty cart
             summary: {
               subtotal: 0,
               totalDiscount: 0,
@@ -124,7 +124,7 @@ export const useCartStore = create<CartStore>()(
       addToCart: async (
         productId,
         productName,
-        _unitPrice, // This will be replaced with backend price
+        _unitPrice, // Unused now, keeping for API compatibility
         quantity = 1,
         productImage = '/placeholder-product.jpg',
         productGroup = 'General',
@@ -132,8 +132,14 @@ export const useCartStore = create<CartStore>()(
         maxQuantity = 99,
         discount
       ) => {
-        const { cart, companyId } = get()
-        if (!cart || !cart.customerId) return
+        const { cart } = get()
+        const { companyId } = get()
+
+        // Cart must exist (user must be signed in)
+        if (!cart) {
+          console.warn('Cannot add to cart: User not authenticated')
+          return
+        }
 
         // Set loading state
         set(state => {
@@ -141,10 +147,10 @@ export const useCartStore = create<CartStore>()(
         })
 
         try {
-          // Fetch backend price using Server Action
+          // Always fetch backend price (user is authenticated)
           const priceData = await fetchProductPriceAction(
             companyId,
-            cart.customerId,
+            cart.customerId || '',
             productId
           )
 
@@ -436,7 +442,13 @@ export const useCartStore = create<CartStore>()(
       // Refresh prices from backend
       refreshPrices: async () => {
         const { cart, companyId } = get()
-        if (!cart || !cart.customerId || cart.items.length === 0) return
+        if (!cart || cart.items.length === 0) return
+
+        // Cart must have customerId (authenticated user)
+        if (!cart.customerId) {
+          console.error('Cart missing customerId - cannot refresh prices')
+          return
+        }
 
         set(state => {
           state.isLoading = true
@@ -504,13 +516,17 @@ export const useCartStore = create<CartStore>()(
   )
 )
 
+// Stable empty array reference to prevent infinite loops
+const EMPTY_ARRAY: CartItem[] = []
+
 // Selector hooks for common use cases
 export const useCartItem = (productId: string) =>
   useCartStore(state => state.findCartItem(productId))
 
 export const useCartSummary = () => useCartStore(state => state.cart?.summary)
 
-export const useCartItems = () => useCartStore(state => state.cart?.items || [])
+export const useCartItems = () =>
+  useCartStore(state => state.cart?.items || EMPTY_ARRAY)
 
 export const useCartCount = () => useCartStore(state => state.getItemCount())
 

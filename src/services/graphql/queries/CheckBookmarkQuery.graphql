@@ -15,3 +15,23 @@ query CheckBookmark(
     stock_id
   }
 }
+
+# {
+#   "company_id": "alfe",
+#   "customer_id": "SE0 1001 1697",
+#   "stock_id": "1001 1003 G030"
+# }
+
+# todo response
+
+# {
+#   "data": {
+#     "customer_bookmarks": [
+#       {
+#         "company_id": "alfe",
+#         "customer_id": "SE0 1001 1697",
+#         "stock_id": "1001 1003 G030"
+#       }
+#     ]
+#   }
+# }

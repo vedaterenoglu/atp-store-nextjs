@@ -14,29 +14,8 @@
  * Dependencies: Apollo Client, Zod validation, categories schema
  */
 
-// Dynamic import for client selection based on environment
-import type { ApolloClient } from '@apollo/client'
-
-let getClient: () => ApolloClient<object>
-
-if (typeof window !== 'undefined') {
-  // Browser environment - use browser client
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { getBrowserClient } = require('@/lib/apollo/browser-client')
-  getClient = getBrowserClient
-} else {
-  // Server environment - use server client
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { getClient: getServerClient } = require('@/lib/apollo/client')
-  getClient = getServerClient
-}
-
-import GetCategoriesQueryDocument from '@/services/graphql/queries/GetCategoriesQuery.graphql'
 import { validateGetCategoriesResponse } from '@/services/graphql/queries/GetCategoriesQuery.schema'
-import type {
-  GetCategoriesQueryResponse,
-  GetCategoriesQueryVariables,
-} from '@/services/graphql/queries/GetCategoriesQuery.types'
+import type { GetCategoriesQueryResponse } from '@/services/graphql/queries/GetCategoriesQuery.types'
 import {
   validateAndTransformCategories,
   type CategoriesArray,
@@ -45,25 +24,32 @@ import {
 import { env } from '@/lib/config/env'
 
 /**
- * Fetch categories using Apollo Client with manual types and Zod validation
+ * Fetch categories using API route facade
  * Returns frontend-friendly Category objects
  */
 export async function getCategories(
   companyId?: string
 ): Promise<CategoriesArray> {
   try {
-    // Use Apollo Client with manual type assertion
-    const client = getClient()
-    const { data } = await client.query<
-      GetCategoriesQueryResponse,
-      GetCategoriesQueryVariables
-    >({
-      query: GetCategoriesQueryDocument,
-      variables: {
-        company_id:
-          companyId || process.env['COMPANY_ID'] || env.COMPANY_ID || 'alfe',
-      },
-    })
+    const company =
+      companyId || process.env['COMPANY_ID'] || env.COMPANY_ID || 'alfe'
+
+    // Construct absolute URL for Server Components
+    const baseUrl =
+      typeof window === 'undefined'
+        ? process.env['NEXT_PUBLIC_APP_URL'] || 'http://localhost:3081'
+        : ''
+
+    // Use new API route facade
+    const response = await fetch(
+      `${baseUrl}/api/categories?company_id=${company}`
+    )
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch categories: ${response.statusText}`)
+    }
+
+    const data: GetCategoriesQueryResponse = await response.json()
 
     // Validate the response structure with Zod (this also type-checks at runtime)
     const validatedResponse = validateGetCategoriesResponse(data)

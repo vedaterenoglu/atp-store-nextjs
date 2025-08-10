@@ -138,7 +138,7 @@ export function calculateProductPrice(
 
   return {
     unitPrice: selected.price,
-    vatRate: stockData.stock_moms,
+    vatRate: stockData.stock_moms!,
     priceSource: selected.source,
     originalPrice,
   }

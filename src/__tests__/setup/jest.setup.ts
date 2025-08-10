@@ -407,10 +407,6 @@ afterAll(() => {
   }
 })
 
-// Mock Apollo Client modules
-jest.mock('@/lib/apollo/client')
-jest.mock('@/lib/apollo/browser-client')
-
 // Mock Clerk hooks
 jest.mock('@clerk/nextjs', () => ({
   useAuth: jest.fn(() => ({
@@ -546,3 +542,69 @@ jest.mock('@/lib/stores', () => {
 })
 
 // Toast utility is mocked per-test basis
+
+// Mock react-i18next
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+    i18n: {
+      changeLanguage: jest.fn(() => Promise.resolve()),
+      language: 'en',
+      exists: jest.fn(() => true),
+      getFixedT: jest.fn(() => (key: string) => key),
+      hasResourceBundle: jest.fn(() => true),
+      addResourceBundle: jest.fn(),
+    },
+  }),
+  Trans: ({ children }: { children: React.ReactNode }) => children,
+  initReactI18next: {
+    type: '3rdParty',
+    init: jest.fn(),
+  },
+  withTranslation: () => (Component: React.ComponentType) => Component,
+}))
+
+// Mock i18next core
+jest.mock('i18next', () => {
+  const i18nMock = {
+    init: jest.fn(() => Promise.resolve()),
+    use: jest.fn(function() { return this }),
+    changeLanguage: jest.fn(() => Promise.resolve()),
+    language: 'en',
+    languages: ['en', 'sv', 'tr', 'da', 'de'],
+    exists: jest.fn(() => true),
+    getFixedT: jest.fn(() => (key: string) => key),
+    hasResourceBundle: jest.fn(() => true),
+    addResourceBundle: jest.fn(),
+    t: (key: string) => key,
+    dir: jest.fn(() => 'ltr'),
+    isInitialized: true,
+    on: jest.fn(),
+    off: jest.fn(),
+    emit: jest.fn(),
+  }
+  
+  return {
+    default: i18nMock,
+    createInstance: jest.fn(() => {
+      const instance = {
+        init: jest.fn(() => Promise.resolve()),
+        use: jest.fn(function() { return this }),
+        changeLanguage: jest.fn(() => Promise.resolve()),
+        language: 'en',
+        languages: ['en', 'sv', 'tr', 'da', 'de'],
+        exists: jest.fn(() => true),
+        getFixedT: jest.fn(() => (key: string) => key),
+        hasResourceBundle: jest.fn(() => true),
+        addResourceBundle: jest.fn(),
+        t: (key: string) => key,
+        dir: jest.fn(() => 'ltr'),
+        isInitialized: true,
+        on: jest.fn(),
+        off: jest.fn(),
+        emit: jest.fn(),
+      }
+      return instance
+    }),
+  }
+})

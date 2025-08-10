@@ -13,6 +13,8 @@
     "admin": "Admin"
   },
   "actions": {
+    "signIn": "Log ind",
+    "signOut": "Log ud",
     "save": "Gem",
     "cancel": "Annuller",
     "delete": "Slet",

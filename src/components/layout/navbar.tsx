@@ -15,31 +15,38 @@
  */
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { SignInButton, UserButton, useAuth, useUser } from '@clerk/nextjs'
-import { Button } from '@/components/ui/schadcn'
 import {
-  ThemeToggle,
-  LanguageToggle,
-  ControlledTooltip,
-  ControlledTooltipProvider,
-} from '@/components/ui/custom'
+  Button,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/schadcn'
+import { ThemeToggle, LanguageToggle } from '@/components/ui/custom'
 import { LayoutDashboard, ShoppingCart, Menu, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useRoleAuth } from '@/lib/auth/role-auth'
-import { useTranslation } from 'react-i18next'
+import { useSafeTranslation } from '@/hooks/use-safe-translation'
 import { useCartCount } from '@/lib/stores/cart.store'
 import { CartBadge } from '@/components/cart/atoms/CartBadge'
+import { getLayoutClasses } from '@/lib/styles/utilities'
+import { cn } from '@/lib/utils'
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   return (
-    <ControlledTooltipProvider>
-      <nav className="border-b -mx-4">
-        <div className="px-4 sm:px-8 py-3 sm:py-4">
+    <TooltipProvider>
+      <nav
+        className={getLayoutClasses({ component: 'navbar', part: 'container' })}
+      >
+        <div
+          className={getLayoutClasses({ component: 'navbar', part: 'inner' })}
+        >
           <div className="flex items-center justify-between">
             <NavbarBrand />
             <NavbarActions
@@ -54,30 +61,35 @@ export function Navbar() {
           onClose={() => setIsMobileMenuOpen(false)}
         />
       </nav>
-    </ControlledTooltipProvider>
+    </TooltipProvider>
   )
 }
 
 function NavbarBrand() {
-  const { t } = useTranslation('common')
+  const { t } = useSafeTranslation('common')
 
   return (
-    <ControlledTooltip content={<p>{t('tooltips.navbar.home')}</p>}>
-      <Link
-        href="/"
-        className="flex items-center gap-2 sm:gap-3 text-foreground transition-colors hover:text-primary"
-      >
-        <Image
-          src="/logo.png"
-          alt="ATP Store Logo"
-          width={40}
-          height={40}
-          className="h-8 w-8 sm:h-10 sm:w-10 object-contain"
-          priority
-        />
-        <span className="text-lg sm:text-xl font-bold">ATP Store</span>
-      </Link>
-    </ControlledTooltip>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Link
+          href="/"
+          className="flex items-center gap-2 sm:gap-3 text-foreground transition-colors hover:text-primary"
+        >
+          <Image
+            src="/logo.png"
+            alt="ATP Store Logo"
+            width={40}
+            height={40}
+            className="h-8 w-8 sm:h-10 sm:w-10 object-contain"
+            priority
+          />
+          <span className="text-lg sm:text-xl font-bold">ATP Store</span>
+        </Link>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>{t('tooltips.navbar.home')}</p>
+      </TooltipContent>
+    </Tooltip>
   )
 }
 
@@ -125,65 +137,105 @@ function NavbarActions({
 }
 
 function CartButton() {
+  // Hooks must be in exact same order every render
+  const { t } = useSafeTranslation('common')
+  const [isMounted, setIsMounted] = useState(false)
   const router = useRouter()
-  const cartCount = useCartCount()
-  const { t } = useTranslation('common')
   const { isSignedIn } = useAuth()
-  const { hasRole } = useRoleAuth()
+  const { requireAuth, hasRole } = useRoleAuth()
+  const cartCount = useCartCount()
 
-  // Only show cart for signed-in customers
-  if (!isSignedIn || !hasRole('customer')) {
-    return null
+  // Prevent hydration mismatch by only showing badge after mount
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  // Show cart badge only for authenticated users with items (only after hydration)
+  const showBadge =
+    isMounted && isSignedIn && hasRole('customer') && cartCount > 0
+
+  const handleCartClick = () => {
+    // Require authentication before navigating to cart
+    if (!isSignedIn || !hasRole('customer')) {
+      requireAuth(
+        'customer',
+        () => {
+          router.push('/cart')
+        },
+        {
+          showToast: true,
+          redirectTo: '/cart',
+        }
+      )
+    } else {
+      // Authenticated customer - go directly to cart
+      router.push('/cart')
+    }
   }
 
   return (
-    <ControlledTooltip content={<p>{t('tooltips.navbar.cart')}</p>}>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="h-9 w-9 relative"
-        aria-label="Shopping Cart"
-        onClick={() => router.push('/cart')}
-      >
-        <ShoppingCart className="h-4 w-4" />
-        {cartCount > 0 && (
-          <div className="absolute -top-1 -right-1">
-            <CartBadge count={cartCount} variant="destructive" size="sm" />
-          </div>
-        )}
-      </Button>
-    </ControlledTooltip>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-9 w-9 relative"
+          aria-label={t('navigation.cart')}
+          onClick={handleCartClick}
+        >
+          <ShoppingCart className="h-4 w-4" />
+          {showBadge && (
+            <div className="absolute -top-1 -right-1">
+              <CartBadge count={cartCount} variant="destructive" size="sm" />
+            </div>
+          )}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>{t('tooltips.navbar.cart')}</p>
+      </TooltipContent>
+    </Tooltip>
   )
 }
 
 function ThemeToggleWithTooltip() {
-  const { t } = useTranslation('common')
+  // const { t } = useSafeTranslation('common')
 
   return (
-    <ControlledTooltip content={<p>{t('tooltips.navbar.theme')}</p>}>
-      <div>
-        <ThemeToggle />
-      </div>
-    </ControlledTooltip>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div>
+          <ThemeToggle />
+        </div>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>Toggle theme</p>
+      </TooltipContent>
+    </Tooltip>
   )
 }
 
 function LanguageToggleWithTooltip() {
-  const { t } = useTranslation('common')
+  // const { t } = useSafeTranslation('common')
 
   return (
-    <ControlledTooltip content={<p>{t('tooltips.navbar.language')}</p>}>
-      <div>
-        <LanguageToggle />
-      </div>
-    </ControlledTooltip>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div>
+          <LanguageToggle />
+        </div>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>Change language</p>
+      </TooltipContent>
+    </Tooltip>
   )
 }
 
 function CustomerDashboardButton() {
   const { isLoaded, hasRole, requireAuth } = useRoleAuth()
   const router = useRouter()
-  const { t } = useTranslation('common')
+  // const { t } = useSafeTranslation('common')
 
   // Only show for signed-in customers
   if (!isLoaded || !hasRole('customer')) {
@@ -204,17 +256,22 @@ function CustomerDashboardButton() {
   }
 
   return (
-    <ControlledTooltip content={<p>{t('tooltips.navbar.dashboard')}</p>}>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="h-9 w-9"
-        aria-label="Customer Dashboard"
-        onClick={handleClick}
-      >
-        <LayoutDashboard className="h-4 w-4" />
-      </Button>
-    </ControlledTooltip>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-9 w-9"
+          aria-label="Customer Dashboard"
+          onClick={handleClick}
+        >
+          <LayoutDashboard className="h-4 w-4" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>Customer Dashboard</p>
+      </TooltipContent>
+    </Tooltip>
   )
 }
 
@@ -241,20 +298,25 @@ function NavbarAuthSkeleton() {
 }
 
 function NavbarSignIn() {
-  const { t } = useTranslation('common')
+  const { t } = useSafeTranslation('common')
 
   return (
-    <ControlledTooltip content={<p>{t('tooltips.navbar.signIn')}</p>}>
-      <SignInButton mode="modal">
-        <Button
-          variant="default"
-          size="sm"
-          className="h-8 px-3 text-xs sm:text-sm"
-        >
-          Sign In
-        </Button>
-      </SignInButton>
-    </ControlledTooltip>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <SignInButton mode="modal">
+          <Button
+            variant="default"
+            size="sm"
+            className="h-8 px-3 text-xs sm:text-sm"
+          >
+            {t('actions.signIn')}
+          </Button>
+        </SignInButton>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>{t('tooltips.navbar.signIn')}</p>
+      </TooltipContent>
+    </Tooltip>
   )
 }
 
@@ -263,25 +325,35 @@ function NavbarUserButton({
 }: {
   user: ReturnType<typeof useUser>['user']
 }) {
-  const { t } = useTranslation('common')
+  // const { t } = useSafeTranslation('common')
   const isAdmin = user?.publicMetadata?.['role'] === 'admin'
 
   return (
     <div className="flex items-center gap-2">
       {isAdmin && (
-        <ControlledTooltip content={<p>{t('tooltips.navbar.admin')}</p>}>
-          <Link href="/admin">
-            <Button variant="ghost" size="sm">
-              Admin
-            </Button>
-          </Link>
-        </ControlledTooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Link href="/admin">
+              <Button variant="ghost" size="sm">
+                Admin
+              </Button>
+            </Link>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Admin Panel</p>
+          </TooltipContent>
+        </Tooltip>
       )}
-      <ControlledTooltip content={<p>{t('tooltips.navbar.userMenu')}</p>}>
-        <div>
-          <UserButton />
-        </div>
-      </ControlledTooltip>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div>
+            <UserButton />
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>User menu</p>
+        </TooltipContent>
+      </Tooltip>
     </div>
   )
 }
@@ -297,7 +369,7 @@ function MobileMenu({
   const { user } = useUser()
   const { hasRole } = useRoleAuth()
   const router = useRouter()
-  const { t } = useTranslation('common')
+  // const { t } = useSafeTranslation('common')
 
   if (!isOpen) return null
 
@@ -309,8 +381,8 @@ function MobileMenu({
   const isAdmin = user?.publicMetadata?.['role'] === 'admin'
 
   return (
-    <div className="sm:hidden border-t bg-background">
-      <div className="px-4 py-3 space-y-3">
+    <div className={cn('sm:hidden border-t bg-background')}>
+      <div className={cn('px-4 py-3 space-y-3')}>
         {/* Icons row - Dashboard, Language, Theme */}
         <div className="flex items-center justify-center gap-4">
           {/* Customer Dashboard - Icon only */}
@@ -320,7 +392,7 @@ function MobileMenu({
               size="icon"
               className="h-9 w-9"
               onClick={handleDashboardClick}
-              aria-label={t('tooltips.navbar.dashboard')}
+              aria-label="Customer Dashboard"
             >
               <LayoutDashboard className="h-4 w-4" />
             </Button>

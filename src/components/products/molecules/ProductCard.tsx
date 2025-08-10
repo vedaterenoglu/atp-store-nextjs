@@ -46,10 +46,10 @@ export function ProductCard({
   const { isSignedIn, sessionClaims } = useAuth()
   const { user } = useUser()
 
-  // Get cart state from Zustand store
+  // Get cart state from Zustand store (only for authenticated users)
   const addToCart = useCartStore(state => state.addToCart)
   const cartItem = useCartStore(state => state.findCartItem(id))
-  const cartQuantity = cartItem?.quantity || 0
+  const cartQuantity = isSignedIn ? cartItem?.quantity || 0 : 0
 
   // Get bookmark state from Zustand store
   const {
@@ -117,6 +117,12 @@ export function ProductCard({
   }
 
   const handleAddToCart = () => {
+    // Check if user is signed in
+    if (!isSignedIn) {
+      toast.error('Please sign in to add items to cart')
+      return
+    }
+
     if (quantity > 0) {
       try {
         addToCart(

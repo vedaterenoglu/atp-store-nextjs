@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 }
 
 export default function CartPage() {
+  // Cart page requires authentication - only customers can view cart
   return (
     <CustomerRouteGuard requireCustomerId={true}>
       <CustomerCartTemplate />

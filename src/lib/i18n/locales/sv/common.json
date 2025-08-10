@@ -13,6 +13,8 @@
     "admin": "Admin"
   },
   "actions": {
+    "signIn": "Logga in",
+    "signOut": "Logga ut",
     "save": "Spara",
     "cancel": "Avbryt",
     "delete": "Ta bort",

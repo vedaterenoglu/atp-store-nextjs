@@ -1,8 +1,43 @@
 # Component Examples and Implementation Patterns
 
+This document provides real-world component examples following Atomic Design principles. Each component demonstrates proper classification, SOLID principles, and implementation patterns.
+
+## Component Classification by Atomic Design Level
+
+### Atoms
+
+- **ThemeToggle**: UI control for dark/light mode
+- **LanguageToggle**: Language selector dropdown
+- **Button**: Base interactive element
+- **Input**: Form input field
+- **EmptyCartButton**: Specialized cart action
+
+### Molecules
+
+- **NavbarBrand**: Logo + company name combination
+- **NavbarActions**: Group of action buttons
+- **CartItemCard**: Product display with actions
+- **SearchBar**: Input + button combination
+
+### Organisms
+
+- **Navbar**: Complete navigation component
+- **Footer**: Site footer with sections
+- **CartItemsList**: List of cart items with actions
+- **ProductGrid**: Grid of product cards
+
+### Templates
+
+- **CustomerCartTemplate**: Cart page layout
+- **AdminDashboardTemplate**: Admin page structure
+
+### Pages
+
+- Route components in `/app` directory
+
 ## Layout Components
 
-### Navbar Component (Actual Implementation)
+### Navbar Component (Organism - Actual Implementation)
 
 **Purpose**: Main navigation with authentication and user preferences
 
@@ -590,3 +625,79 @@ export function GridSkeleton({ count = 6, className }: GridSkeletonProps) {
 - **i18next 25.3.2**: Internationalization
 - **shadcn/ui**: Component library
 - **Tailwind CSS 4.x**: Utility-first styling
+
+---
+
+## Barrel Export Implementation
+
+### Component Export Structure
+
+```typescript
+// src/components/layout/index.ts
+export { Navbar } from './Navbar'
+export { Footer } from './Footer'
+export { AppLayout } from './AppLayout'
+
+// src/components/ui/custom/index.ts
+export { ThemeToggle } from './ThemeToggle'
+export { LanguageToggle } from './LanguageToggle'
+
+// src/components/ui/schadcn/index.ts
+export { Button } from './button'
+export { Input } from './input'
+export { Card, CardHeader, CardContent, CardFooter } from './card'
+export * from './form'
+
+// src/components/index.ts (root barrel)
+export * from './layout'
+export * from './ui/custom'
+export * from './ui/schadcn'
+```
+
+### Usage Examples
+
+```typescript
+// Before (without barrel exports)
+import { Navbar } from '@/components/layout/Navbar'
+import { Footer } from '@/components/layout/Footer'
+import { Button } from '@/components/ui/schadcn/button'
+
+// After (with barrel exports)
+import { Navbar, Footer } from '@/components/layout'
+import { Button } from '@/components/ui/schadcn'
+
+// Or from root barrel
+import { Navbar, Footer, Button } from '@/components'
+```
+
+### Atomic Design with Barrel Exports
+
+```typescript
+// src/components/cart/atoms/index.ts
+export { EmptyCartButton } from './EmptyCartButton'
+export { CartEmptyState } from './CartEmptyState'
+export type { EmptyCartButtonProps, CartEmptyStateProps } from './types'
+
+// src/components/cart/molecules/index.ts
+export { CartItemCard } from './CartItemCard'
+export { CartSummaryCard } from './CartSummaryCard'
+
+// src/components/cart/organisms/index.ts
+export { CartItemsList } from './CartItemsList'
+
+// src/components/cart/templates/index.ts
+export { CustomerCartTemplate } from './CustomerCartTemplate'
+
+// src/components/cart/index.ts (feature barrel)
+export * from './atoms'
+export * from './molecules'
+export * from './organisms'
+export * from './templates'
+```
+
+## Related Documentation
+
+- [Atomic Design Guidelines](./atomic-design-guidelines.md)
+- [Barrel Export Strategy](./barrel-export-strategy.md)
+- [Design Patterns](./design-patterns.md)
+- [Technology Stack](./technology-stack.md)

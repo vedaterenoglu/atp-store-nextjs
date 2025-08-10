@@ -14,52 +14,15 @@
  * Dependencies: Apollo Client, bookmark types, Zod validation
  */
 
-// Dynamic import for client selection based on environment
-import type { ApolloClient } from '@apollo/client'
-
-let getClient: () => ApolloClient<object>
-
-if (typeof window !== 'undefined') {
-  // Browser environment - use browser client
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { getBrowserClient } = require('@/lib/apollo/browser-client')
-  getClient = getBrowserClient
-} else {
-  // Server environment - use server client
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { getClient: getServerClient } = require('@/lib/apollo/client')
-  getClient = getServerClient
-}
-
-// Import GraphQL documents
-import BookmarkProductMutationDocument from '@/services/graphql/mutations/BookmarkProductMutation.graphql'
-import UnbookmarkProductMutationDocument from '@/services/graphql/mutations/UnbookmarkProductMutation.graphql'
-import GetCustomerBookmarksQueryDocument from '@/services/graphql/queries/GetCustomerBookmarksQuery.graphql'
-import CheckBookmarkQueryDocument from '@/services/graphql/queries/CheckBookmarkQuery.graphql'
+// No GraphQL documents needed - using API routes
 
 // Import types
-import type {
-  BookmarkProductMutationResponse,
-  BookmarkProductMutationVariables,
-} from '@/services/graphql/mutations/BookmarkProductMutation.types'
-import type {
-  UnbookmarkProductMutationResponse,
-  UnbookmarkProductMutationVariables,
-} from '@/services/graphql/mutations/UnbookmarkProductMutation.types'
-import type {
-  GetCustomerBookmarksQueryResponse,
-  GetCustomerBookmarksQueryVariables,
-} from '@/services/graphql/queries/GetCustomerBookmarksQuery.types'
-import type {
-  CheckBookmarkQueryResponse,
-  CheckBookmarkQueryVariables,
-} from '@/services/graphql/queries/CheckBookmarkQuery.types'
+import type { GetCustomerBookmarksQueryResponse } from '@/services/graphql/queries/GetCustomerBookmarksQuery.types'
 
 // Import validation schemas
 import { validateBookmarkProductResponse } from '@/services/graphql/mutations/BookmarkProductMutation.schema'
 import { validateUnbookmarkProductResponse } from '@/services/graphql/mutations/UnbookmarkProductMutation.schema'
 import { validateGetCustomerBookmarksResponse } from '@/services/graphql/queries/GetCustomerBookmarksQuery.schema'
-import { validateCheckBookmarkResponse } from '@/services/graphql/queries/CheckBookmarkQuery.schema'
 
 // Import legacy types for compatibility
 import type {
@@ -87,31 +50,34 @@ export class BookmarkService {
     stockId: string
   ): Promise<BookmarkResponse> {
     try {
-      const client = getClient()
-      const { data } = await client.mutate<
-        BookmarkProductMutationResponse,
-        BookmarkProductMutationVariables
-      >({
-        mutation: BookmarkProductMutationDocument,
-        variables: {
+      // Construct absolute URL for Server Components
+      const baseUrl =
+        typeof window === 'undefined'
+          ? process.env['NEXT_PUBLIC_APP_URL'] || 'http://localhost:3081'
+          : ''
+
+      // Use new API route facade
+      const response = await fetch(`${baseUrl}/api/bookmark/add`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           company_id: this.companyId,
           customer_id: customerId,
           stock_id: stockId,
-        },
-        refetchQueries: [
-          {
-            query: GetCustomerBookmarksQueryDocument,
-            variables: {
-              company_id: this.companyId,
-              customer_id: customerId,
-            },
-          },
-        ],
-        awaitRefetchQueries: false,
+        }),
       })
 
+      if (!response.ok) {
+        throw new Error(`Failed to bookmark: ${response.statusText}`)
+      }
+
+      const result = await response.json()
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to bookmark product')
+      }
+
       // Validate response with Zod
-      const validatedData = validateBookmarkProductResponse(data)
+      const validatedData = validateBookmarkProductResponse(result.data)
 
       const affectedRows =
         validatedData?.insert_customer_bookmarks?.affected_rows || 0
@@ -183,31 +149,34 @@ export class BookmarkService {
     stockId: string
   ): Promise<UnbookmarkResponse> {
     try {
-      const client = getClient()
-      const { data } = await client.mutate<
-        UnbookmarkProductMutationResponse,
-        UnbookmarkProductMutationVariables
-      >({
-        mutation: UnbookmarkProductMutationDocument,
-        variables: {
+      // Construct absolute URL for Server Components
+      const baseUrl =
+        typeof window === 'undefined'
+          ? process.env['NEXT_PUBLIC_APP_URL'] || 'http://localhost:3081'
+          : ''
+
+      // Use new API route facade
+      const response = await fetch(`${baseUrl}/api/bookmark/remove`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           company_id: this.companyId,
           customer_id: customerId,
           stock_id: stockId,
-        },
-        refetchQueries: [
-          {
-            query: GetCustomerBookmarksQueryDocument,
-            variables: {
-              company_id: this.companyId,
-              customer_id: customerId,
-            },
-          },
-        ],
-        awaitRefetchQueries: false,
+        }),
       })
 
+      if (!response.ok) {
+        throw new Error(`Failed to unbookmark: ${response.statusText}`)
+      }
+
+      const result = await response.json()
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to unbookmark product')
+      }
+
       // Validate response with Zod
-      const validatedData = validateUnbookmarkProductResponse(data)
+      const validatedData = validateUnbookmarkProductResponse(result.data)
 
       const affectedRows =
         validatedData?.delete_customer_bookmarks?.affected_rows || 0
@@ -277,23 +246,27 @@ export class BookmarkService {
     stockId: string
   ): Promise<boolean> {
     try {
-      const client = getClient()
-      const { data } = await client.query<
-        CheckBookmarkQueryResponse,
-        CheckBookmarkQueryVariables
-      >({
-        query: CheckBookmarkQueryDocument,
-        variables: {
-          company_id: this.companyId,
-          customer_id: customerId,
-          stock_id: stockId,
-        },
+      // Construct absolute URL for Server Components
+      const baseUrl =
+        typeof window === 'undefined'
+          ? process.env['NEXT_PUBLIC_APP_URL'] || 'http://localhost:3081'
+          : ''
+
+      // Use new API route facade
+      const params = new URLSearchParams({
+        company_id: this.companyId,
+        customer_id: customerId,
+        stock_id: stockId,
       })
 
-      // Validate response with Zod
-      const validatedData = validateCheckBookmarkResponse(data)
+      const response = await fetch(`${baseUrl}/api/bookmark/check?${params}`)
 
-      return (validatedData?.customer_bookmarks?.length ?? 0) > 0
+      if (!response.ok) {
+        throw new Error(`Failed to check bookmark: ${response.statusText}`)
+      }
+
+      const result = await response.json()
+      return result.isBookmarked || false
     } catch (error) {
       console.error('Check bookmark error:', error)
       return false
@@ -308,18 +281,27 @@ export class BookmarkService {
     forceRefresh = false
   ): Promise<CustomerBookmarkItem[]> {
     try {
-      const client = getClient()
-      const { data } = await client.query<
-        GetCustomerBookmarksQueryResponse,
-        GetCustomerBookmarksQueryVariables
-      >({
-        query: GetCustomerBookmarksQueryDocument,
-        variables: {
-          company_id: this.companyId,
-          customer_id: customerId,
-        },
-        fetchPolicy: forceRefresh ? 'network-only' : 'cache-first',
+      // Construct absolute URL for Server Components
+      const baseUrl =
+        typeof window === 'undefined'
+          ? process.env['NEXT_PUBLIC_APP_URL'] || 'http://localhost:3081'
+          : ''
+
+      // Use new API route facade
+      const params = new URLSearchParams({
+        company_id: this.companyId,
+        customer_id: customerId,
       })
+
+      const response = await fetch(`${baseUrl}/api/bookmarks?${params}`, {
+        cache: forceRefresh ? 'no-store' : 'default',
+      })
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch bookmarks: ${response.statusText}`)
+      }
+
+      const data: GetCustomerBookmarksQueryResponse = await response.json()
 
       // Validate response with Zod
       const validatedData = validateGetCustomerBookmarksResponse(data)

@@ -13,6 +13,8 @@
     "admin": "Admin"
   },
   "actions": {
+    "signIn": "Sign in",
+    "signOut": "Sign out",
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",

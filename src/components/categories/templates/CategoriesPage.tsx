@@ -13,6 +13,8 @@ import {
   ViewAllProductsButton,
   CategoriesGrid,
 } from '@/components/categories'
+import { getPageClasses, getContainerClasses } from '@/lib/styles/utilities'
+import { cn } from '@/lib/utils'
 
 interface Category {
   id: string
@@ -31,10 +33,19 @@ export function CategoriesPage({ categories, error }: CategoriesPageProps) {
   const { t } = useTranslation('categories')
 
   return (
-    <div className="min-h-screen py-8 sm:py-12 lg:py-16">
+    <div
+      className={cn(
+        getPageClasses({ section: 'container' }),
+        getPageClasses({ section: 'content' })
+      )}
+    >
       {/* Header Section */}
-      <div className="mx-auto mb-8 max-w-[1200px] px-4 sm:mb-12 sm:px-6 lg:px-8">
-        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+      <div className={cn(getContainerClasses({ size: 'lg' }), 'mb-8 sm:mb-12')}>
+        <div
+          className={cn(
+            'flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center'
+          )}
+        >
           <PageTitle>{t('title', 'Categories')}</PageTitle>
           <ViewAllProductsButton />
         </div>

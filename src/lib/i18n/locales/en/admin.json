@@ -1,4 +1,9 @@
 {
+  "dashboard": "Customer Dashboard",
+  "pendingOrders": "Pending Orders",
+  "deliveries": "Delivery Notes (Deliveries)",
+  "invoices": "Invoices",
+  "unpaidInvoices": "Unpaid Invoices",
   "cart": {
     "title": "Cart Management",
     "subtitle": "Manage customer carts and abandoned cart recovery",

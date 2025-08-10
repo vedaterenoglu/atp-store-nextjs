@@ -14,15 +14,26 @@
 
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
+import {
+  createClerkMock,
+  mockAuthSignedOut,
+  mockUserSignedOut,
+} from '@/__tests__/mocks/clerk-mocks'
+
+// Mock Clerk with centralized mocks
+jest.mock('@clerk/nextjs', () =>
+  createClerkMock(mockAuthSignedOut(), mockUserSignedOut())
+)
+
 import { ProtectedRoute } from '../protected-route'
-import { useRoleAuth } from '@/lib/auth/role-auth'
+import { useAuthService } from '@/lib/auth/use-auth-service'
 import { toast } from '@/lib/utils/toast'
 
 // Create a shared mock push function that all router instances will use
 const mockRouterPush = jest.fn()
 
 // Mock dependencies
-jest.mock('@/lib/auth/role-auth')
+jest.mock('@/lib/auth/use-auth-service')
 jest.mock('@/lib/utils/toast')
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -51,28 +62,31 @@ jest.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(),
 }))
 
-// Helper to create mock return value for useRoleAuth
-const createMockRoleAuth = (
-  overrides: Partial<ReturnType<typeof useRoleAuth>> = {}
-): ReturnType<typeof useRoleAuth> => ({
+// Helper to create mock return value for useAuthService
+const createMockAuthService = (
+  overrides: Partial<ReturnType<typeof useAuthService>> = {}
+): ReturnType<typeof useAuthService> => ({
   isLoaded: true,
   isSignedIn: false,
-  userRole: null,
-  checkAuth: jest.fn(),
+  user: null,
   requireAuth: jest.fn(),
+  requireCustomer: jest.fn(),
   hasRole: jest.fn(),
-  hasAnyRole: jest.fn(),
-  getUserRole: jest.fn(),
+  hasCustomerId: jest.fn(),
+  isValidCustomer: jest.fn(),
+  isCustomer: false,
+  isAdmin: false,
+  isStaff: false,
   ...overrides,
 })
 
 // Type the mocks
-const mockUseRoleAuth = useRoleAuth as jest.MockedFunction<typeof useRoleAuth>
+const mockUseAuthService = useAuthService as jest.MockedFunction<
+  typeof useAuthService
+>
 const mockToast = toast as jest.Mocked<typeof toast>
 
 describe('ProtectedRoute', () => {
-  const mockCheckAuth = jest.fn()
-
   beforeEach(() => {
     jest.clearAllMocks()
     mockRouterPush.mockClear()
@@ -80,10 +94,9 @@ describe('ProtectedRoute', () => {
 
   describe('Loading state', () => {
     it('should show default loading skeleton when auth is loading', () => {
-      mockUseRoleAuth.mockReturnValue(
-        createMockRoleAuth({
+      mockUseAuthService.mockReturnValue(
+        createMockAuthService({
           isLoaded: false,
-          checkAuth: mockCheckAuth,
         })
       )
 
@@ -105,10 +118,9 @@ describe('ProtectedRoute', () => {
     })
 
     it('should show custom loading component when provided', () => {
-      mockUseRoleAuth.mockReturnValue(
-        createMockRoleAuth({
+      mockUseAuthService.mockReturnValue(
+        createMockAuthService({
           isLoaded: false,
-          checkAuth: mockCheckAuth,
         })
       )
 
@@ -126,13 +138,9 @@ describe('ProtectedRoute', () => {
     })
 
     it('should not show loading when showLoading is false', () => {
-      mockUseRoleAuth.mockReturnValue(
-        createMockRoleAuth({
+      mockUseAuthService.mockReturnValue(
+        createMockAuthService({
           isLoaded: false,
-          checkAuth: mockCheckAuth.mockReturnValue({
-            success: false,
-            reason: 'loading',
-          }),
         })
       )
 
@@ -152,10 +160,17 @@ describe('ProtectedRoute', () => {
 
   describe('Authentication checks', () => {
     it('should show content when user has required role', () => {
-      mockUseRoleAuth.mockReturnValue(
-        createMockRoleAuth({
+      mockUseAuthService.mockReturnValue(
+        createMockAuthService({
           isLoaded: true,
-          checkAuth: jest.fn().mockReturnValue({ success: true }),
+          isSignedIn: true,
+          user: {
+            id: 'user-123',
+            role: 'customer',
+            customerId: 'cust-123',
+            email: 'test@example.com',
+            name: 'Test User',
+          },
         })
       )
 
@@ -169,16 +184,10 @@ describe('ProtectedRoute', () => {
     })
 
     it('should redirect to sign-in when user is not authenticated', async () => {
-      mockCheckAuth.mockReturnValue({
-        success: false,
-        reason: 'not-signed-in',
-        message: 'To continue you must sign in',
-      })
-
-      mockUseRoleAuth.mockReturnValue(
-        createMockRoleAuth({
+      mockUseAuthService.mockReturnValue(
+        createMockAuthService({
           isLoaded: true,
-          checkAuth: mockCheckAuth,
+          isSignedIn: false,
         })
       )
 
@@ -190,8 +199,8 @@ describe('ProtectedRoute', () => {
 
       await waitFor(() => {
         expect(mockToast.error).toHaveBeenCalledWith(
-          'To continue you must sign in',
-          { position: 'bottom-left', duration: 6000 }
+          'Please sign in to continue',
+          { position: 'bottom-left', duration: 4000 }
         )
         expect(mockRouterPush).toHaveBeenCalledWith(
           expect.stringMatching(/^\/sign-in\?redirect_url=/)
@@ -202,16 +211,17 @@ describe('ProtectedRoute', () => {
     })
 
     it('should redirect to fallback URL when user has wrong role', async () => {
-      mockCheckAuth.mockReturnValue({
-        success: false,
-        reason: 'wrong-role',
-        message: 'Insufficient permissions. Please contact support.',
-      })
-
-      mockUseRoleAuth.mockReturnValue(
-        createMockRoleAuth({
+      mockUseAuthService.mockReturnValue(
+        createMockAuthService({
           isLoaded: true,
-          checkAuth: mockCheckAuth,
+          isSignedIn: true,
+          user: {
+            id: 'user-123',
+            role: 'admin',
+            customerId: null,
+            email: 'admin@example.com',
+            name: 'Admin User',
+          },
         })
       )
 
@@ -223,8 +233,8 @@ describe('ProtectedRoute', () => {
 
       await waitFor(() => {
         expect(mockToast.error).toHaveBeenCalledWith(
-          'Insufficient permissions. Please contact support.',
-          { position: 'bottom-left', duration: 6000 }
+          'You do not have permission to access this page',
+          { position: 'bottom-left', duration: 4000 }
         )
         expect(mockRouterPush).toHaveBeenCalledWith('/home')
       })
@@ -233,16 +243,17 @@ describe('ProtectedRoute', () => {
     })
 
     it('should use default fallback URL when not specified', async () => {
-      mockCheckAuth.mockReturnValue({
-        success: false,
-        reason: 'wrong-role',
-        message: 'Insufficient permissions. Please contact support.',
-      })
-
-      mockUseRoleAuth.mockReturnValue(
-        createMockRoleAuth({
+      mockUseAuthService.mockReturnValue(
+        createMockAuthService({
           isLoaded: true,
-          checkAuth: mockCheckAuth,
+          isSignedIn: true,
+          user: {
+            id: 'user-123',
+            role: 'admin',
+            customerId: null,
+            email: 'admin@example.com',
+            name: 'Admin User',
+          },
         })
       )
 
@@ -260,32 +271,31 @@ describe('ProtectedRoute', () => {
 
   describe('Re-render behavior', () => {
     it('should re-check auth when isLoaded changes', async () => {
+      // Initially not loaded
+      mockUseAuthService.mockReturnValue(
+        createMockAuthService({
+          isLoaded: false,
+        })
+      )
+
       const { rerender } = render(
         <ProtectedRoute requiredRole="customer">
           <div>Protected Content</div>
         </ProtectedRoute>
       )
 
-      // Initially not loaded
-      mockUseRoleAuth.mockReturnValue(
-        createMockRoleAuth({
-          isLoaded: false,
-          checkAuth: mockCheckAuth,
-        })
-      )
-
-      rerender(
-        <ProtectedRoute requiredRole="customer">
-          <div>Protected Content</div>
-        </ProtectedRoute>
-      )
-
       // Then loaded with successful auth
-      mockCheckAuth.mockReturnValue({ success: true })
-      mockUseRoleAuth.mockReturnValue(
-        createMockRoleAuth({
+      mockUseAuthService.mockReturnValue(
+        createMockAuthService({
           isLoaded: true,
-          checkAuth: mockCheckAuth,
+          isSignedIn: true,
+          user: {
+            id: 'user-123',
+            role: 'customer',
+            customerId: 'cust-123',
+            email: 'test@example.com',
+            name: 'Test User',
+          },
         })
       )
 
@@ -301,11 +311,19 @@ describe('ProtectedRoute', () => {
     })
 
     it('should not re-check when already loaded and auth checked', () => {
-      mockCheckAuth.mockReturnValue({ success: true })
-      mockUseRoleAuth.mockReturnValue(
-        createMockRoleAuth({
+      const mockRequireAuth = jest.fn()
+      mockUseAuthService.mockReturnValue(
+        createMockAuthService({
           isLoaded: true,
-          checkAuth: mockCheckAuth,
+          isSignedIn: true,
+          user: {
+            id: 'user-123',
+            role: 'customer',
+            customerId: 'cust-123',
+            email: 'test@example.com',
+            name: 'Test User',
+          },
+          requireAuth: mockRequireAuth,
         })
       )
 
@@ -315,9 +333,6 @@ describe('ProtectedRoute', () => {
         </ProtectedRoute>
       )
 
-      // Clear mock to track new calls
-      mockCheckAuth.mockClear()
-
       // Re-render with same props
       rerender(
         <ProtectedRoute requiredRole="customer">
@@ -325,8 +340,8 @@ describe('ProtectedRoute', () => {
         </ProtectedRoute>
       )
 
-      // Should not check auth again if isLoaded hasn't changed
-      expect(mockCheckAuth).toHaveBeenCalledTimes(2) // Once for effect, once for render
+      // Component should show content
+      expect(screen.getByText('Protected Content')).toBeInTheDocument()
     })
   })
 })

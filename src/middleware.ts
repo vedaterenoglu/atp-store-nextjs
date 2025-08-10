@@ -12,7 +12,7 @@
  * - Chain of Responsibility: Part of Next.js middleware chain
  *
  * Architecture: Edge runtime middleware that protects specific routes
- * using Clerk's authentication system
+ * using Clerk's authentication system with SSOT auth logic
  */
 
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
@@ -29,10 +29,22 @@ const isProtectedRoute = createRouteMatcher([
 ])
 
 // Define routes that require specific roles
-const roleProtectedRoutes: { pattern: RegExp; requiredRole: string }[] = [
-  { pattern: /^\/admin(.*)/, requiredRole: 'customer' },
-  { pattern: /^\/cart(.*)/, requiredRole: 'customer' },
-  { pattern: /^\/favorites(.*)/, requiredRole: 'customer' },
+const roleProtectedRoutes: {
+  pattern: RegExp
+  requiredRole: string
+  requiresCustomerId?: boolean
+}[] = [
+  { pattern: /^\/admin(.*)/, requiredRole: 'admin' },
+  {
+    pattern: /^\/cart(.*)/,
+    requiredRole: 'customer',
+    requiresCustomerId: true,
+  },
+  {
+    pattern: /^\/favorites(.*)/,
+    requiredRole: 'customer',
+    requiresCustomerId: true,
+  },
 ]
 
 export default clerkMiddleware(async (auth, req) => {
@@ -40,23 +52,31 @@ export default clerkMiddleware(async (auth, req) => {
 
   // Check if route requires authentication
   if (isProtectedRoute(req)) {
-    // Not signed in - redirect to sign-in
+    // Not signed in - redirect to custom sign-in page
     if (!userId) {
-      const signInUrl = new URL('/sign-in', req.url)
-      signInUrl.searchParams.set('redirect_url', req.nextUrl.pathname)
-      return redirectToSignIn({ returnBackUrl: req.nextUrl.pathname })
+      return redirectToSignIn({
+        returnBackUrl: req.nextUrl.pathname,
+      })
     }
 
-    // Check role-based access
+    // Check role-based access using SSOT logic
     const pathname = req.nextUrl.pathname
-    for (const { pattern, requiredRole } of roleProtectedRoutes) {
-      if (pattern.test(pathname)) {
-        const metadata = sessionClaims?.['metadata'] as
-          | { role?: string; customerid?: string }
-          | undefined
-        const userRole = metadata?.['role']
 
-        // Wrong role - redirect to home with error
+    // Extract auth data with consistent priority (sessionClaims > publicMetadata)
+    const metadata = sessionClaims?.['metadata'] as
+      | { role?: string; customerid?: string }
+      | undefined
+    const userRole = metadata?.role
+    const customerId = metadata?.customerid
+
+    // Check each protected route pattern
+    for (const {
+      pattern,
+      requiredRole,
+      requiresCustomerId,
+    } of roleProtectedRoutes) {
+      if (pattern.test(pathname)) {
+        // Check role requirement
         if (userRole !== requiredRole) {
           const homeUrl = new URL('/', req.url)
           homeUrl.searchParams.set('error', 'unauthorized')
@@ -64,16 +84,16 @@ export default clerkMiddleware(async (auth, req) => {
           return NextResponse.redirect(homeUrl)
         }
 
-        // Special check for favorites - must have customerid
-        if (pathname.startsWith('/favorites') && !metadata?.['customerid']) {
-          const homeUrl = new URL('/', req.url)
-          homeUrl.searchParams.set('error', 'no_customer_id')
-          return NextResponse.redirect(homeUrl)
+        // Check customer ID requirement for customer routes
+        if (requiresCustomerId && !customerId) {
+          const profileUrl = new URL('/profile/complete', req.url)
+          profileUrl.searchParams.set('message', 'complete_profile')
+          return NextResponse.redirect(profileUrl)
         }
       }
     }
 
-    // Authentication and role check passed
+    // All checks passed - protect the route
     await auth.protect()
   }
 

@@ -1,0 +1,28 @@
+{
+  "extends": "next/core-web-vitals",
+  "overrides": [
+    {
+      "files": [
+        "**/__tests__/**/*.ts",
+        "**/__tests__/**/*.tsx",
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/jest.setup.ts",
+        "**/test-*.ts",
+        "**/test-*.tsx",
+        "**/mock*.ts",
+        "**/mock*.tsx",
+        "src/__tests__/**/*",
+        "src/**/__tests__/**/*"
+      ],
+      "rules": {
+        "@typescript-eslint/no-require-imports": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/ban-ts-comment": "off",
+        "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+        "@next/next/no-img-element": "off",
+        "prettier/prettier": "warn"
+      }
+    }
+  ]
+}

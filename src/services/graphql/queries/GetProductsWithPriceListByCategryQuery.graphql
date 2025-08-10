@@ -28,5 +28,144 @@ query GetProductsWithPriceListByCategryQuery(
 
 # {
 #   "company_id": "alfe",
-#   "stock_groups": "1000 - Pizzakartonger"
+# 	"stock_groups": "1000 - Pizzakartonger"
+# }
+
+# todo: response
+# {
+#   "data": {
+#     "stock": [
+#       {
+#         "stock_id": "1001 1001 0026",
+#         "stock_name": "Pizzakartonger 26*26*3,5 100 st./förp.",
+#         "stock_unit": "förp.",
+#         "stock_price": 23000,
+#         "stock_group": "1000 - Pizzakartonger"
+#       },
+#       {
+#         "stock_id": "1001 1002 0028",
+#         "stock_name": "Pizzakartonger 28*28*3,5 100 st/förp.",
+#         "stock_unit": "förp.",
+#         "stock_price": 28900,
+#         "stock_group": "1000 - Pizzakartonger"
+#       },
+#       {
+#         "stock_id": "1001 1003 G030",
+#         "stock_name": "Pizzakartong 30*30*3,5 Röd 100 st./förp.",
+#         "stock_unit": "förp.",
+#         "stock_price": 21300,
+#         "stock_group": "1000 - Pizzakartonger"
+#       },
+#       {
+#         "stock_id": "1001 1004 R030",
+#         "stock_name": "Pizzakrtong 30*30*3,5 Premium 100 st./förp.",
+#         "stock_unit": "förp.",
+#         "stock_price": 24600,
+#         "stock_group": "1000 - Pizzakartonger"
+#       },
+#       {
+#         "stock_id": "1001 1005 T030",
+#         "stock_name": "Pizzakrtong 30*30*3,5 Tillfällig Besök100 st./förp.",
+#         "stock_unit": "förp.",
+#         "stock_price": 19900,
+#         "stock_group": "1000 - Pizzakartonger"
+#       },
+#       {
+#         "stock_id": "1001 1005 V030",
+#         "stock_name": "Pizzakrtong 30*30*3,5  Premium Vit 100 st./förp.",
+#         "stock_unit": "förp.",
+#         "stock_price": 19900,
+#         "stock_group": "1000 - Pizzakartonger"
+#       },
+#       {
+#         "stock_id": "1001 1006 G033",
+#         "stock_name": "Pizzakrtong 33*33*3,5 Röd  100 st./förp.",
+#         "stock_unit": "förp.",
+#         "stock_price": 19900,
+#         "stock_group": "1000 - Pizzakartonger"
+#       },
+#       {
+#         "stock_id": "1001 1007 R033",
+#         "stock_name": "Pizzakrtong 33*33*3,5 Premium 100 st./förp.",
+#         "stock_unit": "förp.",
+#         "stock_price": 23900,
+#         "stock_group": "1000 - Pizzakartonger"
+#       },
+#       {
+#         "stock_id": "1001 1008 0040",
+#         "stock_name": "Pizzakartong 40*40*4 50 st./förp.",
+#         "stock_unit": "förp.",
+#         "stock_price": 23000,
+#         "stock_group": "1000 - Pizzakartonger"
+#       },
+#       {
+#         "stock_id": "1001 1009 0042",
+#         "stock_name": "Pizzakartong 42*42*4 50 st./förp.",
+#         "stock_unit": "förp.",
+#         "stock_price": 29000,
+#         "stock_group": "1000 - Pizzakartonger"
+#       },
+#       {
+#         "stock_id": "1001 1010 0050",
+#         "stock_name": "Pizzakartong 50*50*4 50 st./förp.",
+#         "stock_unit": "förp.",
+#         "stock_price": 42500,
+#         "stock_group": "1000 - Pizzakartonger"
+#       },
+#       {
+#         "stock_id": "1001 1011 2816",
+#         "stock_name": "Pizzakartong Calzone 28*16*8 100 st./förp. Röda",
+#         "stock_unit": "förp.",
+#         "stock_price": 28000,
+#         "stock_group": "1000 - Pizzakartonger"
+#       },
+#       {
+#         "stock_id": "1001 1012 2828",
+#         "stock_name": "Pizzakartong Dubbelcalzone 28*28*8 100 st./förp.",
+#         "stock_unit": "förp.",
+#         "stock_price": 39900,
+#         "stock_group": "1000 - Pizzakartonger"
+#       },
+#       {
+#         "stock_id": "1001 1012 3030",
+#         "stock_name": "Pizzakartong Dubbelcalzone 30*30*8 100 st./förp.",
+#         "stock_unit": "förp.",
+#         "stock_price": 45000,
+#         "stock_group": "1000 - Pizzakartonger"
+#       },
+#       {
+#         "stock_id": "1001 1013 0001",
+#         "stock_name": "Plankakartong 100 st./förp.",
+#         "stock_unit": "förp.",
+#         "stock_price": 49900,
+#         "stock_group": "1000 - Pizzakartonger"
+#       },
+#       {
+#         "stock_id": "1001 1014 V033",
+#         "stock_name": "Pizzakartong 33*33*3,5 Tillfälligt Besök 100 st./förp.",
+#         "stock_unit": "förp.",
+#         "stock_price": 22900,
+#         "stock_group": "1000 - Pizzakartonger"
+#       },
+#       {
+#         "stock_id": "1002 1001 0001",
+#         "stock_name": "Baklava Låda 1 kg 100 pack",
+#         "stock_unit": "förp.",
+#         "stock_price": 30000,
+#         "stock_group": "1000 - Pizzakartonger"
+#       },
+#       {
+#         "stock_id": "1002 1001 0002",
+#         "stock_name": "Baklava Låda 0,5 kg 100 pack",
+#         "stock_unit": "förp.",
+#         "stock_price": 25900,
+#         "stock_group": "1000 - Pizzakartonger"
+#       }
+#     ],
+#     "stock_aggregate": {
+#       "aggregate": {
+#         "count": 295
+#       }
+#     }
+#   }
 # }

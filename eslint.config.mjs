@@ -47,6 +47,13 @@ const eslintConfig = [
       'no-console': ['error', { allow: ['warn', 'error'] }],
     },
   },
+  {
+    // Override for test files only - allow img element in mocks
+    files: ['**/*.test.{ts,tsx}', '**/__tests__/**/*.{ts,tsx}'],
+    rules: {
+      '@next/next/no-img-element': 'off',
+    },
+  },
 ]
 
 export default eslintConfig

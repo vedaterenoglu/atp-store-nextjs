@@ -1,4 +1,9 @@
 {
+  "dashboard": "Kunden-Dashboard",
+  "pendingOrders": "Ausstehende Bestellungen",
+  "deliveries": "Lieferscheine (Lieferungen)",
+  "invoices": "Rechnungen",
+  "unpaidInvoices": "Unbezahlte Rechnungen",
   "cart": {
     "title": "Warenkorbverwaltung",
     "subtitle": "Verwalten Sie Kundenwarenkörbe und stellen Sie verlassene Warenkörbe wieder her",

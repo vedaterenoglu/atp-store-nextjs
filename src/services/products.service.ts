@@ -13,29 +13,8 @@
  * Dependencies: Apollo Client, products schema, manual types
  */
 
-// Dynamic import for client selection based on environment
-import type { ApolloClient } from '@apollo/client'
-
-let getClient: () => ApolloClient<object>
-
-if (typeof window !== 'undefined') {
-  // Browser environment - use browser client
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { getBrowserClient } = require('@/lib/apollo/browser-client')
-  getClient = getBrowserClient
-} else {
-  // Server environment - use server client
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { getClient: getServerClient } = require('@/lib/apollo/client')
-  getClient = getServerClient
-}
-
-import GetProductsListWithPriceQueryDocument from '@/services/graphql/queries/GetProductsListWithPriceQuery.graphql'
 import { validateGetProductsListWithPriceResponse } from '@/services/graphql/queries/GetProductsListWithPriceQuery.schema'
-import type {
-  GetProductsListWithPriceQueryResponse,
-  GetProductsListWithPriceQueryVariables,
-} from '@/services/graphql/queries/GetProductsListWithPriceQuery.types'
+import type { GetProductsListWithPriceQueryResponse } from '@/services/graphql/queries/GetProductsListWithPriceQuery.types'
 import {
   validateAndTransformProducts,
   type ProductsArray,
@@ -43,24 +22,32 @@ import {
 import { env } from '@/lib/config/env'
 
 /**
- * Fetches all products from the backend
+ * Fetches all products from the backend using API route facade
  * Maps backend 'stock' data to frontend 'products' model
  */
 export async function getProducts(): Promise<ProductsArray> {
   try {
-    const client = getClient()
-    const { data } = await client.query<
-      GetProductsListWithPriceQueryResponse,
-      GetProductsListWithPriceQueryVariables
-    >({
-      query: GetProductsListWithPriceQueryDocument,
-      variables: {
-        company_id: process.env['COMPANY_ID'] || env.COMPANY_ID || 'alfe',
-      },
-    })
+    const companyId = process.env['COMPANY_ID'] || env.COMPANY_ID || 'alfe'
+
+    // Construct absolute URL for Server Components
+    const baseUrl =
+      typeof window === 'undefined'
+        ? process.env['NEXT_PUBLIC_APP_URL'] || 'http://localhost:3081'
+        : ''
+
+    // Use new API route facade
+    const response = await fetch(
+      `${baseUrl}/api/products?company_id=${companyId}`
+    )
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch products: ${response.statusText}`)
+    }
+
+    const data: GetProductsListWithPriceQueryResponse = await response.json()
 
     if (!data?.stock) {
-      console.error('No products data returned from GraphQL')
+      console.error('No products data returned from API')
       return []
     }
 

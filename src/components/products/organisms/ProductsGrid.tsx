@@ -13,6 +13,7 @@ import {
   GridSkeleton,
   GridItem,
 } from '@/components/ui/custom/grid'
+import { getGridClasses, getContainerClasses } from '@/lib/styles/utilities'
 import { cn } from '@/lib/utils'
 
 interface Product {
@@ -47,9 +48,9 @@ export function ProductsGrid({
     <GridErrorBoundary>
       <div
         className={cn(
-          'mx-auto grid w-full max-w-7xl gap-4',
+          getContainerClasses({ size: 'xl' }),
+          getGridClasses({ gap: 'md', responsive: false }),
           'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
-          'px-4 sm:px-6 lg:px-8',
           className
         )}
       >

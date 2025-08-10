@@ -32,6 +32,7 @@ export interface StockPriceItem {
   stock_price_z: number | null
   campaign_price: number | null
   is_campaign_active: boolean | null
+  stock_moms: number | null
 }
 
 /**

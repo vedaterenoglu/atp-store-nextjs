@@ -7,7 +7,6 @@
 
 'use client'
 
-import { clsx } from 'clsx'
 import { useTranslation } from 'react-i18next'
 import type { CartSummaryProps } from '@/types/cart'
 import { PriceDisplay } from '../atoms'
@@ -18,6 +17,8 @@ import {
   CardTitle,
 } from '@/components/ui/schadcn/card'
 import { Separator } from '@/components/ui/schadcn'
+import { getCardClasses } from '@/lib/styles/utilities'
+import { cn } from '@/lib/utils'
 
 export function CartSummaryCard({
   summary,
@@ -51,13 +52,15 @@ export function CartSummaryCard({
   ]
 
   return (
-    <Card className={clsx('', className)}>
-      <CardHeader className="pb-3 px-4 sm:px-6">
-        <CardTitle className="text-lg sm:text-xl">
+    <Card className={cn(className)}>
+      <CardHeader className={getCardClasses({ variant: 'header' })}>
+        <CardTitle className={cn('text-lg sm:text-xl')}>
           {t('summary.title')}
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3 px-4 sm:px-6">
+      <CardContent
+        className={cn(getCardClasses({ variant: 'content' }), 'space-y-3')}
+      >
         {/* Item Count - More prominent on mobile */}
         <div className="flex justify-between text-sm sm:text-base">
           <span className="text-muted-foreground font-medium">

@@ -13,7 +13,7 @@
 'use client'
 
 import { Check } from 'lucide-react'
-import { Button } from '@/components/ui'
+import { Button } from '@/components/ui/schadcn/button'
 import {
   DropdownMenu,
   DropdownMenuContent,

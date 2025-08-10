@@ -254,6 +254,120 @@ class EventManagementFacade {
 - **Repository Pattern**: `/src/services/categories.service.ts`
 - **Observer Pattern**: `/src/lib/stores/theme.store.ts`
 - **Provider Pattern**: `/src/app/layout.tsx`
+- **Barrel Export Pattern**: `/src/components/*/index.ts`
 - Zustand stores currently handle theme and language preferences
 - Component patterns follow SOLID principles and are fully testable
 - Architecture supports future integration of Clerk, Prisma, and TanStack Query
+
+## 7. Barrel Export Pattern
+
+### Purpose
+
+Simplify imports and create clean module boundaries by consolidating exports into index files.
+
+### Implementation
+
+```typescript
+// src/components/products/atoms/index.ts
+export { ProductImage } from './ProductImage'
+export { ProductPrice } from './ProductPrice'
+export { ProductBadge } from './ProductBadge'
+export type { ProductImageProps, ProductPriceProps } from './types'
+
+// src/components/products/index.ts
+export * from './atoms'
+export * from './molecules'
+export * from './organisms'
+
+// Usage
+import { ProductImage, ProductPrice } from '@/components/products'
+```
+
+### Benefits
+
+- **Clean Imports**: Single import statement for multiple components
+- **Encapsulation**: Hide internal file structure
+- **Maintainability**: Easier refactoring without breaking imports
+- **IntelliSense**: Better IDE autocomplete support
+
+### Current Status
+
+- ✅ Partial implementation in UI components
+- 🏗️ Needs full implementation across all component directories
+- 📝 ESLint rules to be added for enforcement
+
+## 8. Atomic Design Pattern
+
+### Purpose
+
+Organize components into hierarchical levels for better structure and reusability.
+
+### Levels
+
+#### Atoms
+
+```typescript
+// Smallest, indivisible components
+export function Button({ children, onClick }: ButtonProps) {
+  return <button onClick={onClick}>{children}</button>
+}
+```
+
+#### Molecules
+
+```typescript
+// Combinations of atoms
+export function SearchBar({ onSearch }: SearchBarProps) {
+  return (
+    <div className="flex gap-2">
+      <Input placeholder="Search..." />
+      <Button onClick={onSearch}>Search</Button>
+    </div>
+  )
+}
+```
+
+#### Organisms
+
+```typescript
+// Complex components with business logic
+export function ProductGrid({ products }: ProductGridProps) {
+  return (
+    <div className="grid">
+      <ProductFilters />
+      {products.map(p => <ProductCard key={p.id} product={p} />)}
+      <Pagination />
+    </div>
+  )
+}
+```
+
+#### Templates
+
+```typescript
+// Page layouts without content
+export function CartTemplate({ cart, onCheckout }: CartTemplateProps) {
+  return (
+    <div className="container">
+      <CartHeader />
+      <CartItemsList items={cart.items} />
+      <CartSummary summary={cart.summary} />
+      <CheckoutButton onClick={onCheckout} />
+    </div>
+  )
+}
+```
+
+### Current Implementation
+
+- ✅ Cart components follow atomic design
+- ✅ UI components properly classified
+- 🏗️ Products components being refactored
+- 📝 Migration guide created for existing components
+
+## Related Documentation
+
+- [Atomic Design Guidelines](./atomic-design-guidelines.md) - Detailed classification criteria
+- [Barrel Export Strategy](./barrel-export-strategy.md) - Implementation guide
+- [Component Examples](./component-examples.md) - Real-world examples
+- [Technology Stack](./technology-stack.md) - Technical implementation details

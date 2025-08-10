@@ -46,11 +46,19 @@
 - **MANDATORY**: Use environment-specific configurations with proper validation
 - **PATTERN**: Type-safe environment variable access with Zod validation
 
+### State Management Standards
+
+- **MANDATORY**: Use Zustand EXCLUSIVELY for ALL client-side state
+- **FORBIDDEN**: React Context API for ANY state management purpose
+- **IMPLEMENTATION**: Create dedicated Zustand stores for each feature
+- **PERSISTENCE**: Use Zustand persistence middleware for user preferences
+- **PATTERN**: Slice pattern for complex stores
+- **EXAMPLES**: theme.store.ts, language.store.ts, cart.store.ts, bookmark.store.ts
+
 ### Caching Standards
 
 - **MANDATORY**: Use TanStack Query for ALL client-side data caching
 - **MANDATORY**: Use Next.js internal cache for server-side caching
-- **MANDATORY**: Use Zustand for theme, user preferences, and global client state
 - **PATTERN**: Hybrid caching strategy (server + client data + global state coordination)
 - **PATTERN**: Cache key consistency between server and client layers
 
@@ -79,7 +87,7 @@
 - **Next.js 15.4.5**: App Router implementation with Server Components
 - **React 19.1.0**: Latest React with concurrent features
 - **TypeScript 5.x**: Strict mode with all safety features enabled
-- **Zustand 5.0.7**: Global state for theme, language, and category search
+- **Zustand 5.0.7**: ALL client-side state management (React Context FORBIDDEN)
 - **i18next 25.3.2**: Internationalization (English, Swedish, Turkish)
 - **Sonner 2.0.6**: Toast notifications system
 - **shadcn/ui**: UI component library with Tailwind CSS 4.x
@@ -116,3 +124,9 @@
 - Testing infrastructure with MSW for GraphQL mocking
 - Single repository with GitHub-Vercel integration
 - No custom Clerk sign-in/sign-up URLs (modal authentication only)
+
+### 🔧 Accepted Technical Exceptions
+
+- **@ts-nocheck in shadcn/ui barrel exports**: Required for third-party component type re-exports. This is standard practice for shadcn/ui integration and should not be modified.
+- **ESLint disables in test setup**: Minimal disables acceptable only in jest.setup.ts for test infrastructure configuration.
+- **Third-party library patterns**: Some third-party libraries (like shadcn/ui) may have patterns that deviate from project standards. These should be documented but not modified.

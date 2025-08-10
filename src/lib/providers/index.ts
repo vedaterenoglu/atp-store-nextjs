@@ -6,5 +6,5 @@
  * @tests N/A - Export file only
  */
 
-// Apollo Provider for GraphQL
-export { ApolloWrapper } from '@/lib/apollo/ApolloWrapper'
+// Note: No client-side GraphQL providers needed
+// All GraphQL calls are made server-side only

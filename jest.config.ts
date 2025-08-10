@@ -74,9 +74,6 @@ const config = {
       '<rootDir>/src/__tests__/mocks/fileMock.ts',
     // Handle all GraphQL file imports with a generic mock
     '\\.graphql$': '<rootDir>/src/__tests__/mocks/graphql/graphql.mock.ts',
-    // Mock Clerk modules
-    '@clerk/nextjs': '<rootDir>/src/__tests__/mocks/clerk.mock.tsx',
-    '@clerk/backend': '<rootDir>/src/__tests__/mocks/clerk.mock.tsx',
   },
 
   // Transform configuration

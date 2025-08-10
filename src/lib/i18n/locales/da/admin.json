@@ -1,4 +1,9 @@
 {
+  "dashboard": "Kundedashboard",
+  "pendingOrders": "Afventende Ordrer",
+  "deliveries": "Leveringsnotater (Leverancer)",
+  "invoices": "Fakturaer",
+  "unpaidInvoices": "Ubetalte Fakturaer",
   "cart": {
     "title": "Kurvadministration",
     "subtitle": "Administrer kundekurve og genoprette forladte kurve",

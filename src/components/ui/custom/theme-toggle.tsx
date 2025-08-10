@@ -14,7 +14,7 @@
 
 import { Moon, Sun, Monitor, Check } from 'lucide-react'
 import { useThemeStore } from '@/lib/stores'
-import { Button } from '@/components/ui'
+import { Button } from '@/components/ui/schadcn/button'
 import {
   DropdownMenu,
   DropdownMenuContent,

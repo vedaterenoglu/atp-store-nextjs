@@ -13,6 +13,8 @@
     "admin": "Yönetici"
   },
   "actions": {
+    "signIn": "Giriş yap",
+    "signOut": "Çıkış yap",
     "save": "Kaydet",
     "cancel": "İptal",
     "delete": "Sil",

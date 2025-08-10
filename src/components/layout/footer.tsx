@@ -19,9 +19,13 @@ import Link from 'next/link'
 import { Mail } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import {
-  ControlledTooltip,
-  ControlledTooltipProvider,
-} from '@/components/ui/custom'
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/schadcn'
+import { getLayoutClasses } from '@/lib/styles/utilities'
+import { cn } from '@/lib/utils'
 
 interface FooterProps {
   year?: number
@@ -39,49 +43,59 @@ export function Footer({
     process.env['NEXT_PUBLIC_DEVELOPER_EMAIL_ADDRESS'] || 'info@gtbscoding.com'
 
   return (
-    <ControlledTooltipProvider>
-      <footer className="mt-auto border-t -mx-4">
-        <div className="px-4 py-4 sm:py-6">
-          <div className="flex flex-col items-center gap-2">
+    <TooltipProvider>
+      <footer
+        className={getLayoutClasses({ component: 'footer', part: 'container' })}
+      >
+        <div
+          className={getLayoutClasses({ component: 'footer', part: 'inner' })}
+        >
+          <div className={cn('flex flex-col items-center gap-2')}>
             <p className="text-center text-sm text-muted-foreground">
               {t('footer.copyright', { year })}
             </p>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <span>{t('footer.createdBy')}</span>
-              <ControlledTooltip
-                content={<p>{t('tooltips.footer.developerWebsite')}</p>}
-              >
-                <Link
-                  href={developerWebsite}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 font-medium text-foreground transition-colors hover:text-primary"
-                >
-                  <Image
-                    src="/logo-gtbs.png"
-                    alt="GTBS Coding Logo"
-                    width={20}
-                    height={20}
-                    className="h-5 w-5 object-contain"
-                  />
-                  <span>{author}</span>
-                </Link>
-              </ControlledTooltip>
-              <ControlledTooltip
-                content={<p>{t('tooltips.footer.developerEmail')}</p>}
-              >
-                <Link
-                  href={`mailto:${developerEmail}`}
-                  className="text-foreground transition-colors hover:text-primary"
-                  aria-label="Email developer"
-                >
-                  <Mail className="h-4 w-4" />
-                </Link>
-              </ControlledTooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link
+                    href={developerWebsite}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 font-medium text-foreground transition-colors hover:text-primary"
+                  >
+                    <Image
+                      src="/logo-gtbs.png"
+                      alt="GTBS Coding Logo"
+                      width={20}
+                      height={20}
+                      className="h-5 w-5 object-contain"
+                    />
+                    <span>{author}</span>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{t('tooltips.footer.developerWebsite')}</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link
+                    href={`mailto:${developerEmail}`}
+                    className="text-foreground transition-colors hover:text-primary"
+                    aria-label="Email developer"
+                  >
+                    <Mail className="h-4 w-4" />
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{t('tooltips.footer.developerEmail')}</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
           </div>
         </div>
       </footer>
-    </ControlledTooltipProvider>
+    </TooltipProvider>
   )
 }

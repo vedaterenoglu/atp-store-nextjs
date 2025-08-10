@@ -19,7 +19,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/schadcn/alert-dialog'
-import { useEmptyCart } from '@/hooks/useEmptyCart'
+import { useEmptyCart } from '@/hooks/use-empty-cart'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 

@@ -13,6 +13,8 @@
     "admin": "Admin"
   },
   "actions": {
+    "signIn": "Anmelden",
+    "signOut": "Abmelden",
     "save": "Speichern",
     "cancel": "Abbrechen",
     "delete": "Löschen",

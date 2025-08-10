@@ -1,4 +1,9 @@
 {
+  "dashboard": "Kundpanel",
+  "pendingOrders": "Väntande beställningar",
+  "deliveries": "Följesedlar (Leveranser)",
+  "invoices": "Fakturor",
+  "unpaidInvoices": "Obetalda fakturor",
   "cart": {
     "title": "Kundvagnshantering",
     "subtitle": "Hantera kundvagnar och övergivna vagnar",

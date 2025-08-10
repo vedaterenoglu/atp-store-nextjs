@@ -5,13 +5,11 @@
  * Dependencies: Apollo Client, GraphQL, Pricing utils
  */
 
-import { getClient } from '@/lib/apollo/client'
 import {
   calculateProductPrice,
   type ProductPriceResponse,
   type PriceCalculation,
 } from '@/lib/utils/pricing'
-import GET_PRODUCT_PRICES_QUERY from '@/services/graphql/queries/GetProductPricesQuery.graphql'
 
 /**
  * Fetch product price from backend and calculate final price
@@ -22,17 +20,28 @@ export async function fetchProductPrice(
   stockId: string
 ): Promise<PriceCalculation> {
   try {
-    const client = getClient()
+    // Construct absolute URL for Server Components
+    const baseUrl =
+      typeof window === 'undefined'
+        ? process.env['NEXT_PUBLIC_APP_URL'] || 'http://localhost:3081'
+        : ''
 
-    const { data } = await client.query<ProductPriceResponse>({
-      query: GET_PRODUCT_PRICES_QUERY,
-      variables: {
-        company_id: companyId,
-        customer_id: customerId,
-        stock_id: stockId,
-      },
-      fetchPolicy: 'network-only', // Always fetch fresh prices
+    // Use new API route facade
+    const params = new URLSearchParams({
+      company_id: companyId,
+      customer_id: customerId,
+      stock_id: stockId,
     })
+
+    const response = await fetch(`${baseUrl}/api/product-prices?${params}`, {
+      cache: 'no-store', // Always fetch fresh prices
+    })
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch price: ${response.statusText}`)
+    }
+
+    const data: ProductPriceResponse = await response.json()
 
     if (!data) {
       throw new Error('No price data received')

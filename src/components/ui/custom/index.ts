@@ -25,9 +25,3 @@ export { GridLayout, GridErrorBoundary, GridSkeleton, GridItem } from './grid'
 
 // Interactive components
 export { BookmarkButton, BookmarkIndicator } from './bookmark-button'
-
-// Tooltip components
-export {
-  ControlledTooltip,
-  ControlledTooltipProvider,
-} from './controlled-tooltip'

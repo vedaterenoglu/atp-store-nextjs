@@ -11,7 +11,9 @@ import { useState } from 'react'
 import { ShoppingCart, ArrowLeft, CreditCard } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useTranslation } from 'react-i18next'
+import { useSafeTranslation } from '@/hooks/use-safe-translation'
+import { useAuth } from '@clerk/nextjs'
+import { useRoleAuth } from '@/lib/auth/role-auth'
 import { CartItemsList } from '../organisms'
 import { CartSummaryCard } from '../molecules'
 import { CartEmptyState, EmptyCartButton } from '../atoms'
@@ -21,14 +23,16 @@ import {
   useCartItems,
   useCartSummary,
 } from '@/lib/stores/cart.store'
-import { useCartSync } from '@/hooks/useCartSync'
+import { useCartSync } from '@/hooks/use-cart-sync'
 import { toast } from 'sonner'
 import { formatPrice } from '@/lib/utils/price'
 
 export function CustomerCartTemplate() {
   const router = useRouter()
-  const { t } = useTranslation('cart')
+  const { t } = useSafeTranslation('cart')
   const [isUpdating, setIsUpdating] = useState(false)
+  const { isSignedIn } = useAuth()
+  const { requireAuth, hasRole } = useRoleAuth()
 
   // Sync cart with backend on mount (SSOT pattern)
   useCartSync({ syncOnMount: true })
@@ -71,20 +75,51 @@ export function CustomerCartTemplate() {
   const handleCheckout = async () => {
     if (!cart || cart.items.length === 0) return
 
-    setIsUpdating(true)
-    try {
-      const success = await checkout()
-      if (success) {
-        toast.success(t('messages.checkoutSuccess'))
-        router.push('/orders')
-      } else {
-        toast.error(t('messages.checkoutFailed'))
+    // Check if user is signed in and has customer role
+    if (!isSignedIn || !hasRole('customer')) {
+      // Require authentication before checkout
+      requireAuth(
+        'customer',
+        async () => {
+          // User is now authenticated, proceed with checkout
+          setIsUpdating(true)
+          try {
+            const success = await checkout()
+            if (success) {
+              toast.success(t('messages.checkoutSuccess'))
+              router.push('/orders')
+            } else {
+              toast.error(t('messages.checkoutFailed'))
+            }
+          } catch (error) {
+            toast.error(t('messages.checkoutError'))
+            console.error('Checkout failed:', error)
+          } finally {
+            setIsUpdating(false)
+          }
+        },
+        {
+          showToast: true,
+          redirectTo: '/checkout', // After sign-in, go to checkout
+        }
+      )
+    } else {
+      // User is already authenticated, proceed with checkout
+      setIsUpdating(true)
+      try {
+        const success = await checkout()
+        if (success) {
+          toast.success(t('messages.checkoutSuccess'))
+          router.push('/orders')
+        } else {
+          toast.error(t('messages.checkoutFailed'))
+        }
+      } catch (error) {
+        toast.error(t('messages.checkoutError'))
+        console.error('Checkout failed:', error)
+      } finally {
+        setIsUpdating(false)
       }
-    } catch (error) {
-      toast.error(t('messages.checkoutError'))
-      console.error('Checkout failed:', error)
-    } finally {
-      setIsUpdating(false)
     }
   }
 

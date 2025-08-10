@@ -11,7 +11,7 @@
  * - Composite Pattern: Combines multiple providers into single layout
  * - Template Method: Defines app structure template for all pages
  *
- * Provider Hierarchy: ClerkProvider → ThemeInitializer → I18nProvider → ApolloWrapper → AppLayout
+ * Provider Hierarchy: ClerkProvider → ThemeInitializer → I18nProvider → CartProvider → AppLayout
  */
 
 import type { Metadata } from 'next'
@@ -23,7 +23,6 @@ import {
   CartProvider,
 } from '@/components/providers'
 import { AppLayout } from '@/components/layout'
-import { ApolloWrapper } from '@/lib/apollo/ApolloWrapper'
 import { Toaster } from 'sonner'
 import './globals.css'
 
@@ -56,9 +55,7 @@ export default function RootLayout({
           <ThemeInitializer />
           <I18nProvider>
             <CartProvider>
-              <ApolloWrapper>
-                <AppLayout>{children}</AppLayout>
-              </ApolloWrapper>
+              <AppLayout>{children}</AppLayout>
             </CartProvider>
             <Toaster
               position="bottom-left"

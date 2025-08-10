@@ -21,7 +21,7 @@ import { toast } from '@/lib/utils/toast'
 const mockRouterPush = jest.fn()
 
 // Mock dependencies
-jest.mock('@clerk/nextjs')
+// Clerk is mocked globally in jest.setup.ts - NO DUPLICATE MOCKS
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => {
@@ -237,7 +237,7 @@ describe('useRoleAuth', () => {
       expect(authResult).toEqual({
         success: false,
         reason: 'not-signed-in',
-        message: 'To continue you must sign in',
+        message: 'Please sign in to continue',
       })
     })
 
@@ -283,7 +283,7 @@ describe('useRoleAuth', () => {
       expect(authResult).toEqual({
         success: false,
         reason: 'wrong-role',
-        message: 'Insufficient permissions. Please contact support.',
+        message: 'Insufficient permissions',
       })
     })
 
@@ -333,7 +333,7 @@ describe('useRoleAuth', () => {
       expect(success).toBe(false)
       expect(onSuccess).not.toHaveBeenCalled()
       expect(mockToast.error).toHaveBeenCalledWith(
-        'To continue you must sign in',
+        'Please sign in to continue',
         { position: 'bottom-left' }
       )
       expect(mockOpenSignIn).toHaveBeenCalledWith({
@@ -365,10 +365,9 @@ describe('useRoleAuth', () => {
 
       expect(success).toBe(false)
       expect(onSuccess).not.toHaveBeenCalled()
-      expect(mockToast.error).toHaveBeenCalledWith(
-        'Insufficient permissions. Please contact support.',
-        { position: 'bottom-left' }
-      )
+      expect(mockToast.error).toHaveBeenCalledWith('Insufficient permissions', {
+        position: 'bottom-left',
+      })
       expect(mockRouterPush).toHaveBeenCalledWith('/home')
     })
 

@@ -1,4 +1,9 @@
 {
+  "dashboard": "Müşteri Paneli",
+  "pendingOrders": "Bekleyen Siparişler",
+  "deliveries": "İrsaliyeler (Teslimatlar)",
+  "invoices": "Faturalar",
+  "unpaidInvoices": "Ödenmemiş Faturalar",
   "cart": {
     "title": "Sepet Yönetimi",
     "subtitle": "Müşteri sepetlerini ve terk edilmiş sepetleri yönetin",

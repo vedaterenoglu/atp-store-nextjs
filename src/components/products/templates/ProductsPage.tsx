@@ -17,6 +17,8 @@ import {
   ProductsGrid,
 } from '@/components/products'
 import { useCategorySearchStore } from '@/lib/stores'
+import { getPageClasses, getContainerClasses } from '@/lib/styles/utilities'
+import { cn } from '@/lib/utils'
 
 interface Product {
   id: string
@@ -83,13 +85,15 @@ export function ProductsPage({
   }
 
   return (
-    <div className="min-h-screen">
+    <div className={getPageClasses({ section: 'container' })}>
       {/* Header Section */}
-      <div className="py-12">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="space-y-4 text-center">
-            <h1 className="text-4xl font-bold">{t('title', 'Products')}</h1>
-            <p className="text-lg text-muted-foreground">
+      <div className={getPageClasses({ section: 'content' })}>
+        <div className={getContainerClasses({ size: 'xl' })}>
+          <div className={cn('space-y-4 text-center')}>
+            <h1 className={cn('text-4xl font-bold')}>
+              {t('title', 'Products')}
+            </h1>
+            <p className={cn('text-lg text-muted-foreground')}>
               {t(
                 'subtitle',
                 'All prices are exclusive of VAT. Contract pricing applies. Subject to market adjustments.'

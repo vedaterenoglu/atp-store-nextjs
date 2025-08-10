@@ -6,28 +6,9 @@
  * Dependencies: Apollo Client, environment config
  */
 
-// Dynamic import for client selection based on environment
-import type { ApolloClient } from '@apollo/client'
-
-let getClient: () => ApolloClient<object>
-
-if (typeof window !== 'undefined') {
-  // Browser environment - use browser client
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { getBrowserClient } = require('@/lib/apollo/browser-client')
-  getClient = getBrowserClient
-} else {
-  // Server environment - use server client
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { getClient: getServerClient } = require('@/lib/apollo/client')
-  getClient = getServerClient
-}
-
-import GetMostPurchasedProductsQueryDocument from '@/services/graphql/queries/GetMostPurchasedProductsQuery.graphql'
 import { validateGetMostPurchasedProductsResponse } from '@/services/graphql/queries/GetMostPurchasedProductsQuery.schema'
 import type {
   GetMostPurchasedProductsQueryResponse,
-  GetMostPurchasedProductsQueryVariables,
   GoodsTransaction,
 } from '@/services/graphql/queries/GetMostPurchasedProductsQuery.types'
 
@@ -46,34 +27,6 @@ export interface MostPurchasedProduct {
 }
 
 /**
- * Calculate date range based on consumption period from environment
- */
-function getDateRange(): { beginDate: string; endDate: string } {
-  const today = new Date()
-  const periodInDays = parseInt(
-    process.env['NEXT_PUBLIC_CONSUMPTION_PERIOD_IN_DAYS'] || '90',
-    10
-  )
-
-  // Calculate begin date (90 days ago by default)
-  const beginDate = new Date(today)
-  beginDate.setDate(beginDate.getDate() - periodInDays)
-
-  // Format dates as YYYY-MM-DD
-  const formatDate = (date: Date): string => {
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
-  }
-
-  return {
-    beginDate: formatDate(beginDate),
-    endDate: formatDate(today),
-  }
-}
-
-/**
  * Fetch most purchased products for a customer
  */
 export async function getMostPurchasedProducts(
@@ -81,22 +34,31 @@ export async function getMostPurchasedProducts(
   companyId?: string
 ): Promise<MostPurchasedProduct[]> {
   try {
-    const { beginDate, endDate } = getDateRange()
     const actualCompanyId = companyId || process.env['COMPANY_ID'] || 'alfe'
 
-    const client = getClient()
-    const { data } = await client.query<
-      GetMostPurchasedProductsQueryResponse,
-      GetMostPurchasedProductsQueryVariables
-    >({
-      query: GetMostPurchasedProductsQueryDocument,
-      variables: {
-        company_id: actualCompanyId,
-        customer_id: customerId,
-        bd: beginDate,
-        ed: endDate,
-      },
+    // Construct absolute URL for Server Components
+    const baseUrl =
+      typeof window === 'undefined'
+        ? process.env['NEXT_PUBLIC_APP_URL'] || 'http://localhost:3081'
+        : ''
+
+    // Use new API route facade (dates are calculated server-side)
+    const params = new URLSearchParams({
+      company_id: actualCompanyId,
+      customer_id: customerId,
     })
+
+    const response = await fetch(`${baseUrl}/api/most-purchased?${params}`)
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch most purchased: ${response.statusText}`)
+    }
+
+    const data: GetMostPurchasedProductsQueryResponse = await response.json()
+
+    if (!data) {
+      throw new Error('No data returned from API')
+    }
 
     // Validate response with Zod
     const validatedResponse = validateGetMostPurchasedProductsResponse(data)

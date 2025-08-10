@@ -2,23 +2,25 @@
 
 ## Overview
 
-This document describes the manual GraphQL type safety workflow used in the ATP Store Next.js application. The project uses Apollo Client with a manual type definition approach instead of code generation.
+This document describes the GraphQL implementation using the Facade Pattern with dedicated API routes. Each GraphQL operation has its own REST endpoint that acts as a facade, hiding GraphQL complexity from the frontend.
 
 ## Current Implementation Status
 
 ### ✅ Completed
 
-- Migration from urql to Apollo Client
-- Manual type safety workflow implementation
-- Removal of all codegen dependencies
-- Creation of validated mock data for all queries/mutations
+- Migration from Apollo Client to API Route Facades
+- Each GraphQL operation has dedicated REST endpoint
+- Two-layer validation (API route + service layer)
+- Complete removal of client-side GraphQL dependencies
+- Admin secret secured in API routes only
 
 ### 🔧 Technology Stack
 
-- **GraphQL Client**: Apollo Client 3.12.8
-- **SSR Support**: @apollo/experimental-nextjs-app-support 0.11.8
+- **API Routes**: Next.js Route Handlers as facades
+- **GraphQL Execution**: Direct fetch to Hasura from API routes
 - **Type Safety**: Manual TypeScript types + Zod runtime validation
 - **GraphQL Files**: Imported via @graphql-tools/webpack-loader
+- **Client Communication**: Simple fetch() calls to API routes
 
 ## Manual Type Safety Workflow
 
@@ -50,7 +52,24 @@ query GetProducts($company_id: String!) {
     stock_group
   }
 }
+
+# todo response
+# {
+#   "data": {
+#     "stock": [
+#       {
+#         "stock_id": "PROD001",
+#         "stock_name": "Product Name",
+#         "stock_price": 99.99,
+#         "stock_unit": "pcs",
+#         "stock_group": "Electronics"
+#       }
+#     ]
+#   }
+# }
 ```
+
+**IMPORTANT**: All GraphQL query files in `/src/services/graphql/queries/` include a `# todo response` comment section showing the actual API response structure. Always refer to these examples when creating types and mock data.
 
 ### 3. TypeScript Types (.types.ts)
 
@@ -171,65 +190,87 @@ export function createMockProductsData(
 }
 ```
 
-## Apollo Client Integration
+## API Route Facade Pattern Implementation
 
-### 1. Client Configuration
+### 1. API Route Configuration
 
 ```typescript
-// src/lib/apollo/client.ts
-import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client'
-import { setContext } from '@apollo/client/link/context'
-import { registerApolloClient } from '@apollo/experimental-nextjs-app-support'
+// src/app/api/products/route.ts
+import { NextResponse } from 'next/server'
+import { print } from 'graphql'
+import GetProductsQueryDocument from '@/services/graphql/queries/GetProductsQuery.graphql'
+import { validateGetProductsResponse } from '@/services/graphql/queries/GetProductsQuery.schema'
 
-const httpLink = createHttpLink({
-  uri: process.env.NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT,
-})
+const HASURA_ENDPOINT = process.env['NEXT_PUBLIC_HASURA_GRAPHQL_API_URL']
+const ADMIN_SECRET = process.env['HASURA_GRAPHQL_ADMIN_SECRET']
 
-const authLink = setContext((_, { headers }) => ({
-  headers: {
-    ...headers,
-    'x-hasura-admin-secret': process.env.HASURA_ADMIN_SECRET,
-  },
-}))
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const companyId = searchParams.get('company_id')
 
-export const { getClient } = registerApolloClient(() => {
-  return new ApolloClient({
-    cache: new InMemoryCache(),
-    link: authLink.concat(httpLink),
+  // Execute GraphQL query from API route
+  const response = await fetch(HASURA_ENDPOINT as string, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-hasura-admin-secret': ADMIN_SECRET as string,
+    },
+    body: JSON.stringify({
+      query: print(GetProductsQueryDocument),
+      variables: { company_id: companyId },
+    }),
   })
-})
+
+  const result = await response.json()
+
+  // First validation layer
+  const validatedData = validateGetProductsResponse(result.data)
+
+  return NextResponse.json(validatedData)
+}
 ```
 
-### 2. Service Implementation
+### 2. Service Implementation (No Apollo Client)
 
 ```typescript
 // src/services/products.service.ts
-import { getClient } from '@/lib/apollo/client'
-import GetProductsQueryDocument from '@/services/graphql/queries/GetProductsQuery.graphql'
 import { validateGetProductsResponse } from '@/services/graphql/queries/GetProductsQuery.schema'
-import type {
-  GetProductsQueryResponse,
-  GetProductsQueryVariables,
-} from '@/services/graphql/queries/GetProductsQuery.types'
+import type { GetProductsQueryResponse } from '@/services/graphql/queries/GetProductsQuery.types'
 
 export async function getProducts(): Promise<ProductsArray> {
-  const client = getClient()
+  // Call API route facade (works in both Server and Client Components)
+  const response = await fetch('/api/products?company_id=alfe')
 
-  const { data } = await client.query<
-    GetProductsQueryResponse,
-    GetProductsQueryVariables
-  >({
-    query: GetProductsQueryDocument,
-    variables: { company_id: 'alfe' },
-  })
+  if (!response.ok) {
+    throw new Error('Failed to fetch products')
+  }
 
-  // Validate response with Zod
+  const data: GetProductsQueryResponse = await response.json()
+
+  // Second validation layer (re-validate for safety)
   const validatedResponse = validateGetProductsResponse(data)
 
   // Transform and return
   return transformProducts(validatedResponse.stock)
 }
 ```
+
+## Current API Routes
+
+### Query Endpoints
+
+- `/api/categories` - GET categories for company
+- `/api/products` - GET products list with prices
+- `/api/bookmarks` - GET customer bookmarks
+- `/api/bookmark/check` - GET check if product is bookmarked
+- `/api/campaign-products` - GET campaign products with prices
+- `/api/product-prices` - GET detailed product pricing
+- `/api/most-purchased` - GET most purchased products
+
+### Mutation Endpoints
+
+- `/api/bookmark/add` - POST add bookmark
+- `/api/bookmark/remove` - POST remove bookmark
 
 ## Benefits of Manual Workflow
 

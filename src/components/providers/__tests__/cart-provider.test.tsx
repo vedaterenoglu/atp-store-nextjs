@@ -21,21 +21,34 @@ jest.mock('@/lib/stores/cart.store', () => ({
   useCartStore: jest.fn(),
 }))
 
+// Mock functions at module level
+const mockInitializeCart = jest.fn()
+const mockResetCart = jest.fn()
+const mockAddItem = jest.fn()
+const mockRemoveItem = jest.fn()
+const mockUpdateQuantity = jest.fn()
+const mockClearCart = jest.fn()
+const mockSyncWithServer = jest.fn()
+
 // Type for mocked cart store return value
 type MockCartStore = {
   initializeCart: jest.Mock
   resetCart: jest.Mock
   isInitialized: boolean
-  [key: string]: unknown
+  items: never[]
+  totalItems: number
+  totalPrice: number
+  addItem: jest.Mock
+  removeItem: jest.Mock
+  updateQuantity: jest.Mock
+  clearCart: jest.Mock
+  syncWithServer: jest.Mock
 }
 
 describe('CartProvider', () => {
-  const mockInitializeCart = jest.fn()
-  const mockResetCart = jest.fn()
-  // Use unknown to bypass strict type checking for mocks
   const mockUseUser = useUser as jest.MockedFunction<typeof useUser>
-  const mockUseCartStore = useCartStore as unknown as jest.MockedFunction<
-    () => MockCartStore
+  const mockUseCartStore = useCartStore as jest.MockedFunction<
+    typeof useCartStore
   >
 
   beforeEach(() => {
@@ -44,7 +57,15 @@ describe('CartProvider', () => {
       initializeCart: mockInitializeCart,
       resetCart: mockResetCart,
       isInitialized: false,
-    } as MockCartStore)
+      items: [],
+      totalItems: 0,
+      totalPrice: 0,
+      addItem: mockAddItem,
+      removeItem: mockRemoveItem,
+      updateQuantity: mockUpdateQuantity,
+      clearCart: mockClearCart,
+      syncWithServer: mockSyncWithServer,
+    })
   })
 
   describe('Rendering', () => {
@@ -314,7 +335,15 @@ describe('CartProvider', () => {
         initializeCart: mockInitializeCart,
         resetCart: mockResetCart,
         isInitialized: true, // Already initialized
-      } as MockCartStore)
+        items: [],
+        totalItems: 0,
+        totalPrice: 0,
+        addItem: mockAddItem,
+        removeItem: mockRemoveItem,
+        updateQuantity: mockUpdateQuantity,
+        clearCart: mockClearCart,
+        syncWithServer: mockSyncWithServer,
+      })
 
       mockUseUser.mockReturnValue({
         isLoaded: true,

@@ -6,13 +6,8 @@
  * Dependencies: Apollo Client, Zod validation, price schemas
  */
 
-import { getClient } from '@/lib/apollo/client'
-import GetProductPricesQueryDocument from '@/services/graphql/queries/GetProductPricesQuery.graphql'
 import { validateGetProductPricesResponse } from '@/services/graphql/queries/GetProductPricesQuery.schema'
-import type {
-  GetProductPricesQueryResponse,
-  GetProductPricesQueryVariables,
-} from '@/services/graphql/queries/GetProductPricesQuery.types'
+import type { GetProductPricesQueryResponse } from '@/services/graphql/queries/GetProductPricesQuery.types'
 import { env } from '@/lib/config/env'
 
 /**
@@ -28,7 +23,7 @@ export interface ProductPriceResult {
 }
 
 /**
- * Fetch product prices using Apollo Client
+ * Fetch product prices using API route facade
  * Returns all price information for a specific product and customer
  */
 export async function getProductPrices(
@@ -37,18 +32,26 @@ export async function getProductPrices(
   companyId?: string
 ): Promise<GetProductPricesQueryResponse> {
   try {
-    const client = getClient()
-    const { data } = await client.query<
-      GetProductPricesQueryResponse,
-      GetProductPricesQueryVariables
-    >({
-      query: GetProductPricesQueryDocument,
-      variables: {
-        company_id: companyId || env.COMPANY_ID || 'alfe',
-        customer_id: customerId,
-        stock_id: stockId,
-      },
+    const actualCompanyId = companyId || env.COMPANY_ID || 'alfe'
+    const params = new URLSearchParams({
+      company_id: actualCompanyId,
+      customer_id: customerId,
+      stock_id: stockId,
     })
+
+    // Construct absolute URL for Server Components
+    const baseUrl =
+      typeof window === 'undefined'
+        ? process.env['NEXT_PUBLIC_APP_URL'] || 'http://localhost:3081'
+        : ''
+
+    const response = await fetch(`${baseUrl}/api/product-prices?${params}`)
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch prices: ${response.statusText}`)
+    }
+
+    const data = await response.json()
 
     // Validate the response structure with Zod
     return validateGetProductPricesResponse(data)

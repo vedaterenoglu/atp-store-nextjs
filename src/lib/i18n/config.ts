@@ -28,7 +28,7 @@ import enFavorites from './locales/en/favorites.json'
 import enAboutUs from './locales/en/aboutUs.json'
 import enCampaign from './locales/en/campaign.json'
 import enCart from './locales/en/cart.json'
-import enAdmin from '../../../public/locales/en/admin.json'
+import enAdmin from './locales/en/admin.json'
 
 import svCommon from './locales/sv/common.json'
 import svAuth from './locales/sv/auth.json'
@@ -39,7 +39,7 @@ import svFavorites from './locales/sv/favorites.json'
 import svAboutUs from './locales/sv/aboutUs.json'
 import svCampaign from './locales/sv/campaign.json'
 import svCart from './locales/sv/cart.json'
-import svAdmin from '../../../public/locales/sv/admin.json'
+import svAdmin from './locales/sv/admin.json'
 
 import trCommon from './locales/tr/common.json'
 import trAuth from './locales/tr/auth.json'
@@ -50,7 +50,7 @@ import trFavorites from './locales/tr/favorites.json'
 import trAboutUs from './locales/tr/aboutUs.json'
 import trCampaign from './locales/tr/campaign.json'
 import trCart from './locales/tr/cart.json'
-import trAdmin from '../../../public/locales/tr/admin.json'
+import trAdmin from './locales/tr/admin.json'
 
 import daCommon from './locales/da/common.json'
 import daAuth from './locales/da/auth.json'
@@ -61,7 +61,7 @@ import daFavorites from './locales/da/favorites.json'
 import daAboutUs from './locales/da/aboutUs.json'
 import daCampaign from './locales/da/campaign.json'
 import daCart from './locales/da/cart.json'
-import daAdmin from '../../../public/locales/da/admin.json'
+import daAdmin from './locales/da/admin.json'
 
 import deCommon from './locales/de/common.json'
 import deAuth from './locales/de/auth.json'
@@ -72,7 +72,7 @@ import deFavorites from './locales/de/favorites.json'
 import deAboutUs from './locales/de/aboutUs.json'
 import deCampaign from './locales/de/campaign.json'
 import deCart from './locales/de/cart.json'
-import deAdmin from '../../../public/locales/de/admin.json'
+import deAdmin from './locales/de/admin.json'
 
 export const defaultNS = 'common'
 export const resources = {
@@ -158,7 +158,7 @@ export function getStoredLanguage(): string {
   return 'sv' // Fallback to Swedish
 }
 
-// Don't initialize immediately - will be done by I18nInitializer
+// Don't initialize immediately - will be done by I18nProvider
 export const initI18n = async () => {
   const initialLanguage = getStoredLanguage()
 

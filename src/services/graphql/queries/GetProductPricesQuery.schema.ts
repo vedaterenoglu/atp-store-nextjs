@@ -35,6 +35,7 @@ export const StockPriceItemSchema = z.object({
   stock_price_z: z.number().nullable(),
   campaign_price: z.number().nullable(),
   is_campaign_active: z.boolean().nullable(),
+  stock_moms: z.number().nullable(),
 })
 
 /**

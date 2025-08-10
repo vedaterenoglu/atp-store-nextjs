@@ -24,3 +24,32 @@ mutation UnbookmarkProductMutation(
     affected_rows
   }
 }
+
+# {
+#   "company_id": "alfe",
+#   "customer_id": "SE0 1001 1086",
+#   "stock_id": "1001 1005 T030"
+# }
+
+# todo: response
+
+# {
+#   "data": {
+#     "delete_customer_bookmarks": {
+#       "returning": [
+#         {
+#           "company_id": "alfe",
+#           "customer": {
+#             "customer_id": "SE0 1001 1086",
+#             "customer_nickname": "La Perla Restaurang & Pizzeria Lanskrona"
+#           },
+#           "stock": {
+#             "stock_id": "1001 1005 T030",
+#             "stock_name": "Pizzakrtong 30*30*3,5 Tillfällig Besök100 st./förp."
+#           }
+#         }
+#       ],
+#       "affected_rows": 1
+#     }
+#   }
+# }

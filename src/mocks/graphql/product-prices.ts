@@ -27,6 +27,7 @@ const rawMockProductPricesData: GetProductPricesQueryResponse = {
       stock_price_hrc: 19000,
       stock_price_hrd: 19000,
       stock_price_z: 19000,
+      stock_moms: 25,
       campaign_price: 0,
       is_campaign_active: false,
     },

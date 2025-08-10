@@ -15,6 +15,5 @@
 
 export { ThemeInitializer } from './theme-initializer'
 export { I18nProvider } from './i18n-provider'
-export { I18nInitializer } from './i18n-initializer'
 export { ClerkLocaleProvider } from './clerk-locale-provider'
 export { CartProvider } from './cart-provider'

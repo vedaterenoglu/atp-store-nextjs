@@ -18,7 +18,6 @@
 
 import { useAuth, useUser, useClerk } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
-import { useTranslation } from 'react-i18next'
 import { toast } from '@/lib/utils/toast'
 
 /**
@@ -52,7 +51,6 @@ export function useRoleAuth() {
   const { isLoaded, isSignedIn, sessionClaims } = useAuth()
   const { user } = useUser()
   const { openSignIn } = useClerk()
-  const { t } = useTranslation('auth', { useSuspense: false })
   const router = useRouter()
 
   /**
@@ -96,7 +94,7 @@ export function useRoleAuth() {
       return {
         success: false,
         reason: 'not-signed-in',
-        message: t('requireSignIn'),
+        message: 'Please sign in to continue',
       }
     }
 
@@ -107,7 +105,7 @@ export function useRoleAuth() {
         return {
           success: false,
           reason: 'wrong-role',
-          message: t('insufficientPermissions'),
+          message: 'Insufficient permissions',
         }
       }
     }
