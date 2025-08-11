@@ -1,22 +1,22 @@
 /**
  * Admin Customers API Route - Fetches all active customers for admin impersonation
  * SOLID Principles: SRP - Single responsibility for fetching all customers
- * Design Patterns: Facade Pattern over GraphQL
- * Dependencies: Clerk auth, GraphQL query
+ * Design Patterns: Facade Pattern over GraphQL with runtime validation
+ * Dependencies: Clerk auth, GraphQL query, Zod validation
  */
 
 import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { env } from '@/lib/config/env'
 import type { AllCustomersResponse } from '@/lib/types/customer.types'
+import { validateGetAllActiveCustomersResponse } from '@/services/graphql/queries/GetAllActiveCustomersQuery.schema'
 
 // GraphQL query for all active customers
 const GET_ALL_ACTIVE_CUSTOMERS = `
   query GetAllActiveCustomersQuery($company_id: String!) {
-    customers(where: {company_id: {_eq: $company_id}, status: {_eq: "active"}}) {
+    customers(where: {customer_is_active: {_eq: true}, company_id: {_eq: $company_id}}, order_by: {customer_title: asc}) {
       customer_id
       customer_title
-      customer_nickname
     }
   }
 `
@@ -41,6 +41,7 @@ export async function GET() {
         status: 403,
       })
     }
+
 
     // Fetch from Hasura
     const response = await fetch(env.NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT, {
@@ -68,8 +69,18 @@ export async function GET() {
       throw new Error('GraphQL query failed')
     }
 
+    // Validate response with Zod
+    const validatedData = validateGetAllActiveCustomersResponse(result.data)
+
+    // Map to expected response format with customer_nickname
+    const customersWithNicknames = validatedData.customers.map(customer => ({
+      customer_id: customer.customer_id,
+      customer_title: customer.customer_title,
+      customer_nickname: customer.customer_title, // Use title as nickname for backward compatibility
+    }))
+
     return NextResponse.json({
-      customers: result.data?.customers || [],
+      customers: customersWithNicknames,
     } as AllCustomersResponse)
   } catch (error) {
     console.error('Admin customers error:', error)

@@ -1,14 +1,15 @@
 /**
  * Customer Titles API Route - Fetches titles for customer IDs
  * SOLID Principles: SRP - Single responsibility for fetching customer titles
- * Design Patterns: Facade Pattern over GraphQL
- * Dependencies: Clerk auth, GraphQL query
+ * Design Patterns: Facade Pattern over GraphQL with runtime validation
+ * Dependencies: Clerk auth, GraphQL query, Zod validation
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { env } from '@/lib/config/env'
 import type { CustomerTitlesResponse } from '@/lib/types/customer.types'
+import { validateGetCustomerTitlesResponse } from '@/services/graphql/queries/GetCustomerTitlesQuery.schema'
 
 // GraphQL query for customer titles
 const GET_CUSTOMER_TITLES = `
@@ -25,44 +26,46 @@ export async function POST(request: NextRequest) {
     // Authenticate user
     const authData = await auth()
     const user = await currentUser()
-    
+
     if (!authData.userId || !user) {
-      return NextResponse.json(
-        { customers: [] } as CustomerTitlesResponse,
-        { status: 401 }
-      )
+      return NextResponse.json({ customers: [] } as CustomerTitlesResponse, {
+        status: 401,
+      })
     }
 
     // Parse request
     const { customerIds } = await request.json()
-    
-    if (!customerIds || !Array.isArray(customerIds) || customerIds.length === 0) {
-      return NextResponse.json(
-        { customers: [] } as CustomerTitlesResponse,
-        { status: 400 }
-      )
+
+    if (
+      !customerIds ||
+      !Array.isArray(customerIds) ||
+      customerIds.length === 0
+    ) {
+      return NextResponse.json({ customers: [] } as CustomerTitlesResponse, {
+        status: 400,
+      })
     }
 
     // Validate user has access to these customer IDs
     const userRole = user.publicMetadata?.['role'] as string
-    
+
     if (userRole === 'customer') {
-      const allowedIds = user.publicMetadata?.['customerids'] as string[] | undefined
-      
+      const allowedIds = user.publicMetadata?.['customerids'] as
+        | string[]
+        | undefined
+
       if (!allowedIds) {
-        return NextResponse.json(
-          { customers: [] } as CustomerTitlesResponse,
-          { status: 403 }
-        )
+        return NextResponse.json({ customers: [] } as CustomerTitlesResponse, {
+          status: 403,
+        })
       }
-      
+
       // Check all requested IDs are in user's allowed list
       const hasAccess = customerIds.every(id => allowedIds.includes(id))
       if (!hasAccess) {
-        return NextResponse.json(
-          { customers: [] } as CustomerTitlesResponse,
-          { status: 403 }
-        )
+        return NextResponse.json({ customers: [] } as CustomerTitlesResponse, {
+          status: 403,
+        })
       }
     }
 
@@ -87,20 +90,29 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await response.json()
-    
+
     if (result.errors) {
       console.error('GraphQL errors:', result.errors)
       throw new Error('GraphQL query failed')
     }
 
+    // Validate response with Zod
+    const validatedData = validateGetCustomerTitlesResponse(result.data)
+
+    // Map to expected response format with customer_nickname
+    const customersWithNicknames = validatedData.customers.map(customer => ({
+      customer_id: customer.customer_id,
+      customer_title: customer.customer_title,
+      customer_nickname: customer.customer_title, // Use title as nickname fallback
+    }))
+
     return NextResponse.json({
-      customers: result.data?.customers || [],
+      customers: customersWithNicknames,
     } as CustomerTitlesResponse)
   } catch (error) {
     console.error('Customer titles error:', error)
-    return NextResponse.json(
-      { customers: [] } as CustomerTitlesResponse,
-      { status: 500 }
-    )
+    return NextResponse.json({ customers: [] } as CustomerTitlesResponse, {
+      status: 500,
+    })
   }
 }

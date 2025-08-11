@@ -27,6 +27,7 @@ export function I18nProvider({ children }: I18nProviderProps) {
   const [i18nInstance, setI18nInstance] = useState<typeof i18n | null>(null)
   const { language } = useLanguageStore()
 
+  // Initial initialization - only runs once
   useEffect(() => {
     const initialize = async () => {
       try {
@@ -35,10 +36,7 @@ export function I18nProvider({ children }: I18nProviderProps) {
           setI18nInstance(initializedI18n)
           setIsInitialized(true)
         } else {
-          // If already initialized, just sync the language
-          if (i18n.language !== language) {
-            await i18n.changeLanguage(language)
-          }
+          // Already initialized from a previous mount
           setI18nInstance(i18n)
           setIsInitialized(true)
         }
@@ -51,11 +49,20 @@ export function I18nProvider({ children }: I18nProviderProps) {
     }
 
     initialize()
-  }, [language])
+  }, []) // Empty dependency - only run once on mount
+
+  // Language change handler - separate from initialization
+  useEffect(() => {
+    if (isInitialized && i18nInstance && i18nInstance.language !== language) {
+      // Change language without showing loading screen
+      i18nInstance.changeLanguage(language).catch(error => {
+        console.error('Failed to change language:', error)
+      })
+    }
+  }, [language, isInitialized, i18nInstance])
 
   if (!isInitialized || !i18nInstance) {
-    // Return professional loading component instead of children
-    // This prevents hooks from being called before i18n is ready
+    // Only show loading on first initialization, never on language changes
     return <I18nLoading />
   }
 

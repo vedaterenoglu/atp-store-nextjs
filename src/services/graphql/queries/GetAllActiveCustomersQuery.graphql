@@ -1,7 +1,7 @@
 query GetAllActiveCustomersQuery($company_id: String!) {
-  customers(where: {customer_is_active: {_eq: true}, company_id: {_eq: $company_id}}) {
+  customers(where: {customer_is_active: {_eq: true}, company_id: {_eq: $company_id}}, order_by: {customer_title: asc}) {
     customer_id
-    customer_nickname
+    customer_title
   }
 }
 
@@ -10,53 +10,32 @@ query GetAllActiveCustomersQuery($company_id: String!) {
 # }
 
 # todo: response
-
 # {
 #   "data": {
 #     "customers": [
 #       {
 #         "customer_id": "SE0 1001 1400",
-#         "customer_nickname": "Pizzeria Hasan Capri"
+#         "customer_title": "Pizzeria HASSAN"
 #       },
 #       {
 #         "customer_id": "SE0 1001 1255",
-#         "customer_nickname": "Falafillo Grillo"
+#         "customer_title": "Jenin Falafal Sverige AB"
 #       },
 #       {
 #         "customer_id": "SE0 1001 1243",
-#         "customer_nickname": "La sosta restaurang och pizzeria"
+#         "customer_title": "Öz,Kurt Restaurang AB"
 #       },
 #       {
 #         "customer_id": "SE0 1001 1083",
-#         "customer_nickname": "Västra Hamnens Pizzeria"
+#         "customer_title": "JAGANA"
 #       },
 #       {
 #         "customer_id": "SE0 1001 1530",
-#         "customer_nickname": "Gamla Pizza Parma"
+#         "customer_title": "Ghasem thai och pizzeria AB"
 #       },
 #       {
 #         "customer_id": "SE0 1001 1031",
-#         "customer_nickname": "Söderkulla Pizzeria"
-#       },
-#       {
-#         "customer_id": "SE0 1001 1041",
-#         "customer_nickname": "Sultan Kebab"
-#       },
-#       {
-#         "customer_id": "SE0 1001 1618",
-#         "customer_nickname": "Restaurang Pizzeria Läget"
-#       },
-#       {
-#         "customer_id": "SE0 1001 1088",
-#         "customer_nickname": "Hjärups Pizzeria"
-#       },
-#       {
-#         "customer_id": "SE0 1001 1244",
-#         "customer_nickname": "Delphi Pizzeria Lund"
-#       },
-#       {
-#         "customer_id": "SE0 1001 1438",
-#         "customer_nickname": "Pizza Center"
+#         "customer_title": "Irfan Demir"
 #       }
 #     ]
 #   }

@@ -12,6 +12,7 @@ import { useUser } from '@clerk/nextjs'
 import { CustomerDropdown } from '../molecules/CustomerDropdown'
 import { CustomerSearchModal } from './CustomerSearchModal'
 import { toast } from '@/lib/utils/toast'
+import { customerService } from '@/services/customer.service'
 import type {
   CustomerAccount,
   ActiveCustomerContext,
@@ -24,6 +25,8 @@ export function CustomerSwitcher() {
   const [customers, setCustomers] = useState<CustomerAccount[]>([])
   const [allCustomers, setAllCustomers] = useState<CustomerAccount[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isContextLoading, setIsContextLoading] = useState(true)
+  const [isAdminCustomersLoading, setIsAdminCustomersLoading] = useState(false)
   const [searchModalOpen, setSearchModalOpen] = useState(false)
   const [isWelcomeModal, setIsWelcomeModal] = useState(false)
   const hasCheckedInitialState = useRef(false)
@@ -39,23 +42,27 @@ export function CustomerSwitcher() {
     hasCheckedInitialState.current = false
   }, [user?.id])
 
-  // Fetch active customer context
+  // Fetch active customer context using service
   useEffect(() => {
     if (!user) {
       // User signed out - reset states
       setActiveContext(null)
       setCustomers([])
       setAllCustomers([])
+      setIsContextLoading(false)
       return
     }
 
-    fetch('/api/customer/active')
-      .then(res => res.json())
+    setIsContextLoading(true)
+    customerService
+      .getActiveCustomer()
       .then((data: ActiveCustomerContext) => {
         setActiveContext(data)
+        setIsContextLoading(false)
       })
       .catch(error => {
         console.error('Failed to get active customer:', error)
+        setIsContextLoading(false)
       })
   }, [user])
 
@@ -64,13 +71,9 @@ export function CustomerSwitcher() {
     if (!user) return
 
     if (isCustomer && customerIds && customerIds.length > 0) {
-      // Fetch titles for customer's accounts
-      fetch('/api/customers/titles', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customerIds }),
-      })
-        .then(res => res.json())
+      // Fetch titles for customer's accounts using service
+      customerService
+        .fetchCustomerTitles(customerIds)
         .then(data => {
           setCustomers(data.customers || [])
           setIsLoading(false)
@@ -80,14 +83,10 @@ export function CustomerSwitcher() {
           setIsLoading(false)
         })
     } else if (isAdmin) {
-      // If admin is impersonating, fetch that customer's title
+      // If admin is impersonating, fetch that customer's title using service
       if (activeContext?.customerId) {
-        fetch('/api/customers/titles', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ customerIds: [activeContext.customerId] }),
-        })
-          .then(res => res.json())
+        customerService
+          .fetchCustomerTitles([activeContext.customerId])
           .then(data => {
             setCustomers(data.customers || [])
             setIsLoading(false)
@@ -106,11 +105,21 @@ export function CustomerSwitcher() {
 
   // Auto-open modal on sign-in for customer selection
   useEffect(() => {
+    console.log('CustomerSwitcher useEffect running:', {
+      hasChecked: hasCheckedInitialState.current,
+      isLoading,
+      isContextLoading,
+      isCustomer,
+      customersLength: customers.length,
+      customerIds,
+      activeCustomerId: activeContext?.customerId
+    })
+    
     // Only check once per session per user
     if (hasCheckedInitialState.current) return
     
-    // Wait for data to load
-    if (isLoading) return
+    // Wait for ALL data to load (both customers and context)
+    if (isLoading || isContextLoading) return
     
     // Must have customers loaded
     if (customers.length === 0 && isCustomer) return
@@ -119,13 +128,17 @@ export function CustomerSwitcher() {
     if (isCustomer && customerIds && customerIds.length === 1) {
       const singleCustomerId = customerIds[0]
       hasCheckedInitialState.current = true  // Set BEFORE making the call
-      // Auto-select the single customer ID
-      fetch('/api/customer/switch', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customerId: singleCustomerId }),
-      })
-        .then(res => res.json())
+      
+      // If already has this customer selected, don't reload
+      if (activeContext?.customerId === singleCustomerId) {
+        console.log('Single customer already selected:', singleCustomerId)
+        return
+      }
+      
+      console.log('Auto-selecting single customer:', singleCustomerId)
+      // Auto-select the single customer ID using service
+      customerService
+        .switchCustomer(singleCustomerId)
         .then(data => {
           if (data.success) {
             // Reload to apply the change
@@ -138,57 +151,72 @@ export function CustomerSwitcher() {
       return
     }
     
-    // For customers with multiple accounts - ALWAYS open modal on sign-in
+    // For customers with multiple accounts - open modal ONLY if no customer selected
     if (isCustomer && customerIds && customerIds.length > 1 && customers.length > 0) {
-      hasCheckedInitialState.current = true  // Set BEFORE opening modal
-      // Always open modal for welcome selection, even if cookie exists
+      hasCheckedInitialState.current = true  // Set BEFORE checking
+      
+      // If customer already selected, don't open modal
+      if (activeContext?.customerId) {
+        console.log('Customer already selected, not opening modal:', activeContext.customerId)
+        return
+      }
+      
+      console.log('Opening modal for multiple customers - no active customer')
+      // Open modal for welcome selection
       setIsWelcomeModal(true)
       setSearchModalOpen(true)
       return
     }
     
-    // For admins, also check if they need to select a customer
+    // For admins - open modal if no customer selected
     if (isAdmin) {
-      hasCheckedInitialState.current = true  // Always mark as checked for admin
-      // If admin has no active customer (not impersonating), they might want to select one
-      // But we don't force it - admin can work without impersonating
-      // Only auto-open if they previously had an impersonation that's no longer valid
-      if (activeContext?.isImpersonating && !activeContext?.customerId) {
+      hasCheckedInitialState.current = true  // Mark as checked
+      
+      // If admin has no active customer selected, open modal for selection
+      if (!activeContext?.customerId) {
+        console.log('Opening modal for admin - no customer selected')
+        setIsWelcomeModal(true)
         setSearchModalOpen(true)
+        // Fetch all customers for admin to choose from
         if (allCustomers.length === 0) {
           fetchAllCustomers()
         }
+      } else {
+        console.log('Admin already has customer selected:', activeContext.customerId)
       }
       return
     }
     
     // Mark as checked if we reach here (for other cases)
     hasCheckedInitialState.current = true
-  })
+  }, [isLoading, isContextLoading, isCustomer, isAdmin, customerIds, customers.length, activeContext?.customerId])
 
-  // Fetch all customers for admin search
+  // Fetch all customers for admin search using service
   const fetchAllCustomers = async () => {
     if (!isAdmin) return
 
+    console.log('Fetching all customers for admin...')
+    setIsAdminCustomersLoading(true)
     try {
-      const response = await fetch('/api/admin/customers')
-      const data = await response.json()
+      const data = await customerService.fetchAllActiveCustomers()
+      console.log('Admin customers response:', {
+        customersCount: data.customers?.length || 0,
+        customers: data.customers,
+      })
       setAllCustomers(data.customers || [])
+      setIsAdminCustomersLoading(false)
     } catch (error) {
       console.error('Failed to fetch all customers:', error)
       toast.error('Failed to load customer list')
+      setIsAdminCustomersLoading(false)
     }
   }
 
   const handleCustomerSwitch = async (customerId: string) => {
     try {
-      const response = await fetch('/api/customer/switch', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customerId }),
-      })
-
-      const data = await response.json()
+      // Switch customer using service
+      const data = await customerService.switchCustomer(customerId)
+      
       if (data.success) {
         // Update active context
         setActiveContext({
@@ -197,15 +225,10 @@ export function CustomerSwitcher() {
           isImpersonating: isAdmin,
         })
 
-        // Fetch title for the new customer
-        const titlesResponse = await fetch('/api/customers/titles', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ customerIds: [customerId] }),
-        })
-
-        const titlesData = await titlesResponse.json()
+        // Fetch title for the new customer using service
+        const titlesData = await customerService.fetchCustomerTitles([customerId])
         const customer = titlesData.customers?.[0]
+        
         if (customer) {
           setActiveContext({
             customerId,
@@ -279,7 +302,7 @@ export function CustomerSwitcher() {
         }}
         customers={isAdmin ? allCustomers : customers}
         onSelect={handleCustomerSwitch}
-        isLoading={isAdmin ? allCustomers.length === 0 : false}
+        isLoading={isAdmin ? isAdminCustomersLoading : false}
         isAdmin={isAdmin}
         showWelcome={isWelcomeModal}
       />

@@ -7,7 +7,7 @@
 
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -46,21 +46,18 @@ export function CustomerSearchModal({
   showWelcome = false,
 }: CustomerSearchModalProps) {
   const [search, setSearch] = useState('')
-  const [filteredCustomers, setFilteredCustomers] = useState(customers)
-
-  useEffect(() => {
+  
+  // Manual filtering with substring matching (not fuzzy)
+  const filteredCustomers = customers.filter(customer => {
+    if (!search) return true
+    
     const searchLower = search.toLowerCase()
-    const filtered = customers.filter(customer => {
-      const title = (
-        customer.customer_title ||
-        customer.customer_nickname ||
-        ''
-      ).toLowerCase()
-      const id = customer.customer_id.toLowerCase()
-      return title.includes(searchLower) || id.includes(searchLower)
-    })
-    setFilteredCustomers(filtered)
-  }, [search, customers])
+    const customerId = customer.customer_id.toLowerCase()
+    const customerTitle = (customer.customer_title || customer.customer_nickname || '').toLowerCase()
+    
+    // Check if search term appears as a substring in ID or title
+    return customerId.includes(searchLower) || customerTitle.includes(searchLower)
+  })
 
   const handleSelect = (customerId: string) => {
     onSelect(customerId)
@@ -89,7 +86,7 @@ export function CustomerSearchModal({
           )}
         </DialogHeader>
 
-        <Command className="rounded-lg border">
+        <Command className="rounded-lg border" shouldFilter={false}>
           <CommandInput
             placeholder="Search by name or ID..."
             value={search}
@@ -100,17 +97,17 @@ export function CustomerSearchModal({
               <div className="py-6 text-center text-sm">
                 Loading customers...
               </div>
+            ) : filteredCustomers.length === 0 ? (
+              <CommandEmpty>No customers found.</CommandEmpty>
             ) : (
-              <>
-                <CommandEmpty>No customers found.</CommandEmpty>
-                <CommandGroup>
-                  {filteredCustomers.map(customer => (
-                    <CommandItem
-                      key={customer.customer_id}
-                      value={customer.customer_id}
-                      onSelect={() => handleSelect(customer.customer_id)}
-                      className="cursor-pointer"
-                    >
+              <CommandGroup>
+                {filteredCustomers.map(customer => (
+                  <CommandItem
+                    key={customer.customer_id}
+                    value={customer.customer_id}
+                    onSelect={() => handleSelect(customer.customer_id)}
+                    className="cursor-pointer"
+                  >
                       <div className="flex w-full items-center justify-between">
                         <div className="flex flex-col">
                           <span className="font-medium">
@@ -126,7 +123,6 @@ export function CustomerSearchModal({
                     </CommandItem>
                   ))}
                 </CommandGroup>
-              </>
             )}
           </CommandList>
         </Command>
