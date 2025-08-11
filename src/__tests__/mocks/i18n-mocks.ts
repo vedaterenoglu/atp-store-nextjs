@@ -53,6 +53,26 @@ export const defaultTranslations: Record<string, string> = {
   'cart.subtotal': 'Subtotal',
   'cart.tax': 'Tax',
   'cart.shipping': 'Shipping',
+
+  // Card
+  'card.addToCart': 'Add to Cart',
+
+  // Messages
+  'messages.noCampaigns': 'No campaigns available',
+  'messages.checkBackSoon': 'Please check back soon',
+  'messages.viewingDetails': 'Viewing details for {{product}}',
+  'messages.addedToCart': '{{count}} item added to cart',
+  'messages.addedToCartPlural': '{{count}} items added to cart',
+  
+  // Page
+  'page.goToAllProducts': 'Go to All Products',
+  'page.title': 'Campaign Products',
+  'page.description': 'Check out our latest campaign offers',
+
+  // Errors
+  'errors.loadFailed': 'Failed to load campaigns',
+  'errors.errorMessage': 'Something went wrong. Please try again.',
+  'errors.tryAgain': 'Try Again',
 }
 
 /**
@@ -145,4 +165,52 @@ export function createTranslationLoadingMock(): MockUseTranslation {
     },
     ready: false,
   }
+}
+
+// Export centralized mock object for jest.setup.ts
+export const i18nMocks = {
+  reactI18next: {
+    useTranslation: jest.fn(() => ({
+      t: (key: string, options?: Record<string, unknown>) => {
+        let translation = defaultTranslations[key] || key
+        
+        // Handle interpolation
+        if (options) {
+          Object.entries(options).forEach(([placeholder, value]) => {
+            translation = translation.replace(`{{${placeholder}}}`, String(value))
+          })
+        }
+        
+        return translation
+      },
+      i18n: {
+        language: 'en',
+        changeLanguage: jest.fn(() => Promise.resolve()),
+      },
+      ready: true,
+    })),
+    Trans: ({ children }: { children?: React.ReactNode }) => children,
+    initReactI18next: {
+      type: '3rdParty',
+      init: jest.fn(),
+    },
+    withTranslation: () => (Component: React.ComponentType) => Component,
+  },
+  i18next: {
+    init: jest.fn(() => Promise.resolve()),
+    use: jest.fn(function() { return this }),
+    changeLanguage: jest.fn(() => Promise.resolve()),
+    language: 'en',
+    languages: ['en', 'sv', 'tr', 'da', 'de'],
+    exists: jest.fn(() => true),
+    getFixedT: jest.fn(() => (key: string) => key),
+    hasResourceBundle: jest.fn(() => true),
+    addResourceBundle: jest.fn(),
+    t: (key: string) => key,
+    dir: jest.fn(() => 'ltr'),
+    isInitialized: true,
+    on: jest.fn(),
+    off: jest.fn(),
+    emit: jest.fn(),
+  },
 }

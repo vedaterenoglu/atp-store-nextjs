@@ -10,7 +10,7 @@ import { render, screen } from '@testing-library/react'
 import { DiscountBadge } from '../DiscountBadge'
 import { calculateDiscountPercentage } from '@/services/price.service'
 
-// Mock the price service
+// Mock price service
 jest.mock('@/services/price.service', () => ({
   calculateDiscountPercentage: jest.fn(),
 }))

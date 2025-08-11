@@ -1,17 +1,8 @@
 /**
- * Jest Setup File
- *
- * SOLID Principles Applied:
- * - SRP: Single responsibility for test environment setup
- * - OCP: Open for extension with additional global setup
- * - DIP: Depends on testing library abstractions
- *
- * Design Patterns:
- * - Initialization Pattern: Global test environment initialization
- * - Adapter Pattern: Adapts testing libraries to Jest environment
- *
- * Architecture: Configures global test environment including custom matchers,
- * mocks, and polyfills required for testing Next.js applications
+ * Jest Setup File - CLEAN VERSION
+ * 
+ * This file contains ONLY essential polyfills and browser API mocks.
+ * All component mocks should be defined inline in individual test files.
  */
 
 import '@testing-library/jest-dom'
@@ -26,30 +17,27 @@ import path from 'path'
 dotenv.config({ path: path.resolve(process.cwd(), '.env.test') })
 
 // Configure Clerk for test environment
-// Clerk needs these to work in test mode
 process.env['CLERK_TESTING'] = 'true'
 process.env['CLERK_API_URL'] = 'https://api.clerk.dev'
-process.env['CLERK_FRONTEND_API'] =
-  'https://charmed-primate-18.clerk.accounts.dev'
+process.env['CLERK_FRONTEND_API'] = 'https://charmed-primate-18.clerk.accounts.dev'
+
+// ============================================
+// POLYFILLS AND BROWSER API MOCKS ONLY
+// ============================================
 
 // Polyfill for TextEncoder/TextDecoder (required for some dependencies)
 global.TextEncoder = TextEncoder
 global.TextDecoder = TextDecoder as unknown as typeof globalThis.TextDecoder
 
-// Add fetch polyfills for MSW in Node.js environment BEFORE any imports
-// Import node-fetch and set up polyfills immediately
+// Add fetch polyfills for MSW in Node.js environment
 import * as nodeFetch from 'node-fetch'
 
-// Set up polyfills synchronously
 ;(() => {
   if (!globalThis.fetch) {
     globalThis.fetch = nodeFetch.default as unknown as typeof globalThis.fetch
-    globalThis.Headers =
-      nodeFetch.Headers as unknown as typeof globalThis.Headers
-    globalThis.Request =
-      nodeFetch.Request as unknown as typeof globalThis.Request
-    globalThis.Response =
-      nodeFetch.Response as unknown as typeof globalThis.Response
+    globalThis.Headers = nodeFetch.Headers as unknown as typeof globalThis.Headers
+    globalThis.Request = nodeFetch.Request as unknown as typeof globalThis.Request
+    globalThis.Response = nodeFetch.Response as unknown as typeof globalThis.Response
   }
 
   // Also set on global object for compatibility
@@ -92,11 +80,11 @@ Object.defineProperty(window, 'matchMedia', {
       onchange: null,
       addListener: jest.fn(callback => {
         listeners.push(callback)
-      }), // deprecated but still used by some libraries
+      }),
       removeListener: jest.fn(callback => {
         const index = listeners.indexOf(callback)
         if (index > -1) listeners.splice(index, 1)
-      }), // deprecated but still used by some libraries
+      }),
       addEventListener: jest.fn((event, callback) => {
         if (event === 'change') listeners.push(callback)
       }),
@@ -127,8 +115,7 @@ class MockIntersectionObserver implements IntersectionObserver {
   }
 }
 
-global.IntersectionObserver =
-  MockIntersectionObserver as unknown as typeof IntersectionObserver
+global.IntersectionObserver = MockIntersectionObserver as unknown as typeof IntersectionObserver
 
 // Mock localStorage
 const localStorageMock = {
@@ -141,7 +128,11 @@ const localStorageMock = {
 }
 global.localStorage = localStorageMock as unknown as Storage
 
-// Mock Next.js router
+// ============================================
+// EXTERNAL PACKAGE MOCKS ONLY
+// ============================================
+
+// Mock Next.js navigation (external package)
 jest.mock('next/navigation', () => ({
   useRouter() {
     return {
@@ -161,195 +152,73 @@ jest.mock('next/navigation', () => ({
   },
 }))
 
-// Mock Next.js Image component
+// Mock Next.js Image component (external package)
 jest.mock('next/image', () => {
   return {
     __esModule: true,
     default: function Image(
-      props: React.ImgHTMLAttributes<HTMLImageElement> & { priority?: boolean }
+      props: React.ImgHTMLAttributes<HTMLImageElement> & { priority?: boolean; fill?: boolean; sizes?: string }
     ) {
       // Filter out Next.js specific props
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { priority, ...imgProps } = props
-      // Return an img element with only valid HTML props
-      return React.createElement('img', imgProps)
+      const { priority, fill, sizes, ...imgProps } = props
+      // Return an img element with data attributes for testing
+      return React.createElement('img', { 
+        ...imgProps, 
+        'data-priority': priority,
+        'data-fill': fill,
+        'data-sizes': sizes,
+        'data-testid': 'product-image'
+      })
     },
   }
 })
 
-// Mock next/dynamic component
+// Mock next/dynamic (external package)
 jest.mock('next/dynamic', () => ({
   __esModule: true,
-  default: jest.fn(
-    (
-      importFn: () => Promise<unknown>,
-      options?: { ssr?: boolean; loading?: () => React.JSX.Element }
-    ) => {
-      // Return different components based on the import
-      const importStr = importFn.toString()
-
-      if (importStr.includes('hero-section')) {
-        // Return a component that simulates loading behavior
-        return function MockHeroSection() {
-          const [isLoading, setIsLoading] = React.useState(true)
-
-          React.useEffect(() => {
-            const timer = setTimeout(() => setIsLoading(false), 0)
-            return () => clearTimeout(timer)
-          }, [])
-
-          if (isLoading && options?.loading) {
-            return React.createElement(React.Fragment, null, options.loading())
-          }
-
-          return React.createElement(
-            'div',
-            { 'data-testid': 'hero-section' },
-            'Hero Section'
-          )
-        }
-      }
-
-      if (importStr.includes('features-section')) {
-        // Return a component that simulates loading behavior
-        return function MockFeaturesSection() {
-          const [isLoading, setIsLoading] = React.useState(true)
-
-          React.useEffect(() => {
-            const timer = setTimeout(() => setIsLoading(false), 0)
-            return () => clearTimeout(timer)
-          }, [])
-
-          if (isLoading && options?.loading) {
-            return React.createElement(React.Fragment, null, options.loading())
-          }
-
-          return React.createElement(
-            'div',
-            { 'data-testid': 'features-section' },
-            'Features Section'
-          )
-        }
-      }
-
-      // Default mock component
-      const MockComponent = () =>
-        React.createElement('div', null, 'Mock Component')
-      MockComponent.displayName = 'MockComponent'
-      return MockComponent
-    }
-  ),
+  default: jest.fn((importFn: () => Promise<unknown>) => {
+    const MockComponent = () => React.createElement('div', null, 'Mock Component')
+    MockComponent.displayName = 'MockComponent'
+    return MockComponent
+  }),
 }))
 
-// Mock Radix UI components that use portals
-jest.mock('@radix-ui/react-dropdown-menu', () => {
-  return {
-    Root: ({
-      children,
-      ...props
-    }: React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>) =>
-      React.createElement(
-        'div',
-        { 'data-testid': 'dropdown-root', ...props },
-        children
-      ),
-    Trigger: ({
-      children,
-      asChild,
-      ...props
-    }: React.PropsWithChildren<
-      React.ButtonHTMLAttributes<HTMLButtonElement> & { asChild?: boolean }
-    >) => {
-      if (asChild && React.isValidElement(children)) {
-        const childProps = {
-          'data-testid': 'dropdown-trigger',
-          ...props,
-        }
-        return React.cloneElement(
-          children as React.ReactElement<React.HTMLAttributes<HTMLElement>>,
-          childProps as React.HTMLAttributes<HTMLElement>
-        )
-      }
-      return React.createElement(
-        'button',
-        { 'data-testid': 'dropdown-trigger', ...props },
-        children
-      )
-    },
-    Portal: ({ children }: React.PropsWithChildren) => children,
-    Content: ({
-      children,
-      sideOffset: _sideOffset,
-      ...props
-    }: React.PropsWithChildren<
-      React.HTMLAttributes<HTMLDivElement> & { sideOffset?: number }
-    >) => {
-      void _sideOffset // Intentionally unused - excluded from DOM props
-      return React.createElement(
-        'div',
-        { 'data-testid': 'dropdown-content', role: 'menu', ...props },
-        children
-      )
-    },
-    Item: ({
-      children,
-      ...props
-    }: React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>) =>
-      React.createElement('div', { role: 'menuitem', ...props }, children),
-    CheckboxItem: ({
-      children,
-      ...props
-    }: React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>) =>
-      React.createElement(
-        'div',
-        { role: 'menuitemcheckbox', ...props },
-        children
-      ),
-    RadioItem: ({
-      children,
-      ...props
-    }: React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>) =>
-      React.createElement('div', { role: 'menuitemradio', ...props }, children),
-    Label: ({
-      children,
-      ...props
-    }: React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>) =>
-      React.createElement('div', { ...props }, children),
-    Separator: (props: React.HTMLAttributes<HTMLHRElement>) =>
-      React.createElement('hr', { ...props }),
-    Group: ({
-      children,
-      ...props
-    }: React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>) =>
-      React.createElement('div', { role: 'group', ...props }, children),
-    Sub: ({
-      children,
-      ...props
-    }: React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>) =>
-      React.createElement(
-        'div',
-        { 'data-testid': 'dropdown-sub', ...props },
-        children
-      ),
-    SubContent: ({
-      children,
-      ...props
-    }: React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>) =>
-      React.createElement('div', { role: 'menu', ...props }, children),
-    SubTrigger: ({
-      children,
-      ...props
-    }: React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>) =>
-      React.createElement('div', { role: 'menuitem', ...props }, children),
-    RadioGroup: ({
-      children,
-      ...props
-    }: React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>) =>
-      React.createElement('div', { role: 'radiogroup', ...props }, children),
+// ============================================
+// MSW SERVER SETUP
+// ============================================
+
+import type { SetupServerApi } from 'msw/node'
+
+let server: SetupServerApi
+
+beforeAll(async () => {
+  // Dynamic import to ensure polyfills are ready
+  const { server: mswServer } = await import('../mocks/server')
+  server = mswServer
+
+  server.listen({
+    onUnhandledRequest: 'warn' as const,
+  })
+})
+
+afterEach(() => {
+  if (server) {
+    server.resetHandlers()
   }
 })
 
-// Suppress console errors in tests (optional - can be removed if you want to see errors)
+afterAll(() => {
+  if (server) {
+    server.close()
+  }
+})
+
+// ============================================
+// TEST LIFECYCLE HOOKS
+// ============================================
+
+// Suppress specific console errors in tests
 const originalError = console.error
 beforeAll(() => {
   console.error = (...args) => {
@@ -375,236 +244,4 @@ afterEach(() => {
   localStorageMock.setItem.mockClear()
   localStorageMock.removeItem.mockClear()
   localStorageMock.clear.mockClear()
-})
-
-// Import the server type from MSW
-import type { SetupServerApi } from 'msw/node'
-
-// Setup MSW server after polyfills are ready using dynamic import
-let server: SetupServerApi
-
-beforeAll(async () => {
-  // Dynamic import to ensure polyfills are ready
-  const { server: mswServer } = await import('../mocks/server')
-  server = mswServer
-
-  server.listen({
-    onUnhandledRequest: 'warn' as const, // Warn on unhandled requests during tests
-  })
-})
-
-// Reset handlers after each test
-afterEach(() => {
-  if (server) {
-    server.resetHandlers()
-  }
-})
-
-// Clean up after all tests
-afterAll(() => {
-  if (server) {
-    server.close()
-  }
-})
-
-// Mock Clerk hooks
-jest.mock('@clerk/nextjs', () => ({
-  useAuth: jest.fn(() => ({
-    isLoaded: true,
-    isSignedIn: false,
-    userId: null,
-    sessionId: null,
-    sessionClaims: null,
-    actor: null,
-    orgId: null,
-    orgRole: null,
-    orgSlug: null,
-    has: jest.fn(),
-    signOut: jest.fn(),
-    getToken: jest.fn(),
-  })),
-  useUser: jest.fn(() => ({
-    isLoaded: true,
-    isSignedIn: false,
-    user: null,
-  })),
-  useClerk: jest.fn(() => ({
-    openSignIn: jest.fn(),
-  })),
-  SignInButton: jest.fn(({ children }) =>
-    React.createElement('div', { 'data-testid': 'sign-in-button' }, children)
-  ),
-  UserButton: jest.fn(() =>
-    React.createElement('div', { 'data-testid': 'user-button' }, 'User Button')
-  ),
-}))
-
-// Mock Zustand stores
-jest.mock('@/lib/stores', () => {
-  let mockLanguageStore = {
-    language: 'sv',
-    isLoading: false,
-    setLanguage: jest.fn(),
-    getAvailableLanguages: jest.fn(() => ['en', 'sv', 'tr']),
-  }
-
-  let mockThemeStore = {
-    theme: 'system',
-    resolvedTheme: 'light',
-    systemTheme: 'light',
-    setTheme: jest.fn(),
-    setSystemTheme: jest.fn(),
-  }
-
-  let languageSubscribers: Array<() => void> = []
-  let themeSubscribers: Array<() => void> = []
-
-  const useLanguageStore = Object.assign(
-    jest.fn(selector => {
-      if (typeof selector === 'function') {
-        return selector(mockLanguageStore)
-      }
-      return mockLanguageStore
-    }),
-    {
-      setState: jest.fn(updates => {
-        mockLanguageStore = {
-          ...mockLanguageStore,
-          ...(typeof updates === 'function'
-            ? updates(mockLanguageStore)
-            : updates),
-        }
-        languageSubscribers.forEach(sub => sub())
-        // Update the mock to return new state
-        useLanguageStore.mockImplementation(selector => {
-          if (typeof selector === 'function') {
-            return selector(mockLanguageStore)
-          }
-          return mockLanguageStore
-        })
-      }),
-      getState: jest.fn(() => mockLanguageStore),
-      persist: {
-        rehydrate: jest.fn(),
-      },
-      subscribe: jest.fn(callback => {
-        languageSubscribers.push(callback)
-        return () => {
-          languageSubscribers = languageSubscribers.filter(
-            sub => sub !== callback
-          )
-        }
-      }),
-    }
-  )
-
-  const useThemeStore = Object.assign(
-    jest.fn(selector => {
-      if (typeof selector === 'function') {
-        return selector(mockThemeStore)
-      }
-      return mockThemeStore
-    }),
-    {
-      setState: jest.fn(updates => {
-        mockThemeStore = {
-          ...mockThemeStore,
-          ...(typeof updates === 'function'
-            ? updates(mockThemeStore)
-            : updates),
-        }
-        themeSubscribers.forEach(sub => sub())
-        // Update the mock to return new state
-        useThemeStore.mockImplementation(selector => {
-          if (typeof selector === 'function') {
-            return selector(mockThemeStore)
-          }
-          return mockThemeStore
-        })
-      }),
-      getState: jest.fn(() => mockThemeStore),
-      persist: {
-        rehydrate: jest.fn(),
-      },
-      subscribe: jest.fn(callback => {
-        themeSubscribers.push(callback)
-        return () => {
-          themeSubscribers = themeSubscribers.filter(sub => sub !== callback)
-        }
-      }),
-    }
-  )
-
-  return {
-    useLanguageStore,
-    useThemeStore,
-  }
-})
-
-// Toast utility is mocked per-test basis
-
-// Mock react-i18next
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-    i18n: {
-      changeLanguage: jest.fn(() => Promise.resolve()),
-      language: 'en',
-      exists: jest.fn(() => true),
-      getFixedT: jest.fn(() => (key: string) => key),
-      hasResourceBundle: jest.fn(() => true),
-      addResourceBundle: jest.fn(),
-    },
-  }),
-  Trans: ({ children }: { children: React.ReactNode }) => children,
-  initReactI18next: {
-    type: '3rdParty',
-    init: jest.fn(),
-  },
-  withTranslation: () => (Component: React.ComponentType) => Component,
-}))
-
-// Mock i18next core
-jest.mock('i18next', () => {
-  const i18nMock = {
-    init: jest.fn(() => Promise.resolve()),
-    use: jest.fn(function() { return this }),
-    changeLanguage: jest.fn(() => Promise.resolve()),
-    language: 'en',
-    languages: ['en', 'sv', 'tr', 'da', 'de'],
-    exists: jest.fn(() => true),
-    getFixedT: jest.fn(() => (key: string) => key),
-    hasResourceBundle: jest.fn(() => true),
-    addResourceBundle: jest.fn(),
-    t: (key: string) => key,
-    dir: jest.fn(() => 'ltr'),
-    isInitialized: true,
-    on: jest.fn(),
-    off: jest.fn(),
-    emit: jest.fn(),
-  }
-  
-  return {
-    default: i18nMock,
-    createInstance: jest.fn(() => {
-      const instance = {
-        init: jest.fn(() => Promise.resolve()),
-        use: jest.fn(function() { return this }),
-        changeLanguage: jest.fn(() => Promise.resolve()),
-        language: 'en',
-        languages: ['en', 'sv', 'tr', 'da', 'de'],
-        exists: jest.fn(() => true),
-        getFixedT: jest.fn(() => (key: string) => key),
-        hasResourceBundle: jest.fn(() => true),
-        addResourceBundle: jest.fn(),
-        t: (key: string) => key,
-        dir: jest.fn(() => 'ltr'),
-        isInitialized: true,
-        on: jest.fn(),
-        off: jest.fn(),
-        emit: jest.fn(),
-      }
-      return instance
-    }),
-  }
 })

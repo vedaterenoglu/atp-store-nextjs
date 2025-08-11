@@ -11,7 +11,7 @@
  */
 
 import React from 'react'
-import { renderWithProviders, screen } from '@/__tests__/utils'
+import { render, screen } from '@testing-library/react'
 import { Footer } from '../footer'
 
 // Mock environment variables
@@ -28,38 +28,62 @@ afterEach(() => {
   process.env = originalEnv
 })
 
-// Mock react-i18next with centralized mock
-jest.mock('react-i18next', () => {
-  const { createUseTranslationMock } = require('@/__tests__/mocks/i18n-mocks')
-  return {
-    useTranslation: () => {
-      const baseMock = createUseTranslationMock()
-      return {
-        ...baseMock,
-        t: (key: string, options?: { year?: number }) => {
-          if (key === 'footer.copyright') {
-            const year =
-              options?.year !== undefined
-                ? options.year
-                : new Date().getFullYear()
-            return `© ${year} Alfe Tissue Paper AB. All rights reserved.`
-          }
-          if (key === 'footer.createdBy') {
-            return 'Created by'
-          }
-          if (key === 'tooltips.footer.developerWebsite') {
-            return 'Visit developer website'
-          }
-          if (key === 'tooltips.footer.developerEmail') {
-            return 'Email developer'
-          }
-          // Fall back to centralized mock for other keys
-          return baseMock.t(key)
-        },
+// Mock react-i18next with inline mock
+jest.mock('react-i18next', () => ({
+  useTranslation: jest.fn(() => ({
+    t: (key: string, options?: { year?: number }) => {
+      if (key === 'footer.copyright') {
+        const year =
+          options?.year !== undefined
+            ? options.year
+            : new Date().getFullYear()
+        return `© ${year} Alfe Tissue Paper AB. All rights reserved.`
       }
+      if (key === 'footer.createdBy') {
+        return 'Created by'
+      }
+      if (key === 'tooltips.footer.developerWebsite') {
+        return 'Visit developer website'
+      }
+      if (key === 'tooltips.footer.developerEmail') {
+        return 'Email developer'
+      }
+      return key
     },
-  }
-})
+    i18n: {
+      changeLanguage: jest.fn(),
+      language: 'en',
+    },
+    ready: true,
+  })),
+}))
+
+// Mock stores
+jest.mock('@/lib/stores', () => ({
+  useThemeStore: jest.fn(() => ({
+    theme: 'light',
+    systemTheme: 'light',
+    setTheme: jest.fn(),
+    setSystemTheme: jest.fn(),
+  })),
+  useLanguageStore: jest.fn(() => ({
+    language: 'en',
+    isLoading: false,
+    setLanguage: jest.fn(),
+  })),
+  useCartStore: jest.fn(() => ({
+    items: [],
+    addItem: jest.fn(),
+    updateQuantity: jest.fn(),
+    removeItem: jest.fn(),
+  })),
+  useBookmarkStore: jest.fn(() => ({
+    bookmarks: [],
+    addBookmark: jest.fn(),
+    removeBookmark: jest.fn(),
+    isBookmarked: jest.fn(() => false),
+  })),
+}))
 
 // Mock Next.js Image component
 jest.mock('next/image', () => ({
@@ -90,7 +114,6 @@ jest.mock('next/image', () => ({
 
 // Mock Tooltip components
 jest.mock('@/components/ui/schadcn', () => ({
-  ...jest.requireActual('@/components/ui/schadcn'),
   Tooltip: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   TooltipTrigger: ({ children }: { children: React.ReactNode }) => (
     <>{children}</>
@@ -116,7 +139,7 @@ describe('Footer', () => {
 
   it('should render with default props', () => {
     const currentYear = new Date().getFullYear()
-    renderWithProviders(<Footer />)
+    render(<Footer />)
 
     // Check copyright text with default year
     expect(
@@ -130,7 +153,7 @@ describe('Footer', () => {
   })
 
   it('should render with custom year and author', () => {
-    renderWithProviders(<Footer year={mockYear} author={mockAuthor} />)
+    render(<Footer year={mockYear} author={mockAuthor} />)
 
     // Check copyright text with custom year
     expect(
@@ -144,7 +167,7 @@ describe('Footer', () => {
   })
 
   it('should render footer container with correct classes', () => {
-    const { container } = renderWithProviders(<Footer />)
+    const { container } = render(<Footer />)
 
     const footer = container.querySelector('footer')
     expect(footer).toBeInTheDocument()
@@ -152,7 +175,7 @@ describe('Footer', () => {
   })
 
   it('should render footer inner with correct classes', () => {
-    const { container } = renderWithProviders(<Footer />)
+    const { container } = render(<Footer />)
 
     const footer = container.querySelector('footer')
     const inner = footer?.firstChild as HTMLElement
@@ -160,7 +183,7 @@ describe('Footer', () => {
   })
 
   it('should render footer content with centered layout', () => {
-    const { container } = renderWithProviders(<Footer />)
+    const { container } = render(<Footer />)
 
     const footer = container.querySelector('footer')
     const inner = footer?.firstChild as HTMLElement
@@ -170,7 +193,7 @@ describe('Footer', () => {
   })
 
   it('should render copyright section', () => {
-    renderWithProviders(<Footer />)
+    render(<Footer />)
 
     const copyrightText = screen.getByText(/© \d{4} Alfe Tissue Paper AB/)
     expect(copyrightText).toHaveClass(
@@ -181,7 +204,7 @@ describe('Footer', () => {
   })
 
   it('should render created by link with correct href', () => {
-    renderWithProviders(<Footer />)
+    render(<Footer />)
 
     const createdByLink = screen
       .getByText('GTBS Coding')
@@ -193,7 +216,7 @@ describe('Footer', () => {
   })
 
   it('should use environment variable for developer website', () => {
-    renderWithProviders(<Footer />)
+    render(<Footer />)
 
     const link = screen
       .getByText('GTBS Coding')
@@ -203,7 +226,7 @@ describe('Footer', () => {
   })
 
   it('should have GTBS logo with correct props', () => {
-    renderWithProviders(<Footer />)
+    render(<Footer />)
 
     const logos = screen.getAllByTestId('next-image')
     const gtbsLogo = logos.find(
@@ -218,13 +241,13 @@ describe('Footer', () => {
   })
 
   it('should render created by text', () => {
-    renderWithProviders(<Footer />)
+    render(<Footer />)
 
     expect(screen.getByText('Created by')).toBeInTheDocument()
   })
 
   it('should apply correct text styles to created by section', () => {
-    renderWithProviders(<Footer />)
+    render(<Footer />)
 
     const createdBySection = screen.getByText('Created by').parentElement
     expect(createdBySection).toHaveClass(
@@ -237,7 +260,7 @@ describe('Footer', () => {
   })
 
   it('should apply hover effect to author link', () => {
-    renderWithProviders(<Footer />)
+    render(<Footer />)
 
     const link = screen
       .getByText('GTBS Coding')
@@ -248,7 +271,7 @@ describe('Footer', () => {
 
   it('should handle missing environment variables gracefully', () => {
     process.env['NEXT_PUBLIC_DEVELOPER_WEB_SITE'] = ''
-    renderWithProviders(<Footer />)
+    render(<Footer />)
 
     const link = screen
       .getByText('GTBS Coding')
@@ -259,7 +282,7 @@ describe('Footer', () => {
   })
 
   it('should render email link with mail icon', () => {
-    renderWithProviders(<Footer />)
+    render(<Footer />)
 
     const mailIcon = screen.getByTestId('mail-icon')
     expect(mailIcon).toBeInTheDocument()

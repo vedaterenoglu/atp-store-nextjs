@@ -21,7 +21,16 @@ import { toast } from '@/lib/utils/toast'
 const mockRouterPush = jest.fn()
 
 // Mock dependencies
-// Clerk is mocked globally in jest.setup.ts - NO DUPLICATE MOCKS
+// Mock Clerk hooks
+jest.mock('@clerk/nextjs', () => ({
+  useAuth: jest.fn(),
+  useUser: jest.fn(),
+  useClerk: jest.fn(),
+  ClerkProvider: ({ children }: { children: React.ReactNode }) => children,
+  SignIn: () => null,
+  SignUp: () => null,
+}))
+
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => {

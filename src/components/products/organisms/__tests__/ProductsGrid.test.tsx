@@ -6,13 +6,39 @@
  */
 
 import React from 'react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { ProductsGrid } from '../ProductsGrid'
-import { renderWithProviders, screen, fireEvent } from '@/__tests__/utils'
-import { createMockProducts } from '@/__tests__/mocks/api-mocks'
+
+// Mock interfaces
+interface MockProduct {
+  id: string
+  name: string
+  imageUrl?: string
+  price: number
+  unit: string
+  categoryId: string
+}
+
+// Helper function to create mock products
+function createMockProducts(count: number): MockProduct[] {
+  return Array.from({ length: count }, (_, index) => {
+    const product: MockProduct = {
+      id: `PROD${String(index + 1).padStart(3, '0')}`,
+      name: `Product ${index + 1}`,
+      price: (index + 1) * 1000,
+      unit: 'kg',
+      categoryId: `CAT${String((index % 3) + 1).padStart(3, '0')}`,
+    }
+    if (index % 2 === 0) {
+      product.imageUrl = `https://example.com/product${index + 1}.jpg`
+    }
+    return product
+  })
+}
 
 // Mock ProductCard component
 jest.mock('@/components/products', () => ({
-  ProductCard: function ProductCard({
+  ProductCard: jest.fn(function ProductCard({
     id,
     name,
     imageUrl,
@@ -38,19 +64,19 @@ jest.mock('@/components/products', () => ({
         {imageUrl && <div>Image: {imageUrl}</div>}
       </div>
     )
-  },
+  }),
 }))
 
 // Mock Grid components
 jest.mock('@/components/ui/custom/grid', () => ({
-  GridErrorBoundary: function GridErrorBoundary({
+  GridErrorBoundary: jest.fn(function GridErrorBoundary({
     children,
   }: {
     children: React.ReactNode
   }) {
     return <div data-testid="grid-error-boundary">{children}</div>
-  },
-  GridSkeleton: function GridSkeleton({
+  }),
+  GridSkeleton: jest.fn(function GridSkeleton({
     count,
     variant,
   }: {
@@ -66,22 +92,27 @@ jest.mock('@/components/ui/custom/grid', () => ({
         Loading {count} items...
       </div>
     )
-  },
-  GridItem: function GridItem({ children }: { children: React.ReactNode }) {
+  }),
+  GridItem: jest.fn(function GridItem({ children }: { children: React.ReactNode }) {
     return <div data-testid="grid-item">{children}</div>
-  },
+  }),
+}))
+
+// Mock style utilities
+jest.mock('@/lib/styles/utilities', () => ({
+  getGridClasses: jest.fn(() => 'grid'),
+  getContainerClasses: jest.fn(() => 'container'),
+}))
+
+// Mock cn utility
+jest.mock('@/lib/utils', () => ({
+  cn: jest.fn((...classes: (string | undefined | null | false)[]) => 
+    classes.filter(Boolean).join(' ')
+  ),
 }))
 
 describe('ProductsGrid', () => {
-  const mockProducts = createMockProducts(3).map(product => ({
-    id: product.stockId,
-    name: product.stockName,
-    imageUrl: product.stockImageLink || '',
-    price: product.stockPrice,
-    unit: product.stockUnit,
-    categoryId: product.stockGroup,
-  }))
-
+  const mockProducts = createMockProducts(3)
   const mockOnProductClick = jest.fn()
 
   beforeEach(() => {
@@ -89,7 +120,7 @@ describe('ProductsGrid', () => {
   })
 
   it('should render products grid with products', () => {
-    renderWithProviders(
+    render(
       <ProductsGrid
         products={mockProducts}
         onProductClick={mockOnProductClick}
@@ -110,7 +141,7 @@ describe('ProductsGrid', () => {
   })
 
   it('should render loading skeleton when isLoading is true', () => {
-    renderWithProviders(<ProductsGrid products={[]} isLoading={true} />)
+    render(<ProductsGrid products={[]} isLoading={true} />)
 
     const skeleton = screen.getByTestId('grid-skeleton')
     expect(skeleton).toBeInTheDocument()
@@ -119,26 +150,26 @@ describe('ProductsGrid', () => {
   })
 
   it('should render loading skeleton with fixed count', () => {
-    renderWithProviders(<ProductsGrid products={[]} isLoading={true} />)
+    render(<ProductsGrid products={[]} isLoading={true} />)
 
     const skeleton = screen.getByTestId('grid-skeleton')
     expect(skeleton).toHaveAttribute('data-count', '8')
   })
 
   it('should render empty state when no products', () => {
-    renderWithProviders(<ProductsGrid products={[]} />)
+    render(<ProductsGrid products={[]} />)
 
     expect(screen.getByText('No products found')).toBeInTheDocument()
   })
 
   it('should render default empty message', () => {
-    renderWithProviders(<ProductsGrid products={[]} />)
+    render(<ProductsGrid products={[]} />)
 
     expect(screen.getByText('No products found')).toBeInTheDocument()
   })
 
   it('should handle product click', () => {
-    renderWithProviders(
+    render(
       <ProductsGrid
         products={mockProducts}
         onProductClick={mockOnProductClick}
@@ -159,7 +190,7 @@ describe('ProductsGrid', () => {
 
   it('should apply custom className', () => {
     const customClass = 'custom-grid-class'
-    const { container } = renderWithProviders(
+    const { container } = render(
       <ProductsGrid products={mockProducts} className={customClass} />
     )
 
@@ -168,14 +199,14 @@ describe('ProductsGrid', () => {
   })
 
   it('should wrap each product in GridItem', () => {
-    renderWithProviders(<ProductsGrid products={mockProducts} />)
+    render(<ProductsGrid products={mockProducts} />)
 
     const gridItems = screen.getAllByTestId('grid-item')
     expect(gridItems).toHaveLength(mockProducts.length)
   })
 
   it('should not show loading when isLoading is false', () => {
-    renderWithProviders(
+    render(
       <ProductsGrid products={mockProducts} isLoading={false} />
     )
 
@@ -184,11 +215,12 @@ describe('ProductsGrid', () => {
 
   it('should handle products without images', () => {
     const productsNoImages = mockProducts.map(p => {
-      const { imageUrl: _, ...rest } = p
-      return rest
+      const productCopy = { ...p }
+      delete productCopy.imageUrl
+      return productCopy
     })
 
-    renderWithProviders(<ProductsGrid products={productsNoImages} />)
+    render(<ProductsGrid products={productsNoImages} />)
 
     // Check products are still rendered
     productsNoImages.forEach(product => {
@@ -204,7 +236,7 @@ describe('ProductsGrid', () => {
     const firstProduct = mockProducts[0]
     if (!firstProduct) throw new Error('Mock product not found')
 
-    renderWithProviders(<ProductsGrid products={[firstProduct]} />)
+    render(<ProductsGrid products={[firstProduct]} />)
 
     expect(
       screen.getByTestId(`product-card-${firstProduct.id}`)
@@ -213,22 +245,15 @@ describe('ProductsGrid', () => {
   })
 
   it('should handle large number of products', () => {
-    const manyProducts = createMockProducts(50).map(product => ({
-      id: product.stockId,
-      name: product.stockName,
-      imageUrl: product.stockImageLink || '',
-      price: product.stockPrice,
-      unit: product.stockUnit,
-      categoryId: product.stockGroup,
-    }))
+    const manyProducts = createMockProducts(50)
 
-    renderWithProviders(<ProductsGrid products={manyProducts} />)
+    render(<ProductsGrid products={manyProducts} />)
 
     expect(screen.getAllByTestId('grid-item')).toHaveLength(50)
   })
 
   it('should not call onProductClick when not provided', () => {
-    renderWithProviders(<ProductsGrid products={mockProducts} />)
+    render(<ProductsGrid products={mockProducts} />)
 
     const firstMockProduct = mockProducts[0]
     if (!firstMockProduct) throw new Error('Mock product not found')
@@ -243,14 +268,14 @@ describe('ProductsGrid', () => {
   })
 
   it('should render with default loading count when not specified', () => {
-    renderWithProviders(<ProductsGrid products={[]} isLoading={true} />)
+    render(<ProductsGrid products={[]} isLoading={true} />)
 
     const skeleton = screen.getByTestId('grid-skeleton')
     expect(skeleton).toHaveAttribute('data-count', '8') // Default count
   })
 
   it('should handle empty products array differently from undefined', () => {
-    const { rerender } = renderWithProviders(<ProductsGrid products={[]} />)
+    const { rerender } = render(<ProductsGrid products={[]} />)
 
     expect(screen.getByText('No products found')).toBeInTheDocument()
 

@@ -11,20 +11,14 @@
  */
 
 import React from 'react'
-import {
-  renderWithProviders,
-  screen,
-  fireEvent,
-  waitFor,
-} from '@/__tests__/utils'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { LanguageToggle } from '../language-toggle'
-import { createLanguageStoreMock } from '@/__tests__/mocks/store-mocks'
 
 // Mock Lucide React icons
 jest.mock('lucide-react', () => ({
-  Check: ({ className, ...props }: { className?: string }) => (
-    <div data-testid="check-icon" className={className} {...props} />
-  ),
+  Check: jest.fn(({ className }: { className?: string }) => (
+    <div data-testid="check-icon" className={className} />
+  )),
 }))
 
 // Mock UI components from schadcn
@@ -51,10 +45,10 @@ jest.mock('@/components/ui/schadcn/button', () => ({
 }))
 
 jest.mock('@/components/ui', () => ({
-  DropdownMenu: ({ children }: { children: React.ReactNode }) => (
+  DropdownMenu: jest.fn(({ children }: { children: React.ReactNode }) => (
     <div data-testid="dropdown-menu">{children}</div>
-  ),
-  DropdownMenuContent: ({
+  )),
+  DropdownMenuContent: jest.fn(({
     children,
     align,
     className,
@@ -70,8 +64,8 @@ jest.mock('@/components/ui', () => ({
     >
       {children}
     </div>
-  ),
-  DropdownMenuItem: ({
+  )),
+  DropdownMenuItem: jest.fn(({
     children,
     onClick,
     className,
@@ -91,7 +85,7 @@ jest.mock('@/components/ui', () => ({
     >
       {children}
     </div>
-  ),
+  )),
   DropdownMenuTrigger: React.forwardRef<
     HTMLDivElement,
     { children: React.ReactNode; asChild?: boolean }
@@ -104,11 +98,32 @@ jest.mock('@/components/ui', () => ({
   }),
 }))
 
-// Create mock language store with centralized mock
-const mockLanguageStore = createLanguageStoreMock('sv')
+// Create inline mock for language store
+const mockSetLanguage = jest.fn()
+const mockInitializeLanguage = jest.fn()
+
+const createMockLanguageStore = (initialLanguage = 'sv') => ({
+  language: initialLanguage as 'en' | 'sv' | 'tr' | 'da' | 'de',
+  isLoading: false,
+  setLanguage: mockSetLanguage,
+  initializeLanguage: mockInitializeLanguage,
+})
+
+// Mock theme store
+const mockThemeStore = {
+  theme: 'light' as const,
+  systemTheme: 'light' as const,
+  setTheme: jest.fn(),
+  setSystemTheme: jest.fn(),
+}
+
+// Create the mock store instance
+const mockLanguageStore = createMockLanguageStore('sv')
 
 jest.mock('@/lib/stores', () => ({
   useLanguageStore: jest.fn(() => mockLanguageStore),
+  useThemeStore: jest.fn(() => mockThemeStore),
+  SupportedLanguage: {} as Record<string, string>,
 }))
 
 describe('LanguageToggle', () => {
@@ -117,7 +132,7 @@ describe('LanguageToggle', () => {
     // Reset to Swedish as default for tests
     mockLanguageStore.language = 'sv'
     mockLanguageStore.isLoading = false
-    mockLanguageStore.setLanguage.mockResolvedValue(undefined)
+    mockSetLanguage.mockResolvedValue(undefined)
   })
 
   describe('Component Rendering', () => {
@@ -128,7 +143,7 @@ describe('LanguageToggle', () => {
         .spyOn(React, 'useState')
         .mockImplementationOnce(() => [false, mockSetMounted])
 
-      renderWithProviders(<LanguageToggle />)
+      render(<LanguageToggle />)
 
       const skeleton = screen.getByLabelText('Loading language selector')
       expect(skeleton).toBeInTheDocument()
@@ -137,7 +152,7 @@ describe('LanguageToggle', () => {
     })
 
     it('should render dropdown after mounting', async () => {
-      renderWithProviders(<LanguageToggle />)
+      render(<LanguageToggle />)
 
       await waitFor(() => {
         expect(screen.getByTestId('dropdown-menu')).toBeInTheDocument()
@@ -145,13 +160,14 @@ describe('LanguageToggle', () => {
     })
 
     it('should render current language flag in trigger', async () => {
-      renderWithProviders(<LanguageToggle />)
+      render(<LanguageToggle />)
 
       await waitFor(() => {
         // Check the trigger button specifically
         const trigger = screen.getByTestId('dropdown-menu-trigger')
         const button = trigger.querySelector('button')
-        expect(button).toContainHTML('🇸🇪')
+        expect(button).toBeInTheDocument()
+        expect(button?.textContent).toContain('🇸🇪')
         expect(
           screen.getByLabelText('Current language: Svenska')
         ).toBeInTheDocument()
@@ -161,7 +177,7 @@ describe('LanguageToggle', () => {
 
   describe('Language Options', () => {
     it('should render all language options in dropdown content', async () => {
-      renderWithProviders(<LanguageToggle />)
+      render(<LanguageToggle />)
 
       await waitFor(() => {
         // Check that all flags appear
@@ -174,7 +190,7 @@ describe('LanguageToggle', () => {
     })
 
     it('should show check icon for currently selected language', async () => {
-      renderWithProviders(<LanguageToggle />)
+      render(<LanguageToggle />)
 
       await waitFor(() => {
         const checkIcons = screen.getAllByTestId('check-icon')
@@ -193,7 +209,7 @@ describe('LanguageToggle', () => {
     })
 
     it('should handle language change when clicking an option', async () => {
-      renderWithProviders(<LanguageToggle />)
+      render(<LanguageToggle />)
 
       await waitFor(() => {
         const menuItems = screen.getAllByTestId('dropdown-menu-item')
@@ -206,12 +222,12 @@ describe('LanguageToggle', () => {
         }
       })
 
-      expect(mockLanguageStore.setLanguage).toHaveBeenCalledWith('en')
+      expect(mockSetLanguage).toHaveBeenCalledWith('en')
     })
 
     it('should disable menu items when loading', async () => {
       mockLanguageStore.isLoading = true
-      renderWithProviders(<LanguageToggle />)
+      render(<LanguageToggle />)
 
       await waitFor(() => {
         const menuItems = screen.getAllByTestId('dropdown-menu-item')
@@ -224,7 +240,7 @@ describe('LanguageToggle', () => {
 
   describe('Component Structure', () => {
     it('should render trigger button with correct props', async () => {
-      renderWithProviders(<LanguageToggle />)
+      render(<LanguageToggle />)
 
       await waitFor(() => {
         const trigger = screen.getByTestId('dropdown-menu-trigger')
@@ -235,22 +251,20 @@ describe('LanguageToggle', () => {
     })
 
     it('should render dropdown content with correct alignment', async () => {
-      renderWithProviders(<LanguageToggle />)
+      render(<LanguageToggle />)
 
       await waitFor(() => {
         const content = screen.getByTestId('dropdown-menu-content')
         expect(content).toHaveAttribute('data-align', 'end')
-        expect(content).toHaveClass(
-          '!w-[100px]',
-          'min-w-0',
-          'bg-popover',
-          'border-border'
-        )
+        expect(content.className).toContain('!w-[100px]')
+        expect(content.className).toContain('min-w-0')
+        expect(content.className).toContain('bg-popover')
+        expect(content.className).toContain('border-border')
       })
     })
 
     it('should render language flags correctly', async () => {
-      renderWithProviders(<LanguageToggle />)
+      render(<LanguageToggle />)
 
       await waitFor(() => {
         // Component only shows flags, not labels
@@ -269,7 +283,7 @@ describe('LanguageToggle', () => {
 
   describe('Accessibility', () => {
     it('should have proper aria labels', async () => {
-      renderWithProviders(<LanguageToggle />)
+      render(<LanguageToggle />)
 
       await waitFor(() => {
         expect(
@@ -280,7 +294,7 @@ describe('LanguageToggle', () => {
 
     it('should disable button when in loading state', async () => {
       mockLanguageStore.isLoading = true
-      renderWithProviders(<LanguageToggle />)
+      render(<LanguageToggle />)
 
       await waitFor(() => {
         const trigger = screen.getByTestId('dropdown-menu-trigger')
@@ -292,7 +306,7 @@ describe('LanguageToggle', () => {
 
   describe('Edge Cases', () => {
     it('should NOT call setLanguage when clicking same language', async () => {
-      renderWithProviders(<LanguageToggle />)
+      render(<LanguageToggle />)
 
       await waitFor(() => {
         const menuItems = screen.getAllByTestId('dropdown-menu-item')
@@ -306,11 +320,11 @@ describe('LanguageToggle', () => {
       })
 
       // Should NOT call setLanguage if it's already the selected language
-      expect(mockLanguageStore.setLanguage).not.toHaveBeenCalled()
+      expect(mockSetLanguage).not.toHaveBeenCalled()
     })
 
     it('should handle rapid language changes', async () => {
-      renderWithProviders(<LanguageToggle />)
+      render(<LanguageToggle />)
 
       await waitFor(() => {
         const menuItems = screen.getAllByTestId('dropdown-menu-item')
@@ -321,9 +335,9 @@ describe('LanguageToggle', () => {
         if (turkishItem) fireEvent.click(turkishItem)
       })
 
-      expect(mockLanguageStore.setLanguage).toHaveBeenCalledTimes(2)
-      expect(mockLanguageStore.setLanguage).toHaveBeenCalledWith('en')
-      expect(mockLanguageStore.setLanguage).toHaveBeenCalledWith('tr')
+      expect(mockSetLanguage).toHaveBeenCalledTimes(2)
+      expect(mockSetLanguage).toHaveBeenCalledWith('en')
+      expect(mockSetLanguage).toHaveBeenCalledWith('tr')
     })
   })
 })

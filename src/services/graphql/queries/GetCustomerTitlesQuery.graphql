@@ -1,0 +1,29 @@
+GetCustomerTitlesQueryquery GetCustomerTitlesQuery($company_id: String!, $customerids: [String!]) {
+  customers(where: {customer_id: {_in: $customerids}, company_id: {_eq: $company_id}}) {
+    customer_id
+    customer_title
+  }
+}
+
+
+# {
+#   "company_id": "alfe",
+#   "customerids": ["SE0 1001 1086", "SE0 1001 1400"]
+# }
+
+# todo: response
+
+# {
+#   "data": {
+#     "customers": [
+#       {
+#         "customer_id": "SE0 1001 1400",
+#         "customer_title": "Pizzeria HASSAN"
+#       },
+#       {
+#         "customer_id": "SE0 1001 1086",
+#         "customer_title": "Celik, Erkut Levent"
+#       }
+#     ]
+#   }
+# }

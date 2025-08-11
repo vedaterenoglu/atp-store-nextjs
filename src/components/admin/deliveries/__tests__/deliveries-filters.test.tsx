@@ -5,54 +5,47 @@
  * Dependencies: React Testing Library, Jest
  */
 
+import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { DeliveriesFilters } from '../deliveries-filters'
 import { useTranslation } from 'react-i18next'
+
+// Mock interfaces
+interface MockButtonProps {
+  children: React.ReactNode
+  variant?: string
+  size?: string
+  onClick?: () => void
+  className?: string
+}
 
 // Mock react-i18next
 jest.mock('react-i18next', () => ({
   useTranslation: jest.fn(),
 }))
 
-// Mock shadcn/ui Button component
+// Mock lucide-react icons
+jest.mock('lucide-react', () => ({
+  Filter: jest.fn(({ className }: { className?: string }) => (
+    <span data-testid="filter-icon" className={className}>Filter Icon</span>
+  )),
+  Search: jest.fn(({ className }: { className?: string }) => (
+    <span data-testid="search-icon" className={className}>Search Icon</span>
+  )),
+}))
+
+// Mock UI components
 jest.mock('@/components/ui/schadcn', () => ({
-  Button: ({
-    children,
-    variant,
-    size,
-    className,
-    onClick,
-  }: {
-    children: React.ReactNode
-    variant?: string
-    size?: string
-    className?: string
-    onClick?: () => void
-  }) => (
-    <button
-      data-testid="button"
+  Button: jest.fn(({ children, variant, size, ...props }: MockButtonProps) => (
+    <button 
+      data-testid="button" 
       data-variant={variant}
       data-size={size}
-      className={className}
-      onClick={onClick}
+      {...props}
     >
       {children}
     </button>
-  ),
-}))
-
-// Mock lucide-react icons
-jest.mock('lucide-react', () => ({
-  Filter: ({ className }: { className?: string }) => (
-    <span data-testid="filter-icon" className={className}>
-      Filter Icon
-    </span>
-  ),
-  Search: ({ className }: { className?: string }) => (
-    <span data-testid="search-icon" className={className}>
-      Search Icon
-    </span>
-  ),
+  )),
 }))
 
 describe('DeliveriesFilters', () => {
@@ -66,11 +59,19 @@ describe('DeliveriesFilters', () => {
     return translations[key] || key
   })
 
+  const mockUseTranslation = useTranslation as jest.MockedFunction<
+    typeof useTranslation
+  >
+
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(useTranslation as jest.Mock).mockReturnValue({
-      t: mockT,
-    })
+
+    // Setup translation mock
+    mockUseTranslation.mockReturnValue({
+      t: mockT as unknown as ReturnType<typeof useTranslation>['t'],
+      i18n: {} as ReturnType<typeof useTranslation>['i18n'],
+      ready: true,
+    } as unknown as ReturnType<typeof useTranslation>)
   })
 
   describe('Component Structure', () => {

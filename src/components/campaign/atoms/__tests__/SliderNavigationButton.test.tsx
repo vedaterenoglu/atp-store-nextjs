@@ -11,50 +11,33 @@ import { SliderNavigationButton } from '../SliderNavigationButton'
 
 // Mock lucide-react icons
 jest.mock('lucide-react', () => ({
-  ChevronLeft: ({ className }: { className?: string }) => (
-    <div data-testid="chevron-left-icon" className={className} />
-  ),
-  ChevronRight: ({ className }: { className?: string }) => (
-    <div data-testid="chevron-right-icon" className={className} />
-  ),
+  ChevronLeft: jest.fn(({ className }: any) => (
+    <div data-testid="chevron-left-icon" className={className}>{'<'}</div>
+  )),
+  ChevronRight: jest.fn(({ className }: any) => (
+    <div data-testid="chevron-right-icon" className={className}>{'>'}</div>
+  )),
 }))
 
-// Mock the cn utility
-jest.mock('@/lib/utils', () => ({
-  cn: (...classes: (string | undefined | boolean)[]) =>
-    classes.filter(Boolean).join(' '),
-}))
-
-// Mock Button component
+// Mock shadcn/ui Button
 jest.mock('@/components/ui/schadcn/button', () => ({
-  Button: ({
-    children,
-    variant,
-    size,
-    onClick,
-    disabled,
-    className,
-    'aria-label': ariaLabel,
-  }: {
-    children?: React.ReactNode
-    variant?: string
-    size?: string
-    onClick?: () => void
-    disabled?: boolean
-    className?: string
-    'aria-label'?: string
-  }) => (
+  Button: jest.fn(({ children, onClick, disabled, className, variant, size, ...props }: any) => (
     <button
-      data-variant={variant}
-      data-size={size}
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
       disabled={disabled}
       className={className}
-      aria-label={ariaLabel}
+      data-variant={variant}
+      data-size={size}
+      {...props}
     >
       {children}
     </button>
-  ),
+  )),
+}))
+
+// Mock cn utility
+jest.mock('@/lib/utils', () => ({
+  cn: jest.fn((...classes: any[]) => classes.filter(Boolean).join(' ')),
 }))
 
 describe('SliderNavigationButton', () => {

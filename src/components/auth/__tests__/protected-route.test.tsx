@@ -14,41 +14,39 @@
 
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
-import {
-  createClerkMock,
-  mockAuthSignedOut,
-  mockUserSignedOut,
-} from '@/__tests__/mocks/clerk-mocks'
-
-// Mock Clerk with centralized mocks
-jest.mock('@clerk/nextjs', () =>
-  createClerkMock(mockAuthSignedOut(), mockUserSignedOut())
-)
-
 import { ProtectedRoute } from '../protected-route'
 import { useAuthService } from '@/lib/auth/use-auth-service'
 import { toast } from '@/lib/utils/toast'
+import { useTranslation } from 'react-i18next'
 
-// Create a shared mock push function that all router instances will use
-const mockRouterPush = jest.fn()
-
-// Mock dependencies
-jest.mock('@/lib/auth/use-auth-service')
-jest.mock('@/lib/utils/toast')
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => {
-      const translations: Record<string, string> = {
-        requireSignIn: 'To continue you must sign in',
-        insufficientPermissions:
-          'Insufficient permissions. Please contact support.',
-      }
-      return translations[key] || key
-    },
-  }),
+// Mock auth service
+jest.mock('@/lib/auth/use-auth-service', () => ({
+  useAuthService: jest.fn(),
 }))
 
-// Override the next/navigation mock for this test
+// Mock toast
+jest.mock('@/lib/utils/toast', () => ({
+  toast: {
+    error: jest.fn(),
+    success: jest.fn(),
+    warning: jest.fn(),
+  },
+}))
+
+// Mock react-i18next
+jest.mock('react-i18next', () => ({
+  useTranslation: jest.fn(() => ({
+    t: (key: string) => key,
+    i18n: {
+      changeLanguage: jest.fn(),
+      language: 'en',
+    },
+    ready: true,
+  })),
+}))
+
+// Create mock router push for this test file
+const mockRouterPush = jest.fn()
 jest.mock('next/navigation', () => ({
   useRouter: () => ({
     push: mockRouterPush,
@@ -85,11 +83,42 @@ const mockUseAuthService = useAuthService as jest.MockedFunction<
   typeof useAuthService
 >
 const mockToast = toast as jest.Mocked<typeof toast>
+const mockUseTranslation = useTranslation as jest.MockedFunction<
+  typeof useTranslation
+>
 
 describe('ProtectedRoute', () => {
+  let mockT: jest.Mock
+
   beforeEach(() => {
     jest.clearAllMocks()
     mockRouterPush.mockClear()
+
+    // Setup translation mock
+    mockT = jest.fn((key: string) => {
+      const translations: Record<string, string> = {
+        requireSignIn: 'To continue you must sign in',
+        insufficientPermissions:
+          'Insufficient permissions. Please contact support.',
+      }
+      return translations[key] || key
+    })
+
+    // Add brand property for TFunction type
+    Object.defineProperty(mockT, '$TFunctionBrand', {
+      value: undefined,
+      enumerable: false,
+    })
+
+    const mockReturnValue = {
+      t: mockT,
+      i18n: {} as ReturnType<typeof useTranslation>['i18n'],
+      ready: true,
+    }
+
+    mockUseTranslation.mockReturnValue(
+      mockReturnValue as unknown as ReturnType<typeof useTranslation>
+    )
   })
 
   describe('Loading state', () => {

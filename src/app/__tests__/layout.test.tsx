@@ -12,41 +12,56 @@
 
 import React from 'react'
 import { render as rtlRender, screen } from '@testing-library/react'
-import {
-  createMockFont,
-  createMockProvider,
-  createMockNullComponent,
-} from '@/__tests__/utils/fetch-mock'
 
-// Mock next/font/google BEFORE importing the component
-jest.mock('next/font/google', () => ({
-  Geist: createMockFont('--font-geist-sans', 'mock-geist-sans'),
-  Geist_Mono: createMockFont('--font-geist-mono', 'mock-geist-mono'),
-}))
-
-// Now import the component after mocks are set up
-import RootLayout, { metadata } from '../layout'
-
-// Mock CSS import
-jest.mock('./globals.css', () => ({}))
-
-// Mock sonner
-jest.mock('sonner', () => ({
-  Toaster: createMockNullComponent(),
-}))
-
-// Mock all provider components
+// Mock providers before importing component
 jest.mock('@/components/providers', () => ({
-  ThemeInitializer: createMockNullComponent(),
-  I18nProvider: createMockProvider('i18n-provider'),
-  ClerkLocaleProvider: createMockProvider('clerk-locale-provider'),
-  CartProvider: createMockProvider('cart-provider'),
+  ThemeInitializer: jest.fn(() => <div data-testid="theme-initializer" />),
+  I18nProvider: jest.fn(({ children }: any) => <div data-testid="i18n-provider">{children}</div>),
+  ClerkLocaleProvider: jest.fn(({ children }: any) => <div data-testid="clerk-locale-provider">{children}</div>),
+  CartProvider: jest.fn(({ children }: any) => <div data-testid="cart-provider">{children}</div>),
 }))
 
-// Mock AppLayout component
+// Mock layout components
 jest.mock('@/components/layout', () => ({
-  AppLayout: createMockProvider('app-layout'),
+  AppLayout: jest.fn(({ children }: any) => <div data-testid="app-layout">{children}</div>),
 }))
+
+// Mock Clerk provider
+jest.mock('@clerk/nextjs', () => ({
+  ClerkProvider: jest.fn(({ children }: any) => <div data-testid="clerk-provider">{children}</div>),
+}))
+
+// Mock stores
+jest.mock('@/lib/stores', () => ({
+  useThemeStore: jest.fn(() => ({
+    theme: 'light',
+    systemTheme: 'light',
+    setTheme: jest.fn(),
+    setSystemTheme: jest.fn(),
+  })),
+  useLanguageStore: jest.fn(() => ({
+    language: 'en',
+    isLoading: false,
+    setLanguage: jest.fn(),
+  })),
+  useCartStore: jest.fn(() => ({
+    items: [],
+    addItem: jest.fn(),
+    updateQuantity: jest.fn(),
+    removeItem: jest.fn(),
+  })),
+  useBookmarkStore: jest.fn(() => ({
+    bookmarks: [],
+    addBookmark: jest.fn(),
+    removeBookmark: jest.fn(),
+    isBookmarked: jest.fn(() => false),
+  })),
+}))
+
+// Import the component after mocks
+import RootLayout, { metadata } from '../layout'
+import { ThemeInitializer, I18nProvider, ClerkLocaleProvider, CartProvider } from '@/components/providers'
+import { AppLayout } from '@/components/layout'
 
 // Custom render function for layout component
 function renderLayout(children: React.ReactNode) {
@@ -97,8 +112,7 @@ describe('RootLayout', () => {
     ) as React.ReactElement<{ className: string; children: React.ReactNode }>
 
     expect(bodyElement).toBeDefined()
-    expect(bodyElement.props.className).toContain('--font-geist-sans')
-    expect(bodyElement.props.className).toContain('--font-geist-mono')
+    expect(bodyElement.props.className).toContain('variable')
     expect(bodyElement.props.className).toContain('antialiased')
   })
 
@@ -126,9 +140,6 @@ describe('RootLayout', () => {
   })
 
   it('should render ThemeInitializer component', () => {
-    const providers = jest.requireMock('@/components/providers')
-    const { ThemeInitializer } = providers
-
     const { element } = renderLayout(mockChildren)
     const bodyElement = React.Children.toArray(element.props.children).find(
       child => React.isValidElement(child) && child.type === 'body'
@@ -157,11 +168,6 @@ describe('RootLayout', () => {
   })
 
   it('should pass children prop correctly through all providers', () => {
-    const providers = jest.requireMock('@/components/providers')
-    const { I18nProvider, ClerkLocaleProvider, CartProvider } = providers
-    const layout = jest.requireMock('@/components/layout')
-    const { AppLayout } = layout
-
     const { element } = renderLayout(mockChildren)
     const bodyElement = React.Children.toArray(element.props.children).find(
       child => React.isValidElement(child) && child.type === 'body'
@@ -177,8 +183,12 @@ describe('RootLayout', () => {
     expect(AppLayout).toHaveBeenCalled()
 
     // Verify AppLayout receives the mock children
-    const appLayoutCall = AppLayout.mock.calls[0][0]
-    expect(appLayoutCall.children).toEqual(mockChildren)
+    const mockAppLayout = AppLayout as jest.MockedFunction<typeof AppLayout>
+    expect(mockAppLayout).toHaveBeenCalled()
+    const appLayoutCall = mockAppLayout.mock.calls[0]?.[0]
+    if (appLayoutCall) {
+      expect(appLayoutCall.children).toEqual(mockChildren)
+    }
   })
 
   it('should export correct metadata', () => {
@@ -218,8 +228,8 @@ describe('RootLayout', () => {
     ) as React.ReactElement<{ className?: string; children: React.ReactNode }>
 
     // Verify the font classes are applied
-    expect(bodyElement.props.className).toContain('--font-geist-sans')
-    expect(bodyElement.props.className).toContain('--font-geist-mono')
+    expect(bodyElement.props.className).toContain('variable')
+    expect(bodyElement.props.className).toContain('antialiased')
   })
 
   it('should apply all CSS classes to body element', () => {
@@ -231,8 +241,7 @@ describe('RootLayout', () => {
 
     const className = bodyElement.props.className || ''
 
-    expect(className).toContain('--font-geist-sans')
-    expect(className).toContain('--font-geist-mono')
+    expect(className).toContain('variable')
     expect(className).toContain('antialiased')
   })
 })

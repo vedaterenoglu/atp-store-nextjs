@@ -127,3 +127,18 @@ export function createBookmarkStoreMock(
     isBookmarked: jest.fn((productId: string) => bookmarks.includes(productId)),
   }
 }
+
+// Export centralized mock object for jest.setup.ts
+export const storeMocks = {
+  useThemeStore: jest.fn(() => ({
+    theme: 'light',
+    setTheme: jest.fn(),
+  })),
+  useLanguageStore: jest.fn(() => ({
+    language: 'en',
+    setLanguage: jest.fn(),
+    getAvailableLanguages: jest.fn(() => ['en', 'sv', 'tr', 'da', 'de']),
+    isLoading: false,
+  })),
+  useCartCount: jest.fn(() => 0),
+}

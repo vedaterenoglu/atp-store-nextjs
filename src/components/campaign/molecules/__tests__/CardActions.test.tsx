@@ -21,68 +21,35 @@ jest.mock('react-i18next', () => ({
   }),
 }))
 
-// Mock Lucide React icons
-interface MockIconProps {
-  className?: string
-  [key: string]: unknown
-}
-
+// Mock lucide-react
 jest.mock('lucide-react', () => ({
-  ShoppingCart: ({ className, ...props }: MockIconProps) => (
-    <div data-testid="shopping-cart-icon" className={className} {...props} />
-  ),
+  ShoppingCart: jest.fn(({ className }: any) => (
+    <span data-testid="shopping-cart-icon" className={className}>
+      Cart Icon
+    </span>
+  )),
 }))
 
 // Mock shadcn/ui Button
-interface MockButtonProps {
-  children?: React.ReactNode
-  onClick?: () => void
-  disabled?: boolean
-  className?: string
-  variant?: string
-  size?: string
-  [key: string]: unknown
-}
-
 jest.mock('@/components/ui/schadcn/button', () => ({
-  Button: ({
-    children,
-    onClick,
-    disabled,
-    className,
-    variant,
-    size,
-    ...props
-  }: MockButtonProps) => (
+  Button: jest.fn(({ children, onClick, disabled, className, variant, size, ...props }: any) => (
     <button
-      onClick={onClick}
+      data-testid="add-to-cart-button"
+      onClick={disabled ? undefined : onClick}
       disabled={disabled}
       className={className}
       data-variant={variant}
       data-size={size}
-      data-testid="add-to-cart-button"
       {...props}
     >
       {children}
     </button>
-  ),
+  )),
 }))
 
-// Mock QuantityCounter component
-interface MockQuantityCounterProps {
-  quantity: number
-  onDecrease: () => void
-  onIncrease: () => void
-  disabled?: boolean
-}
-
-jest.mock('@/components/campaign/atoms', () => ({
-  QuantityCounter: ({
-    quantity,
-    onDecrease,
-    onIncrease,
-    disabled,
-  }: MockQuantityCounterProps) => (
+// Mock QuantityCounter
+jest.mock('../../atoms', () => ({
+  QuantityCounter: jest.fn(({ quantity, onDecrease, onIncrease, disabled }: any) => (
     <div data-testid="quantity-counter" data-disabled={disabled}>
       <button
         data-testid="decrease-button"
@@ -100,7 +67,7 @@ jest.mock('@/components/campaign/atoms', () => ({
         +
       </button>
     </div>
-  ),
+  )),
 }))
 
 describe('CardActions', () => {

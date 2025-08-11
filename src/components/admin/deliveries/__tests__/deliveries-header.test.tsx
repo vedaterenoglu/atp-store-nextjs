@@ -5,6 +5,7 @@
  * Dependencies: React Testing Library, Jest
  */
 
+import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { DeliveriesHeader } from '../deliveries-header'
 import { useTranslation } from 'react-i18next'
@@ -23,11 +24,19 @@ describe('DeliveriesHeader', () => {
     return translations[key] || key
   })
 
+  const mockUseTranslation = useTranslation as jest.MockedFunction<
+    typeof useTranslation
+  >
+
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(useTranslation as jest.Mock).mockReturnValue({
-      t: mockT,
-    })
+
+    // Setup translation mock
+    mockUseTranslation.mockReturnValue({
+      t: mockT as unknown as ReturnType<typeof useTranslation>['t'],
+      i18n: {} as ReturnType<typeof useTranslation>['i18n'],
+      ready: true,
+    } as unknown as ReturnType<typeof useTranslation>)
   })
 
   describe('Component Rendering', () => {
@@ -130,9 +139,11 @@ describe('DeliveriesHeader', () => {
         return translations[key] || key
       })
 
-      ;(useTranslation as jest.Mock).mockReturnValue({
-        t: customMockT,
-      })
+      mockUseTranslation.mockReturnValue({
+        t: customMockT as unknown as ReturnType<typeof useTranslation>['t'],
+        i18n: {} as ReturnType<typeof useTranslation>['i18n'],
+        ready: true,
+      } as unknown as ReturnType<typeof useTranslation>)
 
       render(<DeliveriesHeader />)
 
@@ -143,9 +154,11 @@ describe('DeliveriesHeader', () => {
     it('handles missing translation keys gracefully', () => {
       const mockTWithMissingKeys = jest.fn((key: string) => key)
 
-      ;(useTranslation as jest.Mock).mockReturnValue({
-        t: mockTWithMissingKeys,
-      })
+      mockUseTranslation.mockReturnValue({
+        t: mockTWithMissingKeys as unknown as ReturnType<typeof useTranslation>['t'],
+        i18n: {} as ReturnType<typeof useTranslation>['i18n'],
+        ready: true,
+      } as unknown as ReturnType<typeof useTranslation>)
 
       render(<DeliveriesHeader />)
 
@@ -266,9 +279,11 @@ describe('DeliveriesHeader', () => {
     it('handles empty translation values', () => {
       const emptyMockT = jest.fn(() => '')
 
-      ;(useTranslation as jest.Mock).mockReturnValue({
-        t: emptyMockT,
-      })
+      mockUseTranslation.mockReturnValue({
+        t: emptyMockT as unknown as ReturnType<typeof useTranslation>['t'],
+        i18n: {} as ReturnType<typeof useTranslation>['i18n'],
+        ready: true,
+      } as unknown as ReturnType<typeof useTranslation>)
 
       render(<DeliveriesHeader />)
 
@@ -290,9 +305,11 @@ describe('DeliveriesHeader', () => {
         return translations[key] || key
       })
 
-      ;(useTranslation as jest.Mock).mockReturnValue({
-        t: longTextMockT,
-      })
+      mockUseTranslation.mockReturnValue({
+        t: longTextMockT as unknown as ReturnType<typeof useTranslation>['t'],
+        i18n: {} as ReturnType<typeof useTranslation>['i18n'],
+        ready: true,
+      } as unknown as ReturnType<typeof useTranslation>)
 
       render(<DeliveriesHeader />)
 
@@ -309,9 +326,11 @@ describe('DeliveriesHeader', () => {
         return translations[key] || key
       })
 
-      ;(useTranslation as jest.Mock).mockReturnValue({
-        t: specialCharMockT,
-      })
+      mockUseTranslation.mockReturnValue({
+        t: specialCharMockT as unknown as ReturnType<typeof useTranslation>['t'],
+        i18n: {} as ReturnType<typeof useTranslation>['i18n'],
+        ready: true,
+      } as unknown as ReturnType<typeof useTranslation>)
 
       render(<DeliveriesHeader />)
 

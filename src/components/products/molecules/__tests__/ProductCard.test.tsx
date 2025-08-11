@@ -6,15 +6,36 @@
  */
 
 import React from 'react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { ProductCard } from '../ProductCard'
-import { renderWithProviders, fireEvent, screen } from '@/__tests__/utils'
-import { createMockProduct } from '@/__tests__/mocks/api-mocks'
-import type { Product } from '@/types/product'
+
+// Mock interfaces
+interface MockProduct {
+  stockId: string
+  stockName: string
+  stockPrice: number
+  stockUnit: string
+  stockGroup: string
+  stockImageLink?: string | undefined
+}
+
+// Helper function to create mock product
+function createMockProduct(overrides: Partial<MockProduct> = {}): MockProduct {
+  return {
+    stockId: 'PROD001',
+    stockName: 'Test Product',
+    stockPrice: 1500,
+    stockUnit: 'kg',
+    stockGroup: 'CAT001',
+    ...(overrides.stockImageLink !== undefined && { stockImageLink: overrides.stockImageLink }),
+    ...overrides,
+  }
+}
 
 // Mock Next.js Image component
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: function Image({
+  default: jest.fn(function Image({
     src,
     alt,
     fill,
@@ -35,43 +56,19 @@ jest.mock('next/image', () => ({
       'data-sizes': sizes,
       'data-testid': 'product-image',
     })
-  },
+  }),
 }))
 
 // Mock PriceTag component
 jest.mock('@/components/products', () => ({
-  PriceTag: function PriceTag({ price }: { price: number }) {
+  PriceTag: jest.fn(function PriceTag({ price }: { price: number }) {
     return <div data-testid="price-tag">Price: {price}</div>
-  },
-}))
-
-// Mock react-i18next
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => {
-      const translations: Record<string, string> = {
-        'products.addToCart': 'Add to Cart',
-        'products.removeFromCart': 'Remove from Cart',
-        'products.quantity': 'Quantity',
-        'productCard.category': 'Category',
-        'productCard.id': 'ID',
-        'productCard.unit': 'Unit',
-        'productCard.addToCart': 'Add to Cart',
-      }
-      return translations[key] || key
-    },
   }),
-}))
-
-// Mock bookmark actions to prevent real API calls
-jest.mock('@/app/actions/bookmark-actions', () => ({
-  getCustomerBookmarks: jest.fn().mockResolvedValue([]),
-  toggleBookmark: jest.fn().mockResolvedValue({ success: true }),
 }))
 
 // Mock BookmarkButton component
 jest.mock('@/components/ui/custom', () => ({
-  BookmarkButton: function BookmarkButton({
+  BookmarkButton: jest.fn(function BookmarkButton({
     productId,
     isBookmarked,
     onToggle,
@@ -93,7 +90,56 @@ jest.mock('@/components/ui/custom', () => ({
         Bookmark
       </button>
     )
-  },
+  }),
+}))
+
+// Mock lucide-react icons
+jest.mock('lucide-react', () => ({
+  Minus: jest.fn(function Minus({ className }: { className?: string }) {
+    return (
+      <span data-testid="minus-icon" className={className}>
+        -
+      </span>
+    )
+  }),
+  Plus: jest.fn(function Plus({ className }: { className?: string }) {
+    return (
+      <span data-testid="plus-icon" className={className}>
+        +
+      </span>
+    )
+  }),
+  ShoppingCart: jest.fn(function ShoppingCart({ className }: { className?: string }) {
+    return (
+      <span data-testid="shopping-cart-icon" className={className}>
+        Cart
+      </span>
+    )
+  }),
+}))
+
+// Mock react-i18next
+jest.mock('react-i18next', () => ({
+  useTranslation: jest.fn(() => ({
+    t: jest.fn((key: string) => {
+      const translations: Record<string, string> = {
+        'products.addToCart': 'Add to Cart',
+        'products.removeFromCart': 'Remove from Cart',
+        'products.quantity': 'Quantity',
+        'productCard.category': 'Category',
+        'productCard.id': 'ID',
+        'productCard.unit': 'Unit',
+        'productCard.addToCart': 'Add to Cart',
+      }
+      return translations[key] || key
+    }),
+  })),
+}))
+
+// Mock Clerk auth hooks
+jest.mock('@clerk/nextjs', () => ({
+  useAuth: jest.fn(),
+  useUser: jest.fn(),
 }))
 
 // Mock Zustand stores
@@ -103,10 +149,18 @@ const mockIsBookmarked = jest.fn(() => false)
 const mockInitializeBookmarks = jest.fn()
 
 jest.mock('@/lib/stores/cart.store', () => ({
-  useCartStore: jest.fn(() => ({
-    addToCart: mockAddToCart,
-    findCartItem: jest.fn(() => null),
-  })),
+  useCartStore: jest.fn((selector) => {
+    const store = {
+      addToCart: mockAddToCart,
+      findCartItem: jest.fn(() => null),
+    }
+    // If a selector function is passed, call it with the store
+    if (typeof selector === 'function') {
+      return selector(store)
+    }
+    // Otherwise return the whole store
+    return store
+  }),
 }))
 
 jest.mock('@/lib/stores/bookmark-store', () => ({
@@ -118,25 +172,128 @@ jest.mock('@/lib/stores/bookmark-store', () => ({
   })),
 }))
 
-// Clerk is mocked globally in jest.setup.ts - NO DUPLICATE MOCKS
+// Mock shadcn/ui components
+jest.mock('@/components/ui/schadcn', () => ({
+  Card: jest.fn(({ children, className, onClick }: { children: React.ReactNode; className?: string; onClick?: () => void }) => (
+    <div className={className} data-testid="card" onClick={onClick}>
+      {children}
+    </div>
+  )),
+  Button: jest.fn(({ 
+    children, 
+    onClick, 
+    disabled, 
+    variant, 
+    size, 
+    className 
+  }: { 
+    children: React.ReactNode
+    onClick?: () => void
+    disabled?: boolean
+    variant?: string
+    size?: string
+    className?: string
+  }) => (
+    <button 
+      onClick={onClick} 
+      disabled={disabled} 
+      data-variant={variant}
+      data-size={size}
+      className={className}
+    >
+      {children}
+    </button>
+  )),
+}))
+
+// Mock cn utility
+jest.mock('@/lib/utils', () => ({
+  cn: jest.fn((...classes: (string | undefined | null | false)[]) => 
+    classes.filter(Boolean).join(' ')
+  ),
+}))
+
+// Mock toast
+jest.mock('sonner', () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn(),
+  },
+}))
+
+// Import mocked functions
 import { useAuth, useUser } from '@clerk/nextjs'
-import {
-  mockAuthSignedIn,
-  mockUserSignedIn,
-  mockAuthSignedOut,
-  mockUserSignedOut,
-} from '@/__tests__/mocks/clerk-mocks'
-const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>
-const mockUseUser = useUser as jest.MockedFunction<typeof useUser>
+
+const mockUseAuth = useAuth as jest.Mock
+const mockUseUser = useUser as jest.Mock
+
+// Helper functions for auth mocks
+function mockAuthSignedOut() {
+  return {
+    isLoaded: true as const,
+    isSignedIn: false as const,
+    userId: null,
+    sessionId: null,
+    sessionClaims: null,
+    actor: null,
+    orgId: null,
+    orgRole: null,
+    orgSlug: null,
+    has: jest.fn(() => false),
+    signOut: jest.fn(),
+    getToken: jest.fn(),
+  }
+}
+
+function mockUserSignedOut() {
+  return {
+    isLoaded: true as const,
+    isSignedIn: false as const,
+    user: null,
+  }
+}
+
+function mockAuthSignedIn() {
+  return {
+    isLoaded: true as const,
+    isSignedIn: true as const,
+    userId: 'user_test123',
+    sessionId: 'sess_test123',
+    sessionClaims: {
+      metadata: { role: 'customer', customerid: 'CUST123' },
+    } as Record<string, unknown>,
+    actor: null,
+    orgId: null,
+    orgRole: null,
+    orgSlug: null,
+    has: jest.fn(() => false),
+    signOut: jest.fn(),
+    getToken: jest.fn(),
+  }
+}
+
+function mockUserSignedIn(overrides: { publicMetadata?: Record<string, unknown> } = {}) {
+  return {
+    isLoaded: true as const,
+    isSignedIn: true as const,
+    user: {
+      id: 'user_test123',
+      firstName: 'Test',
+      lastName: 'User',
+      username: 'testuser',
+      imageUrl: 'https://example.com/avatar.jpg',
+      publicMetadata: overrides.publicMetadata || { role: 'customer', customerid: 'CUST123' },
+    } as Record<string, unknown>,
+  }
+}
 
 describe('ProductCard', () => {
-  const mockProduct: Product = createMockProduct({
+  const mockProduct = createMockProduct({
     stockId: 'PROD001',
     stockName: 'Test Product',
     stockPrice: 1500,
     stockUnit: 'kg',
     stockGroup: 'CAT001',
-    stockImageLink: undefined,
   })
 
   const mockOnClick = jest.fn()
@@ -144,16 +301,12 @@ describe('ProductCard', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     // Default to signed out state
-    mockUseAuth.mockReturnValue(
-      mockAuthSignedOut() as ReturnType<typeof useAuth>
-    )
-    mockUseUser.mockReturnValue(
-      mockUserSignedOut() as ReturnType<typeof useUser>
-    )
+    mockUseAuth.mockReturnValue(mockAuthSignedOut())
+    mockUseUser.mockReturnValue(mockUserSignedOut())
   })
 
   it('should render with all required props', () => {
-    renderWithProviders(
+    render(
       <ProductCard
         id={mockProduct.stockId}
         name={mockProduct.stockName}
@@ -180,7 +333,7 @@ describe('ProductCard', () => {
   })
 
   it('should render with image when imageUrl is provided', () => {
-    renderWithProviders(
+    render(
       <ProductCard
         id={mockProduct.stockId}
         name={mockProduct.stockName}
@@ -198,7 +351,7 @@ describe('ProductCard', () => {
   })
 
   it('should render placeholder when no imageUrl', () => {
-    renderWithProviders(
+    render(
       <ProductCard
         id={mockProduct.stockId}
         name={mockProduct.stockName}
@@ -213,7 +366,7 @@ describe('ProductCard', () => {
   })
 
   it('should handle onClick on card', () => {
-    renderWithProviders(
+    render(
       <ProductCard
         id={mockProduct.stockId}
         name={mockProduct.stockName}
@@ -224,16 +377,16 @@ describe('ProductCard', () => {
       />
     )
 
-    // Click on the card's clickable area (not buttons)
-    const productName = screen.getByText('Test Product')
-    fireEvent.click(productName)
+    // Click on the card element itself
+    const card = screen.getByTestId('card')
+    fireEvent.click(card)
 
     expect(mockOnClick).toHaveBeenCalledTimes(1)
   })
 
   it('should increase quantity when plus button is clicked', () => {
     // Test the quantity controls - the component uses local state
-    renderWithProviders(
+    render(
       <ProductCard
         id={mockProduct.stockId}
         name={mockProduct.stockName}
@@ -267,13 +420,12 @@ describe('ProductCard', () => {
     // Click to test interaction (state changes are internal to component)
     fireEvent.click(plusButton)
 
-    // After click, verify buttons are still there
-    expect(screen.getByTestId('plus-icon')).toBeInTheDocument()
-    expect(screen.getByTestId('minus-icon')).toBeInTheDocument()
+    // After click, quantity should increase
+    expect(screen.getByText('1')).toBeInTheDocument()
   })
 
   it('should decrease quantity when minus button is clicked', () => {
-    renderWithProviders(
+    render(
       <ProductCard
         id={mockProduct.stockId}
         name={mockProduct.stockName}
@@ -293,13 +445,18 @@ describe('ProductCard', () => {
 
     // Click plus to enable minus button
     fireEvent.click(plusButton)
+    expect(screen.getByText('1')).toBeInTheDocument()
 
     // Now minus should be enabled
     expect(minusButton).not.toBeDisabled()
+    
+    // Click minus to decrease
+    fireEvent.click(minusButton)
+    expect(screen.getByText('0')).toBeInTheDocument()
   })
 
   it('should not decrease below 0', () => {
-    renderWithProviders(
+    render(
       <ProductCard
         id={mockProduct.stockId}
         name={mockProduct.stockName}
@@ -322,7 +479,11 @@ describe('ProductCard', () => {
   })
 
   it('should call addToCart when add to cart button is clicked', () => {
-    renderWithProviders(
+    // Mock signed in state - required for add to cart
+    mockUseAuth.mockReturnValue(mockAuthSignedIn())
+    mockUseUser.mockReturnValue(mockUserSignedIn())
+    
+    render(
       <ProductCard
         id={mockProduct.stockId}
         name={mockProduct.stockName}
@@ -340,13 +501,26 @@ describe('ProductCard', () => {
     const plusButton = screen.getByTestId('plus-icon')
       .parentElement as HTMLButtonElement
     fireEvent.click(plusButton)
-
-    // Note: Due to React state updates, the button enabling happens asynchronously
-    // In a real test we'd use waitFor, but for unit tests we verify the click handler
+    
+    expect(addToCartButton).not.toBeDisabled()
+    
+    // Click add to cart
+    fireEvent.click(addToCartButton)
+    // The component calls addToCart with individual parameters
+    expect(mockAddToCart).toHaveBeenCalledWith(
+      'PROD001',      // id
+      'Test Product', // name
+      1500,           // price
+      1,              // quantity
+      undefined,      // imageUrl
+      'CAT001',       // categoryId (used as productGroup)
+      'kg',           // unit
+      99              // max quantity
+    )
   })
 
   it('should not add to cart when quantity is 0', () => {
-    renderWithProviders(
+    render(
       <ProductCard
         id={mockProduct.stockId}
         name={mockProduct.stockName}
@@ -367,21 +541,14 @@ describe('ProductCard', () => {
 
   it('should show bookmark button for signed-in customers', () => {
     // Mock signed in state with customer role
-    const authState = mockAuthSignedIn()
-    mockUseAuth.mockReturnValue({
-      ...authState,
-      sessionClaims: {
-        ...authState.sessionClaims,
-        metadata: { role: 'customer', customerid: 'CUST123' },
-      },
-    } as ReturnType<typeof useAuth>)
+    mockUseAuth.mockReturnValue(mockAuthSignedIn())
     mockUseUser.mockReturnValue(
       mockUserSignedIn({
         publicMetadata: { role: 'customer', customerid: 'CUST123' },
-      }) as ReturnType<typeof useUser>
+      })
     )
 
-    renderWithProviders(
+    render(
       <ProductCard
         id={mockProduct.stockId}
         name={mockProduct.stockName}
@@ -396,21 +563,14 @@ describe('ProductCard', () => {
 
   it('should handle bookmark toggle', () => {
     // Mock signed in state with customer role
-    const authState = mockAuthSignedIn()
-    mockUseAuth.mockReturnValue({
-      ...authState,
-      sessionClaims: {
-        ...authState.sessionClaims,
-        metadata: { role: 'customer', customerid: 'CUST123' },
-      },
-    } as ReturnType<typeof useAuth>)
+    mockUseAuth.mockReturnValue(mockAuthSignedIn())
     mockUseUser.mockReturnValue(
       mockUserSignedIn({
         publicMetadata: { role: 'customer', customerid: 'CUST123' },
-      }) as ReturnType<typeof useUser>
+      })
     )
 
-    renderWithProviders(
+    render(
       <ProductCard
         id={mockProduct.stockId}
         name={mockProduct.stockName}
@@ -437,7 +597,7 @@ describe('ProductCard', () => {
   })
 
   it('should render product without campaign elements', () => {
-    renderWithProviders(
+    render(
       <ProductCard
         id={mockProduct.stockId}
         name={mockProduct.stockName}
@@ -453,7 +613,7 @@ describe('ProductCard', () => {
   })
 
   it('should handle product with all optional props', () => {
-    renderWithProviders(
+    render(
       <ProductCard
         id="PROD002"
         name="Full Product"
@@ -470,27 +630,9 @@ describe('ProductCard', () => {
       'src',
       'https://example.com/full.jpg'
     )
-    // Verify onClick is passed
-    const productNameElement = screen.getByText('Full Product')
-    fireEvent.click(productNameElement)
+    // Click on the card to verify onClick
+    const card = screen.getByTestId('card')
+    fireEvent.click(card)
     expect(mockOnClick).toHaveBeenCalled()
   })
 })
-
-// Mock lucide-react icons
-jest.mock('lucide-react', () => ({
-  Minus: function Minus({ className }: { className?: string }) {
-    return (
-      <span data-testid="minus-icon" className={className}>
-        -
-      </span>
-    )
-  },
-  Plus: function Plus({ className }: { className?: string }) {
-    return (
-      <span data-testid="plus-icon" className={className}>
-        +
-      </span>
-    )
-  },
-}))

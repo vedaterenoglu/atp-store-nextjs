@@ -17,13 +17,15 @@ jest.mock('react-i18next', () => ({
 
 // Mock HeroPrimaryAction component
 jest.mock('@/components/sections/home/hero-section', () => ({
-  HeroPrimaryAction: () => (
+  HeroPrimaryAction: jest.fn(() => (
     <div data-testid="hero-primary-action">Hero Action</div>
-  ),
+  )),
 }))
 
 describe('AboutTitle', () => {
-  const mockT = jest.fn()
+  const mockT = jest.fn() as jest.MockedFunction<
+    ReturnType<typeof useTranslation>['t']
+  >
   const mockUseTranslation = useTranslation as jest.MockedFunction<
     typeof useTranslation
   >
@@ -42,18 +44,18 @@ describe('AboutTitle', () => {
 
     mockUseTranslation.mockReturnValue({
       t: mockT,
-      i18n: {},
+      i18n: {} as ReturnType<typeof useTranslation>['i18n'],
       ready: true,
-    } as unknown as ReturnType<typeof useTranslation>)
+    })
   })
 
   describe('Loading State', () => {
     it('should render loading skeleton when translations are not ready', () => {
       mockUseTranslation.mockReturnValue({
         t: mockT,
-        i18n: {},
+        i18n: {} as ReturnType<typeof useTranslation>['i18n'],
         ready: false,
-      } as unknown as ReturnType<typeof useTranslation>)
+      })
 
       const { container } = render(<AboutTitle />)
 
@@ -69,9 +71,9 @@ describe('AboutTitle', () => {
     it('should apply correct width classes to loading skeleton', () => {
       mockUseTranslation.mockReturnValue({
         t: mockT,
-        i18n: {},
+        i18n: {} as ReturnType<typeof useTranslation>['i18n'],
         ready: false,
-      } as unknown as ReturnType<typeof useTranslation>)
+      })
 
       const { container } = render(<AboutTitle />)
 
@@ -85,9 +87,9 @@ describe('AboutTitle', () => {
     it('should center the loading skeleton', () => {
       mockUseTranslation.mockReturnValue({
         t: mockT,
-        i18n: {},
+        i18n: {} as ReturnType<typeof useTranslation>['i18n'],
         ready: false,
-      } as unknown as ReturnType<typeof useTranslation>)
+      })
 
       const { container } = render(<AboutTitle />)
 
@@ -225,9 +227,9 @@ describe('AboutTitle', () => {
     it('should not render content elements when not ready', () => {
       mockUseTranslation.mockReturnValue({
         t: mockT,
-        i18n: {},
+        i18n: {} as ReturnType<typeof useTranslation>['i18n'],
         ready: false,
-      } as unknown as ReturnType<typeof useTranslation>)
+      })
 
       render(<AboutTitle />)
 

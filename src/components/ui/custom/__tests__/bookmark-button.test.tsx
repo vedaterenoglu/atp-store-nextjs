@@ -13,14 +13,91 @@
  * - Accessibility
  */
 
+import React from 'react'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { BookmarkButton, BookmarkIndicator } from '../bookmark-button'
+
+// Mock Lucide icons
+jest.mock('lucide-react', () => ({
+  Bookmark: jest.fn(({ className }: { className?: string }) => (
+    <span data-testid="bookmark-icon" className={className}>Bookmark</span>
+  )),
+  BookmarkCheck: jest.fn(({ className }: { className?: string }) => (
+    <span data-testid="bookmark-check-icon" className={className}>BookmarkCheck</span>
+  )),
+  Loader2: jest.fn(({ className }: { className?: string }) => (
+    <span data-testid="loader-icon" className={className}>Loading</span>
+  )),
+}))
+
+// Mock shadcn/ui Button
+jest.mock('@/components/ui/schadcn', () => ({
+  Button: jest.fn(({ 
+    children, 
+    className, 
+    variant, 
+    size, 
+    onClick,
+    disabled,
+    type = 'button',
+    ...props 
+  }: {
+    children: React.ReactNode
+    className?: string
+    variant?: string
+    size?: string
+    onClick?: (e: React.MouseEvent) => void
+    disabled?: boolean
+    type?: string
+    [key: string]: unknown
+  }) => (
+    <button
+      className={className}
+      data-variant={variant}
+      data-size={size}
+      onClick={onClick}
+      disabled={disabled}
+      type={type}
+      {...props}
+    >
+      {children}
+    </button>
+  )),
+}))
+
+// Mock cn utility
+jest.mock('@/lib/utils', () => ({
+  cn: jest.fn((...classes: (string | undefined | null | false)[]) => 
+    classes.filter(Boolean).join(' ')
+  ),
+}))
+
+// Mock bookmark store
+const mockToggleBookmark = jest.fn()
+const mockIsBookmarked = jest.fn()
+
+jest.mock('@/lib/stores/bookmark-store', () => ({
+  useBookmarkStore: jest.fn(() => ({
+    isBookmarked: mockIsBookmarked,
+    toggleBookmark: mockToggleBookmark,
+    bookmarks: [],
+    addBookmark: jest.fn(),
+    removeBookmark: jest.fn(),
+    initializeBookmarks: jest.fn(),
+    isInitialized: true,
+    isLoading: false,
+  })),
+}))
 
 describe('BookmarkButton', () => {
   const defaultProps = {
     productId: 'prod_123',
     isBookmarked: false,
   }
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
 
   describe('Rendering', () => {
     it('should render unbookmarked state by default', () => {
@@ -43,20 +120,26 @@ describe('BookmarkButton', () => {
       render(<BookmarkButton {...defaultProps} className="custom-class" />)
 
       const button = screen.getByRole('button')
-      expect(button).toHaveClass('custom-class')
+      expect(button.className).toContain('custom-class')
     })
 
     it('should render with different sizes', () => {
       const { rerender } = render(
         <BookmarkButton {...defaultProps} size="sm" />
       )
-      expect(screen.getByRole('button')).toHaveClass('h-8', 'w-8')
+      const button = screen.getByRole('button')
+      expect(button.className).toContain('h-8')
+      expect(button.className).toContain('w-8')
 
       rerender(<BookmarkButton {...defaultProps} size="md" />)
-      expect(screen.getByRole('button')).toHaveClass('h-10', 'w-10')
+      const buttonMd = screen.getByRole('button')
+      expect(buttonMd.className).toContain('h-10')
+      expect(buttonMd.className).toContain('w-10')
 
       rerender(<BookmarkButton {...defaultProps} size="lg" />)
-      expect(screen.getByRole('button')).toHaveClass('h-12', 'w-12')
+      const buttonLg = screen.getByRole('button')
+      expect(buttonLg.className).toContain('h-12')
+      expect(buttonLg.className).toContain('w-12')
     })
 
     it('should use custom aria label when provided', () => {
@@ -156,13 +239,10 @@ describe('BookmarkButton', () => {
       consoleError.mockRestore()
     })
 
-    it('should disable button during pending state', async () => {
+    it('should show loading state during async operation', async () => {
       // This test verifies that when showLoading is true,
       // the component uses React's useTransition to manage loading state
-      const onToggle = jest.fn(async () => {
-        // Simulate async operation
-        await new Promise(resolve => setTimeout(resolve, 50))
-      })
+      const onToggle = jest.fn(() => new Promise(resolve => setTimeout(resolve, 50)))
 
       render(
         <BookmarkButton
@@ -292,28 +372,25 @@ describe('BookmarkIndicator', () => {
     )
 
     const indicator = screen.getByLabelText('Bookmarked')
-    expect(indicator).toHaveClass('custom-indicator')
+    expect(indicator.className).toContain('custom-indicator')
   })
 
   it('should render with different sizes', () => {
     const { rerender } = render(
       <BookmarkIndicator isBookmarked={true} size="sm" />
     )
-    expect(screen.getByLabelText('Bookmarked').firstChild).toHaveClass(
-      'h-4',
-      'w-4'
-    )
+    const icon = screen.getByTestId('bookmark-check-icon')
+    expect(icon.className).toContain('h-4')
+    expect(icon.className).toContain('w-4')
 
     rerender(<BookmarkIndicator isBookmarked={true} size="md" />)
-    expect(screen.getByLabelText('Bookmarked').firstChild).toHaveClass(
-      'h-5',
-      'w-5'
-    )
+    const iconMd = screen.getByTestId('bookmark-check-icon')
+    expect(iconMd.className).toContain('h-5')
+    expect(iconMd.className).toContain('w-5')
 
     rerender(<BookmarkIndicator isBookmarked={true} size="lg" />)
-    expect(screen.getByLabelText('Bookmarked').firstChild).toHaveClass(
-      'h-6',
-      'w-6'
-    )
+    const iconLg = screen.getByTestId('bookmark-check-icon')
+    expect(iconLg.className).toContain('h-6')
+    expect(iconLg.className).toContain('w-6')
   })
 })

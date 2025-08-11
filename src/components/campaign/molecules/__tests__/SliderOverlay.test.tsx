@@ -8,23 +8,19 @@
 import { render, screen } from '@testing-library/react'
 import { SliderOverlay } from '../SliderOverlay'
 
-// Mock the price service
+// Mock price service
 jest.mock('@/services/price.service', () => ({
-  calculateDiscountPercentage: jest.fn(
-    (originalPrice: number, discountedPrice: number) => {
-      if (originalPrice <= 0) return 0
-      if (discountedPrice >= originalPrice) return 0
-      if (discountedPrice === 0) return 100
-      return Math.round(
-        ((originalPrice - discountedPrice) / originalPrice) * 100
-      )
-    }
-  ),
+  calculateDiscountPercentage: jest.fn((originalPrice: number, discountedPrice: number) => {
+    if (originalPrice <= 0) return 0
+    if (discountedPrice >= originalPrice) return 0
+    if (discountedPrice === 0) return 100
+    return Math.round(((originalPrice - discountedPrice) / originalPrice) * 100)
+  }),
 }))
 
-// Mock the utils function
+// Mock cn utility
 jest.mock('@/lib/utils', () => ({
-  cn: jest.fn((...classes: unknown[]) => classes.filter(Boolean).join(' ')),
+  cn: jest.fn((...classes: any[]) => classes.filter(Boolean).join(' ')),
 }))
 
 describe('SliderOverlay', () => {
@@ -38,20 +34,6 @@ describe('SliderOverlay', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    // Restore the original mock implementation
-    const priceService = jest.requireMock('@/services/price.service')
-    const calculateDiscountPercentage =
-      priceService.calculateDiscountPercentage as jest.Mock
-    calculateDiscountPercentage.mockImplementation(
-      (originalPrice: number, discountedPrice: number) => {
-        if (originalPrice <= 0) return 0
-        if (discountedPrice >= originalPrice) return 0
-        if (discountedPrice === 0) return 100
-        return Math.round(
-          ((originalPrice - discountedPrice) / originalPrice) * 100
-        )
-      }
-    )
   })
 
   // Test basic rendering
@@ -368,13 +350,7 @@ describe('SliderOverlay', () => {
   // Test different discount scenarios
   describe('Discount scenarios', () => {
     it('handles 100% discount (free product)', () => {
-      // Arrange
-      const priceService = jest.requireMock('@/services/price.service')
-      const calculateDiscountPercentage =
-        priceService.calculateDiscountPercentage as jest.Mock
-      calculateDiscountPercentage.mockReturnValue(100)
-
-      // Act
+      // Arrange & Act
       render(
         <SliderOverlay {...mockProps} campaign_price={0} stock_price={5000} />
       )
@@ -385,13 +361,7 @@ describe('SliderOverlay', () => {
     })
 
     it('handles small discount percentage', () => {
-      // Arrange
-      const priceService = jest.requireMock('@/services/price.service')
-      const calculateDiscountPercentage =
-        priceService.calculateDiscountPercentage as jest.Mock
-      calculateDiscountPercentage.mockReturnValue(5)
-
-      // Act
+      // Arrange & Act
       render(
         <SliderOverlay
           {...mockProps}
@@ -406,18 +376,18 @@ describe('SliderOverlay', () => {
     })
 
     it('handles no discount case', () => {
-      // Arrange
-      const priceService = jest.requireMock('@/services/price.service')
-      const calculateDiscountPercentage =
-        priceService.calculateDiscountPercentage as jest.Mock
-      calculateDiscountPercentage.mockReturnValue(0)
-
-      // Act
-      render(<SliderOverlay {...mockProps} />)
+      // Arrange & Act
+      render(
+        <SliderOverlay
+          {...mockProps}
+          campaign_price={10000}
+          stock_price={10000}
+        />
+      )
 
       // Assert
-      expect(screen.getByText('80.00 SEK')).toBeInTheDocument()
-      expect(screen.queryByText(/line-through/)).not.toBeInTheDocument()
+      expect(screen.getByText('100.00 SEK')).toBeInTheDocument()
+      expect(screen.getAllByText('100.00 SEK')).toHaveLength(1) // Only one price shown when no discount
     })
   })
 

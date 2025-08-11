@@ -15,49 +15,85 @@ jest.mock('react-i18next', () => ({
   useTranslation: jest.fn(),
 }))
 
-// Mock lucide-react icons
+// Mock lucide-react icons with proper typing
+interface IconProps {
+  className?: string
+}
+
 jest.mock('lucide-react', () => ({
-  MapPin: ({ className }: { className?: string }) => (
-    <div data-testid="map-pin-icon" className={className} />
-  ),
-  Phone: ({ className }: { className?: string }) => (
-    <div data-testid="phone-icon" className={className} />
-  ),
-  Mail: ({ className }: { className?: string }) => (
-    <div data-testid="mail-icon" className={className} />
-  ),
-  Clock: ({ className }: { className?: string }) => (
-    <div data-testid="clock-icon" className={className} />
-  ),
-  Globe: ({ className }: { className?: string }) => (
-    <div data-testid="globe-icon" className={className} />
-  ),
-  MessageCircle: ({ className }: { className?: string }) => (
-    <div data-testid="message-circle-icon" className={className} />
-  ),
+  MapPin: jest.fn(({ className }: IconProps) => (
+    <div data-testid="map-pin-icon" className={className}>MapPin Icon</div>
+  )),
+  Phone: jest.fn(({ className }: IconProps) => (
+    <div data-testid="phone-icon" className={className}>Phone Icon</div>
+  )),
+  Mail: jest.fn(({ className }: IconProps) => (
+    <div data-testid="mail-icon" className={className}>Mail Icon</div>
+  )),
+  Clock: jest.fn(({ className }: IconProps) => (
+    <div data-testid="clock-icon" className={className}>Clock Icon</div>
+  )),
+  Globe: jest.fn(({ className }: IconProps) => (
+    <div data-testid="globe-icon" className={className}>Globe Icon</div>
+  )),
+  MessageCircle: jest.fn(({ className }: IconProps) => (
+    <div data-testid="message-circle-icon" className={className}>Message Icon</div>
+  )),
 }))
 
-// Mock Button component
+// Mock shadcn/ui components
+interface ButtonProps {
+  children: React.ReactNode
+  variant?: string
+  size?: string
+  className?: string
+}
+
 jest.mock('@/components/ui/schadcn/button', () => ({
-  Button: ({
-    children,
-    variant,
-    size,
-    ...props
-  }: {
-    children?: React.ReactNode
-    variant?: string
-    size?: string
-    [key: string]: unknown
-  }) => (
-    <button data-variant={variant} data-size={size} {...props}>
+  Button: jest.fn(({ children, variant, size, className }: ButtonProps) => (
+    <button data-variant={variant} data-size={size} className={className}>
       {children}
     </button>
-  ),
+  )),
+}))
+
+interface CardProps {
+  children: React.ReactNode
+  className?: string
+}
+
+interface CardHeaderProps {
+  children: React.ReactNode
+  className?: string
+}
+
+interface CardTitleProps {
+  children: React.ReactNode
+  className?: string
+}
+
+interface CardContentProps {
+  children: React.ReactNode
+  className?: string
+}
+
+jest.mock('@/components/ui/schadcn/card', () => ({
+  Card: jest.fn(({ children, className }: CardProps) => (
+    <div data-testid="card" className={className}>{children}</div>
+  )),
+  CardHeader: jest.fn(({ children, className }: CardHeaderProps) => (
+    <div data-testid="card-header" className={className}>{children}</div>
+  )),
+  CardTitle: jest.fn(({ children, className }: CardTitleProps) => (
+    <h2 data-testid="card-title" className={className}>{children}</h2>
+  )),
+  CardContent: jest.fn(({ children, className }: CardContentProps) => (
+    <div data-testid="card-content" className={className}>{children}</div>
+  )),
 }))
 
 describe('ContactInfo', () => {
-  const mockT = jest.fn()
+  const mockT = jest.fn((key: string) => key)
   const mockUseTranslation = useTranslation as jest.MockedFunction<
     typeof useTranslation
   >
@@ -90,19 +126,19 @@ describe('ContactInfo', () => {
     })
 
     mockUseTranslation.mockReturnValue({
-      t: mockT,
-      i18n: {},
+      t: mockT as unknown as ReturnType<typeof useTranslation>['t'],
+      i18n: {} as ReturnType<typeof useTranslation>['i18n'],
       ready: true,
-    } as unknown as ReturnType<typeof useTranslation>)
+    } as ReturnType<typeof useTranslation>)
   })
 
   describe('Loading State', () => {
     it('should render loading skeleton when translations are not ready', () => {
       mockUseTranslation.mockReturnValue({
-        t: mockT,
-        i18n: {},
+        t: mockT as unknown as ReturnType<typeof useTranslation>['t'],
+        i18n: {} as ReturnType<typeof useTranslation>['i18n'],
         ready: false,
-      } as unknown as ReturnType<typeof useTranslation>)
+      } as ReturnType<typeof useTranslation>)
 
       const { container } = render(<ContactInfo />)
 
@@ -117,10 +153,10 @@ describe('ContactInfo', () => {
 
     it('should render 6 skeleton items for contact details', () => {
       mockUseTranslation.mockReturnValue({
-        t: mockT,
-        i18n: {},
+        t: mockT as unknown as ReturnType<typeof useTranslation>['t'],
+        i18n: {} as ReturnType<typeof useTranslation>['i18n'],
         ready: false,
-      } as unknown as ReturnType<typeof useTranslation>)
+      } as ReturnType<typeof useTranslation>)
 
       const { container } = render(<ContactInfo />)
 

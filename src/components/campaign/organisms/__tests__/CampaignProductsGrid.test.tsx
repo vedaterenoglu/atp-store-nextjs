@@ -23,13 +23,8 @@ jest.mock('react-i18next', () => ({
 }))
 
 // Mock CampaignProductCard
-interface MockProductCardProps {
-  product: CampaignProduct
-  onAddToCart?: (stockId: string, quantity: number) => void
-}
-
 jest.mock('../CampaignProductCard', () => ({
-  CampaignProductCard: ({ product, onAddToCart }: MockProductCardProps) => (
+  CampaignProductCard: jest.fn(({ product, onAddToCart }: any) => (
     <div
       data-testid={`product-card-${product.stock_id}`}
       data-product-id={product.stock_id}
@@ -37,41 +32,25 @@ jest.mock('../CampaignProductCard', () => ({
     >
       Product Card: {product.stock_name}
     </div>
-  ),
+  )),
 }))
 
 // Mock molecules
-interface MockSkeletonProps {
-  key?: string
-}
-
-interface MockErrorProps {
-  error: Error
-  onRetry?: () => void
-}
-
-interface MockErrorBoundaryProps {
-  children: React.ReactNode
-  onRetry?: () => void
-}
-
 jest.mock('../../molecules', () => ({
-  CampaignCardSkeleton: ({ key }: MockSkeletonProps) => (
-    <div data-testid="skeleton" data-key={key}>
-      Loading Skeleton
-    </div>
-  ),
-  CampaignGridError: ({ error, onRetry }: MockErrorProps) => (
-    <div data-testid="grid-error" data-has-retry={!!onRetry}>
-      Error: {error.message}
-      {onRetry && <button onClick={onRetry}>Retry</button>}
-    </div>
-  ),
-  CampaignErrorBoundary: ({ children, onRetry }: MockErrorBoundaryProps) => (
+  CampaignCardSkeleton: jest.fn(() => (
+    <div data-testid="skeleton">Loading Skeleton</div>
+  )),
+  CampaignErrorBoundary: jest.fn(({ children, onRetry }: any) => (
     <div data-testid="error-boundary" data-has-retry={!!onRetry}>
       {children}
     </div>
-  ),
+  )),
+  CampaignGridError: jest.fn(({ error, onRetry }: any) => (
+    <div data-testid="grid-error" data-has-retry={!!onRetry}>
+      <span>Error: {error.message}</span>
+      {onRetry && <button onClick={onRetry}>Retry</button>}
+    </div>
+  )),
 }))
 
 describe('CampaignProductsGrid', () => {

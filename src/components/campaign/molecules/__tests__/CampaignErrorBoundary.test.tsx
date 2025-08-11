@@ -9,23 +9,53 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { CampaignErrorBoundary } from '../CampaignErrorBoundary'
 
-// Mock CampaignGridError component
+// Mock interfaces
+interface MockCampaignGridErrorProps {
+  error?: Error
+  onRetry?: () => void
+  className?: string
+}
+
+// Mock CampaignGridError
 jest.mock('../CampaignGridError', () => ({
-  CampaignGridError: ({
-    error,
-    onRetry,
-  }: {
-    error: Error
-    onRetry: () => void
-  }) => (
+  CampaignGridError: jest.fn(({ error, onRetry }: MockCampaignGridErrorProps) => (
     <div data-testid="campaign-grid-error">
-      <span data-testid="error-message">{error.message}</span>
-      <button data-testid="retry-button" onClick={onRetry}>
-        Retry
-      </button>
+      <span data-testid="error-message">
+        {error?.message || 'Something went wrong'}
+      </span>
+      {onRetry && (
+        <button data-testid="retry-button" onClick={onRetry}>
+          Retry
+        </button>
+      )}
     </div>
-  ),
+  )),
 }))
+
+// Test utility components for error testing
+const ThrowError = ({ shouldThrow }: { shouldThrow: boolean }) => {
+  if (shouldThrow) {
+    throw new Error('Test error message')
+  }
+  return <div data-testid="child-content">Child content</div>
+}
+
+class ComponentWithLifecycleError extends React.Component {
+  override componentDidMount() {
+    throw new Error('Lifecycle error')
+  }
+  override render() {
+    return <div>Component</div>
+  }
+}
+
+const BrokenComponent = () => {
+  throw new Error('Render phase error')
+}
+
+const CustomError = ({ message }: { message: string }) => {
+  throw new Error(message)
+}
 
 // Mock console.error to prevent noise in test output
 const originalConsoleError = console.error
@@ -36,14 +66,6 @@ beforeAll(() => {
 afterAll(() => {
   console.error = originalConsoleError
 })
-
-// Component that throws error for testing
-const ThrowError = ({ shouldThrow }: { shouldThrow: boolean }) => {
-  if (shouldThrow) {
-    throw new Error('Test error message')
-  }
-  return <div data-testid="child-content">Child content</div>
-}
 
 describe('CampaignErrorBoundary', () => {
   beforeEach(() => {
@@ -241,10 +263,6 @@ describe('CampaignErrorBoundary', () => {
 
   describe('Error Types', () => {
     it('should handle different error types', () => {
-      const CustomError = ({ message }: { message: string }) => {
-        throw new Error(message)
-      }
-
       render(
         <CampaignErrorBoundary>
           <CustomError message="Custom error occurred" />
@@ -257,15 +275,6 @@ describe('CampaignErrorBoundary', () => {
     })
 
     it('should handle errors thrown in lifecycle methods', () => {
-      class ComponentWithLifecycleError extends React.Component {
-        override componentDidMount() {
-          throw new Error('Lifecycle error')
-        }
-        override render() {
-          return <div>Component</div>
-        }
-      }
-
       render(
         <CampaignErrorBoundary>
           <ComponentWithLifecycleError />
@@ -336,10 +345,6 @@ describe('CampaignErrorBoundary', () => {
 
   describe('Component Lifecycle', () => {
     it('should catch errors during render phase', () => {
-      const BrokenComponent = () => {
-        throw new Error('Render phase error')
-      }
-
       render(
         <CampaignErrorBoundary>
           <BrokenComponent />

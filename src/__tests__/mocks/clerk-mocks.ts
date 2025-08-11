@@ -342,3 +342,38 @@ export const clerkServerModule = {
     },
   },
 }
+
+// Export centralized mock object for jest.setup.ts
+export const clerkMocks = {
+  useAuth: jest.fn(() => mockAuthSignedOut()),
+  useUser: jest.fn(() => mockUserSignedOut()),
+  useClerk: jest.fn(() => ({
+    openSignIn: jest.fn(),
+    openSignUp: jest.fn(),
+    signOut: jest.fn(),
+  })),
+  SignInButton: jest.fn(({ children }: { children?: ReactNode }) => {
+    const React = require('react')
+    return React.createElement(
+      'div',
+      { 'data-testid': 'sign-in-button' },
+      children
+    )
+  }),
+  SignOutButton: jest.fn(({ children }: { children?: ReactNode }) => {
+    const React = require('react')
+    return React.createElement(
+      'div',
+      { 'data-testid': 'sign-out-button' },
+      children
+    )
+  }),
+  UserButton: jest.fn(() => {
+    const React = require('react')
+    return React.createElement(
+      'div',
+      { 'data-testid': 'user-button' },
+      'User Button'
+    )
+  }),
+}

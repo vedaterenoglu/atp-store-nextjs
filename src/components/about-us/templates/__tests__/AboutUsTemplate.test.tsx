@@ -5,47 +5,74 @@
  * Dependencies: React Testing Library, Jest
  */
 
+import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { AboutUsTemplate } from '../AboutUsTemplate'
 import { useTranslation } from 'react-i18next'
+
+// Mock interfaces - none needed for this test file
 
 // Mock react-i18next
 jest.mock('react-i18next', () => ({
   useTranslation: jest.fn(),
 }))
 
-// Mock child components
+// Mock About Us components individually
 jest.mock('@/components/about-us/molecules/ImageSlider', () => ({
-  ImageSlider: () => (
-    <div data-testid="image-slider">Image Slider Component</div>
-  ),
+  ImageSlider: jest.fn(() => <div data-testid="image-slider">Image Slider</div>),
 }))
 
 jest.mock('@/components/about-us/molecules/AboutTitle', () => ({
-  AboutTitle: () => <div data-testid="about-title">About Title Component</div>,
+  AboutTitle: jest.fn(() => <div data-testid="about-title">About Title</div>),
 }))
 
 jest.mock('@/components/about-us/molecules/AboutContent', () => ({
-  AboutContent: () => (
-    <div data-testid="about-content">About Content Component</div>
-  ),
-}))
-
-jest.mock('@/components/about-us/molecules/GoogleMapsEmbed', () => ({
-  GoogleMapsEmbed: () => (
-    <div data-testid="google-maps">Google Maps Component</div>
-  ),
-}))
-
-jest.mock('@/components/about-us/organisms/ContactForm', () => ({
-  ContactForm: () => (
-    <div data-testid="contact-form">Contact Form Component</div>
-  ),
+  AboutContent: jest.fn(() => <div data-testid="about-content">About Content</div>),
 }))
 
 jest.mock('@/components/about-us/molecules/ContactInfo', () => ({
-  ContactInfo: () => (
-    <div data-testid="contact-info">Contact Info Component</div>
+  ContactInfo: jest.fn(() => <div data-testid="contact-info">Contact Info</div>),
+}))
+
+jest.mock('@/components/about-us/molecules/GoogleMapsEmbed', () => ({
+  GoogleMapsEmbed: jest.fn(() => <div data-testid="google-maps">Google Maps</div>),
+}))
+
+jest.mock('@/components/about-us/organisms/ContactForm', () => ({
+  ContactForm: jest.fn(() => <div data-testid="contact-form">Contact Form</div>),
+}))
+
+// Mock style utilities
+jest.mock('@/lib/styles/utilities', () => ({
+  getPageClasses: jest.fn(({ section }: { section: string }) => {
+    if (section === 'container') return 'min-h-screen'
+    if (section === 'section') return 'px-4 sm:px-6 lg:px-8'
+    return ''
+  }),
+  getContainerClasses: jest.fn(({ withPadding }: { size?: string; withPadding?: boolean }) => {
+    const classes = ['mx-auto', 'max-w-7xl']
+    if (withPadding !== false) {
+      classes.push('px-4', 'sm:px-6', 'lg:px-8')
+    }
+    return classes.join(' ')
+  }),
+  getSpacingClasses: jest.fn(({ y }: { y: string }) => {
+    if (y === 'xl') return 'py-8 sm:py-12 lg:py-16'
+    return ''
+  }),
+  getGridClasses: jest.fn(({ gap }: { gap: string; responsive?: boolean }) => {
+    const classes = ['grid']
+    if (gap === 'lg') {
+      classes.push('gap-6', 'sm:gap-8')
+    }
+    return classes.join(' ')
+  }),
+}))
+
+// Mock cn utility
+jest.mock('@/lib/utils', () => ({
+  cn: jest.fn((...classes: (string | undefined)[]) => 
+    classes.filter(Boolean).join(' ')
   ),
 }))
 
@@ -58,11 +85,19 @@ describe('AboutUsTemplate', () => {
     return translations[key] || key
   })
 
+  const mockUseTranslation = useTranslation as jest.MockedFunction<
+    typeof useTranslation
+  >
+
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(useTranslation as jest.Mock).mockReturnValue({
-      t: mockT,
-    })
+
+    // Setup translation mock
+    mockUseTranslation.mockReturnValue({
+      t: mockT as unknown as ReturnType<typeof useTranslation>['t'],
+      i18n: {} as ReturnType<typeof useTranslation>['i18n'],
+      ready: true,
+    } as unknown as ReturnType<typeof useTranslation>)
   })
 
   describe('Component Structure', () => {

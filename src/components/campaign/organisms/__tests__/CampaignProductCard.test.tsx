@@ -10,40 +10,27 @@ import { CampaignProductCard } from '../CampaignProductCard'
 import type { CampaignProduct } from '@/types/campaign'
 
 // Mock shadcn/ui Card components
-interface MockCardProps {
-  children: React.ReactNode
-  className?: string
-}
-
 jest.mock('@/components/ui/schadcn/card', () => ({
-  Card: ({ children, className }: MockCardProps) => (
-    <div data-testid="card" className={className}>
+  Card: jest.fn(({ children, className, ...props }: any) => (
+    <div data-testid="error-card" className={className} {...props}>
       {children}
     </div>
-  ),
-  CardContent: ({ children, className }: MockCardProps) => (
+  )),
+  CardContent: jest.fn(({ children, className }: any) => (
     <div data-testid="card-content" className={className}>
       {children}
     </div>
-  ),
-  CardFooter: ({ children, className }: MockCardProps) => (
+  )),
+  CardFooter: jest.fn(({ children, className }: any) => (
     <div data-testid="card-footer" className={className}>
       {children}
     </div>
-  ),
+  )),
 }))
 
 // Mock atoms
-interface MockDiscountBadgeProps {
-  originalPrice: number
-  discountedPrice: number
-}
-
 jest.mock('../../atoms', () => ({
-  DiscountBadge: ({
-    originalPrice,
-    discountedPrice,
-  }: MockDiscountBadgeProps) => (
+  DiscountBadge: jest.fn(({ originalPrice, discountedPrice }: any) => (
     <div
       data-testid="discount-badge"
       data-original-price={originalPrice}
@@ -51,57 +38,12 @@ jest.mock('../../atoms', () => ({
     >
       Discount Badge
     </div>
-  ),
+  )),
 }))
 
 // Mock molecules
-interface MockProductImageProps {
-  src: string
-  alt: string
-}
-
-interface MockProductInfoProps {
-  stock_name: string
-  stock_group: string
-  stock_id: string
-  stock_unit: string
-}
-
-interface MockPriceDisplayProps {
-  stock_price: number
-  campaign_price: number
-}
-
-interface MockCardActionsProps {
-  product: CampaignProduct
-  disabled: boolean
-  onAddToCart?: (product: CampaignProduct, quantity: number) => void
-  className?: string
-}
-
 jest.mock('../../molecules', () => ({
-  ProductImage: ({ src, alt }: MockProductImageProps) => (
-    <div data-testid="product-image" data-src={src} data-alt={alt}>
-      Product Image
-    </div>
-  ),
-  ProductInfo: ({
-    stock_name,
-    stock_group,
-    stock_id,
-    stock_unit,
-  }: MockProductInfoProps) => (
-    <div
-      data-testid="product-info"
-      data-stock-name={stock_name}
-      data-stock-group={stock_group}
-      data-stock-id={stock_id}
-      data-stock-unit={stock_unit}
-    >
-      Product Info
-    </div>
-  ),
-  PriceDisplay: ({ stock_price, campaign_price }: MockPriceDisplayProps) => (
+  PriceDisplay: jest.fn(({ stock_price, campaign_price }: any) => (
     <div
       data-testid="price-display"
       data-stock-price={stock_price}
@@ -109,13 +51,24 @@ jest.mock('../../molecules', () => ({
     >
       Price Display
     </div>
-  ),
-  CardActions: ({
-    product,
-    disabled,
-    onAddToCart,
-    className,
-  }: MockCardActionsProps) => (
+  )),
+  ProductImage: jest.fn(({ src, alt }: any) => (
+    <div data-testid="product-image" data-src={src} data-alt={alt}>
+      Product Image
+    </div>
+  )),
+  ProductInfo: jest.fn((props: any) => (
+    <div
+      data-testid="product-info"
+      data-stock-name={props.stock_name}
+      data-stock-group={props.stock_group}
+      data-stock-id={props.stock_id}
+      data-stock-unit={props.stock_unit}
+    >
+      Product Info
+    </div>
+  )),
+  CardActions: jest.fn(({ product, disabled, onAddToCart, className }: any) => (
     <div
       data-testid="card-actions"
       data-stock-id={product?.stock_id}
@@ -125,7 +78,7 @@ jest.mock('../../molecules', () => ({
     >
       <button onClick={() => onAddToCart?.(product, 1)}>Add to Cart</button>
     </div>
-  ),
+  )),
 }))
 
 describe('CampaignProductCard', () => {
@@ -150,7 +103,7 @@ describe('CampaignProductCard', () => {
     it('renders all product components correctly', () => {
       render(<CampaignProductCard product={mockProduct} />)
 
-      expect(screen.getByTestId('card')).toBeInTheDocument()
+      expect(screen.getByTestId('error-card')).toBeInTheDocument()
       expect(screen.getByTestId('product-image')).toBeInTheDocument()
       expect(screen.getByTestId('product-info')).toBeInTheDocument()
       expect(screen.getByTestId('price-display')).toBeInTheDocument()
@@ -163,14 +116,14 @@ describe('CampaignProductCard', () => {
         <CampaignProductCard product={mockProduct} className={customClass} />
       )
 
-      const card = screen.getByTestId('card')
+      const card = screen.getByTestId('error-card')
       expect(card).toHaveClass(customClass)
     })
 
     it('applies default className when not provided', () => {
       render(<CampaignProductCard product={mockProduct} />)
 
-      const card = screen.getByTestId('card')
+      const card = screen.getByTestId('error-card')
       expect(card).toHaveClass(
         'relative',
         'overflow-hidden',

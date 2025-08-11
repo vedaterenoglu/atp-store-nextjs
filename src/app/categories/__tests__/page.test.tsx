@@ -10,25 +10,6 @@ import Page from '../page'
 import { getCategories } from '@/services'
 import mockCategoriesData from '@/mock/categories.json'
 
-// Mock the dependencies
-jest.mock('@/services')
-jest.mock('@/components/categories', () => ({
-  CategoriesPage: jest.fn(({ categories, error }) => (
-    <div data-testid="categories-page">
-      {error ? (
-        <div data-testid="error-state">Error: {error.message}</div>
-      ) : (
-        <div data-testid="categories-count">{categories.length}</div>
-      )}
-    </div>
-  )),
-}))
-
-// Type the mock
-const mockGetCategories = getCategories as jest.MockedFunction<
-  typeof getCategories
->
-
 // Define the expected transformed categories type
 interface TransformedCategory {
   id: string
@@ -37,6 +18,32 @@ interface TransformedCategory {
   imageUrl: string
   altText: string
 }
+
+// Mock services
+jest.mock('@/services', () => ({
+  getCategories: jest.fn(),
+}))
+
+// Mock CategoriesPage component with proper typing
+interface MockCategoriesPageProps {
+  categories: TransformedCategory[]
+  error?: Error | null
+}
+
+jest.mock('@/components/categories', () => ({
+  CategoriesPage: jest.fn(({ categories, error }: MockCategoriesPageProps) => (
+    <div data-testid="categories-page" data-categories={JSON.stringify(categories)}>
+      Categories Page
+      <div data-testid="categories-count">{categories?.length || 0}</div>
+      {error && <div data-testid="error-state">Error: {error.message}</div>}
+    </div>
+  )),
+}))
+
+// Type the mock
+const mockGetCategories = getCategories as jest.MockedFunction<
+  typeof getCategories
+>
 
 describe('Categories Page', () => {
   beforeEach(() => {

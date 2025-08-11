@@ -46,15 +46,23 @@ export class AuthService {
     }
 
     // Extract user data with SSOT logic
+    // Map Clerk's sessionClaims to our expected format
+    const sessionClaimsMetadata = authData.sessionClaims ? {
+      metadata: {
+        role: (authData.sessionClaims as Record<string, unknown>)['role'] as string | undefined,
+        customerid: (authData.sessionClaims as Record<string, unknown>)['customerid'] as string | undefined,
+      }
+    } : null
+    
     const authUser: AuthUser = {
       id: user.id,
       role: extractRole(
-        authData.sessionClaims,
+        sessionClaimsMetadata,
         user.publicMetadata,
         user.unsafeMetadata
       ),
       customerId: extractCustomerId(
-        authData.sessionClaims,
+        sessionClaimsMetadata,
         user.publicMetadata
       ),
       email: user.primaryEmailAddress?.emailAddress || '',

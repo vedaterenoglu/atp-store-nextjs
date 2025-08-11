@@ -22,58 +22,42 @@ jest.mock('react-i18next', () => ({
   }),
 }))
 
-// Mock Lucide React icons
-interface MockIconProps {
-  className?: string
-  [key: string]: unknown
-}
-
+// Mock lucide-react icons
 jest.mock('lucide-react', () => ({
-  AlertCircle: ({ className, ...props }: MockIconProps) => (
-    <div data-testid="alert-circle" className={className} {...props} />
-  ),
-  RefreshCw: ({ className, ...props }: MockIconProps) => (
-    <div data-testid="refresh-cw" className={className} {...props} />
-  ),
+  AlertCircle: jest.fn(({ className }: any) => (
+    <div data-testid="alert-circle" className={className}>Alert Icon</div>
+  )),
+  RefreshCw: jest.fn(({ className }: any) => (
+    <div data-testid="refresh-cw" className={className}>Refresh Icon</div>
+  )),
 }))
 
 // Mock shadcn/ui components
-interface MockButtonProps {
-  children?: React.ReactNode
-  onClick?: () => void
-  className?: string
-  [key: string]: unknown
-}
-
 jest.mock('@/components/ui/schadcn/button', () => ({
-  Button: ({ children, onClick, className, ...props }: MockButtonProps) => (
+  Button: jest.fn(({ children, onClick, className, variant, ...props }: any) => (
     <button
+      data-testid="retry-button"
       onClick={onClick}
       className={className}
-      data-testid="retry-button"
+      data-variant={variant}
       {...props}
     >
       {children}
     </button>
-  ),
+  )),
 }))
 
-interface MockCardProps {
-  children?: React.ReactNode
-  className?: string
-}
-
 jest.mock('@/components/ui/schadcn/card', () => ({
-  Card: ({ children, className }: MockCardProps) => (
+  Card: jest.fn(({ children, className }: any) => (
     <div data-testid="error-card" className={className}>
       {children}
     </div>
-  ),
-  CardContent: ({ children, className }: MockCardProps) => (
+  )),
+  CardContent: jest.fn(({ children, className }: any) => (
     <div data-testid="card-content" className={className}>
       {children}
     </div>
-  ),
+  )),
 }))
 
 describe('CampaignGridError', () => {

@@ -8,128 +8,78 @@
 import { render, screen, fireEvent, act } from '@testing-library/react'
 import { CampaignSlider } from '../CampaignSlider'
 import type { CampaignProduct } from '@/types/campaign'
+import { toast } from 'sonner'
+import React from 'react'
 
 // Mock react-i18next
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string, params?: Record<string, unknown>) => {
       const translations: Record<string, string> = {
-        'messages.noCampaigns': 'No campaigns available',
         'messages.viewingDetails': `Viewing details for ${params?.['product']}`,
+        'messages.noCampaigns': 'No campaigns available',
       }
       return translations[key] || key
     },
   }),
 }))
 
-// Mock sonner toast
+// Mock sonner
 jest.mock('sonner', () => ({
   toast: {
     info: jest.fn(),
+    success: jest.fn(),
+    error: jest.fn(),
+    warning: jest.fn(),
   },
 }))
 
-// Mock Carousel components
-
-jest.mock('@/components/ui/schadcn/carousel', () => {
-  let localMockApi: unknown
-  const localHandlers: Record<string, (() => void)[]> = {}
-
-  return {
-    Carousel: ({
-      children,
-      setApi,
-      className,
-      opts,
-    }: {
-      children: React.ReactNode
-      setApi?: (api: unknown) => void
-      className?: string
-      opts?: Record<string, unknown>
-    }) => {
-      const React = jest.requireActual('react')
-      React.useEffect(() => {
-        localMockApi = {
-          selectedScrollSnap: jest.fn(() => 0),
-          canScrollPrev: jest.fn(() => false),
-          canScrollNext: jest.fn(() => true),
-          scrollNext: jest.fn(),
-          scrollPrev: jest.fn(),
-          scrollTo: jest.fn(),
-          on: jest.fn((event: string, handler: () => void) => {
-            if (!localHandlers[event]) {
-              localHandlers[event] = []
-            }
-            localHandlers[event].push(handler)
-          }),
-          off: jest.fn((event: string, handler: () => void) => {
-            if (localHandlers[event]) {
-              localHandlers[event] = localHandlers[event].filter(
-                h => h !== handler
-              )
-            }
-          }),
-        }
-        setApi?.(localMockApi)
-      }, [setApi])
-      return (
-        <div
-          data-testid="carousel"
-          className={className}
-          data-opts={JSON.stringify(opts)}
-        >
-          {children}
-        </div>
-      )
-    },
-    CarouselContent: ({
-      children,
-      className,
-    }: {
-      children: React.ReactNode
-      className?: string
-    }) => (
-      <div data-testid="carousel-content" className={className}>
+// Mock Carousel components  
+jest.mock('@/components/ui/schadcn/carousel', () => ({
+  Carousel: jest.fn(({ children, className, setApi, opts }: any) => {
+    React.useEffect(() => {
+      const mockApi = {
+        selectedScrollSnap: jest.fn(() => 0),
+        canScrollPrev: jest.fn(() => false),
+        canScrollNext: jest.fn(() => true),
+        scrollNext: jest.fn(),
+        scrollPrev: jest.fn(),
+        scrollTo: jest.fn(),
+        on: jest.fn(),
+        off: jest.fn(),
+      }
+      setApi?.(mockApi)
+    }, [setApi])
+    
+    return (
+      <div data-testid="carousel" className={className} data-opts={JSON.stringify(opts)}>
         {children}
       </div>
-    ),
-    CarouselItem: ({
-      children,
-      className,
-    }: {
-      children: React.ReactNode
-      className?: string
-    }) => (
-      <div data-testid="carousel-item" className={className}>
-        {children}
-      </div>
-    ),
-  }
-})
+    )
+  }),
+  CarouselContent: jest.fn(({ children, className }: any) => (
+    <div data-testid="carousel-content" className={className}>
+      {children}
+    </div>
+  )),
+  CarouselItem: jest.fn(({ children, className }: any) => (
+    <div data-testid="carousel-item" className={className}>
+      {children}
+    </div>
+  )),
+}))
 
 // Mock SliderSlide and SliderControls
-interface MockSliderSlideProps {
-  product: CampaignProduct
-  onClick?: () => void
-}
-
-interface MockSliderControlsProps {
-  total: number
-  current: number
-  onPrevious: () => void
-  onNext: () => void
-  onSelect: (index: number) => void
-  canScrollPrev: boolean
-  canScrollNext: boolean
-}
-
-jest.mock('@/components/campaign/molecules', () => ({
-  SliderSlide: ({ product, onClick }: MockSliderSlideProps) => (
-    <div data-testid={`slider-slide-${product.stock_id}`} onClick={onClick}>
+jest.mock('../../molecules', () => ({
+  SliderSlide: jest.fn(({ product, onClick }: any) => (
+    <div
+      data-testid={`slider-slide-${product.stock_id}`}
+      onClick={onClick}
+    >
       Slide: {product.stock_name}
     </div>
-  ),
-  SliderControls: ({
+  )),
+  SliderControls: jest.fn(({
     total,
     current,
     onPrevious,
@@ -137,7 +87,7 @@ jest.mock('@/components/campaign/molecules', () => ({
     onSelect,
     canScrollPrev,
     canScrollNext,
-  }: MockSliderControlsProps) => (
+  }: any) => (
     <div data-testid="slider-controls">
       <button
         data-testid="prev-button"
@@ -165,11 +115,8 @@ jest.mock('@/components/campaign/molecules', () => ({
         </button>
       ))}
     </div>
-  ),
+  )),
 }))
-
-// Import React for useEffect
-import React from 'react'
 
 describe('CampaignSlider', () => {
   const mockProducts: CampaignProduct[] = [
@@ -341,9 +288,6 @@ describe('CampaignSlider', () => {
     })
 
     it('shows toast when product clicked without onProductClick handler', () => {
-      const { toast } = jest.requireMock('sonner') as {
-        toast: { info: jest.Mock }
-      }
       render(<CampaignSlider products={mockProducts} />)
 
       const slide1 = screen.getByTestId('slider-slide-PROD-1')
@@ -525,9 +469,6 @@ describe('CampaignSlider', () => {
         },
       ]
 
-      const { toast } = jest.requireMock('sonner') as {
-        toast: { info: jest.Mock }
-      }
       render(<CampaignSlider products={specialProducts} />)
 
       const slide = screen.getByTestId(

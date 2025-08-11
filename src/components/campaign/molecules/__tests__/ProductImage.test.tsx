@@ -8,51 +8,30 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { ProductImage } from '../ProductImage'
 
-// Mock Next.js Image component
-interface MockImageProps {
-  src: string
-  alt: string
-  onLoad?: () => void
-  onError?: () => void
-  className?: string
-  fill?: boolean
-  [key: string]: unknown
-}
-
-jest.mock('next/image', () => {
-  return function MockImage({
-    src,
-    alt,
-    onLoad,
-    onError,
-    className,
-    fill,
-    ...props
-  }: MockImageProps) {
+// Mock Next.js Image
+jest.mock('next/image', () => ({
+  __esModule: true,
+  default: jest.fn((props: any) => {
+    const { onLoad, onError, priority, fill, sizes, ...imgProps } = props
     return (
       <img
-        src={src}
-        alt={alt}
-        className={className}
+        {...imgProps}
+        data-priority={priority}
         data-fill={fill}
+        data-sizes={sizes}
         data-testid="product-image"
-        onLoad={onLoad}
-        onError={onError}
-        {...props}
+        onLoad={() => onLoad?.()}
+        onError={() => onError?.()}
       />
     )
-  }
-})
+  }),
+}))
 
-// Mock shadcn/ui Skeleton
-interface MockSkeletonProps {
-  className?: string
-}
-
+// Mock Skeleton component
 jest.mock('@/components/ui/schadcn/skeleton', () => ({
-  Skeleton: ({ className }: MockSkeletonProps) => (
+  Skeleton: jest.fn(({ className }: any) => (
     <div data-testid="skeleton" className={className} />
-  ),
+  )),
 }))
 
 describe('ProductImage', () => {

@@ -32,3 +32,17 @@ export interface CampaignStock {
 export interface GetCampaignProductsWithPricesQueryResponse {
   stock: CampaignStock[]
 }
+
+/**
+ * Type guard to check if data is GetCampaignProductsWithPricesQueryResponse
+ */
+export function isGetCampaignProductsWithPricesQueryResponse(
+  data: unknown
+): data is GetCampaignProductsWithPricesQueryResponse {
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    'stock' in data &&
+    Array.isArray((data as GetCampaignProductsWithPricesQueryResponse).stock)
+  )
+}

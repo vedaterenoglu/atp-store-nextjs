@@ -8,25 +8,9 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { SliderControls } from '../SliderControls'
 
-interface MockNavigationButtonProps {
-  direction: 'prev' | 'next'
-  onClick?: () => void
-  disabled?: boolean
-}
-
-interface MockIndicatorProps {
-  total: number
-  current: number
-  onSelect?: (index: number) => void
-}
-
-// Mock the atom components
+// Mock atoms
 jest.mock('../../atoms', () => ({
-  SliderNavigationButton: ({
-    direction,
-    onClick,
-    disabled,
-  }: MockNavigationButtonProps) => (
+  SliderNavigationButton: jest.fn(({ direction, onClick, disabled }: any) => (
     <button
       data-testid={`nav-button-${direction}`}
       onClick={onClick}
@@ -35,8 +19,8 @@ jest.mock('../../atoms', () => ({
     >
       {direction === 'prev' ? 'Previous' : 'Next'}
     </button>
-  ),
-  SliderIndicator: ({ total, current, onSelect }: MockIndicatorProps) => (
+  )),
+  SliderIndicator: jest.fn(({ total, current, onSelect }: any) => (
     <div
       data-testid="slider-indicator"
       data-total={total}
@@ -53,7 +37,7 @@ jest.mock('../../atoms', () => ({
         </button>
       ))}
     </div>
-  ),
+  )),
 }))
 
 describe('SliderControls', () => {

@@ -35,33 +35,40 @@ import { useCartCount } from '@/lib/stores/cart.store'
 import { CartBadge } from '@/components/cart/atoms/CartBadge'
 import { getLayoutClasses } from '@/lib/styles/utilities'
 import { cn } from '@/lib/utils'
+import { CustomerSwitcher } from '@/components/customer/organisms/CustomerSwitcher'
+import { ImpersonationBanner } from '@/components/customer/molecules/ImpersonationBanner'
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   return (
-    <TooltipProvider>
-      <nav
-        className={getLayoutClasses({ component: 'navbar', part: 'container' })}
-      >
-        <div
-          className={getLayoutClasses({ component: 'navbar', part: 'inner' })}
+    <>
+      {/* Admin Impersonation Banner */}
+      <ImpersonationBanner />
+      
+      <TooltipProvider>
+        <nav
+          className={getLayoutClasses({ component: 'navbar', part: 'container' })}
         >
-          <div className="flex items-center justify-between">
-            <NavbarBrand />
-            <NavbarActions
-              isMobileMenuOpen={isMobileMenuOpen}
-              setIsMobileMenuOpen={setIsMobileMenuOpen}
-            />
+          <div
+            className={getLayoutClasses({ component: 'navbar', part: 'inner' })}
+          >
+            <div className="flex items-center justify-between">
+              <NavbarBrand />
+              <NavbarActions
+                isMobileMenuOpen={isMobileMenuOpen}
+                setIsMobileMenuOpen={setIsMobileMenuOpen}
+              />
+            </div>
           </div>
-        </div>
-        {/* Mobile Menu Dropdown */}
-        <MobileMenu
-          isOpen={isMobileMenuOpen}
-          onClose={() => setIsMobileMenuOpen(false)}
-        />
-      </nav>
-    </TooltipProvider>
+          {/* Mobile Menu Dropdown */}
+          <MobileMenu
+            isOpen={isMobileMenuOpen}
+            onClose={() => setIsMobileMenuOpen(false)}
+          />
+        </nav>
+      </TooltipProvider>
+    </>
   )
 }
 
@@ -107,6 +114,7 @@ function NavbarActions({
 
       {/* Desktop Navigation Items */}
       <div className="hidden sm:flex items-center gap-4">
+        <CustomerSwitcher />
         <CustomerDashboardButton />
         <LanguageToggleWithTooltip />
         <ThemeToggleWithTooltip />
@@ -234,6 +242,7 @@ function LanguageToggleWithTooltip() {
 
 function CustomerDashboardButton() {
   const { isLoaded, hasRole, requireAuth } = useRoleAuth()
+  const { user } = useUser()
   const router = useRouter()
   // const { t } = useSafeTranslation('common')
 
@@ -243,14 +252,29 @@ function CustomerDashboardButton() {
   }
 
   const handleClick = () => {
+    // Check for customerid in publicMetadata
+    const customerid = user?.publicMetadata?.customerid as string | undefined
+    
+    if (!customerid) {
+      // Show error toast if customerid is missing
+      const { toast } = require('@/lib/utils/toast')
+      toast.error('Customer ID not found in your account', {
+        position: 'bottom-left',
+      })
+      // Still redirect to customer dashboard where guard will handle sign-in
+      router.push('/customer/dashboard')
+      return
+    }
+
+    // All checks passed - navigate to customer dashboard
     requireAuth(
       'customer',
       () => {
-        router.push('/admin/dashboard')
+        router.push('/customer/dashboard')
       },
       {
         showToast: true,
-        redirectTo: '/admin/dashboard',
+        redirectTo: '/customer/dashboard',
       }
     )
   }
@@ -374,7 +398,23 @@ function MobileMenu({
   if (!isOpen) return null
 
   const handleDashboardClick = () => {
-    router.push('/admin/dashboard')
+    // Check for customerid in publicMetadata
+    const customerid = user?.publicMetadata?.customerid as string | undefined
+    
+    if (!customerid) {
+      // Show error toast if customerid is missing
+      const { toast } = require('@/lib/utils/toast')
+      toast.error('Customer ID not found in your account', {
+        position: 'bottom-left',
+      })
+      // Still redirect to customer dashboard where guard will handle sign-in
+      router.push('/customer/dashboard')
+      onClose()
+      return
+    }
+
+    // All checks passed - navigate to customer dashboard
+    router.push('/customer/dashboard')
     onClose()
   }
 
@@ -383,6 +423,11 @@ function MobileMenu({
   return (
     <div className={cn('sm:hidden border-t bg-background')}>
       <div className={cn('px-4 py-3 space-y-3')}>
+        {/* Customer Switcher for mobile */}
+        <div className="flex justify-center">
+          <CustomerSwitcher />
+        </div>
+        
         {/* Icons row - Dashboard, Language, Theme */}
         <div className="flex items-center justify-center gap-4">
           {/* Customer Dashboard - Icon only */}

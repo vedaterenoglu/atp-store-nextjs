@@ -9,47 +9,30 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { CampaignCardSkeleton } from '../CampaignCardSkeleton'
 
-// Mock shadcn/ui components
+// Mock shadcn/ui Card components
 jest.mock('@/components/ui/schadcn/card', () => ({
-  Card: ({
-    children,
-    className,
-  }: {
-    children?: React.ReactNode
-    className?: string
-  }) => (
+  Card: jest.fn(({ children, className }: any) => (
     <div data-testid="card" className={className}>
       {children}
     </div>
-  ),
-  CardContent: ({
-    children,
-    className,
-  }: {
-    children?: React.ReactNode
-    className?: string
-  }) => (
+  )),
+  CardContent: jest.fn(({ children, className }: any) => (
     <div data-testid="card-content" className={className}>
       {children}
     </div>
-  ),
-  CardFooter: ({
-    children,
-    className,
-  }: {
-    children?: React.ReactNode
-    className?: string
-  }) => (
+  )),
+  CardFooter: jest.fn(({ children, className }: any) => (
     <div data-testid="card-footer" className={className}>
       {children}
     </div>
-  ),
+  )),
 }))
 
+// Mock Skeleton component
 jest.mock('@/components/ui/schadcn/skeleton', () => ({
-  Skeleton: ({ className }: { className?: string }) => (
-    <div data-testid="skeleton" className={className} />
-  ),
+  Skeleton: jest.fn(({ className }: any) => (
+    <div data-testid="skeleton" className={`${className} skeleton animate-pulse`} />
+  )),
 }))
 
 describe('CampaignCardSkeleton', () => {

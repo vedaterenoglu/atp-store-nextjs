@@ -6,90 +6,89 @@
  */
 
 import React from 'react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { CategoryCard } from '../CategoryCard'
-import { renderWithProviders, screen, fireEvent } from '@/__tests__/utils'
 import { useRouter } from 'next/navigation'
 import { useCategorySearchStore } from '@/lib/stores'
+
+// Mock interfaces
+interface MockCardProps {
+  children: React.ReactNode
+  className?: string
+}
+
+interface MockImageContainerProps {
+  src: string
+  alt: string
+  className?: string
+}
+
+interface MockOverlayProps {
+  title: string
+  isVisible: boolean
+}
+
+interface MockRouterReturn {
+  push: jest.Mock
+  replace: jest.Mock
+  prefetch: jest.Mock
+  back: jest.Mock
+  forward: jest.Mock
+  refresh: jest.Mock
+}
 
 // Mock Next.js router
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }))
 
-// Mock the Zustand store
+// Mock the Zustand stores
 jest.mock('@/lib/stores', () => ({
   useCategorySearchStore: jest.fn(),
 }))
 
 // Mock the UI components
 jest.mock('@/components/ui/schadcn', () => ({
-  Card: function Card({
-    children,
-    className,
-  }: {
-    children: React.ReactNode
-    className?: string
-  }) {
-    return (
-      <div className={className} data-testid="card">
-        {children}
-      </div>
-    )
-  },
+  Card: jest.fn(({ children, className }: MockCardProps) => (
+    <div className={className} data-testid="card">
+      {children}
+    </div>
+  )),
 }))
 
-// Mock the categories components
-jest.mock('@/components/categories', () => ({
-  ImageContainer: function ImageContainer({
-    src,
-    alt,
-    className,
-  }: {
-    src: string
-    alt: string
-    className?: string
-  }) {
-    return (
-      <div
-        data-testid="image-container"
-        data-src={src}
-        data-alt={alt}
-        className={className}
-      >
-        Image: {alt}
-      </div>
-    )
-  },
-  OverlayComponent: function OverlayComponent({
-    title,
-    isVisible,
-  }: {
-    title: string
-    isVisible: boolean
-  }) {
-    return (
-      <div
-        data-testid="overlay-component"
-        data-title={title}
-        data-visible={isVisible}
-      >
-        {title}
-      </div>
-    )
-  },
-}))
-
-// Mock the cn utility
+// Mock cn utility
 jest.mock('@/lib/utils', () => ({
-  cn: function cn(...classes: (string | undefined | null | false)[]) {
-    return classes.filter(Boolean).join(' ')
-  },
+  cn: jest.fn((...classes: (string | undefined | null | false)[]) => 
+    classes.filter(Boolean).join(' ')
+  ),
+}))
+
+// Mock the categories components  
+jest.mock('@/components/categories', () => ({
+  ImageContainer: jest.fn(({ src, alt, className }: MockImageContainerProps) => (
+    <div
+      data-testid="image-container"
+      data-src={src}
+      data-alt={alt}
+      className={className}
+    >
+      Image: {alt}
+    </div>
+  )),
+  OverlayComponent: jest.fn(({ title, isVisible }: MockOverlayProps) => (
+    <div
+      data-testid="overlay-component"
+      data-title={title}
+      data-visible={isVisible}
+    >
+      {title}
+    </div>
+  )),
 }))
 
 // Type the mocked functions
 const mockUseRouter = useRouter as jest.MockedFunction<typeof useRouter>
-const mockUseCategorySearchStore =
-  useCategorySearchStore as jest.MockedFunction<typeof useCategorySearchStore>
+const mockUseCategorySearchStore = useCategorySearchStore as jest.MockedFunction<typeof useCategorySearchStore>
 
 describe('CategoryCard', () => {
   const mockPush = jest.fn()
@@ -110,7 +109,8 @@ describe('CategoryCard', () => {
       back: jest.fn(),
       forward: jest.fn(),
       refresh: jest.fn(),
-    } as never)
+    } as MockRouterReturn)
+    
     mockUseCategorySearchStore.mockReturnValue({
       setSearchPrefix: mockSetSearchPrefix,
       searchPrefix: '',
@@ -120,7 +120,7 @@ describe('CategoryCard', () => {
 
   describe('Component rendering', () => {
     it('should render with required props', () => {
-      renderWithProviders(<CategoryCard {...defaultProps} />)
+      render(<CategoryCard {...defaultProps} />)
 
       // Check main container
       const container = screen.getByTestId('card').parentElement as HTMLElement
@@ -148,16 +148,14 @@ describe('CategoryCard', () => {
 
     it('should render with custom className', () => {
       const customClass = 'custom-category-card'
-      renderWithProviders(
-        <CategoryCard {...defaultProps} className={customClass} />
-      )
+      render(<CategoryCard {...defaultProps} className={customClass} />)
 
       const card = screen.getByTestId('card')
       expect(card).toHaveClass(customClass)
     })
 
     it('should render image container with correct props', () => {
-      renderWithProviders(<CategoryCard {...defaultProps} />)
+      render(<CategoryCard {...defaultProps} />)
 
       const imageContainer = screen.getByTestId('image-container')
       expect(imageContainer).toBeInTheDocument()
@@ -167,7 +165,7 @@ describe('CategoryCard', () => {
     })
 
     it('should render overlay component with correct props', () => {
-      renderWithProviders(<CategoryCard {...defaultProps} />)
+      render(<CategoryCard {...defaultProps} />)
 
       const overlay = screen.getByTestId('overlay-component')
       expect(overlay).toBeInTheDocument()
@@ -176,9 +174,7 @@ describe('CategoryCard', () => {
     })
 
     it('should have correct aspect ratio container', () => {
-      const { container } = renderWithProviders(
-        <CategoryCard {...defaultProps} />
-      )
+      const { container } = render(<CategoryCard {...defaultProps} />)
 
       const aspectContainer = container.querySelector('.aspect-\\[3\\/2\\]')
       expect(aspectContainer).toBeInTheDocument()
@@ -188,7 +184,7 @@ describe('CategoryCard', () => {
 
   describe('Click behavior', () => {
     it('should handle click event', () => {
-      renderWithProviders(<CategoryCard {...defaultProps} />)
+      render(<CategoryCard {...defaultProps} />)
 
       const container = screen.getByTestId('card').parentElement as HTMLElement
       fireEvent.click(container)
@@ -203,7 +199,7 @@ describe('CategoryCard', () => {
     })
 
     it('should handle multiple clicks', () => {
-      renderWithProviders(<CategoryCard {...defaultProps} />)
+      render(<CategoryCard {...defaultProps} />)
 
       const container = screen.getByTestId('card').parentElement as HTMLElement
 
@@ -228,7 +224,7 @@ describe('CategoryCard', () => {
         callOrder.push('push')
       })
 
-      renderWithProviders(<CategoryCard {...defaultProps} />)
+      render(<CategoryCard {...defaultProps} />)
 
       const container = screen.getByTestId('card').parentElement as HTMLElement
       fireEvent.click(container)
@@ -248,7 +244,7 @@ describe('CategoryCard', () => {
       ]
 
       categories.forEach(category => {
-        const { unmount } = renderWithProviders(
+        const { unmount } = render(
           <CategoryCard
             {...defaultProps}
             id={category.id}
@@ -278,7 +274,7 @@ describe('CategoryCard', () => {
       ]
 
       specialNames.forEach(name => {
-        const { unmount } = renderWithProviders(
+        const { unmount } = render(
           <CategoryCard {...defaultProps} name={name} />
         )
 
@@ -299,7 +295,7 @@ describe('CategoryCard', () => {
       ]
 
       imageUrls.forEach(imageUrl => {
-        const { unmount } = renderWithProviders(
+        const { unmount } = render(
           <CategoryCard {...defaultProps} imageUrl={imageUrl} />
         )
 
@@ -311,7 +307,7 @@ describe('CategoryCard', () => {
     })
 
     it('should handle empty strings', () => {
-      renderWithProviders(<CategoryCard id="" name="" imageUrl="" />)
+      render(<CategoryCard id="" name="" imageUrl="" />)
 
       const container = screen.getByTestId('card').parentElement as HTMLElement
       fireEvent.click(container)
@@ -322,7 +318,7 @@ describe('CategoryCard', () => {
 
     it('should handle very long names', () => {
       const longName = 'A'.repeat(200)
-      renderWithProviders(<CategoryCard {...defaultProps} name={longName} />)
+      render(<CategoryCard {...defaultProps} name={longName} />)
 
       const overlay = screen.getByTestId('overlay-component')
       expect(overlay).toHaveAttribute('data-title', longName)
@@ -331,7 +327,7 @@ describe('CategoryCard', () => {
 
   describe('Store integration', () => {
     it('should use store hook correctly', () => {
-      renderWithProviders(<CategoryCard {...defaultProps} />)
+      render(<CategoryCard {...defaultProps} />)
 
       expect(mockUseCategorySearchStore).toHaveBeenCalledTimes(1)
       expect(mockUseCategorySearchStore).toHaveBeenCalledWith()
@@ -344,14 +340,14 @@ describe('CategoryCard', () => {
 
       // Should throw the error (not catch it)
       expect(() => {
-        renderWithProviders(<CategoryCard {...defaultProps} />)
+        render(<CategoryCard {...defaultProps} />)
       }).toThrow('Store error')
     })
   })
 
   describe('Router integration', () => {
     it('should use router hook correctly', () => {
-      renderWithProviders(<CategoryCard {...defaultProps} />)
+      render(<CategoryCard {...defaultProps} />)
 
       expect(mockUseRouter).toHaveBeenCalledTimes(1)
       expect(mockUseRouter).toHaveBeenCalledWith()
@@ -364,14 +360,14 @@ describe('CategoryCard', () => {
 
       // Should throw the error (not catch it)
       expect(() => {
-        renderWithProviders(<CategoryCard {...defaultProps} />)
+        render(<CategoryCard {...defaultProps} />)
       }).toThrow('Router error')
     })
   })
 
   describe('Edge cases', () => {
     it('should handle rapid clicks', () => {
-      renderWithProviders(<CategoryCard {...defaultProps} />)
+      render(<CategoryCard {...defaultProps} />)
 
       const container = screen.getByTestId('card').parentElement as HTMLElement
 
@@ -385,9 +381,7 @@ describe('CategoryCard', () => {
     })
 
     it('should handle component unmounting during click', () => {
-      const { unmount } = renderWithProviders(
-        <CategoryCard {...defaultProps} />
-      )
+      const { unmount } = render(<CategoryCard {...defaultProps} />)
 
       const container = screen.getByTestId('card').parentElement as HTMLElement
       fireEvent.click(container)

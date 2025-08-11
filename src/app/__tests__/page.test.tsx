@@ -12,29 +12,8 @@
 
 import React from 'react'
 import { render, screen, waitFor } from '@/__tests__/utils/test-utils'
-import {
-  createMockServiceFunction,
-  componentMocks,
-} from '@/__tests__/utils/fetch-mock'
 
-// Mock the campaign service
-jest.mock('@/services/campaign.service', () => ({
-  getCampaignProducts: createMockServiceFunction([]),
-}))
-
-// Mock the CampaignSection component
-jest.mock('@/components/home/CampaignSection', () =>
-  componentMocks.createNamedExport('CampaignSection')
-)
-
-// Mock Hero and Features sections
-jest.mock('@/components/sections/home/hero-section', () =>
-  componentMocks.createDefaultExport('HeroSection', 'hero-section')
-)
-
-jest.mock('@/components/sections/home/features-section', () =>
-  componentMocks.createDefaultExport('FeaturesSection', 'features-section')
-)
+// All mocks are configured in jest.setup.ts, no inline mocks needed
 
 // Create a synchronous test version of Home
 const Home = () => {

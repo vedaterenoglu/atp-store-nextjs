@@ -5,28 +5,54 @@
  * Dependencies: Jest, React Testing Library, mock data
  */
 
-import { render } from '@/__tests__/utils/test-utils'
+import { render } from '@testing-library/react'
 import Page from '../page'
 import { getProducts } from '@/services'
-import { mockConsoleError } from '@/__tests__/mocks/products-mocks'
 
-// Mock the dependencies
-jest.mock('@/services')
+// Import the correct Product type
+import type { Product } from '@/services/utils/product-transforms'
 
-// Mock components using centralized mocks
-jest.mock(
-  '@/components/products',
-  () => require('@/__tests__/mocks/products-mocks').productsComponentModule
-)
-
-// Mock BookmarkProvider using centralized mocks
-jest.mock(
-  '@/components/providers/bookmark-provider',
-  () => require('@/__tests__/mocks/products-mocks').bookmarkProviderModule
-)
-
-// Setup console.error mock
+// Mock console.error
+const mockConsoleError = jest.fn()
 const originalConsoleError = console.error
+
+// Mock services
+jest.mock('@/services', () => ({
+  getProducts: jest.fn(),
+}))
+
+// Mock ProductsPage component with proper typing
+interface MockProductsPageProps {
+  products: Product[]
+}
+
+jest.mock('@/components/products', () => ({
+  ProductsPage: jest.fn(({ products }: MockProductsPageProps) => (
+    <div data-testid="products-page">
+      Products Page
+      <div data-testid="products-count">{products?.length || 0}</div>
+      {products.map((product) => (
+        <div key={product.id} data-testid={`product-${product.id}`}>
+          {product.name} - {product.imageUrl}
+        </div>
+      ))}
+    </div>
+  )),
+}))
+
+// Mock BookmarkProvider
+interface MockBookmarkProviderProps {
+  children: React.ReactNode
+}
+
+jest.mock('@/components/providers/bookmark-provider', () => ({
+  BookmarkProvider: jest.fn(({ children }: MockBookmarkProviderProps) => (
+    <div data-testid="bookmark-provider">{children}</div>
+  )),
+}))
+
+// Type the mock
+const mockGetProducts = getProducts as jest.MockedFunction<typeof getProducts>
 
 beforeAll(() => {
   console.error = mockConsoleError
@@ -35,12 +61,6 @@ beforeAll(() => {
 afterAll(() => {
   console.error = originalConsoleError
 })
-
-// Type the mock
-const mockGetProducts = getProducts as jest.MockedFunction<typeof getProducts>
-
-// Import the correct Product type
-import type { Product } from '@/services/utils/product-transforms'
 
 describe('Products Page', () => {
   const fallbackImageUrl =

@@ -9,11 +9,7 @@ import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { SliderIndicator } from '../SliderIndicator'
 
-// Mock the cn utility
-jest.mock('@/lib/utils', () => ({
-  cn: (...classes: (string | undefined | boolean)[]) =>
-    classes.filter(Boolean).join(' '),
-}))
+// All mocks are configured in jest.setup.ts, no inline mocks needed
 
 describe('SliderIndicator', () => {
   const defaultProps = {

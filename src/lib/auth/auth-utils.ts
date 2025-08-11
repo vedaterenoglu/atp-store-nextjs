@@ -12,19 +12,11 @@ import type { UserRole } from './auth-types'
  */
 interface SessionClaimsMetadata {
   metadata?: {
-    role?: string
-    customerid?: string
+    role?: string | undefined
+    customerid?: string | undefined
   }
 }
 
-interface PublicMetadata {
-  role?: string
-  customerid?: string
-}
-
-interface UnsafeMetadata {
-  role?: string
-}
 
 /**
  * Extract role with consistent priority chain
@@ -32,19 +24,19 @@ interface UnsafeMetadata {
  */
 export function extractRole(
   sessionClaims: SessionClaimsMetadata | null | undefined,
-  publicMetadata: PublicMetadata | null | undefined,
-  unsafeMetadata: UnsafeMetadata | null | undefined
+  publicMetadata: Record<string, unknown> | null | undefined,
+  unsafeMetadata: Record<string, unknown> | null | undefined
 ): UserRole {
   // Priority 1: Session Claims (most secure, set by backend)
   const sessionRole = sessionClaims?.metadata?.role
   if (isValidRole(sessionRole)) return sessionRole
 
   // Priority 2: Public Metadata (secure, admin-modifiable)
-  const publicRole = publicMetadata?.role
+  const publicRole = publicMetadata?.['role']
   if (isValidRole(publicRole)) return publicRole
 
   // Priority 3: Unsafe Metadata (client-modifiable, least secure)
-  const unsafeRole = unsafeMetadata?.role
+  const unsafeRole = unsafeMetadata?.['role']
   if (isValidRole(unsafeRole)) return unsafeRole
 
   return null
@@ -56,14 +48,14 @@ export function extractRole(
  */
 export function extractCustomerId(
   sessionClaims: SessionClaimsMetadata | null | undefined,
-  publicMetadata: PublicMetadata | null | undefined
+  publicMetadata: Record<string, unknown> | null | undefined
 ): string | null {
   // Priority 1: Session Claims
   const sessionCustomerId = sessionClaims?.metadata?.customerid // Note: lowercase in Clerk
   if (sessionCustomerId) return String(sessionCustomerId)
 
   // Priority 2: Public Metadata
-  const publicCustomerId = publicMetadata?.customerid // Note: lowercase in Clerk
+  const publicCustomerId = publicMetadata?.['customerid'] // Note: lowercase in Clerk
   if (publicCustomerId) return String(publicCustomerId)
 
   return null

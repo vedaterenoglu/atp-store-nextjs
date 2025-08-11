@@ -8,6 +8,7 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { CampaignPageContent } from '../CampaignPageContent'
 import type { CampaignProduct } from '@/types/campaign'
+import { toast } from 'sonner'
 
 // Mock react-i18next
 jest.mock('react-i18next', () => ({
@@ -29,132 +30,110 @@ jest.mock('react-i18next', () => ({
 jest.mock('sonner', () => ({
   toast: {
     success: jest.fn(),
+    error: jest.fn(),
+    info: jest.fn(),
+    warning: jest.fn(),
   },
 }))
 
 // Mock Next.js Link
 jest.mock('next/link', () => ({
   __esModule: true,
-  default: ({
-    children,
-    href,
-  }: {
-    children: React.ReactNode
-    href: string
-  }) => <a href={href}>{children}</a>,
+  default: ({ children, href }: { children: React.ReactNode; href: string }) => {
+    const React = require('react')
+    return React.createElement('a', { href }, children)
+  },
 }))
 
 // Mock lucide-react
 jest.mock('lucide-react', () => ({
-  ArrowRight: ({ className }: { className?: string }) => (
-    <span data-testid="arrow-right-icon" className={className}>
-      →
-    </span>
-  ),
+  ArrowRight: ({ className }: { className?: string }) => {
+    const React = require('react')
+    return React.createElement('span', { 
+      'data-testid': 'arrow-right-icon', 
+      className 
+    }, '→')
+  },
 }))
 
 // Mock shadcn Button
-interface MockButtonProps {
-  children: React.ReactNode
-  size?: string
-  className?: string
-  asChild?: boolean
-}
-
 jest.mock('@/components/ui/schadcn', () => ({
-  Button: ({ children, size, className, asChild }: MockButtonProps) => {
-    // When asChild is true, wrap children in a span with data attributes
+  Button: ({ children, size, className, asChild }: {
+    children: React.ReactNode
+    size?: string
+    className?: string
+    asChild?: boolean
+  }) => {
+    const React = require('react')
     if (asChild) {
-      return (
-        <span
-          data-testid="button-wrapper"
-          data-size={size}
-          className={className}
-          data-as-child={asChild}
-        >
-          {children}
-        </span>
-      )
+      return React.createElement('span', {
+        'data-testid': 'button-wrapper',
+        'data-size': size,
+        className,
+        'data-as-child': asChild,
+      }, children)
     }
-    return (
-      <button
-        data-testid="button"
-        data-size={size}
-        className={className}
-        data-as-child={asChild}
-      >
-        {children}
-      </button>
-    )
+    return React.createElement('button', {
+      'data-testid': 'button',
+      'data-size': size,
+      className,
+      'data-as-child': asChild,
+    }, children)
   },
 }))
 
 // Mock CampaignProductsGrid
-interface MockCampaignProductsGridProps {
-  products: CampaignProduct[]
-  isLoading: boolean
-  error: Error | null
-  onAddToCart?: (stockId: string, quantity: number) => void
-  onRetry?: () => void
-  skeletonCount?: number
-}
-
 jest.mock('@/components/campaign/organisms', () => ({
-  CampaignProductsGrid: ({
-    products,
-    isLoading,
-    error,
-    onAddToCart,
-    onRetry,
-    skeletonCount,
-  }: MockCampaignProductsGridProps) => (
-    <div
-      data-testid="campaign-products-grid"
-      data-products-count={products.length}
-      data-is-loading={isLoading}
-      data-has-error={!!error}
-      data-skeleton-count={skeletonCount}
-    >
-      {error && (
-        <div data-testid="error-display">
-          Error: {error.message}
-          {onRetry && (
-            <button data-testid="retry-button" onClick={onRetry}>
-              Retry
-            </button>
-          )}
-        </div>
-      )}
-      {!error &&
-        products.map(product => (
-          <div
-            key={product.stock_id}
-            data-testid={`product-${product.stock_id}`}
-          >
-            {product.stock_name}
-            {onAddToCart && (
-              <>
-                <button
-                  data-testid={`add-to-cart-${product.stock_id}`}
-                  onClick={() => onAddToCart(product.stock_id, 1)}
-                >
-                  Add to Cart
-                </button>
-                <button
-                  data-testid={`add-to-cart-multiple-${product.stock_id}`}
-                  onClick={() => onAddToCart(product.stock_id, 3)}
-                >
-                  Add 3 to Cart
-                </button>
-              </>
-            )}
-          </div>
-        ))}
-    </div>
-  ),
+  CampaignProductsGrid: ({ products, isLoading, error, onAddToCart, onRetry, skeletonCount }: {
+    products: Array<{ stock_id: string; stock_name: string }>
+    isLoading: boolean
+    error: Error | null
+    onAddToCart?: (stockId: string, quantity: number) => void
+    onRetry?: () => void
+    skeletonCount?: number
+  }) => {
+    const React = require('react')
+    return React.createElement('div', {
+      'data-testid': 'campaign-products-grid',
+      'data-products-count': products.length,
+      'data-is-loading': isLoading,
+      'data-has-error': !!error,
+      'data-skeleton-count': skeletonCount,
+    }, [
+      error && React.createElement('div', { 
+        key: 'error', 
+        'data-testid': 'error-display' 
+      }, [
+        `Error: ${error.message}`,
+        onRetry && React.createElement('button', {
+          key: 'retry',
+          'data-testid': 'retry-button',
+          onClick: onRetry,
+        }, 'Retry'),
+      ]),
+      !error && products.map(product =>
+        React.createElement('div', {
+          key: product.stock_id,
+          'data-testid': `product-${product.stock_id}`,
+        }, [
+          product.stock_name,
+          onAddToCart && React.createElement(React.Fragment, { key: 'buttons' }, [
+            React.createElement('button', {
+              key: 'add-single',
+              'data-testid': `add-to-cart-${product.stock_id}`,
+              onClick: () => onAddToCart(product.stock_id, 1),
+            }, 'Add to Cart'),
+            React.createElement('button', {
+              key: 'add-multiple',
+              'data-testid': `add-to-cart-multiple-${product.stock_id}`,
+              onClick: () => onAddToCart(product.stock_id, 3),
+            }, 'Add 3 to Cart'),
+          ]),
+        ])
+      ),
+    ].filter(Boolean))
+  },
 }))
-
-// Mock window.location.reload is not currently used in tests
 
 describe('CampaignPageContent', () => {
   const mockProducts: CampaignProduct[] = [
@@ -318,9 +297,6 @@ describe('CampaignPageContent', () => {
 
   describe('Add to Cart Functionality', () => {
     it('shows success toast for single item', () => {
-      const { toast } = jest.requireMock('sonner') as {
-        toast: { success: jest.Mock }
-      }
       render(<CampaignPageContent products={mockProducts} />)
 
       const addButton = screen.getByTestId('add-to-cart-PROD-1')
@@ -330,9 +306,6 @@ describe('CampaignPageContent', () => {
     })
 
     it('handles adding multiple quantities', () => {
-      const { toast } = jest.requireMock('sonner') as {
-        toast: { success: jest.Mock }
-      }
       render(<CampaignPageContent products={mockProducts} />)
 
       // Click the button that adds 3 items
@@ -346,9 +319,6 @@ describe('CampaignPageContent', () => {
     })
 
     it('shows success toast for multiple items', () => {
-      const { toast } = jest.requireMock('sonner') as {
-        toast: { success: jest.Mock }
-      }
       render(<CampaignPageContent products={mockProducts} />)
 
       // Manually call handleAddToCart with quantity > 1
@@ -367,9 +337,6 @@ describe('CampaignPageContent', () => {
     })
 
     it('handles add to cart for different products', () => {
-      const { toast } = jest.requireMock('sonner') as {
-        toast: { success: jest.Mock }
-      }
       render(<CampaignPageContent products={mockProducts} />)
 
       const addButton1 = screen.getByTestId('add-to-cart-PROD-1')
@@ -513,9 +480,6 @@ describe('CampaignPageContent', () => {
     })
 
     it('handles plural forms in add to cart messages', () => {
-      const { toast } = jest.requireMock('sonner') as {
-        toast: { success: jest.Mock }
-      }
       render(<CampaignPageContent products={mockProducts} />)
 
       // Test is handled in Add to Cart Functionality section

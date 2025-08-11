@@ -42,14 +42,22 @@ export function useAuthService() {
     }
 
     // Use same extraction logic as server
+    // Map Clerk's sessionClaims to our expected format
+    const sessionClaimsMetadata = sessionClaims ? {
+      metadata: {
+        role: (sessionClaims as Record<string, unknown>)['role'] as string | undefined,
+        customerid: (sessionClaims as Record<string, unknown>)['customerid'] as string | undefined,
+      }
+    } : null
+    
     const authUser: AuthUser = {
       id: user.id,
       role: extractRole(
-        sessionClaims,
+        sessionClaimsMetadata,
         user.publicMetadata,
         user.unsafeMetadata
       ),
-      customerId: extractCustomerId(sessionClaims, user.publicMetadata),
+      customerId: extractCustomerId(sessionClaimsMetadata, user.publicMetadata),
       email: user.primaryEmailAddress?.emailAddress || '',
       name: user.fullName || null,
     }
