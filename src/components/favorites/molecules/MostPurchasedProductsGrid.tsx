@@ -20,7 +20,7 @@ import {
   mostPurchasedService,
   type MostPurchasedProduct,
 } from '@/services/most-purchased.service'
-import { useAuth, useUser } from '@clerk/nextjs'
+import { useAuth } from '@clerk/nextjs'
 import { Button } from '@/components/ui/schadcn'
 import { Minus, Plus } from 'lucide-react'
 import { useBookmarkStore } from '@/lib/stores/bookmark-store'
@@ -34,8 +34,7 @@ export function MostPurchasedProductsGrid() {
   const [products, setProducts] = useState<ProductWithQuantity[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [consumptionPeriod, setConsumptionPeriod] = useState<number>(90)
-  const { sessionClaims, isSignedIn } = useAuth()
-  const { user } = useUser()
+  const { isSignedIn } = useAuth()
 
   // Subscribe to bookmark store changes to trigger re-render when bookmarks change
   // This ensures bookmark buttons update when bookmarks are toggled
@@ -57,29 +56,30 @@ export function MostPurchasedProductsGrid() {
       try {
         setIsLoading(true)
 
-        // Get customer ID from session or user metadata
-        const metadata = sessionClaims?.['metadata'] as
-          | Record<string, unknown>
-          | undefined
-        const sessionCustomerId = metadata?.['customerid'] as string | undefined
-        const publicCustomerId = user?.publicMetadata?.['customerid'] as
-          | string
-          | undefined
-        const customerId = sessionCustomerId || publicCustomerId
+        // Get active customer ID from cookies via the API
+        const response = await fetch('/api/customer/active')
+        const activeCustomerData = await response.json()
+        const customerId = activeCustomerData?.customerId
 
         if (!customerId) {
+          console.log('🔍 MostPurchased: No active customer ID found')
           setProducts([])
           setIsLoading(false)
           return
         }
+
+        console.log('🔍 MostPurchased: Fetching for customer:', customerId)
 
         // Get consumption period from service
         const period = mostPurchasedService.getConsumptionPeriodInDays()
         setConsumptionPeriod(period)
 
         // Fetch most purchased products from service
+        console.log('🔍 MostPurchased: Calling service for customer:', customerId)
         const mostPurchased =
           await mostPurchasedService.getMostPurchasedProducts(customerId)
+        
+        console.log('🔍 MostPurchased: Got products:', mostPurchased.length)
 
         // Transform to include selected quantity for cart
         const productsWithQuantity: ProductWithQuantity[] = mostPurchased.map(
@@ -99,7 +99,7 @@ export function MostPurchasedProductsGrid() {
     }
 
     fetchMostPurchasedProducts()
-  }, [sessionClaims, user]) // Only fetch on initial load or auth change
+  }, [isSignedIn]) // Only fetch on initial load or auth change
 
   const handleQuantityChange = (productId: string, delta: number) => {
     setProducts(prevProducts =>

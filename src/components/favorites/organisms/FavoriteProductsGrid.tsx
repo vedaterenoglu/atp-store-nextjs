@@ -47,12 +47,13 @@ export function FavoriteProductsGrid() {
     setIsHydrated(true)
   }, [])
 
-  // Initialize bookmarks on mount
+  // Initialize bookmarks on mount - always refresh on favorites page
   useEffect(() => {
-    if (isSignedIn && !isInitialized && isHydrated) {
-      initializeBookmarks()
+    if (isSignedIn && isHydrated) {
+      // Force refresh on favorites page to always show latest bookmarks
+      initializeBookmarks(true)
     }
-  }, [isSignedIn, isInitialized, initializeBookmarks, isHydrated])
+  }, [isSignedIn, initializeBookmarks, isHydrated])
 
   // Show loading while hydrating or initializing
   const showLoading = !isHydrated || (isLoading && !isInitialized)

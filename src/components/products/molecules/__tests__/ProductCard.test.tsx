@@ -136,10 +136,18 @@ jest.mock('react-i18next', () => ({
   })),
 }))
 
-// Mock Clerk auth hooks
-jest.mock('@clerk/nextjs', () => ({
-  useAuth: jest.fn(),
-  useUser: jest.fn(),
+// Mock secure auth hook
+const mockSecureAuth = {
+  auth: {
+    canBookmark: false,
+    canAddToCart: false,
+    activeCustomerId: null as string | null,
+    role: null as 'customer' | 'admin' | null,
+  },
+  isAuthenticated: false,
+}
+jest.mock('@/hooks/use-secure-auth', () => ({
+  useSecureAuth: jest.fn(() => mockSecureAuth),
 }))
 
 // Mock Zustand stores
@@ -214,78 +222,17 @@ jest.mock('@/lib/utils', () => ({
 }))
 
 // Mock toast
-jest.mock('sonner', () => ({
+jest.mock('@/lib/utils/toast', () => ({
   toast: {
     success: jest.fn(),
     error: jest.fn(),
+    warning: jest.fn(),
+    info: jest.fn(),
   },
 }))
+import { toast } from '@/lib/utils/toast'
 
-// Import mocked functions
-import { useAuth, useUser } from '@clerk/nextjs'
-
-const mockUseAuth = useAuth as jest.Mock
-const mockUseUser = useUser as jest.Mock
-
-// Helper functions for auth mocks
-function mockAuthSignedOut() {
-  return {
-    isLoaded: true as const,
-    isSignedIn: false as const,
-    userId: null,
-    sessionId: null,
-    sessionClaims: null,
-    actor: null,
-    orgId: null,
-    orgRole: null,
-    orgSlug: null,
-    has: jest.fn(() => false),
-    signOut: jest.fn(),
-    getToken: jest.fn(),
-  }
-}
-
-function mockUserSignedOut() {
-  return {
-    isLoaded: true as const,
-    isSignedIn: false as const,
-    user: null,
-  }
-}
-
-function mockAuthSignedIn() {
-  return {
-    isLoaded: true as const,
-    isSignedIn: true as const,
-    userId: 'user_test123',
-    sessionId: 'sess_test123',
-    sessionClaims: {
-      metadata: { role: 'customer', customerid: 'CUST123' },
-    } as Record<string, unknown>,
-    actor: null,
-    orgId: null,
-    orgRole: null,
-    orgSlug: null,
-    has: jest.fn(() => false),
-    signOut: jest.fn(),
-    getToken: jest.fn(),
-  }
-}
-
-function mockUserSignedIn(overrides: { publicMetadata?: Record<string, unknown> } = {}) {
-  return {
-    isLoaded: true as const,
-    isSignedIn: true as const,
-    user: {
-      id: 'user_test123',
-      firstName: 'Test',
-      lastName: 'User',
-      username: 'testuser',
-      imageUrl: 'https://example.com/avatar.jpg',
-      publicMetadata: overrides.publicMetadata || { role: 'customer', customerid: 'CUST123' },
-    } as Record<string, unknown>,
-  }
-}
+// No longer need Clerk imports since we're using secure auth
 
 describe('ProductCard', () => {
   const mockProduct = createMockProduct({
@@ -300,9 +247,15 @@ describe('ProductCard', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    // Default to signed out state
-    mockUseAuth.mockReturnValue(mockAuthSignedOut())
-    mockUseUser.mockReturnValue(mockUserSignedOut())
+    // Reset mock auth state to default (not authenticated)
+    mockSecureAuth.isAuthenticated = false
+    mockSecureAuth.auth.canBookmark = false
+    mockSecureAuth.auth.canAddToCart = false
+    mockSecureAuth.auth.activeCustomerId = null
+    mockSecureAuth.auth.role = null
+    // Reset other mocks
+    mockAddToCart.mockResolvedValue(true)
+    mockIsBookmarked.mockReturnValue(false)
   })
 
   it('should render with all required props', () => {
@@ -385,7 +338,12 @@ describe('ProductCard', () => {
   })
 
   it('should increase quantity when plus button is clicked', () => {
-    // Test the quantity controls - the component uses local state
+    // Enable auth for adding to cart
+    mockSecureAuth.isAuthenticated = true
+    mockSecureAuth.auth.canAddToCart = true
+    mockSecureAuth.auth.activeCustomerId = 'customer-123'
+    mockSecureAuth.auth.role = 'customer'
+    
     render(
       <ProductCard
         id={mockProduct.stockId}
@@ -425,6 +383,12 @@ describe('ProductCard', () => {
   })
 
   it('should decrease quantity when minus button is clicked', () => {
+    // Enable auth for adding to cart
+    mockSecureAuth.isAuthenticated = true
+    mockSecureAuth.auth.canAddToCart = true
+    mockSecureAuth.auth.activeCustomerId = 'customer-123'
+    mockSecureAuth.auth.role = 'customer'
+    
     render(
       <ProductCard
         id={mockProduct.stockId}
@@ -478,10 +442,12 @@ describe('ProductCard', () => {
     expect(screen.getByText('0')).toBeInTheDocument()
   })
 
-  it('should call addToCart when add to cart button is clicked', () => {
-    // Mock signed in state - required for add to cart
-    mockUseAuth.mockReturnValue(mockAuthSignedIn())
-    mockUseUser.mockReturnValue(mockUserSignedIn())
+  it('should call addToCart when add to cart button is clicked', async () => {
+    // Enable auth for adding to cart
+    mockSecureAuth.isAuthenticated = true
+    mockSecureAuth.auth.canAddToCart = true
+    mockSecureAuth.auth.activeCustomerId = 'customer-123'
+    mockSecureAuth.auth.role = 'customer'
     
     render(
       <ProductCard
@@ -540,13 +506,11 @@ describe('ProductCard', () => {
   })
 
   it('should show bookmark button for signed-in customers', () => {
-    // Mock signed in state with customer role
-    mockUseAuth.mockReturnValue(mockAuthSignedIn())
-    mockUseUser.mockReturnValue(
-      mockUserSignedIn({
-        publicMetadata: { role: 'customer', customerid: 'CUST123' },
-      })
-    )
+    // Enable auth for bookmarking
+    mockSecureAuth.isAuthenticated = true
+    mockSecureAuth.auth.canBookmark = true
+    mockSecureAuth.auth.activeCustomerId = 'customer-123'
+    mockSecureAuth.auth.role = 'customer'
 
     render(
       <ProductCard
@@ -562,13 +526,11 @@ describe('ProductCard', () => {
   })
 
   it('should handle bookmark toggle', () => {
-    // Mock signed in state with customer role
-    mockUseAuth.mockReturnValue(mockAuthSignedIn())
-    mockUseUser.mockReturnValue(
-      mockUserSignedIn({
-        publicMetadata: { role: 'customer', customerid: 'CUST123' },
-      })
-    )
+    // Enable auth for bookmarking
+    mockSecureAuth.isAuthenticated = true
+    mockSecureAuth.auth.canBookmark = true
+    mockSecureAuth.auth.activeCustomerId = 'customer-123'
+    mockSecureAuth.auth.role = 'customer'
 
     render(
       <ProductCard

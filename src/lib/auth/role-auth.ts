@@ -128,7 +128,7 @@ export function useRoleAuth() {
     const {
       showToast = true,
       redirectTo,
-      toastPosition = 'bottom-left',
+      toastPosition = 'top-right',
     } = options
 
     const result = checkAuth(requiredRole)

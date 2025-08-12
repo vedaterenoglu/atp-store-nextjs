@@ -343,7 +343,7 @@ describe('useRoleAuth', () => {
       expect(onSuccess).not.toHaveBeenCalled()
       expect(mockToast.error).toHaveBeenCalledWith(
         'Please sign in to continue',
-        { position: 'bottom-left' }
+        { position: 'top-right' }
       )
       expect(mockOpenSignIn).toHaveBeenCalledWith({
         redirectUrl: expect.any(String),
@@ -375,7 +375,7 @@ describe('useRoleAuth', () => {
       expect(success).toBe(false)
       expect(onSuccess).not.toHaveBeenCalled()
       expect(mockToast.error).toHaveBeenCalledWith('Insufficient permissions', {
-        position: 'bottom-left',
+        position: 'top-right',
       })
       expect(mockRouterPush).toHaveBeenCalledWith('/home')
     })

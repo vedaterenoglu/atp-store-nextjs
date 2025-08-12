@@ -7,13 +7,35 @@
 
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { useCartStore } from '@/lib/stores/cart.store'
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const { isLoaded, isSignedIn, user } = useUser()
   const { initializeCart, resetCart, isInitialized } = useCartStore()
+  const [activeCustomerId, setActiveCustomerId] = useState<string | null>(null)
+
+  // Fetch active customer from cookie/API
+  useEffect(() => {
+    if (!isSignedIn || !user) {
+      setActiveCustomerId(null)
+      return
+    }
+
+    // Get active customer from API (which checks cookies)
+    fetch('/api/customer/active')
+      .then(res => res.json())
+      .then(data => {
+        if (data.customerId) {
+          setActiveCustomerId(data.customerId)
+        }
+      })
+      .catch(err => {
+        console.error('Failed to fetch active customer:', err)
+        setActiveCustomerId(null)
+      })
+  }, [isSignedIn, user])
 
   useEffect(() => {
     // Wait for auth to load
@@ -25,21 +47,34 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       return
     }
 
-    // Check if user is a customer with customerid
+    // Check user role and customer IDs
     const role = user.publicMetadata?.['role'] as string
-    const customerid = user.publicMetadata?.customerid as string
+    const customerids = user.publicMetadata?.['customerids'] as string[] | undefined
 
-    if (role !== 'customer' || !customerid) {
-      // Not a customer, reset cart
+    // Support both customer and admin roles
+    if (role !== 'customer' && role !== 'admin') {
+      // Not a valid role, reset cart
       resetCart()
       return
     }
 
-    // Initialize cart for the customer
-    if (!isInitialized) {
-      initializeCart(user.id, customerid)
+    // For customers, must have customerids
+    if (role === 'customer' && (!customerids || customerids.length === 0)) {
+      resetCart()
+      return
     }
-  }, [isLoaded, isSignedIn, user, initializeCart, resetCart, isInitialized])
+
+    // Wait for active customer to be determined
+    if (!activeCustomerId) {
+      // Don't reset yet, waiting for active customer
+      return
+    }
+
+    // Initialize cart with active customer
+    if (!isInitialized) {
+      initializeCart(user.id, activeCustomerId)
+    }
+  }, [isLoaded, isSignedIn, user, activeCustomerId, initializeCart, resetCart, isInitialized])
 
   return <>{children}</>
 }

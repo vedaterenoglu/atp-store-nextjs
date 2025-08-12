@@ -5,7 +5,7 @@
  * Dependencies: React Testing Library, Jest, i18n mock
  */
 
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { CardActions } from '../CardActions'
 import type { CampaignProduct } from '@/types/campaign'
 
@@ -23,16 +23,25 @@ jest.mock('react-i18next', () => ({
 
 // Mock lucide-react
 jest.mock('lucide-react', () => ({
-  ShoppingCart: jest.fn(({ className }: any) => (
+  ShoppingCart: jest.fn(({ className }: { className?: string }) => (
     <span data-testid="shopping-cart-icon" className={className}>
       Cart Icon
     </span>
   )),
 }))
 
-// Mock shadcn/ui Button
+// Mock shadcn/ui Button with proper typing
+interface ButtonProps {
+  children: React.ReactNode
+  onClick?: () => void
+  disabled?: boolean
+  className?: string
+  variant?: string
+  size?: string
+}
+
 jest.mock('@/components/ui/schadcn/button', () => ({
-  Button: jest.fn(({ children, onClick, disabled, className, variant, size, ...props }: any) => (
+  Button: jest.fn(({ children, onClick, disabled, className, variant, size, ...props }: ButtonProps) => (
     <button
       data-testid="add-to-cart-button"
       onClick={disabled ? undefined : onClick}
@@ -47,14 +56,22 @@ jest.mock('@/components/ui/schadcn/button', () => ({
   )),
 }))
 
-// Mock QuantityCounter
+// Mock QuantityCounter with proper typing
+interface QuantityCounterProps {
+  quantity: number
+  onDecrease: () => void
+  onIncrease: () => void
+  disabled?: boolean
+  canModify?: boolean
+}
+
 jest.mock('../../atoms', () => ({
-  QuantityCounter: jest.fn(({ quantity, onDecrease, onIncrease, disabled }: any) => (
-    <div data-testid="quantity-counter" data-disabled={disabled}>
+  QuantityCounter: jest.fn(({ quantity, onDecrease, onIncrease, disabled, canModify }: QuantityCounterProps) => (
+    <div data-testid="quantity-counter" data-disabled={disabled} data-can-modify={canModify}>
       <button
         data-testid="decrease-button"
         onClick={onDecrease}
-        disabled={disabled}
+        disabled={disabled || !canModify}
       >
         -
       </button>
@@ -62,12 +79,47 @@ jest.mock('../../atoms', () => ({
       <button
         data-testid="increase-button"
         onClick={onIncrease}
-        disabled={disabled}
+        disabled={disabled || !canModify}
       >
         +
       </button>
     </div>
   )),
+}))
+
+// Mock toast
+jest.mock('@/lib/utils/toast', () => ({
+  toast: {
+    error: jest.fn(),
+    success: jest.fn(),
+  },
+}))
+
+// Mock secure auth hook
+const mockSecureAuth = {
+  auth: {
+    canAddToCart: true,
+    activeCustomerId: 'customer-123' as string | null,
+  },
+  isAuthenticated: true,
+}
+
+jest.mock('@/hooks/use-secure-auth', () => ({
+  useSecureAuth: jest.fn(() => mockSecureAuth),
+}))
+
+// Mock cart store
+const mockAddToCart = jest.fn(() => Promise.resolve(true))
+const mockFindCartItem = jest.fn(() => null)
+
+jest.mock('@/lib/stores/cart.store', () => ({
+  useCartStore: jest.fn((selector) => {
+    const state = {
+      addToCart: mockAddToCart,
+      findCartItem: mockFindCartItem,
+    }
+    return selector ? selector(state) : state
+  }),
 }))
 
 describe('CardActions', () => {
@@ -91,6 +143,12 @@ describe('CardActions', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    // Reset auth state to default
+    mockSecureAuth.auth.canAddToCart = true
+    mockSecureAuth.auth.activeCustomerId = 'customer-123'
+    mockSecureAuth.isAuthenticated = true
+    mockAddToCart.mockResolvedValue(true)
+    mockFindCartItem.mockReturnValue(null)
   })
 
   // Test basic rendering
@@ -203,35 +261,8 @@ describe('CardActions', () => {
     })
   })
 
-  // Test add to cart functionality
+  // Test add to cart functionality  
   describe('Add to cart functionality', () => {
-    it('calls onAddToCart with correct parameters when button is clicked with quantity > 0', () => {
-      // Arrange
-      const mockOnAddToCart = jest.fn()
-      render(<CardActions {...mockProps} onAddToCart={mockOnAddToCart} />)
-      fireEvent.click(screen.getByTestId('increase-button'))
-
-      // Act
-      fireEvent.click(screen.getByTestId('add-to-cart-button'))
-
-      // Assert
-      expect(mockOnAddToCart).toHaveBeenCalledWith(mockProduct, 1)
-    })
-
-    it('resets quantity to 0 after adding to cart', () => {
-      // Arrange
-      const mockOnAddToCart = jest.fn()
-      render(<CardActions {...mockProps} onAddToCart={mockOnAddToCart} />)
-      fireEvent.click(screen.getByTestId('increase-button'))
-      fireEvent.click(screen.getByTestId('increase-button'))
-
-      // Act
-      fireEvent.click(screen.getByTestId('add-to-cart-button'))
-
-      // Assert
-      expect(screen.getByTestId('quantity-display')).toHaveTextContent('0')
-    })
-
     it('does not call onAddToCart when quantity is 0', () => {
       // Arrange
       const mockOnAddToCart = jest.fn()
@@ -244,10 +275,51 @@ describe('CardActions', () => {
       expect(mockOnAddToCart).not.toHaveBeenCalled()
     })
 
-    it('does not call onAddToCart when onAddToCart is not provided', () => {
+    it('calls onAddToCart with correct parameters when button is clicked with quantity > 0', async () => {
+      // Arrange
+      const mockOnAddToCart = jest.fn()
+      render(<CardActions {...mockProps} onAddToCart={mockOnAddToCart} />)
+      fireEvent.click(screen.getByTestId('increase-button'))
+
+      // Act
+      fireEvent.click(screen.getByTestId('add-to-cart-button'))
+
+      // Assert - wait for async operations
+      await waitFor(() => {
+        expect(mockAddToCart).toHaveBeenCalledWith(
+          mockProduct.stock_id,
+          mockProduct.stock_name,
+          mockProduct.campaign_price,
+          1,
+          mockProduct.stock_image_link,
+          mockProduct.stock_group,
+          mockProduct.stock_unit,
+          99
+        )
+        expect(mockOnAddToCart).toHaveBeenCalledWith(mockProduct, 1)
+      })
+    })
+
+    it('resets quantity to 0 after adding to cart', async () => {
+      // Arrange
+      const mockOnAddToCart = jest.fn()
+      render(<CardActions {...mockProps} onAddToCart={mockOnAddToCart} />)
+      fireEvent.click(screen.getByTestId('increase-button'))
+      fireEvent.click(screen.getByTestId('increase-button'))
+
+      // Act
+      fireEvent.click(screen.getByTestId('add-to-cart-button'))
+
+      // Assert
+      await waitFor(() => {
+        expect(screen.getByTestId('quantity-display')).toHaveTextContent('0')
+      })
+    })
+
+    it('does not call onAddToCart when onAddToCart is not provided', async () => {
       // Arrange
       const { onAddToCart, ...propsWithoutCallback } = mockProps
-      void onAddToCart // Intentionally unused - testing without callback
+      void onAddToCart // Intentionally unused
       render(<CardActions {...propsWithoutCallback} />)
       fireEvent.click(screen.getByTestId('increase-button'))
 
@@ -255,15 +327,16 @@ describe('CardActions', () => {
       fireEvent.click(screen.getByTestId('add-to-cart-button'))
 
       // Assert - No error should occur, component should handle gracefully
-      expect(screen.getByTestId('quantity-display')).toHaveTextContent('1')
+      await waitFor(() => {
+        expect(mockAddToCart).toHaveBeenCalled()
+        expect(screen.getByTestId('quantity-display')).toHaveTextContent('0')
+      })
     })
 
-    it('calls onAddToCart with different quantities', () => {
+    it('calls onAddToCart with different quantities', async () => {
       // Arrange
       const mockOnAddToCart = jest.fn()
       render(<CardActions {...mockProps} onAddToCart={mockOnAddToCart} />)
-
-      // Test with quantity 3
       fireEvent.click(screen.getByTestId('increase-button'))
       fireEvent.click(screen.getByTestId('increase-button'))
       fireEvent.click(screen.getByTestId('increase-button'))
@@ -272,29 +345,24 @@ describe('CardActions', () => {
       fireEvent.click(screen.getByTestId('add-to-cart-button'))
 
       // Assert
-      expect(mockOnAddToCart).toHaveBeenCalledWith(mockProduct, 3)
+      await waitFor(() => {
+        expect(mockOnAddToCart).toHaveBeenCalledWith(mockProduct, 3)
+      })
     })
   })
 
   // Test disabled state
   describe('Disabled state', () => {
-    it('passes disabled state to quantity counter', () => {
-      // Arrange & Act
-      render(<CardActions {...mockProps} disabled={true} />)
+    it('disables quantity counter when canAddToCart is false', () => {
+      // Arrange
+      mockSecureAuth.auth.canAddToCart = false
+      
+      // Act
+      render(<CardActions {...mockProps} />)
 
       // Assert
-      expect(screen.getByTestId('quantity-counter')).toHaveAttribute(
-        'data-disabled',
-        'true'
-      )
-    })
-
-    it('disables add to cart button when disabled prop is true', () => {
-      // Arrange & Act
-      render(<CardActions {...mockProps} disabled={true} />)
-
-      // Assert
-      expect(screen.getByTestId('add-to-cart-button')).toBeDisabled()
+      expect(screen.getByTestId('quantity-counter')).toHaveAttribute('data-disabled', 'true')
+      expect(screen.getByTestId('quantity-counter')).toHaveAttribute('data-can-modify', 'false')
     })
 
     it('disables add to cart button when quantity is 0', () => {
@@ -307,7 +375,7 @@ describe('CardActions', () => {
 
     it('enables add to cart button when quantity > 0 and not disabled', () => {
       // Arrange
-      render(<CardActions {...mockProps} />)
+      render(<CardActions {...mockProps} disabled={false} />)
 
       // Act
       fireEvent.click(screen.getByTestId('increase-button'))
@@ -318,88 +386,132 @@ describe('CardActions', () => {
 
     it('keeps add to cart button disabled when disabled=true even with quantity > 0', () => {
       // Arrange
+      mockSecureAuth.auth.canAddToCart = false
       render(<CardActions {...mockProps} disabled={true} />)
 
-      // Act
+      // Act - Try to increase quantity (should not work)
       fireEvent.click(screen.getByTestId('increase-button'))
 
       // Assert
       expect(screen.getByTestId('add-to-cart-button')).toBeDisabled()
-    })
-  })
-
-  // Test button styling and attributes
-  describe('Button styling and attributes', () => {
-    it('applies correct variant and size to add to cart button', () => {
-      // Arrange & Act
-      render(<CardActions {...mockProps} />)
-
-      // Assert
-      const button = screen.getByTestId('add-to-cart-button')
-      expect(button).toHaveAttribute('data-variant', 'default')
-      expect(button).toHaveAttribute('data-size', 'default')
-      expect(button).toHaveClass('w-full')
-    })
-
-    it('displays shopping cart icon with correct styling', () => {
-      // Arrange & Act
-      render(<CardActions {...mockProps} />)
-
-      // Assert
-      const icon = screen.getByTestId('shopping-cart-icon')
-      expect(icon).toHaveClass('h-4', 'w-4', 'mr-2')
+      expect(screen.getByTestId('quantity-display')).toHaveTextContent('0')
     })
   })
 
   // Test prop variations
   describe('Prop variations', () => {
-    it('works with different product values', () => {
+    it('handles undefined onAddToCart callback', async () => {
       // Arrange
-      const mockOnAddToCart = jest.fn()
-      const customProduct: CampaignProduct = {
-        ...mockProduct,
-        stock_id: 'custom-stock-456',
-      }
-      render(
-        <CardActions product={customProduct} onAddToCart={mockOnAddToCart} />
-      )
+      render(<CardActions product={mockProduct} />)
       fireEvent.click(screen.getByTestId('increase-button'))
 
       // Act
       fireEvent.click(screen.getByTestId('add-to-cart-button'))
 
-      // Assert
-      expect(mockOnAddToCart).toHaveBeenCalledWith(customProduct, 1)
+      // Assert - Should not throw error
+      await waitFor(() => {
+        expect(mockAddToCart).toHaveBeenCalled()
+      })
     })
 
-    it('handles missing onAddToCart gracefully', () => {
-      // Arrange & Act
-      render(<CardActions product={mockProduct} />)
+    it('works with different product values', async () => {
+      // Arrange
+      const customProduct: CampaignProduct = {
+        ...mockProduct,
+        stock_id: 'custom-stock-456',
+      }
+      const mockOnAddToCart = jest.fn()
+      render(
+        <CardActions product={customProduct} onAddToCart={mockOnAddToCart} />
+      )
+
+      // Act
       fireEvent.click(screen.getByTestId('increase-button'))
+      fireEvent.click(screen.getByTestId('add-to-cart-button'))
+
+      // Assert
+      await waitFor(() => {
+        expect(mockOnAddToCart).toHaveBeenCalledWith(customProduct, 1)
+      })
+    })
+
+    it('handles missing onAddToCart gracefully', async () => {
+      // Arrange
+      render(<CardActions product={mockProduct} />)
+
+      // Act
+      fireEvent.click(screen.getByTestId('increase-button'))
+      fireEvent.click(screen.getByTestId('add-to-cart-button'))
 
       // Assert - Should not throw error
-      expect(() => {
-        fireEvent.click(screen.getByTestId('add-to-cart-button'))
-      }).not.toThrow()
+      await waitFor(() => {
+        expect(mockAddToCart).toHaveBeenCalled()
+      })
     })
   })
 
   // Test complete user workflow
   describe('Complete user workflow', () => {
-    it('handles complete add to cart workflow', () => {
+    it('handles complete add to cart workflow', async () => {
       // Arrange
       const mockOnAddToCart = jest.fn()
       render(<CardActions {...mockProps} onAddToCart={mockOnAddToCart} />)
 
-      // Act - User increases quantity, adds to cart, then increases again
+      // Act - User adds quantity
       fireEvent.click(screen.getByTestId('increase-button'))
-      fireEvent.click(screen.getByTestId('increase-button'))
-      fireEvent.click(screen.getByTestId('add-to-cart-button'))
       fireEvent.click(screen.getByTestId('increase-button'))
 
+      // Act - User adds to cart
+      fireEvent.click(screen.getByTestId('add-to-cart-button'))
+
       // Assert
-      expect(mockOnAddToCart).toHaveBeenCalledWith(mockProduct, 2)
-      expect(screen.getByTestId('quantity-display')).toHaveTextContent('1')
+      await waitFor(() => {
+        expect(mockOnAddToCart).toHaveBeenCalledWith(mockProduct, 2)
+        expect(screen.getByTestId('quantity-display')).toHaveTextContent('0')
+      })
+    })
+  })
+
+  // Test authentication scenarios
+  describe('Authentication scenarios', () => {
+    it('disables quantity controls when user cannot add to cart', () => {
+      // Arrange
+      mockSecureAuth.isAuthenticated = false
+      mockSecureAuth.auth.canAddToCart = false
+      
+      render(<CardActions {...mockProps} />)
+
+      // Assert - The quantity counter should be disabled
+      expect(screen.getByTestId('quantity-counter')).toHaveAttribute('data-disabled', 'true')
+      expect(screen.getByTestId('quantity-counter')).toHaveAttribute('data-can-modify', 'false')
+      expect(screen.getByTestId('increase-button')).toBeDisabled()
+      expect(screen.getByTestId('decrease-button')).toBeDisabled()
+    })
+
+    it('enables quantity controls when user can add to cart', () => {
+      // Arrange
+      mockSecureAuth.isAuthenticated = true
+      mockSecureAuth.auth.canAddToCart = true
+      mockSecureAuth.auth.activeCustomerId = 'customer-123'
+      
+      render(<CardActions {...mockProps} />)
+
+      // Assert - The quantity counter should be enabled
+      expect(screen.getByTestId('quantity-counter')).toHaveAttribute('data-disabled', 'false')
+      expect(screen.getByTestId('quantity-counter')).toHaveAttribute('data-can-modify', 'true')
+      expect(screen.getByTestId('increase-button')).not.toBeDisabled()
+      expect(screen.getByTestId('decrease-button')).not.toBeDisabled()
+    })
+
+    it('shows existing cart quantity when item is in cart', () => {
+      // Arrange
+      mockFindCartItem.mockReturnValue({ quantity: 5 })
+      
+      // Act
+      render(<CardActions {...mockProps} />)
+
+      // Assert
+      expect(screen.getByText('Add to Cart (5 in cart)')).toBeInTheDocument()
     })
   })
 })

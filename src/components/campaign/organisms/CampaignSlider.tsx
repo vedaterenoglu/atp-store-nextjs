@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/schadcn/carousel'
 import { SliderSlide, SliderControls } from '../molecules'
 import type { CampaignProduct } from '@/types/campaign'
-import { toast } from 'sonner'
+import { toast } from '@/lib/utils/toast'
 import { useTranslation } from 'react-i18next'
 
 interface CampaignSliderProps {

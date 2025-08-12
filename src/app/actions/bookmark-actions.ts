@@ -17,6 +17,7 @@
 'use server'
 
 import { auth, currentUser } from '@clerk/nextjs/server'
+import { cookies } from 'next/headers'
 import { bookmarkService } from '@/services/bookmark.service'
 import type {
   BookmarkResponse,
@@ -25,41 +26,55 @@ import type {
 import { revalidatePath } from 'next/cache'
 
 /**
- * Extract customer ID from Clerk session securely
- * Priority: sessionClaims > publicMetadata > error
+ * Extract customer ID from active customer selection
+ * Priority: active_customer_id cookie > first customerid > null
+ * Returns null if no customer selected (instead of throwing)
  */
-async function getSecureCustomerId(): Promise<string> {
-  const { userId, sessionClaims } = await auth()
+async function getSecureCustomerId(): Promise<string | null> {
+  const { userId } = await auth()
 
   if (!userId) {
-    throw new Error('Authentication required')
+    return null // Not authenticated
   }
 
-  // Try session claims first (most secure) - using 'customerid' (lowercase)
-  const metadata = sessionClaims?.['metadata'] as
-    | Record<string, unknown>
-    | undefined
-  const sessionCustomerId = metadata?.['customerid'] as string | undefined
-
-  if (sessionCustomerId) {
-    return sessionCustomerId
-  }
-
-  // Fallback to user metadata
   const user = await currentUser()
-
-  const publicCustomerId = user?.publicMetadata?.['customerid'] as
-    | string
-    | undefined
-
-  if (publicCustomerId) {
-    return publicCustomerId
+  if (!user) {
+    return null
   }
 
-  // No customer ID found - user must have proper metadata set
-  throw new Error(
-    'Customer ID not found. Please contact support to link your account.'
-  )
+  const role = user.publicMetadata?.['role'] as string | undefined
+  const customerids = user.publicMetadata?.['customerids'] as string[] | undefined
+
+  // Check if user has customer access (customer or admin role)
+  if (role !== 'customer' && role !== 'admin') {
+    return null // No customer access
+  }
+
+  // For customer role, must have customerids
+  if (role === 'customer' && (!customerids || customerids.length === 0)) {
+    return null // Customer without customer IDs
+  }
+
+  // Check for active customer from cookie
+  const cookieStore = await cookies()
+  const activeCustomerId = cookieStore.get('active_customer_id')?.value
+
+  if (activeCustomerId) {
+    // Validate that this customer ID is in the user's list (for customer role)
+    if (role === 'customer' && customerids && !customerids.includes(activeCustomerId)) {
+      // Invalid selection, clear it
+      return null
+    }
+    return activeCustomerId
+  }
+
+  // For customer with single ID, use it automatically
+  if (role === 'customer' && customerids && customerids.length === 1) {
+    return customerids[0] ?? null
+  }
+
+  // Multiple customers or admin without selection - return null
+  return null
 }
 
 /**
@@ -81,6 +96,14 @@ export async function bookmarkProduct(
 
     // Get customer ID securely from session
     const customerId = await getSecureCustomerId()
+    
+    // Check if customer is selected
+    if (!customerId) {
+      return {
+        success: false,
+        error: 'Please select a customer first',
+      }
+    }
 
     // Execute bookmark operation
     const result = await bookmarkService.bookmarkProduct(customerId, stockId)
@@ -123,6 +146,14 @@ export async function unbookmarkProduct(
 
     // Get customer ID securely from session
     const customerId = await getSecureCustomerId()
+    
+    // Check if customer is selected
+    if (!customerId) {
+      return {
+        success: false,
+        error: 'Please select a customer first',
+      }
+    }
 
     // Execute unbookmark operation
     const result = await bookmarkService.unbookmarkProduct(customerId, stockId)
@@ -167,6 +198,14 @@ export async function toggleBookmark(
 
     // Get customer ID securely from session
     const customerId = await getSecureCustomerId()
+    
+    // Check if customer is selected
+    if (!customerId) {
+      return {
+        success: false,
+        error: 'Please select a customer first',
+      }
+    }
 
     // Trust client state - it's managed by Zustand store which is the source of truth
     // The store is initialized from backend and maintains consistency
@@ -211,6 +250,11 @@ export async function isProductBookmarked(stockId: string): Promise<boolean> {
 
     // Get customer ID securely from session
     const customerId = await getSecureCustomerId()
+    
+    // If no customer selected, not bookmarked
+    if (!customerId) {
+      return false
+    }
 
     // Check bookmark status
     return await bookmarkService.isProductBookmarked(customerId, stockId)
@@ -229,6 +273,11 @@ export async function getCustomerBookmarks(forceRefresh = false) {
   try {
     // Get customer ID securely from session
     const customerId = await getSecureCustomerId()
+    
+    // If no customer selected, return empty array
+    if (!customerId) {
+      return []
+    }
 
     // Get customer bookmarks
     return await bookmarkService.getCustomerBookmarks(customerId, forceRefresh)

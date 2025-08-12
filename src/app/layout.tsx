@@ -24,6 +24,8 @@ import {
 } from '@/components/providers'
 import { AppLayout } from '@/components/layout'
 import { Toaster } from 'sonner'
+import { NewUserWelcomeHandler } from '@/components/auth/NewUserWelcomeHandler'
+import { SignOutHandler } from '@/components/auth/SignOutHandler'
 import './globals.css'
 
 const geistSans = Geist({
@@ -53,12 +55,14 @@ export default function RootLayout({
       >
         <ClerkLocaleProvider>
           <ThemeInitializer />
+          <SignOutHandler />
           <I18nProvider>
             <CartProvider>
               <AppLayout>{children}</AppLayout>
+              <NewUserWelcomeHandler />
             </CartProvider>
             <Toaster
-              position="bottom-left"
+              position="top-right"
               toastOptions={{
                 duration: 4000,
                 className: 'sonner-toast',

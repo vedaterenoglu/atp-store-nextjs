@@ -30,13 +30,28 @@ jest.mock('react-i18next', () => ({
   }),
 }))
 
-// Mock role auth hook
-const mockRequireAuth = jest.fn()
-jest.mock('@/lib/auth/role-auth', () => ({
-  useRoleAuth: () => ({
-    requireAuth: mockRequireAuth,
-  }),
+// Mock secure auth hook
+const mockSecureAuth = {
+  auth: {
+    canAccessCustomerFeatures: false,
+    role: null as 'customer' | 'admin' | null,
+  },
+  isAuthenticated: false,
+}
+jest.mock('@/hooks/use-secure-auth', () => ({
+  useSecureAuth: jest.fn(() => mockSecureAuth),
 }))
+
+// Mock toast
+jest.mock('@/lib/utils/toast', () => ({
+  toast: {
+    error: jest.fn(),
+    success: jest.fn(),
+    warning: jest.fn(),
+    info: jest.fn(),
+  },
+}))
+import { toast } from '@/lib/utils/toast'
 
 // Mock lucide-react icons
 jest.mock('lucide-react', () => ({
@@ -84,6 +99,10 @@ jest.mock('@/lib/utils', () => ({
 describe('GoToCartButton', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    // Reset mock auth state to default (not authenticated)
+    mockSecureAuth.isAuthenticated = false
+    mockSecureAuth.auth.canAccessCustomerFeatures = false
+    mockSecureAuth.auth.role = null
   })
 
   it('should render with default props', () => {
@@ -117,44 +136,35 @@ describe('GoToCartButton', () => {
     expect(button).toHaveClass('h-12 gap-2 custom-class')
   })
 
-  it('should handle click with auth check and navigation', () => {
-    mockRequireAuth.mockImplementation((_, callback) => {
-      // Simulate successful auth
-      callback()
-    })
+  it('should handle click when authenticated and can access cart', () => {
+    // User is authenticated and can access customer features
+    mockSecureAuth.isAuthenticated = true
+    mockSecureAuth.auth.canAccessCustomerFeatures = true
+    mockSecureAuth.auth.role = 'customer'
 
     render(<GoToCartButton />)
 
     const button = screen.getByTestId('button')
     fireEvent.click(button)
 
-    // Verify requireAuth was called with correct parameters
-    expect(mockRequireAuth).toHaveBeenCalledWith(
-      'customer',
-      expect.any(Function),
-      { showToast: true }
-    )
+    // Should not show error
+    expect(toast.error).not.toHaveBeenCalled()
 
     // Verify navigation was triggered
     expect(mockPush).toHaveBeenCalledWith('/cart')
   })
 
-  it('should not navigate when auth fails', () => {
-    mockRequireAuth.mockImplementation(() => {
-      // Simulate failed auth - don't call callback
-    })
+  it('should not navigate when not authenticated', () => {
+    // User is not authenticated
+    mockSecureAuth.isAuthenticated = false
 
     render(<GoToCartButton />)
 
     const button = screen.getByTestId('button')
     fireEvent.click(button)
 
-    // Verify requireAuth was called
-    expect(mockRequireAuth).toHaveBeenCalledWith(
-      'customer',
-      expect.any(Function),
-      { showToast: true }
-    )
+    // Should show error toast
+    expect(toast.error).toHaveBeenCalledWith('Please sign in to access cart')
 
     // Verify navigation was NOT triggered
     expect(mockPush).not.toHaveBeenCalled()
@@ -181,20 +191,19 @@ describe('GoToCartButton', () => {
     expect(mobileText).toHaveClass('sm:hidden')
   })
 
-  it('should execute auth callback on successful authentication', () => {
-    let authCallback: (() => void) | null = null
-    mockRequireAuth.mockImplementation((_, callback) => {
-      authCallback = callback
-      callback()
-    })
+  it('should show appropriate error when authenticated but cannot access customer features', () => {
+    // User is authenticated but cannot access customer features
+    mockSecureAuth.isAuthenticated = true
+    mockSecureAuth.auth.canAccessCustomerFeatures = false
+    mockSecureAuth.auth.role = 'customer'
 
     render(<GoToCartButton />)
 
     const button = screen.getByTestId('button')
     fireEvent.click(button)
 
-    // Verify the callback was captured and executed
-    expect(authCallback).toBeTruthy()
-    expect(mockPush).toHaveBeenCalledWith('/cart')
+    // Should show error about selecting customer
+    expect(toast.error).toHaveBeenCalledWith('Please select a customer account to access cart')
+    expect(mockPush).not.toHaveBeenCalled()
   })
 })

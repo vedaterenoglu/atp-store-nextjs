@@ -46,20 +46,40 @@ export async function POST(request: NextRequest) {
 
     // Admin can switch to any customer
     if (userRole === 'admin') {
-      // Set impersonation cookie for admin
+      console.log('🔧 API/switch: Admin switching to customer:', customerId)
+      
+      // Set active customer cookie for admin (same as customer role)
       const cookieStore = await cookies()
-      cookieStore.set('impersonating_customer_id', customerId, {
+      
+      console.log('🍪 API/switch: Setting active_customer_id cookie for admin')
+      cookieStore.set('active_customer_id', customerId, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         path: '/',
         maxAge: 60 * 60 * 24 * 7, // 7 days
       })
+      
+      console.log('✅ API/switch: Cookie set successfully for admin, customerId:', customerId)
 
-      return NextResponse.json({
+      // Create response with explicit cookie header
+      const response = NextResponse.json({
         success: true,
         customerId,
       } as CustomerSwitchResponse)
+      
+      // Also set cookie in response headers for redundancy
+      response.cookies.set('active_customer_id', customerId, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+      })
+      
+      console.log('🍪 API/switch: Cookie also set in response headers')
+      
+      return response
     }
 
     // Regular customer can only switch to their own accounts

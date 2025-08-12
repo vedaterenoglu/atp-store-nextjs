@@ -18,7 +18,7 @@ import { redirect } from 'next/navigation'
 import { AdminLayoutWrapper } from '@/components/admin'
 
 // Define allowed roles for admin access
-const ADMIN_ALLOWED_ROLES = ['customer'] as const
+const ADMIN_ALLOWED_ROLES = ['admin'] as const
 type AdminRole = (typeof ADMIN_ALLOWED_ROLES)[number]
 
 export default async function AdminLayout({

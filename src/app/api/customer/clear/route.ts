@@ -25,11 +25,12 @@ export async function POST() {
     const cookieStore = await cookies()
     const userRole = user.publicMetadata?.['role'] as string
 
-    // Clear appropriate cookie based on role
+    // Clear active customer cookie for both roles (we use same cookie name now)
+    cookieStore.delete('active_customer_id')
+    
+    // Also clear legacy cookie name for backwards compatibility
     if (userRole === 'admin') {
       cookieStore.delete('impersonating_customer_id')
-    } else if (userRole === 'customer') {
-      cookieStore.delete('active_customer_id')
     }
 
     return NextResponse.json({ success: true })

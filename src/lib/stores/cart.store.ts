@@ -38,7 +38,7 @@ interface CartStore {
     stockUnit?: string,
     maxQuantity?: number,
     discount?: number
-  ) => Promise<void>
+  ) => Promise<boolean>
   updateQuantity: (itemId: string, quantity: number) => Promise<void>
   removeFromCart: (itemId: string) => Promise<void>
   clearCart: () => void
@@ -137,8 +137,8 @@ export const useCartStore = create<CartStore>()(
 
         // Cart must exist (user must be signed in)
         if (!cart) {
-          console.warn('Cannot add to cart: User not authenticated')
-          return
+          console.warn('Cannot add to cart: Cart not initialized')
+          return false
         }
 
         // Set loading state
@@ -223,9 +223,10 @@ export const useCartStore = create<CartStore>()(
 
           // Recalculate summary after adding
           get().recalculateSummary()
+          return true // Successfully added
         } catch (error) {
           console.error('Failed to add item to cart:', error)
-          throw error
+          return false // Failed to add
         } finally {
           set(state => {
             state.isLoading = false

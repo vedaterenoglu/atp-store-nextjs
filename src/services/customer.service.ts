@@ -229,9 +229,9 @@ export class CustomerService {
   }
 
   /**
-   * Clear internal cache
+   * Clear internal cache (made public for sign out cleanup)
    */
-  private clearCache(): void {
+  clearCache(): void {
     this.activeCustomerCache = null
     this.cacheTimestamp = 0
   }

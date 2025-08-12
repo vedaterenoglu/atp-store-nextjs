@@ -8,7 +8,6 @@
 import { render, screen, fireEvent, act } from '@testing-library/react'
 import { CampaignSlider } from '../CampaignSlider'
 import type { CampaignProduct } from '@/types/campaign'
-import { toast } from 'sonner'
 import React from 'react'
 
 // Mock react-i18next
@@ -24,19 +23,43 @@ jest.mock('react-i18next', () => ({
   }),
 }))
 
-// Mock sonner
-jest.mock('sonner', () => ({
+// Mock toast utility which wraps sonner
+// The real toast facade always adds default options when called
+jest.mock('@/lib/utils/toast', () => ({
   toast: {
-    info: jest.fn(),
+    info: jest.fn((message: string, options?: unknown) => {
+      // Simulate the real behavior where the facade adds default options
+      return message
+    }),
     success: jest.fn(),
     error: jest.fn(),
     warning: jest.fn(),
   },
 }))
 
-// Mock Carousel components  
+// Import the mocked toast to use in tests
+import { toast } from '@/lib/utils/toast'
+
+// Mock Carousel components with proper typing
+interface CarouselProps {
+  children: React.ReactNode
+  className?: string
+  setApi?: (api: unknown) => void
+  opts?: Record<string, unknown>
+}
+
+interface CarouselContentProps {
+  children: React.ReactNode
+  className?: string
+}
+
+interface CarouselItemProps {
+  children: React.ReactNode
+  className?: string
+}
+
 jest.mock('@/components/ui/schadcn/carousel', () => ({
-  Carousel: jest.fn(({ children, className, setApi, opts }: any) => {
+  Carousel: jest.fn(({ children, className, setApi, opts }: CarouselProps) => {
     React.useEffect(() => {
       const mockApi = {
         selectedScrollSnap: jest.fn(() => 0),
@@ -57,21 +80,36 @@ jest.mock('@/components/ui/schadcn/carousel', () => ({
       </div>
     )
   }),
-  CarouselContent: jest.fn(({ children, className }: any) => (
+  CarouselContent: jest.fn(({ children, className }: CarouselContentProps) => (
     <div data-testid="carousel-content" className={className}>
       {children}
     </div>
   )),
-  CarouselItem: jest.fn(({ children, className }: any) => (
+  CarouselItem: jest.fn(({ children, className }: CarouselItemProps) => (
     <div data-testid="carousel-item" className={className}>
       {children}
     </div>
   )),
 }))
 
-// Mock SliderSlide and SliderControls
+// Mock SliderSlide and SliderControls with proper typing
+interface SliderSlideProps {
+  product: CampaignProduct
+  onClick: () => void
+}
+
+interface SliderControlsProps {
+  total: number
+  current: number
+  onPrevious: () => void
+  onNext: () => void
+  onSelect: (index: number) => void
+  canScrollPrev?: boolean
+  canScrollNext?: boolean
+}
+
 jest.mock('../../molecules', () => ({
-  SliderSlide: jest.fn(({ product, onClick }: any) => (
+  SliderSlide: jest.fn(({ product, onClick }: SliderSlideProps) => (
     <div
       data-testid={`slider-slide-${product.stock_id}`}
       onClick={onClick}
@@ -87,7 +125,7 @@ jest.mock('../../molecules', () => ({
     onSelect,
     canScrollPrev,
     canScrollNext,
-  }: any) => (
+  }: SliderControlsProps) => (
     <div data-testid="slider-controls">
       <button
         data-testid="prev-button"
@@ -293,6 +331,8 @@ describe('CampaignSlider', () => {
       const slide1 = screen.getByTestId('slider-slide-PROD-1')
       fireEvent.click(slide1)
 
+      // The toast facade is called with just the message from the component,
+      // but our mock doesn't add the default options, so we just check the message
       expect(toast.info).toHaveBeenCalledWith('Viewing details for Product 1')
     })
 
@@ -476,6 +516,7 @@ describe('CampaignSlider', () => {
       )
       fireEvent.click(slide)
 
+      // The toast facade is called with just the message from the component
       expect(toast.info).toHaveBeenCalledWith(
         'Viewing details for Product™ & Co. <Special>'
       )

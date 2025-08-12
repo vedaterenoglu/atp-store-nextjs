@@ -55,7 +55,6 @@ export function ProtectedRoute({
     // Check authentication
     if (!isSignedIn) {
       toast.error('Please sign in to continue', {
-        position: 'bottom-left',
         duration: 4000,
       })
 
@@ -68,7 +67,6 @@ export function ProtectedRoute({
     // Check role requirement
     if (requiredRole && user?.role !== requiredRole) {
       toast.error('You do not have permission to access this page', {
-        position: 'bottom-left',
         duration: 4000,
       })
       router.push(fallbackUrl)
@@ -78,7 +76,6 @@ export function ProtectedRoute({
     // Check customer ID requirement
     if (requireCustomerId && !user?.customerId) {
       toast.error('Please complete your profile to continue', {
-        position: 'bottom-left',
         duration: 4000,
       })
       router.push('/profile/complete')

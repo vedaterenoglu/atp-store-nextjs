@@ -10,8 +10,7 @@
 import { useEffect, useState } from 'react'
 import { Alert, AlertDescription } from '@/components/ui/schadcn/alert'
 import { Badge } from '@/components/ui/schadcn/badge'
-import { Button } from '@/components/ui/schadcn/button'
-import { X, User } from 'lucide-react'
+import { User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { ActiveCustomerContext } from '@/lib/types/customer.types'
 
@@ -62,19 +61,6 @@ export function ImpersonationBanner() {
       })
   }, [])
 
-  const handleStopImpersonation = async () => {
-    try {
-      const response = await fetch('/api/customer/clear', { method: 'POST' })
-      if (response.ok) {
-        setContext(null)
-        // Refresh the page to update the UI
-        window.location.reload()
-      }
-    } catch (error) {
-      console.error('Failed to stop impersonation:', error)
-    }
-  }
-
   if (isLoading || !context?.isImpersonating) {
     return null
   }
@@ -86,28 +72,19 @@ export function ImpersonationBanner() {
         'bg-destructive/10 border-destructive/20'
       )}
     >
-      <AlertDescription className="flex items-center justify-between">
+      <AlertDescription className="flex items-center justify-center">
         <div className="flex items-center gap-3">
           <Badge variant="destructive" className="gap-1">
             <User className="h-3 w-3" />
             Admin Mode
           </Badge>
           <span className="text-sm">
-            Viewing as customer:{' '}
+            Viewing as:{' '}
             <strong>
               {context.customerTitle || context.customerId || 'Unknown'}
             </strong>
           </span>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleStopImpersonation}
-          className="gap-1"
-        >
-          <X className="h-3 w-3" />
-          Stop Impersonation
-        </Button>
       </AlertDescription>
     </Alert>
   )

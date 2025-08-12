@@ -16,9 +16,9 @@ import { PriceTag } from '@/components/products'
 import { BookmarkButton } from '@/components/ui/custom'
 import { useBookmarkStore } from '@/lib/stores/bookmark-store'
 import { useCartStore } from '@/lib/stores/cart.store'
-import { useAuth, useUser } from '@clerk/nextjs'
 import { Minus, Plus, ShoppingCart } from 'lucide-react'
-import { toast } from 'sonner'
+import { toast } from '@/lib/utils/toast'
+import { useSecureAuth } from '@/hooks/use-secure-auth'
 
 interface ProductCardProps {
   id: string
@@ -43,13 +43,12 @@ export function ProductCard({
 }: ProductCardProps) {
   const { t } = useTranslation('products')
   const [quantity, setQuantity] = useState(0)
-  const { isSignedIn, sessionClaims } = useAuth()
-  const { user } = useUser()
+  const { auth, isAuthenticated } = useSecureAuth()
 
   // Get cart state from Zustand store (only for authenticated users)
   const addToCart = useCartStore(state => state.addToCart)
   const cartItem = useCartStore(state => state.findCartItem(id))
-  const cartQuantity = isSignedIn ? cartItem?.quantity || 0 : 0
+  const cartQuantity = isAuthenticated ? cartItem?.quantity || 0 : 0
 
   // Get bookmark state from Zustand store
   const {
@@ -62,34 +61,14 @@ export function ProductCard({
 
   // Initialize bookmarks on mount if user is signed in
   useEffect(() => {
-    if (isSignedIn && !isInitialized) {
+    if (isAuthenticated && !isInitialized) {
       initializeBookmarks()
     }
-  }, [isSignedIn, isInitialized, initializeBookmarks])
+  }, [isAuthenticated, isInitialized, initializeBookmarks])
 
-  // Check if user can bookmark (must be signed in, have customer role, and have customerid)
-  const canBookmark = () => {
-    if (!isSignedIn) return false
-
-    // Check role (from session claims or user metadata)
-    const metadata = sessionClaims?.['metadata'] as
-      | Record<string, unknown>
-      | undefined
-    const sessionRole = metadata?.['role'] as string | undefined
-    const publicRole = user?.publicMetadata?.['role'] as string | undefined
-    const userRole = sessionRole || publicRole
-
-    if (userRole !== 'customer') return false
-
-    // Check if customerid exists
-    const sessionCustomerId = metadata?.['customerid'] as string | undefined
-    const publicCustomerId = user?.publicMetadata?.['customerid'] as
-      | string
-      | undefined
-    const hasCustomerId = sessionCustomerId || publicCustomerId
-
-    return !!hasCustomerId
-  }
+  // Use secure server-side auth checks (cannot be manipulated from console)
+  const canBookmark = () => auth.canBookmark
+  const canAddToCart = () => auth.canAddToCart
 
   // Handle bookmark toggle using store
   const handleBookmarkToggle = async () => {
@@ -109,23 +88,45 @@ export function ProductCard({
   }
 
   const handleDecrease = () => {
+    // Check auth first
+    if (!canAddToCart()) {
+      if (!isAuthenticated) {
+        toast.error('Please sign in to modify cart items')
+      } else if (!auth.activeCustomerId) {
+        toast.error('Please select a customer account')
+      } else {
+        toast.error('You need proper permissions to modify cart')
+      }
+      return
+    }
     if (quantity > 0) setQuantity(quantity - 1)
   }
 
   const handleIncrease = () => {
+    // Check auth first
+    if (!canAddToCart()) {
+      if (!isAuthenticated) {
+        toast.error('Please sign in to add items to cart')
+      } else if (!auth.activeCustomerId) {
+        toast.error('Please select a customer account')
+      } else {
+        toast.error('You need proper permissions to add to cart')
+      }
+      return
+    }
     setQuantity(quantity + 1)
   }
 
-  const handleAddToCart = () => {
-    // Check if user is signed in
-    if (!isSignedIn) {
-      toast.error('Please sign in to add items to cart')
+  const handleAddToCart = async () => {
+    // Double check authentication (button should be disabled if not allowed)
+    if (!canAddToCart()) {
+      toast.error('Please sign in with a customer account to add items to cart')
       return
     }
 
     if (quantity > 0) {
       try {
-        addToCart(
+        const success = await addToCart(
           id,
           name,
           price,
@@ -135,8 +136,13 @@ export function ProductCard({
           unit,
           99 // max quantity
         )
-        toast.success(`Added ${quantity} ${name} to cart`)
-        setQuantity(0) // Reset quantity after adding
+        
+        if (success) {
+          toast.success(`Added ${quantity} ${name} to cart`)
+          setQuantity(0) // Reset quantity after adding
+        } else {
+          toast.error('Failed to add to cart. Please try again.')
+        }
       } catch (error) {
         toast.error('Failed to add to cart')
         console.error('Error adding to cart:', error)
@@ -208,7 +214,7 @@ export function ProductCard({
                 e.stopPropagation()
                 handleDecrease()
               }}
-              disabled={quantity === 0}
+              disabled={quantity === 0 || !canAddToCart()}
             >
               <Minus className="h-3 w-3" />
             </Button>
@@ -221,6 +227,7 @@ export function ProductCard({
                 e.stopPropagation()
                 handleIncrease()
               }}
+              disabled={!canAddToCart()}
             >
               <Plus className="h-3 w-3" />
             </Button>
@@ -232,7 +239,7 @@ export function ProductCard({
               e.stopPropagation()
               handleAddToCart()
             }}
-            disabled={quantity === 0}
+            disabled={quantity === 0 || !canAddToCart()}
           >
             {cartQuantity > 0 ? (
               <>

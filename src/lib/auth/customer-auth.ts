@@ -36,10 +36,8 @@ export function useCustomerAuth() {
   const requireCustomerAuth = (onSuccess: () => void): boolean => {
     // Check if user is signed in
     if (!isSignedIn) {
-      // Show toast from bottom-left
-      toast.error(t('requireSignIn', 'To continue you must sign in'), {
-        position: 'bottom-left',
-      })
+      // Show toast
+      toast.error(t('requireSignIn', 'To continue you must sign in'))
 
       // Open sign-in modal
       openSignIn()
@@ -58,10 +56,7 @@ export function useCustomerAuth() {
         t(
           'insufficientPermissions',
           'Insufficient permissions. Please contact support.'
-        ),
-        {
-          position: 'bottom-left',
-        }
+        )
       )
 
       return false

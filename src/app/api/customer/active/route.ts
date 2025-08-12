@@ -32,9 +32,13 @@ export async function GET() {
 
     // Check for admin impersonation
     if (userRole === 'admin') {
-      const impersonatingId = cookieStore.get(
-        'impersonating_customer_id'
-      )?.value
+      // Use the same cookie name as we set in switch route
+      const activeId = cookieStore.get('active_customer_id')?.value
+      
+      // Also check legacy cookie for backwards compatibility
+      const legacyId = cookieStore.get('impersonating_customer_id')?.value
+      
+      const impersonatingId = activeId || legacyId
 
       if (impersonatingId) {
         return NextResponse.json({

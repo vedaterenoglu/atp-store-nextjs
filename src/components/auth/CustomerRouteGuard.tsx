@@ -2,15 +2,15 @@
  * Customer route guard component
  * SOLID Principles: SRP - Single responsibility for customer authentication guard
  * Design Patterns: Guard Pattern, HOC Pattern
- * Dependencies: React, Clerk, Customer Service
+ * Dependencies: React, Clerk, useAuthGuard hook
  */
 
 'use client'
 
-import { useUser, SignIn } from '@clerk/nextjs'
+import { SignIn } from '@clerk/nextjs'
 import { useEffect, useState } from 'react'
 import { Dialog, DialogContent } from '@/components/ui/schadcn/dialog'
-import { toast } from '@/lib/utils/toast'
+import { useAuthGuard } from '@/hooks/use-auth-guard'
 
 interface CustomerRouteGuardProps {
   children: React.ReactNode
@@ -19,68 +19,34 @@ interface CustomerRouteGuardProps {
 
 export function CustomerRouteGuard({
   children,
-  requireActiveCustomer = true,
 }: CustomerRouteGuardProps) {
-  const { isLoaded, isSignedIn, user } = useUser()
+  const { isLoading, canAccessCustomerFeatures } = useAuthGuard()
   const [showSignInModal, setShowSignInModal] = useState(false)
-  const [activeCustomerId, setActiveCustomerId] = useState<string | null>(null)
-  const [checkingCustomer, setCheckingCustomer] = useState(true)
+  const [authError, setAuthError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!isLoaded) return
+    if (isLoading) return
 
-    // Check if user is signed in
-    if (!isSignedIn) {
-      setShowSignInModal(true)
-      setCheckingCustomer(false)
-      return
-    }
-
-    // Check if user has customer role
-    const userRole = user?.publicMetadata?.['role'] as string
-    if (userRole !== 'customer') {
-      setShowSignInModal(true)
-      setCheckingCustomer(false)
-      return
-    }
-
-    // Check for active customer from cookie
-    if (requireActiveCustomer) {
-      fetch('/api/customer/active')
-        .then(res => res.json())
-        .then(data => {
-          if (data.customerId) {
-            setActiveCustomerId(data.customerId)
-            setShowSignInModal(false)
-          } else {
-            // User needs to select a customer
-            const customerIds = user?.publicMetadata?.customerids as string[] | undefined
-            if (customerIds && customerIds.length > 0) {
-              toast.warning('Please select a customer account to continue', {
-                position: 'bottom-left',
-              })
-            } else {
-              toast.error('No customer accounts found for your user', {
-                position: 'bottom-left',
-              })
-              setShowSignInModal(true)
-            }
-          }
-          setCheckingCustomer(false)
-        })
-        .catch(error => {
-          console.error('Failed to check active customer:', error)
-          setCheckingCustomer(false)
-        })
+    // Use centralized auth check
+    const result = canAccessCustomerFeatures()
+    
+    if (!result.success) {
+      setAuthError(result.message || 'Access denied')
+      
+      // Show sign-in modal for NOT_SIGNED_IN or INVALID_ROLE
+      if (result.error === 'NOT_SIGNED_IN' || result.error === 'INVALID_ROLE') {
+        setShowSignInModal(true)
+      } else {
+        setShowSignInModal(false)
+      }
     } else {
-      // All checks passed
+      setAuthError(null)
       setShowSignInModal(false)
-      setCheckingCustomer(false)
     }
-  }, [isLoaded, isSignedIn, user, requireActiveCustomer])
+  }, [isLoading, canAccessCustomerFeatures])
 
   // Loading state
-  if (!isLoaded || checkingCustomer) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
@@ -88,11 +54,9 @@ export function CustomerRouteGuard({
     )
   }
 
-  // Check authentication and authorization
-  const hasAccess =
-    isSignedIn &&
-    user?.publicMetadata?.['role'] === 'customer' &&
-    (!requireActiveCustomer || activeCustomerId)
+  // Check authentication and authorization using centralized service
+  const authResult = canAccessCustomerFeatures()
+  const hasAccess = authResult.success
 
   return (
     <>
@@ -102,14 +66,10 @@ export function CustomerRouteGuard({
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-md mx-auto text-center">
             <h2 className="text-2xl font-bold mb-4">
-              Customer Access Required
+              Access Required
             </h2>
             <p className="text-muted-foreground mb-6">
-              {!isSignedIn 
-                ? 'Please sign in with a valid customer account to access this area.'
-                : !activeCustomerId && requireActiveCustomer
-                ? 'Please select a customer account from the dropdown in the navigation bar.'
-                : 'Please sign in with a valid customer account to access this area.'}
+              {authError || 'Please sign in to access this area.'}
             </p>
           </div>
         </div>

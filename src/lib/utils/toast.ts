@@ -33,13 +33,15 @@ interface ToastOptions {
 }
 
 class ToastFacade {
+  private defaultPosition: ToastOptions['position'] = 'top-right'
+
   success(message: string, options?: ToastOptions) {
     const toastOptions: ExternalToast = {
       duration: options?.duration || 4000,
+      position: options?.position || this.defaultPosition,
     }
 
     if (options?.id) toastOptions.id = options.id
-    if (options?.position) toastOptions.position = options.position
     if (options?.onDismiss) {
       toastOptions.onDismiss = () => options.onDismiss!()
     }
@@ -65,10 +67,10 @@ class ToastFacade {
   error(message: string, options?: ToastOptions) {
     const toastOptions: ExternalToast = {
       duration: options?.duration || 6000, // Longer for errors
+      position: options?.position || this.defaultPosition,
     }
 
     if (options?.id) toastOptions.id = options.id
-    if (options?.position) toastOptions.position = options.position
     if (options?.onDismiss) {
       toastOptions.onDismiss = () => options.onDismiss!()
     }
@@ -94,10 +96,10 @@ class ToastFacade {
   warning(message: string, options?: ToastOptions) {
     const toastOptions: ExternalToast = {
       duration: options?.duration || 5000,
+      position: options?.position || this.defaultPosition,
     }
 
     if (options?.id) toastOptions.id = options.id
-    if (options?.position) toastOptions.position = options.position
     if (options?.onDismiss) {
       toastOptions.onDismiss = () => options.onDismiss!()
     }
@@ -123,10 +125,10 @@ class ToastFacade {
   info(message: string, options?: ToastOptions) {
     const toastOptions: ExternalToast = {
       duration: options?.duration || 4000,
+      position: options?.position || this.defaultPosition,
     }
 
     if (options?.id) toastOptions.id = options.id
-    if (options?.position) toastOptions.position = options.position
     if (options?.onDismiss) {
       toastOptions.onDismiss = () => options.onDismiss!()
     }
@@ -150,10 +152,11 @@ class ToastFacade {
   }
 
   loading(message: string, options?: Omit<ToastOptions, 'duration'>) {
-    const toastOptions: ExternalToast = {}
+    const toastOptions: ExternalToast = {
+      position: options?.position || this.defaultPosition,
+    }
 
     if (options?.id) toastOptions.id = options.id
-    if (options?.position) toastOptions.position = options.position
     if (options?.onDismiss) {
       toastOptions.onDismiss = () => options.onDismiss!()
     }
@@ -176,21 +179,22 @@ class ToastFacade {
     },
     options?: ToastOptions
   ) {
-    const toastOptions: ExternalToast = {}
+    const toastOptions: ExternalToast = {
+      position: options?.position || this.defaultPosition,
+    }
 
     if (options?.id) toastOptions.id = options.id
-    if (options?.position) toastOptions.position = options.position
 
-    return sonnerToast.promise(promise, messages)
+    return sonnerToast.promise(promise, messages, toastOptions)
   }
 
   custom(jsx: ReactNode, options?: ToastOptions) {
     const toastOptions: ExternalToast = {
       duration: options?.duration || 4000,
+      position: options?.position || this.defaultPosition,
     }
 
     if (options?.id) toastOptions.id = options.id
-    if (options?.position) toastOptions.position = options.position
     if (options?.onDismiss) {
       toastOptions.onDismiss = () => options.onDismiss!()
     }

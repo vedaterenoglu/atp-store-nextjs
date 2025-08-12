@@ -2,7 +2,7 @@
  * BookmarksFilterButton Atom Component
  * SOLID Principles: Single Responsibility - Navigate to bookmarks or toggle filter
  * Design Patterns: Navigation/Toggle Component Pattern with Auth Guard
- * Dependencies: shadcn/ui Button, lucide-react icons, react-i18next, role auth, next router
+ * Dependencies: shadcn/ui Button, lucide-react icons, react-i18next, secure auth, next router
  */
 
 'use client'
@@ -11,9 +11,9 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/schadcn'
 import { Bookmark } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useRoleAuth } from '@/lib/auth/role-auth'
 import { useRouter } from 'next/navigation'
-import { useAuth, useUser } from '@clerk/nextjs'
+import { useSecureAuth } from '@/hooks/use-secure-auth'
+import { toast } from '@/lib/utils/toast'
 
 interface BookmarksFilterButtonProps {
   isActive?: boolean
@@ -23,48 +23,39 @@ interface BookmarksFilterButtonProps {
 
 export function BookmarksFilterButton({
   isActive = false,
-  onClick,
   className,
 }: BookmarksFilterButtonProps) {
   const { t } = useTranslation('products')
-  const { requireAuth } = useRoleAuth()
   const router = useRouter()
-  const { isSignedIn, sessionClaims } = useAuth()
-  const { user } = useUser()
+  const { auth, isAuthenticated } = useSecureAuth()
 
   const handleClick = () => {
-    // Check if user is signed in and has customer role with customerid
-    if (isSignedIn) {
-      const metadata = sessionClaims?.['metadata'] as
-        | Record<string, unknown>
-        | undefined
-      const sessionRole = metadata?.['role'] as string | undefined
-      const publicRole = user?.publicMetadata?.['role'] as string | undefined
-      const userRole = sessionRole || publicRole
-
-      const sessionCustomerId = metadata?.['customerid'] as string | undefined
-      const publicCustomerId = user?.publicMetadata?.['customerid'] as
-        | string
-        | undefined
-      const hasCustomerId = sessionCustomerId || publicCustomerId
-
-      // If customer with customerid, navigate to favorites
-      if (userRole === 'customer' && hasCustomerId) {
-        router.push('/favorites')
-        return
-      }
+    console.log('🔘 BookmarksFilterButton clicked, auth state:', {
+      isAuthenticated,
+      auth,
+      canBookmark: auth.canBookmark,
+      activeCustomerId: auth.activeCustomerId,
+      role: auth.role
+    })
+    
+    // Use server-provided permission flags instead of manual checks
+    if (!isAuthenticated) {
+      toast.error('Please sign in to access bookmarks')
+      return
     }
-
-    // Otherwise, require auth and then execute onClick (filter)
-    requireAuth(
-      'customer',
-      () => {
-        if (onClick) onClick()
-      },
-      {
-        showToast: true,
+    
+    // Check if user can bookmark (server handles admin logic)
+    if (!auth.canBookmark) {
+      if (!auth.role || (auth.role !== 'customer' && auth.role !== 'admin')) {
+        toast.error('You need a customer or admin account to access bookmarks')
+      } else {
+        toast.error('Please select a customer account to access bookmarks')
       }
-    )
+      return
+    }
+    
+    // All checks passed, navigate to favorites
+    router.push('/favorites')
   }
 
   return (

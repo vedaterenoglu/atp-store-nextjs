@@ -36,6 +36,7 @@ describe('Toast Utility', () => {
 
       expect(mockSonnerToast.success).toHaveBeenCalledWith(message, {
         duration: 4000,
+        position: 'top-right',
       })
     })
 
@@ -46,6 +47,7 @@ describe('Toast Utility', () => {
 
       expect(mockSonnerToast.success).toHaveBeenCalledWith(message, {
         duration: 5000,
+        position: 'top-right',
       })
     })
   })
@@ -57,6 +59,7 @@ describe('Toast Utility', () => {
 
       expect(mockSonnerToast.error).toHaveBeenCalledWith(message, {
         duration: 6000,
+        position: 'top-right',
       })
     })
   })
@@ -68,6 +71,7 @@ describe('Toast Utility', () => {
 
       expect(mockSonnerToast.warning).toHaveBeenCalledWith(message, {
         duration: 5000,
+        position: 'top-right',
       })
     })
   })
@@ -79,6 +83,7 @@ describe('Toast Utility', () => {
 
       expect(mockSonnerToast.info).toHaveBeenCalledWith(message, {
         duration: 4000,
+        position: 'top-right',
       })
     })
   })
@@ -88,7 +93,9 @@ describe('Toast Utility', () => {
       const message = 'Loading...'
       toast.loading(message)
 
-      expect(mockSonnerToast.loading).toHaveBeenCalledWith(message, {})
+      expect(mockSonnerToast.loading).toHaveBeenCalledWith(message, {
+        position: 'top-right',
+      })
     })
   })
 

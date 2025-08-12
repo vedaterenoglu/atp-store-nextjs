@@ -29,20 +29,22 @@ import {
 import { ThemeToggle, LanguageToggle } from '@/components/ui/custom'
 import { LayoutDashboard, ShoppingCart, Menu, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useRoleAuth } from '@/lib/auth/role-auth'
 import { useSafeTranslation } from '@/hooks/use-safe-translation'
 import { useCartCount } from '@/lib/stores/cart.store'
 import { CartBadge } from '@/components/cart/atoms/CartBadge'
 import { getLayoutClasses } from '@/lib/styles/utilities'
 import { cn } from '@/lib/utils'
+import { toast } from '@/lib/utils/toast'
 import { CustomerSwitcher } from '@/components/customer/organisms/CustomerSwitcher'
 import { ImpersonationBanner } from '@/components/customer/molecules/ImpersonationBanner'
+import { useAuthGuard } from '@/hooks/use-auth-guard'
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   return (
     <>
+      
       {/* Admin Impersonation Banner */}
       <ImpersonationBanner />
       
@@ -109,12 +111,16 @@ function NavbarActions({
 }) {
   return (
     <div className="flex items-center gap-2 sm:gap-4">
+      {/* Customer Switcher - Visible on desktop, moved to first position */}
+      <div className="hidden sm:block">
+        <CustomerSwitcher />
+      </div>
+
       {/* Cart Button - Always visible on all screens */}
       <CartButton />
 
       {/* Desktop Navigation Items */}
       <div className="hidden sm:flex items-center gap-4">
-        <CustomerSwitcher />
         <CustomerDashboardButton />
         <LanguageToggleWithTooltip />
         <ThemeToggleWithTooltip />
@@ -145,40 +151,45 @@ function NavbarActions({
 }
 
 function CartButton() {
-  // Hooks must be in exact same order every render
   const { t } = useSafeTranslation('common')
   const [isMounted, setIsMounted] = useState(false)
   const router = useRouter()
-  const { isSignedIn } = useAuth()
-  const { requireAuth, hasRole } = useRoleAuth()
   const cartCount = useCartCount()
+  const { authContext } = useAuthGuard()
 
   // Prevent hydration mismatch by only showing badge after mount
   useEffect(() => {
     setIsMounted(true)
   }, [])
 
-  // Show cart badge only for authenticated users with items (only after hydration)
-  const showBadge =
-    isMounted && isSignedIn && hasRole('customer') && cartCount > 0
+  // Determine if cart is accessible
+  const isCartAccessible = 
+    authContext.isSignedIn && 
+    authContext.role && 
+    (authContext.role === 'customer' || authContext.role === 'admin') && 
+    authContext.hasActiveCustomer
+
+  // Show cart badge only when there are items and cart is accessible
+  const showBadge = isMounted && cartCount > 0 && isCartAccessible
 
   const handleCartClick = () => {
-    // Require authentication before navigating to cart
-    if (!isSignedIn || !hasRole('customer')) {
-      requireAuth(
-        'customer',
-        () => {
-          router.push('/cart')
-        },
-        {
-          showToast: true,
-          redirectTo: '/cart',
-        }
-      )
-    } else {
-      // Authenticated customer - go directly to cart
-      router.push('/cart')
+    // Check auth conditions and show appropriate toast
+    if (!authContext.isSignedIn) {
+      toast.error('Please sign in to access cart')
+      return
     }
+    
+    if (!authContext.role || (authContext.role !== 'customer' && authContext.role !== 'admin')) {
+      toast.error('You need a customer or admin account to access cart')
+      return
+    }
+    
+    if (!authContext.hasActiveCustomer) {
+      toast.error('Please select a customer account to access cart')
+      return
+    }
+    
+    router.push('/cart')
   }
 
   return (
@@ -187,7 +198,10 @@ function CartButton() {
         <Button
           variant="ghost"
           size="icon"
-          className="h-9 w-9 relative"
+          className={cn(
+            "h-9 w-9 relative",
+            !isCartAccessible && "opacity-50 hover:opacity-50"
+          )}
           aria-label={t('navigation.cart')}
           onClick={handleCartClick}
         >
@@ -200,7 +214,7 @@ function CartButton() {
         </Button>
       </TooltipTrigger>
       <TooltipContent>
-        <p>{t('tooltips.navbar.cart')}</p>
+        <p>{!isCartAccessible ? 'Sign in and select a customer to access cart' : t('tooltips.navbar.cart')}</p>
       </TooltipContent>
     </Tooltip>
   )
@@ -241,42 +255,34 @@ function LanguageToggleWithTooltip() {
 }
 
 function CustomerDashboardButton() {
-  const { isLoaded, hasRole, requireAuth } = useRoleAuth()
-  const { user } = useUser()
   const router = useRouter()
-  // const { t } = useSafeTranslation('common')
+  const { authContext } = useAuthGuard()
 
-  // Only show for signed-in customers
-  if (!isLoaded || !hasRole('customer')) {
-    return null
-  }
+  // Determine if dashboard is accessible
+  const isDashboardAccessible = 
+    authContext.isSignedIn && 
+    authContext.role && 
+    (authContext.role === 'customer' || authContext.role === 'admin') && 
+    authContext.hasActiveCustomer
 
   const handleClick = () => {
-    // Check for customerid in publicMetadata
-    const customerid = user?.publicMetadata?.customerid as string | undefined
-    
-    if (!customerid) {
-      // Show error toast if customerid is missing
-      const { toast } = require('@/lib/utils/toast')
-      toast.error('Customer ID not found in your account', {
-        position: 'bottom-left',
-      })
-      // Still redirect to customer dashboard where guard will handle sign-in
-      router.push('/customer/dashboard')
+    // Check auth conditions and show appropriate toast
+    if (!authContext.isSignedIn) {
+      toast.error('Please sign in to access dashboard')
       return
     }
-
-    // All checks passed - navigate to customer dashboard
-    requireAuth(
-      'customer',
-      () => {
-        router.push('/customer/dashboard')
-      },
-      {
-        showToast: true,
-        redirectTo: '/customer/dashboard',
-      }
-    )
+    
+    if (!authContext.role || (authContext.role !== 'customer' && authContext.role !== 'admin')) {
+      toast.error('You need a customer or admin account to access dashboard')
+      return
+    }
+    
+    if (!authContext.hasActiveCustomer) {
+      toast.error('Please select a customer account to access dashboard')
+      return
+    }
+    
+    router.push('/customer/dashboard')
   }
 
   return (
@@ -285,7 +291,10 @@ function CustomerDashboardButton() {
         <Button
           variant="ghost"
           size="icon"
-          className="h-9 w-9"
+          className={cn(
+            "h-9 w-9",
+            !isDashboardAccessible && "opacity-50 hover:opacity-50"
+          )}
           aria-label="Customer Dashboard"
           onClick={handleClick}
         >
@@ -293,7 +302,7 @@ function CustomerDashboardButton() {
         </Button>
       </TooltipTrigger>
       <TooltipContent>
-        <p>Customer Dashboard</p>
+        <p>{!isDashboardAccessible ? 'Sign in and select a customer to access dashboard' : 'Customer Dashboard'}</p>
       </TooltipContent>
     </Tooltip>
   )
@@ -301,7 +310,6 @@ function CustomerDashboardButton() {
 
 function NavbarAuth() {
   const { isLoaded, isSignedIn } = useAuth()
-  const { user } = useUser()
 
   // Show loading state while Clerk initializes
   if (!isLoaded) {
@@ -314,7 +322,7 @@ function NavbarAuth() {
   }
 
   // Show user button for authenticated users
-  return <NavbarUserButton user={user} />
+  return <NavbarUserButton />
 }
 
 function NavbarAuthSkeleton() {
@@ -344,30 +352,11 @@ function NavbarSignIn() {
   )
 }
 
-function NavbarUserButton({
-  user,
-}: {
-  user: ReturnType<typeof useUser>['user']
-}) {
+function NavbarUserButton() {
   // const { t } = useSafeTranslation('common')
-  const isAdmin = user?.publicMetadata?.['role'] === 'admin'
 
   return (
     <div className="flex items-center gap-2">
-      {isAdmin && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Link href="/admin">
-              <Button variant="ghost" size="sm">
-                Admin
-              </Button>
-            </Link>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Admin Panel</p>
-          </TooltipContent>
-        </Tooltip>
-      )}
       <Tooltip>
         <TooltipTrigger asChild>
           <div>
@@ -389,31 +378,14 @@ function MobileMenu({
   isOpen: boolean
   onClose: () => void
 }) {
-  const { isLoaded, isSignedIn } = useAuth()
+  const { isSignedIn } = useAuth()
   const { user } = useUser()
-  const { hasRole } = useRoleAuth()
   const router = useRouter()
-  // const { t } = useSafeTranslation('common')
+  const { authContext } = useAuthGuard()
 
   if (!isOpen) return null
 
   const handleDashboardClick = () => {
-    // Check for customerid in publicMetadata
-    const customerid = user?.publicMetadata?.customerid as string | undefined
-    
-    if (!customerid) {
-      // Show error toast if customerid is missing
-      const { toast } = require('@/lib/utils/toast')
-      toast.error('Customer ID not found in your account', {
-        position: 'bottom-left',
-      })
-      // Still redirect to customer dashboard where guard will handle sign-in
-      router.push('/customer/dashboard')
-      onClose()
-      return
-    }
-
-    // All checks passed - navigate to customer dashboard
     router.push('/customer/dashboard')
     onClose()
   }
@@ -423,15 +395,17 @@ function MobileMenu({
   return (
     <div className={cn('sm:hidden border-t bg-background')}>
       <div className={cn('px-4 py-3 space-y-3')}>
-        {/* Customer Switcher for mobile */}
+        {/* Customer Switcher for mobile - Placed first for consistency */}
         <div className="flex justify-center">
           <CustomerSwitcher />
         </div>
         
         {/* Icons row - Dashboard, Language, Theme */}
         <div className="flex items-center justify-center gap-4">
-          {/* Customer Dashboard - Icon only */}
-          {isLoaded && hasRole('customer') && (
+          {/* Customer Dashboard - Icon only (for customers and admins) */}
+          {authContext.isSignedIn && 
+           (authContext.role === 'customer' || authContext.role === 'admin') && 
+           authContext.hasActiveCustomer && (
             <Button
               variant="ghost"
               size="icon"

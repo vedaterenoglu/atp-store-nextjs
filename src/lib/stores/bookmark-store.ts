@@ -7,6 +7,7 @@
 
 import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
+import { toast } from '@/lib/utils/toast'
 import {
   getCustomerBookmarks as fetchBookmarks,
   toggleBookmark as toggleBookmarkAction,
@@ -31,7 +32,7 @@ interface BookmarkState {
   error: string | null
 
   // Actions
-  initializeBookmarks: () => Promise<void>
+  initializeBookmarks: (forceRefresh?: boolean) => Promise<void>
   toggleBookmark: (
     stockId: string,
     productData?: BookmarkedProduct
@@ -55,11 +56,12 @@ export const useBookmarkStore = create<BookmarkState>()(
         error: null,
 
         // Initialize bookmarks from backend
-        initializeBookmarks: async () => {
+        initializeBookmarks: async (forceRefresh = false) => {
           const { isLoading, isInitialized } = get()
 
           // Prevent multiple simultaneous initializations
-          if (isLoading || isInitialized) return
+          // Allow force refresh to bypass isInitialized check
+          if (isLoading || (!forceRefresh && isInitialized)) return
 
           set({ isLoading: true, error: null })
 
@@ -157,6 +159,13 @@ export const useBookmarkStore = create<BookmarkState>()(
                 error: result.error || 'Failed to update bookmark',
               })
               console.error('❌ Bookmark toggle failed:', result.error)
+              
+              // Show user-friendly error message
+              if (result.error === 'Please select a customer first') {
+                toast.error('Please select a customer to use bookmarks')
+              } else {
+                toast.error(result.error || 'Failed to update bookmark')
+              }
             } else {
               // Bookmark toggled successfully
               // If we bookmarked but didn't have product data, fetch it

@@ -8,7 +8,7 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { CampaignPageContent } from '../CampaignPageContent'
 import type { CampaignProduct } from '@/types/campaign'
-import { toast } from 'sonner'
+import { toast } from '@/lib/utils/toast'
 
 // Mock react-i18next
 jest.mock('react-i18next', () => ({
@@ -26,8 +26,8 @@ jest.mock('react-i18next', () => ({
   }),
 }))
 
-// Mock sonner toast
-jest.mock('sonner', () => ({
+// Mock toast facade from lib/utils/toast
+jest.mock('@/lib/utils/toast', () => ({
   toast: {
     success: jest.fn(),
     error: jest.fn(),
@@ -80,6 +80,30 @@ jest.mock('@/components/ui/schadcn', () => ({
       'data-as-child': asChild,
     }, children)
   },
+}))
+
+// Mock cart store to prevent warnings
+const mockAddToCart = jest.fn(() => Promise.resolve(true))
+jest.mock('@/lib/stores/cart.store', () => ({
+  useCartStore: jest.fn((selector) => {
+    const state = {
+      isInitialized: true,
+      addToCart: mockAddToCart,
+      items: [],
+    }
+    return selector ? selector(state) : state
+  }),
+}))
+
+// Mock secure auth hook
+jest.mock('@/hooks/use-secure-auth', () => ({
+  useSecureAuth: jest.fn(() => ({
+    auth: {
+      canAddToCart: true,
+      activeCustomerId: 'customer-123',
+    },
+    isAuthenticated: true,
+  })),
 }))
 
 // Mock CampaignProductsGrid

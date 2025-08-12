@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/schadcn'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
+import { toast } from '@/lib/utils/toast'
 
 interface CampaignSectionProps {
   products: CampaignProduct[]

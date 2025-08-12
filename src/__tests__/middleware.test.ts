@@ -29,6 +29,15 @@ describe('Middleware', () => {
       )
     })
 
+    it('should import NextResponse and NextRequest from next/server', () => {
+      expect(middlewareSource).toContain(
+        "import { NextResponse } from 'next/server'"
+      )
+      expect(middlewareSource).toContain(
+        "import type { NextRequest } from 'next/server'"
+      )
+    })
+
     it('should define protected routes array', () => {
       expect(middlewareSource).toContain('/dashboard(.*)')
       expect(middlewareSource).toContain('/profile(.*)')
@@ -36,6 +45,7 @@ describe('Middleware', () => {
       expect(middlewareSource).toContain('/admin(.*)')
       expect(middlewareSource).toContain('/cart(.*)')
       expect(middlewareSource).toContain('/favorites(.*)')
+      expect(middlewareSource).toContain('/customer(.*)')
     })
 
     it('should create route matcher with protected routes', () => {
@@ -46,6 +56,7 @@ describe('Middleware', () => {
       expect(middlewareSource).toContain("'/admin(.*)',")
       expect(middlewareSource).toContain("'/cart(.*)',")
       expect(middlewareSource).toContain("'/favorites(.*)',")
+      expect(middlewareSource).toContain("'/customer(.*)',")
     })
 
     it('should export default clerkMiddleware', () => {
@@ -66,6 +77,7 @@ describe('Middleware', () => {
         '/admin(.*)',
         '/cart(.*)',
         '/favorites(.*)',
+        '/customer(.*)',
       ]
 
       requiredRoutes.forEach(route => {
@@ -73,12 +85,19 @@ describe('Middleware', () => {
       })
     })
 
+    it('should define role protected routes with patterns', () => {
+      expect(middlewareSource).toContain('roleProtectedRoutes')
+      expect(middlewareSource).toContain('pattern: RegExp')
+      expect(middlewareSource).toContain('requiredRole: string')
+      expect(middlewareSource).toContain('requiresActiveCustomer?: boolean')
+    })
+
     it('should use wildcard patterns for sub-routes', () => {
       expect(middlewareSource).toContain('(.*)')
     })
 
     it('should call auth.protect() for protected routes', () => {
-      expect(middlewareSource).toContain('if (isProtectedRoute(req)) {')
+      expect(middlewareSource).toContain('if (isProtectedRoute(req))')
       expect(middlewareSource).toContain('await auth.protect()')
     })
   })
@@ -115,11 +134,11 @@ describe('Middleware', () => {
 
   describe('Handler Function Structure', () => {
     it('should define async handler function', () => {
-      expect(middlewareSource).toContain('async (auth, req) => {')
+      expect(middlewareSource).toContain('async (auth, req: NextRequest)')
     })
 
     it('should accept auth and req parameters', () => {
-      expect(middlewareSource).toContain('(auth, req)')
+      expect(middlewareSource).toContain('(auth, req: NextRequest)')
     })
 
     it('should check if route is protected', () => {
@@ -135,7 +154,7 @@ describe('Middleware', () => {
     it('should include SOLID principles documentation', () => {
       expect(middlewareSource).toContain('SOLID Principles Applied:')
       expect(middlewareSource).toContain(
-        'SRP: Single responsibility for route protection'
+        'SRP: Single responsibility for route protection and customer validation'
       )
     })
 
@@ -184,6 +203,10 @@ describe('Middleware', () => {
       expect(middlewareSource).toContain("'/favorites(.*)'")
     })
 
+    it('should protect customer routes', () => {
+      expect(middlewareSource).toContain("'/customer(.*)'")
+    })
+
     it('should use consistent route pattern format', () => {
       const routePatterns = [
         '/dashboard(.*)',
@@ -192,6 +215,7 @@ describe('Middleware', () => {
         '/admin(.*)',
         '/cart(.*)',
         '/favorites(.*)',
+        '/customer(.*)',
       ]
 
       routePatterns.forEach(pattern => {
@@ -206,9 +230,11 @@ describe('Middleware', () => {
       const importLines = middlewareSource
         .split('\n')
         .filter(line => line.includes('import'))
-      expect(importLines).toHaveLength(2)
+      // We have 3 imports now: clerkMiddleware, NextResponse, and NextRequest type
+      expect(importLines).toHaveLength(3)
       expect(importLines[0]).toContain('@clerk/nextjs/server')
       expect(importLines[1]).toContain('next/server')
+      expect(importLines[2]).toContain('next/server')
     })
 
     it('should not use Node.js specific APIs', () => {
@@ -220,8 +246,9 @@ describe('Middleware', () => {
     })
 
     it('should use async/await pattern correctly', () => {
-      expect(middlewareSource).toContain('async (auth, req)')
+      expect(middlewareSource).toContain('async (auth, req: NextRequest)')
       expect(middlewareSource).toContain('await auth.protect()')
+      expect(middlewareSource).toContain('await auth()')
     })
   })
 
@@ -248,6 +275,10 @@ describe('Middleware', () => {
 
     it('should protect favorites routes', () => {
       expect(middlewareSource).toContain('/favorites(.*)')
+    })
+
+    it('should protect customer routes', () => {
+      expect(middlewareSource).toContain('/customer(.*)')
     })
 
     it('should call auth.protect() for authentication', () => {

@@ -21,6 +21,9 @@ jest.mock('@/lib/stores/cart.store', () => ({
   useCartStore: jest.fn(),
 }))
 
+// Mock fetch globally
+global.fetch = jest.fn()
+
 // Mock functions at module level
 const mockInitializeCart = jest.fn()
 const mockResetCart = jest.fn()
@@ -53,6 +56,8 @@ describe('CartProvider', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    // Reset fetch mock
+    ;(global.fetch as jest.Mock) = jest.fn()
     mockUseCartStore.mockReturnValue({
       initializeCart: mockInitializeCart,
       resetCart: mockResetCart,
@@ -163,8 +168,8 @@ describe('CartProvider', () => {
     })
   })
 
-  describe('Non-Customer Users', () => {
-    it('should reset cart for admin user', async () => {
+  describe('Admin Users', () => {
+    it('should initialize cart for admin user with active customer', async () => {
       mockUseUser.mockReturnValue({
         isLoaded: true,
         isSignedIn: true,
@@ -172,10 +177,15 @@ describe('CartProvider', () => {
           id: 'user-1',
           publicMetadata: {
             role: 'admin',
-            customerid: 'CUST-123',
+            customerids: ['CUST-123'],
           },
         },
       } as unknown as ReturnType<typeof useUser>)
+
+      // Mock fetch to return active customer
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+        json: jest.fn().mockResolvedValueOnce({ customerId: 'CUST-123' }),
+      })
 
       render(
         <CartProvider>
@@ -184,8 +194,12 @@ describe('CartProvider', () => {
       )
 
       await waitFor(() => {
-        expect(mockResetCart).toHaveBeenCalledTimes(1)
-        expect(mockInitializeCart).not.toHaveBeenCalled()
+        expect(global.fetch).toHaveBeenCalledWith('/api/customer/active')
+      })
+
+      await waitFor(() => {
+        expect(mockInitializeCart).toHaveBeenCalledWith('user-1', 'CUST-123')
+        expect(mockResetCart).not.toHaveBeenCalled()
       })
     })
 
@@ -196,10 +210,15 @@ describe('CartProvider', () => {
         user: {
           id: 'user-1',
           publicMetadata: {
-            customerid: 'CUST-123',
+            customerids: ['CUST-123'],
           },
         },
       } as unknown as ReturnType<typeof useUser>)
+
+      // Mock fetch to return no active customer
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+        json: jest.fn().mockResolvedValueOnce({}),
+      })
 
       render(
         <CartProvider>
@@ -213,7 +232,7 @@ describe('CartProvider', () => {
       })
     })
 
-    it('should reset cart for customer without customerid', async () => {
+    it('should reset cart for customer without customerids', async () => {
       mockUseUser.mockReturnValue({
         isLoaded: true,
         isSignedIn: true,
@@ -224,6 +243,11 @@ describe('CartProvider', () => {
           },
         },
       } as unknown as ReturnType<typeof useUser>)
+
+      // Mock fetch to return no active customer
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+        json: jest.fn().mockResolvedValueOnce({}),
+      })
 
       render(
         <CartProvider>
@@ -247,6 +271,11 @@ describe('CartProvider', () => {
         },
       } as unknown as ReturnType<typeof useUser>)
 
+      // Mock fetch to return no active customer
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+        json: jest.fn().mockResolvedValueOnce({}),
+      })
+
       render(
         <CartProvider>
           <div>Test</div>
@@ -268,6 +297,11 @@ describe('CartProvider', () => {
           publicMetadata: null,
         },
       } as unknown as ReturnType<typeof useUser>)
+
+      // Mock fetch to return no active customer
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+        json: jest.fn().mockResolvedValueOnce({}),
+      })
 
       render(
         <CartProvider>
@@ -291,6 +325,11 @@ describe('CartProvider', () => {
         },
       } as unknown as ReturnType<typeof useUser>)
 
+      // Mock fetch to return no active customer
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+        json: jest.fn().mockResolvedValueOnce({}),
+      })
+
       render(
         <CartProvider>
           <div>Test</div>
@@ -305,7 +344,7 @@ describe('CartProvider', () => {
   })
 
   describe('Customer Cart Initialization', () => {
-    it('should initialize cart for customer with valid customerid', async () => {
+    it('should initialize cart for customer with valid customerids', async () => {
       mockUseUser.mockReturnValue({
         isLoaded: true,
         isSignedIn: true,
@@ -313,16 +352,25 @@ describe('CartProvider', () => {
           id: 'user-123',
           publicMetadata: {
             role: 'customer',
-            customerid: 'CUST-456',
+            customerids: ['CUST-456'],
           },
         },
       } as unknown as ReturnType<typeof useUser>)
+
+      // Mock fetch to return active customer
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+        json: jest.fn().mockResolvedValueOnce({ customerId: 'CUST-456' }),
+      })
 
       render(
         <CartProvider>
           <div>Test</div>
         </CartProvider>
       )
+
+      await waitFor(() => {
+        expect(global.fetch).toHaveBeenCalledWith('/api/customer/active')
+      })
 
       await waitFor(() => {
         expect(mockInitializeCart).toHaveBeenCalledWith('user-123', 'CUST-456')
@@ -352,10 +400,15 @@ describe('CartProvider', () => {
           id: 'user-123',
           publicMetadata: {
             role: 'customer',
-            customerid: 'CUST-456',
+            customerids: ['CUST-456'],
           },
         },
       } as unknown as ReturnType<typeof useUser>)
+
+      // Mock fetch to return active customer
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+        json: jest.fn().mockResolvedValueOnce({ customerId: 'CUST-456' }),
+      })
 
       render(
         <CartProvider>
@@ -432,10 +485,15 @@ describe('CartProvider', () => {
           id: 'user-123',
           publicMetadata: {
             role: 'customer',
-            customerid: 'CUST-456',
+            customerids: ['CUST-456'],
           },
         },
       } as unknown as ReturnType<typeof useUser>)
+
+      // Mock fetch to return active customer
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+        json: jest.fn().mockResolvedValueOnce({ customerId: 'CUST-456' }),
+      })
 
       rerender(
         <CartProvider>
@@ -458,10 +516,15 @@ describe('CartProvider', () => {
           id: 'user-123',
           publicMetadata: {
             role: 'customer',
-            customerid: 'CUST-456',
+            customerids: ['CUST-456'],
           },
         },
       } as unknown as ReturnType<typeof useUser>)
+
+      // Mock fetch to return active customer
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+        json: jest.fn().mockResolvedValueOnce({ customerId: 'CUST-456' }),
+      })
 
       const { rerender } = render(
         <CartProvider>
@@ -475,7 +538,7 @@ describe('CartProvider', () => {
 
       jest.clearAllMocks()
 
-      // Change to: Admin
+      // Change to: Admin (admins now also can have cart)
       mockUseUser.mockReturnValue({
         isLoaded: true,
         isSignedIn: true,
@@ -483,10 +546,15 @@ describe('CartProvider', () => {
           id: 'user-123',
           publicMetadata: {
             role: 'admin',
-            customerid: 'CUST-456',
+            customerids: ['CUST-456'],
           },
         },
       } as unknown as ReturnType<typeof useUser>)
+
+      // Mock fetch again for admin
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+        json: jest.fn().mockResolvedValueOnce({ customerId: 'CUST-456' }),
+      })
 
       rerender(
         <CartProvider>
@@ -494,15 +562,16 @@ describe('CartProvider', () => {
         </CartProvider>
       )
 
+      // Admin with active customer should also get cart initialized
       await waitFor(() => {
-        expect(mockResetCart).toHaveBeenCalledTimes(1)
-        expect(mockInitializeCart).not.toHaveBeenCalled()
+        expect(mockInitializeCart).toHaveBeenCalledWith('user-123', 'CUST-456')
+        expect(mockResetCart).not.toHaveBeenCalled()
       })
     })
   })
 
   describe('Edge Cases', () => {
-    it('should handle empty string customerid', async () => {
+    it('should handle empty customerids array', async () => {
       mockUseUser.mockReturnValue({
         isLoaded: true,
         isSignedIn: true,
@@ -510,10 +579,16 @@ describe('CartProvider', () => {
           id: 'user-1',
           publicMetadata: {
             role: 'customer',
-            customerid: '',
+            customerids: [],
           },
         },
       } as unknown as ReturnType<typeof useUser>)
+
+      // Even though user is signed in, customerids is empty so no fetch will be made
+      // But we still need to provide mock in case component calls it
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+        json: jest.fn().mockResolvedValueOnce({}),
+      })
 
       render(
         <CartProvider>
@@ -527,7 +602,7 @@ describe('CartProvider', () => {
       })
     })
 
-    it('should handle whitespace-only customerid', async () => {
+    it('should handle fetch error gracefully', async () => {
       mockUseUser.mockReturnValue({
         isLoaded: true,
         isSignedIn: true,
@@ -535,10 +610,14 @@ describe('CartProvider', () => {
           id: 'user-1',
           publicMetadata: {
             role: 'customer',
-            customerid: '   ',
+            customerids: ['CUST-123'],
           },
         },
       } as unknown as ReturnType<typeof useUser>)
+
+      // Mock fetch to reject
+      ;(global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'))
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
 
       render(
         <CartProvider>
@@ -547,13 +626,16 @@ describe('CartProvider', () => {
       )
 
       await waitFor(() => {
-        // Whitespace is still truthy, so it would initialize
-        expect(mockInitializeCart).toHaveBeenCalledWith('user-1', '   ')
-        expect(mockResetCart).not.toHaveBeenCalled()
+        expect(consoleSpy).toHaveBeenCalledWith('Failed to fetch active customer:', expect.any(Error))
       })
+
+      // Should not initialize cart when fetch fails
+      expect(mockInitializeCart).not.toHaveBeenCalled()
+      
+      consoleSpy.mockRestore()
     })
 
-    it('should handle numeric customerid', async () => {
+    it('should handle multiple customerids', async () => {
       mockUseUser.mockReturnValue({
         isLoaded: true,
         isSignedIn: true,
@@ -561,10 +643,15 @@ describe('CartProvider', () => {
           id: 'user-1',
           publicMetadata: {
             role: 'customer',
-            customerid: 12345 as unknown, // Numeric instead of string
+            customerids: ['CUST-123', 'CUST-456', 'CUST-789'],
           },
         },
       } as unknown as ReturnType<typeof useUser>)
+
+      // Mock fetch to return the first customer as active
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+        json: jest.fn().mockResolvedValueOnce({ customerId: 'CUST-456' }),
+      })
 
       render(
         <CartProvider>
@@ -573,8 +660,8 @@ describe('CartProvider', () => {
       )
 
       await waitFor(() => {
-        // Numeric value is cast to string and still truthy
-        expect(mockInitializeCart).toHaveBeenCalledWith('user-1', 12345)
+        // Should initialize with the active customer from API
+        expect(mockInitializeCart).toHaveBeenCalledWith('user-1', 'CUST-456')
         expect(mockResetCart).not.toHaveBeenCalled()
       })
     })

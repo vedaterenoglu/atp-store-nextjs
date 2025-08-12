@@ -61,18 +61,19 @@ export function CustomerDropdown({
   if (!isAdmin && customers.length === 1) {
     const customer = customers[0]
     if (!customer) return null
+    const title = customer.customer_title || customer.customer_nickname || ''
     return (
       <CustomerBadge
         customerId={customer.customer_id}
-        customerTitle={customer.customer_title || customer.customer_nickname}
-        className={className}
+        customerTitle={title}
+        className={className || ''}
       />
     )
   }
 
   return (
     <Select
-      value={activeCustomerId ?? undefined}
+      value={activeCustomerId || ''}
       onValueChange={handleSelect}
       open={open}
       onOpenChange={setOpen}

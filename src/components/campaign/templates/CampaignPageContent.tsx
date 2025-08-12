@@ -10,7 +10,7 @@
 import { useState } from 'react'
 import { CampaignProductsGrid } from '@/components/campaign/organisms'
 import type { CampaignProduct } from '@/types/campaign'
-import { toast } from 'sonner'
+import { toast } from '@/lib/utils/toast'
 import { Button } from '@/components/ui/schadcn'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'

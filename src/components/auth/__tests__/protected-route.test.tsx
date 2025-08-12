@@ -229,7 +229,7 @@ describe('ProtectedRoute', () => {
       await waitFor(() => {
         expect(mockToast.error).toHaveBeenCalledWith(
           'Please sign in to continue',
-          { position: 'bottom-left', duration: 4000 }
+          { duration: 4000 }
         )
         expect(mockRouterPush).toHaveBeenCalledWith(
           expect.stringMatching(/^\/sign-in\?redirect_url=/)
@@ -263,7 +263,7 @@ describe('ProtectedRoute', () => {
       await waitFor(() => {
         expect(mockToast.error).toHaveBeenCalledWith(
           'You do not have permission to access this page',
-          { position: 'bottom-left', duration: 4000 }
+          { duration: 4000 }
         )
         expect(mockRouterPush).toHaveBeenCalledWith('/home')
       })

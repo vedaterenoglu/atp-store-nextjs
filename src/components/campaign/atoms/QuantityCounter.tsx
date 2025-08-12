@@ -17,6 +17,7 @@ interface QuantityCounterProps {
   min?: number
   max?: number
   disabled?: boolean
+  canModify?: boolean  // New prop to determine if user has permission
   className?: string
 }
 
@@ -27,6 +28,7 @@ export function QuantityCounter({
   min = 0,
   max = 99,
   disabled = false,
+  canModify = true,  // Default to true for backwards compatibility
   className = '',
 }: QuantityCounterProps) {
   return (
@@ -37,9 +39,10 @@ export function QuantityCounter({
         className="h-8 w-8 p-0"
         onClick={e => {
           e.stopPropagation()
+          // Always call handler - parent will show toast if needed
           onDecrease()
         }}
-        disabled={disabled || quantity <= min}
+        disabled={disabled || !canModify || quantity <= min}
       >
         <Minus className="h-3 w-3" />
       </Button>
@@ -50,9 +53,10 @@ export function QuantityCounter({
         className="h-8 w-8 p-0"
         onClick={e => {
           e.stopPropagation()
+          // Always call handler - parent will show toast if needed
           onIncrease()
         }}
-        disabled={disabled || quantity >= max}
+        disabled={disabled || !canModify || quantity >= max}
       >
         <Plus className="h-3 w-3" />
       </Button>

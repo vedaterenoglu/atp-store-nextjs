@@ -104,7 +104,11 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
     } of roleProtectedRoutes) {
       if (pattern.test(pathname)) {
         // Check role requirement
-        if (userRole !== requiredRole) {
+        // Allow admin to access customer routes (admin can do everything customer can)
+        const hasRequiredRole = userRole === requiredRole || 
+          (requiredRole === 'customer' && userRole === 'admin')
+        
+        if (!hasRequiredRole) {
           const homeUrl = new URL('/', req.url)
           homeUrl.searchParams.set('error', 'unauthorized')
           homeUrl.searchParams.set('required_role', requiredRole)
@@ -138,12 +142,12 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
         // Check for admin impersonation
         if (userRole === 'admin' && requiresActiveCustomer) {
           // Admin can view customer routes via impersonation
-          const impersonatingId = req.cookies.get(
-            'impersonating_customer_id'
-          )?.value
+          // Check both possible cookie names (active_customer_id is the standard one)
+          const activeCustomerId = req.cookies.get('active_customer_id')?.value
+          const impersonatingId = req.cookies.get('impersonating_customer_id')?.value
 
-          // Allow admin access if impersonating
-          if (!impersonatingId && pathname !== '/customer/switch') {
+          // Allow admin access if they have selected a customer
+          if (!activeCustomerId && !impersonatingId && pathname !== '/customer/switch') {
             // Redirect admin to customer selection
             const switchUrl = new URL('/customer/switch', req.url)
             switchUrl.searchParams.set('redirect', pathname)

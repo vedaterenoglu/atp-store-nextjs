@@ -24,7 +24,7 @@ import {
   useCartSummary,
 } from '@/lib/stores/cart.store'
 import { useCartSync } from '@/hooks/use-cart-sync'
-import { toast } from 'sonner'
+import { toast } from '@/lib/utils/toast'
 import { formatPrice } from '@/lib/utils/price'
 
 export function CustomerCartTemplate() {
