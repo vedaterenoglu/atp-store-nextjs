@@ -5,6 +5,7 @@
  * Dependencies: React Testing Library, Jest, Next.js Image mock
  */
 
+import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { SliderSlide } from '../SliderSlide'
 import type { CampaignProduct } from '@/types/campaign'
@@ -12,46 +13,71 @@ import type { CampaignProduct } from '@/types/campaign'
 // Mock Next.js Image
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: jest.fn((props: any) => {
-    const { priority, fill, sizes, ...imgProps } = props
-    return (
-      <img
-        {...imgProps}
-        data-priority={priority}
-        data-fill={fill}
-        data-sizes={sizes}
-        data-testid="product-image"
-      />
-    )
-  }),
+  default: jest.fn(
+    (
+      props: React.ImgHTMLAttributes<HTMLImageElement> & {
+        priority?: boolean
+        fill?: boolean
+        sizes?: string
+      }
+    ) => {
+      const { priority, fill, sizes, alt = '', ...imgProps } = props
+      return (
+        <img
+          {...imgProps}
+          alt={alt}
+          data-priority={priority}
+          data-fill={fill}
+          data-sizes={sizes}
+          data-testid="product-image"
+        />
+      )
+    }
+  ),
 }))
 
 // Mock DiscountBadge - imported from atoms barrel export
 jest.mock('../../atoms', () => ({
-  DiscountBadge: jest.fn(({ originalPrice, discountedPrice }: any) => (
-    <div
-      data-testid="discount-badge"
-      data-original-price={originalPrice}
-      data-discounted-price={discountedPrice}
-    >
-      Discount Badge
-    </div>
-  )),
+  DiscountBadge: jest.fn(
+    ({
+      originalPrice,
+      discountedPrice,
+    }: {
+      originalPrice: number
+      discountedPrice: number
+    }) => (
+      <div
+        data-testid="discount-badge"
+        data-original-price={originalPrice}
+        data-discounted-price={discountedPrice}
+      >
+        Discount Badge
+      </div>
+    )
+  ),
 }))
 
 // Mock SliderOverlay
 jest.mock('../SliderOverlay', () => ({
-  SliderOverlay: jest.fn((props: any) => (
-    <div
-      data-testid="slider-overlay"
-      data-stock-name={props.stock_name}
-      data-stock-unit={props.stock_unit}
-      data-stock-price={props.stock_price}
-      data-campaign-price={props.campaign_price}
-    >
-      Slider Overlay
-    </div>
-  )),
+  SliderOverlay: jest.fn(
+    (props: {
+      stock_name: string
+      stock_unit?: string
+      stock_price?: number
+      campaign_price?: number
+      onProductClick?: () => void
+    }) => (
+      <div
+        data-testid="slider-overlay"
+        data-stock-name={props.stock_name}
+        data-stock-unit={props.stock_unit}
+        data-stock-price={props.stock_price}
+        data-campaign-price={props.campaign_price}
+      >
+        Slider Overlay
+      </div>
+    )
+  ),
 }))
 
 describe('SliderSlide', () => {

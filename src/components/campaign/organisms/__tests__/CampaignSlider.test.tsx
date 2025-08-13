@@ -27,7 +27,7 @@ jest.mock('react-i18next', () => ({
 // The real toast facade always adds default options when called
 jest.mock('@/lib/utils/toast', () => ({
   toast: {
-    info: jest.fn((message: string, options?: unknown) => {
+    info: jest.fn((message: string) => {
       // Simulate the real behavior where the facade adds default options
       return message
     }),
@@ -73,9 +73,13 @@ jest.mock('@/components/ui/schadcn/carousel', () => ({
       }
       setApi?.(mockApi)
     }, [setApi])
-    
+
     return (
-      <div data-testid="carousel" className={className} data-opts={JSON.stringify(opts)}>
+      <div
+        data-testid="carousel"
+        className={className}
+        data-opts={JSON.stringify(opts)}
+      >
         {children}
       </div>
     )
@@ -110,50 +114,49 @@ interface SliderControlsProps {
 
 jest.mock('../../molecules', () => ({
   SliderSlide: jest.fn(({ product, onClick }: SliderSlideProps) => (
-    <div
-      data-testid={`slider-slide-${product.stock_id}`}
-      onClick={onClick}
-    >
+    <div data-testid={`slider-slide-${product.stock_id}`} onClick={onClick}>
       Slide: {product.stock_name}
     </div>
   )),
-  SliderControls: jest.fn(({
-    total,
-    current,
-    onPrevious,
-    onNext,
-    onSelect,
-    canScrollPrev,
-    canScrollNext,
-  }: SliderControlsProps) => (
-    <div data-testid="slider-controls">
-      <button
-        data-testid="prev-button"
-        onClick={onPrevious}
-        disabled={!canScrollPrev}
-      >
-        Previous
-      </button>
-      <button
-        data-testid="next-button"
-        onClick={onNext}
-        disabled={!canScrollNext}
-      >
-        Next
-      </button>
-      <span data-testid="current-index">{current}</span>
-      <span data-testid="total-items">{total}</span>
-      {Array.from({ length: total }, (_, i) => (
+  SliderControls: jest.fn(
+    ({
+      total,
+      current,
+      onPrevious,
+      onNext,
+      onSelect,
+      canScrollPrev,
+      canScrollNext,
+    }: SliderControlsProps) => (
+      <div data-testid="slider-controls">
         <button
-          key={i}
-          data-testid={`indicator-${i}`}
-          onClick={() => onSelect(i)}
+          data-testid="prev-button"
+          onClick={onPrevious}
+          disabled={!canScrollPrev}
         >
-          {i}
+          Previous
         </button>
-      ))}
-    </div>
-  )),
+        <button
+          data-testid="next-button"
+          onClick={onNext}
+          disabled={!canScrollNext}
+        >
+          Next
+        </button>
+        <span data-testid="current-index">{current}</span>
+        <span data-testid="total-items">{total}</span>
+        {Array.from({ length: total }, (_, i) => (
+          <button
+            key={i}
+            data-testid={`indicator-${i}`}
+            onClick={() => onSelect(i)}
+          >
+            {i}
+          </button>
+        ))}
+      </div>
+    )
+  ),
 }))
 
 describe('CampaignSlider', () => {

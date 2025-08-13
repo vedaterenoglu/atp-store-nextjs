@@ -62,24 +62,18 @@ export function MostPurchasedProductsGrid() {
         const customerId = activeCustomerData?.customerId
 
         if (!customerId) {
-          console.log('🔍 MostPurchased: No active customer ID found')
           setProducts([])
           setIsLoading(false)
           return
         }
-
-        console.log('🔍 MostPurchased: Fetching for customer:', customerId)
 
         // Get consumption period from service
         const period = mostPurchasedService.getConsumptionPeriodInDays()
         setConsumptionPeriod(period)
 
         // Fetch most purchased products from service
-        console.log('🔍 MostPurchased: Calling service for customer:', customerId)
         const mostPurchased =
           await mostPurchasedService.getMostPurchasedProducts(customerId)
-        
-        console.log('🔍 MostPurchased: Got products:', mostPurchased.length)
 
         // Transform to include selected quantity for cart
         const productsWithQuantity: ProductWithQuantity[] = mostPurchased.map(

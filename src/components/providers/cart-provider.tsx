@@ -49,7 +49,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     // Check user role and customer IDs
     const role = user.publicMetadata?.['role'] as string
-    const customerids = user.publicMetadata?.['customerids'] as string[] | undefined
+    const customerids = user.publicMetadata?.['customerids'] as
+      | string[]
+      | undefined
 
     // Support both customer and admin roles
     if (role !== 'customer' && role !== 'admin') {
@@ -74,7 +76,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     if (!isInitialized) {
       initializeCart(user.id, activeCustomerId)
     }
-  }, [isLoaded, isSignedIn, user, activeCustomerId, initializeCart, resetCart, isInitialized])
+  }, [
+    isLoaded,
+    isSignedIn,
+    user,
+    activeCustomerId,
+    initializeCart,
+    resetCart,
+    isInitialized,
+  ])
 
   return <>{children}</>
 }

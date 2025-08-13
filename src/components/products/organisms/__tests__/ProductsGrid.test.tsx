@@ -93,7 +93,11 @@ jest.mock('@/components/ui/custom/grid', () => ({
       </div>
     )
   }),
-  GridItem: jest.fn(function GridItem({ children }: { children: React.ReactNode }) {
+  GridItem: jest.fn(function GridItem({
+    children,
+  }: {
+    children: React.ReactNode
+  }) {
     return <div data-testid="grid-item">{children}</div>
   }),
 }))
@@ -106,7 +110,7 @@ jest.mock('@/lib/styles/utilities', () => ({
 
 // Mock cn utility
 jest.mock('@/lib/utils', () => ({
-  cn: jest.fn((...classes: (string | undefined | null | false)[]) => 
+  cn: jest.fn((...classes: (string | undefined | null | false)[]) =>
     classes.filter(Boolean).join(' ')
   ),
 }))
@@ -206,9 +210,7 @@ describe('ProductsGrid', () => {
   })
 
   it('should not show loading when isLoading is false', () => {
-    render(
-      <ProductsGrid products={mockProducts} isLoading={false} />
-    )
+    render(<ProductsGrid products={mockProducts} isLoading={false} />)
 
     expect(screen.queryByTestId('grid-skeleton')).not.toBeInTheDocument()
   })

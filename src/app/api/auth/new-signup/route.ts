@@ -30,24 +30,21 @@ export async function POST(request: NextRequest) {
       lastName,
     })
 
-    if (success) {
-      console.log('New user notification sent for:', userEmail)
-    } else {
-      console.log('Failed to send new user notification for:', userEmail)
-    }
+    // Notification result already handled by email service
 
     // Always return success to not block user flow
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
-      message: success ? 'Sign-up notification sent' : 'User registered (notification may have failed)'
+      message: success
+        ? 'Sign-up notification sent'
+        : 'User registered (notification may have failed)',
     })
-
   } catch (error) {
     console.error('Error processing sign-up notification:', error)
     // Don't fail the user flow even if notification fails
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
-      message: 'User registered (notification may have failed)'
+      message: 'User registered (notification may have failed)',
     })
   }
 }

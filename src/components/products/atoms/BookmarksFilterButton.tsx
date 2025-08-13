@@ -30,20 +30,12 @@ export function BookmarksFilterButton({
   const { auth, isAuthenticated } = useSecureAuth()
 
   const handleClick = () => {
-    console.log('🔘 BookmarksFilterButton clicked, auth state:', {
-      isAuthenticated,
-      auth,
-      canBookmark: auth.canBookmark,
-      activeCustomerId: auth.activeCustomerId,
-      role: auth.role
-    })
-    
     // Use server-provided permission flags instead of manual checks
     if (!isAuthenticated) {
       toast.error('Please sign in to access bookmarks')
       return
     }
-    
+
     // Check if user can bookmark (server handles admin logic)
     if (!auth.canBookmark) {
       if (!auth.role || (auth.role !== 'customer' && auth.role !== 'admin')) {
@@ -53,7 +45,7 @@ export function BookmarksFilterButton({
       }
       return
     }
-    
+
     // All checks passed, navigate to favorites
     router.push('/favorites')
   }

@@ -16,11 +16,16 @@ import { I18nProvider } from '../i18n-provider'
 
 // Mock react-i18next
 jest.mock('react-i18next', () => ({
-  I18nextProvider: jest.fn(({ children, i18n }: { children: React.ReactNode; i18n: unknown }) => (
-    <div data-testid="i18next-provider" data-i18n={i18n ? 'initialized' : 'not-initialized'}>
-      {children}
-    </div>
-  )),
+  I18nextProvider: jest.fn(
+    ({ children, i18n }: { children: React.ReactNode; i18n: unknown }) => (
+      <div
+        data-testid="i18next-provider"
+        data-i18n={i18n ? 'initialized' : 'not-initialized'}
+      >
+        {children}
+      </div>
+    )
+  ),
 }))
 
 // Mock I18nLoading component
@@ -46,7 +51,7 @@ jest.mock('@/lib/i18n', () => {
     off: jest.fn(),
     emit: jest.fn(),
   }
-  
+
   return {
     default: mockI18nInstanceObj,
     initI18n: jest.fn(() => Promise.resolve(mockI18nInstanceObj)),
@@ -66,7 +71,7 @@ jest.mock('@/lib/stores', () => {
 
 describe('I18nProvider', () => {
   const mockChildren = <div data-testid="children">Test Content</div>
-  
+
   // Get references to mocked modules
   let mockI18nInstanceObj: {
     language: string
@@ -91,33 +96,34 @@ describe('I18nProvider', () => {
     // Get references after mocks are created
     const i18nModule = jest.requireMock('@/lib/i18n')
     const storesModule = jest.requireMock('@/lib/stores')
-    
+
     mockI18nInstanceObj = i18nModule.__mockInstance
     mockChangeLanguage = i18nModule.__mockChangeLanguage
     mockInitI18n = i18nModule.initI18n
-    mockUseLanguageStore = storesModule.__mockStore || storesModule.useLanguageStore
-    
+    mockUseLanguageStore =
+      storesModule.__mockStore || storesModule.useLanguageStore
+
     mockSetLanguage = jest.fn()
     mockInitializeLanguage = jest.fn()
   })
 
   beforeEach(() => {
     jest.clearAllMocks()
-    
+
     // Reset mock i18n instance
     mockI18nInstanceObj.language = 'en'
     mockI18nInstanceObj.isInitialized = false
-    
+
     // Reset changeLanguage mock
     mockChangeLanguage.mockClear()
     mockChangeLanguage.mockResolvedValue(undefined)
-    
+
     // Reset initI18n mock
     if (mockInitI18n) {
       mockInitI18n.mockReset()
       mockInitI18n.mockResolvedValue(mockI18nInstanceObj)
     }
-    
+
     // Reset language store mock
     if (mockUseLanguageStore) {
       mockUseLanguageStore.mockReturnValue({
@@ -162,7 +168,7 @@ describe('I18nProvider', () => {
   it('should handle already initialized state', async () => {
     // Set isInitialized to true
     mockI18nInstanceObj.isInitialized = true
-    
+
     render(<I18nProvider>{mockChildren}</I18nProvider>)
 
     // Should eventually render children
@@ -170,7 +176,7 @@ describe('I18nProvider', () => {
       expect(screen.getByTestId('i18next-provider')).toBeInTheDocument()
       expect(screen.getByTestId('children')).toBeInTheDocument()
     })
-    
+
     // Based on the component implementation, it doesn't call initI18n when already initialized
     // but the useEffect always runs initialization logic
     // The component checks i18n.isInitialized inside the effect
@@ -207,7 +213,7 @@ describe('I18nProvider', () => {
   it('should handle language change when initialized', async () => {
     // Set isInitialized to true
     mockI18nInstanceObj.isInitialized = true
-    
+
     // First render with 'en'
     mockUseLanguageStore.mockReturnValue({
       language: 'en',
@@ -215,7 +221,7 @@ describe('I18nProvider', () => {
       setLanguage: mockSetLanguage,
       initializeLanguage: mockInitializeLanguage,
     })
-    
+
     const { rerender } = render(<I18nProvider>{mockChildren}</I18nProvider>)
 
     // Wait for initial render
@@ -223,10 +229,10 @@ describe('I18nProvider', () => {
       expect(screen.getByTestId('i18next-provider')).toBeInTheDocument()
       expect(screen.getByTestId('children')).toBeInTheDocument()
     })
-    
+
     // Clear mocks
     mockChangeLanguage.mockClear()
-    
+
     // Change language to 'tr'
     mockUseLanguageStore.mockReturnValue({
       language: 'tr',
@@ -234,16 +240,16 @@ describe('I18nProvider', () => {
       setLanguage: mockSetLanguage,
       initializeLanguage: mockInitializeLanguage,
     })
-    
+
     // Rerender with new language
     rerender(<I18nProvider>{mockChildren}</I18nProvider>)
-    
+
     // Verify component still renders correctly
     await waitFor(() => {
       expect(screen.getByTestId('i18next-provider')).toBeInTheDocument()
       expect(screen.getByTestId('children')).toBeInTheDocument()
     })
-    
+
     // Since the component runs effect on language change,
     // it should handle the language switch appropriately
     // The actual behavior depends on implementation details
@@ -254,7 +260,7 @@ describe('I18nProvider', () => {
     // Set isInitialized to true with same language
     mockI18nInstanceObj.isInitialized = true
     mockI18nInstanceObj.language = 'en'
-    
+
     render(<I18nProvider>{mockChildren}</I18nProvider>)
 
     // Should render children

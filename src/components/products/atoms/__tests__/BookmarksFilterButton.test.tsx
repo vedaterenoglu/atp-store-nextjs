@@ -164,8 +164,10 @@ describe('BookmarksFilterButton', () => {
     fireEvent.click(button)
 
     // Should show error toast
-    expect(toast.error).toHaveBeenCalledWith('Please sign in to access bookmarks')
-    
+    expect(toast.error).toHaveBeenCalledWith(
+      'Please sign in to access bookmarks'
+    )
+
     // Should not navigate
     expect(mockPush).not.toHaveBeenCalled()
   })
@@ -182,8 +184,10 @@ describe('BookmarksFilterButton', () => {
     fireEvent.click(button)
 
     // Should show error toast about selecting customer
-    expect(toast.error).toHaveBeenCalledWith('Please select a customer account to access bookmarks')
-    
+    expect(toast.error).toHaveBeenCalledWith(
+      'Please select a customer account to access bookmarks'
+    )
+
     // Should not navigate
     expect(mockPush).not.toHaveBeenCalled()
   })
@@ -259,7 +263,9 @@ describe('BookmarksFilterButton', () => {
       fireEvent.click(button)
 
       // Should show error about needing customer/admin account
-      expect(toast.error).toHaveBeenCalledWith('You need a customer or admin account to access bookmarks')
+      expect(toast.error).toHaveBeenCalledWith(
+        'You need a customer or admin account to access bookmarks'
+      )
       // Should NOT navigate
       expect(mockPush).not.toHaveBeenCalled()
     })
@@ -277,7 +283,9 @@ describe('BookmarksFilterButton', () => {
       fireEvent.click(button)
 
       // Should show error about selecting customer
-      expect(toast.error).toHaveBeenCalledWith('Please select a customer account to access bookmarks')
+      expect(toast.error).toHaveBeenCalledWith(
+        'Please select a customer account to access bookmarks'
+      )
       // Should NOT navigate
       expect(mockPush).not.toHaveBeenCalled()
     })
@@ -295,7 +303,9 @@ describe('BookmarksFilterButton', () => {
       fireEvent.click(button)
 
       // Should show error about selecting customer
-      expect(toast.error).toHaveBeenCalledWith('Please select a customer account to access bookmarks')
+      expect(toast.error).toHaveBeenCalledWith(
+        'Please select a customer account to access bookmarks'
+      )
       // Should NOT navigate
       expect(mockPush).not.toHaveBeenCalled()
     })
@@ -308,7 +318,9 @@ describe('BookmarksFilterButton', () => {
       mockSecureAuth.isAuthenticated = false
       rerender(<BookmarksFilterButton isActive={false} />)
       fireEvent.click(screen.getByTestId('button'))
-      expect(toast.error).toHaveBeenCalledWith('Please sign in to access bookmarks')
+      expect(toast.error).toHaveBeenCalledWith(
+        'Please sign in to access bookmarks'
+      )
 
       jest.clearAllMocks()
 
@@ -318,7 +330,9 @@ describe('BookmarksFilterButton', () => {
       mockSecureAuth.auth.role = 'customer'
       rerender(<BookmarksFilterButton isActive={false} />)
       fireEvent.click(screen.getByTestId('button'))
-      expect(toast.error).toHaveBeenCalledWith('Please select a customer account to access bookmarks')
+      expect(toast.error).toHaveBeenCalledWith(
+        'Please select a customer account to access bookmarks'
+      )
 
       jest.clearAllMocks()
 

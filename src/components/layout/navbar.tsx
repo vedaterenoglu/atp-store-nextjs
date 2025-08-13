@@ -44,13 +44,15 @@ export function Navbar() {
 
   return (
     <>
-      
       {/* Admin Impersonation Banner */}
       <ImpersonationBanner />
-      
+
       <TooltipProvider>
         <nav
-          className={getLayoutClasses({ component: 'navbar', part: 'container' })}
+          className={getLayoutClasses({
+            component: 'navbar',
+            part: 'container',
+          })}
         >
           <div
             className={getLayoutClasses({ component: 'navbar', part: 'inner' })}
@@ -163,10 +165,10 @@ function CartButton() {
   }, [])
 
   // Determine if cart is accessible
-  const isCartAccessible = 
-    authContext.isSignedIn && 
-    authContext.role && 
-    (authContext.role === 'customer' || authContext.role === 'admin') && 
+  const isCartAccessible =
+    authContext.isSignedIn &&
+    authContext.role &&
+    (authContext.role === 'customer' || authContext.role === 'admin') &&
     authContext.hasActiveCustomer
 
   // Show cart badge only when there are items and cart is accessible
@@ -178,17 +180,20 @@ function CartButton() {
       toast.error('Please sign in to access cart')
       return
     }
-    
-    if (!authContext.role || (authContext.role !== 'customer' && authContext.role !== 'admin')) {
+
+    if (
+      !authContext.role ||
+      (authContext.role !== 'customer' && authContext.role !== 'admin')
+    ) {
       toast.error('You need a customer or admin account to access cart')
       return
     }
-    
+
     if (!authContext.hasActiveCustomer) {
       toast.error('Please select a customer account to access cart')
       return
     }
-    
+
     router.push('/cart')
   }
 
@@ -199,8 +204,8 @@ function CartButton() {
           variant="ghost"
           size="icon"
           className={cn(
-            "h-9 w-9 relative",
-            !isCartAccessible && "opacity-50 hover:opacity-50"
+            'h-9 w-9 relative',
+            !isCartAccessible && 'opacity-50 hover:opacity-50'
           )}
           aria-label={t('navigation.cart')}
           onClick={handleCartClick}
@@ -214,7 +219,11 @@ function CartButton() {
         </Button>
       </TooltipTrigger>
       <TooltipContent>
-        <p>{!isCartAccessible ? 'Sign in and select a customer to access cart' : t('tooltips.navbar.cart')}</p>
+        <p>
+          {!isCartAccessible
+            ? 'Sign in and select a customer to access cart'
+            : t('tooltips.navbar.cart')}
+        </p>
       </TooltipContent>
     </Tooltip>
   )
@@ -259,10 +268,10 @@ function CustomerDashboardButton() {
   const { authContext } = useAuthGuard()
 
   // Determine if dashboard is accessible
-  const isDashboardAccessible = 
-    authContext.isSignedIn && 
-    authContext.role && 
-    (authContext.role === 'customer' || authContext.role === 'admin') && 
+  const isDashboardAccessible =
+    authContext.isSignedIn &&
+    authContext.role &&
+    (authContext.role === 'customer' || authContext.role === 'admin') &&
     authContext.hasActiveCustomer
 
   const handleClick = () => {
@@ -271,17 +280,20 @@ function CustomerDashboardButton() {
       toast.error('Please sign in to access dashboard')
       return
     }
-    
-    if (!authContext.role || (authContext.role !== 'customer' && authContext.role !== 'admin')) {
+
+    if (
+      !authContext.role ||
+      (authContext.role !== 'customer' && authContext.role !== 'admin')
+    ) {
       toast.error('You need a customer or admin account to access dashboard')
       return
     }
-    
+
     if (!authContext.hasActiveCustomer) {
       toast.error('Please select a customer account to access dashboard')
       return
     }
-    
+
     router.push('/customer/dashboard')
   }
 
@@ -292,8 +304,8 @@ function CustomerDashboardButton() {
           variant="ghost"
           size="icon"
           className={cn(
-            "h-9 w-9",
-            !isDashboardAccessible && "opacity-50 hover:opacity-50"
+            'h-9 w-9',
+            !isDashboardAccessible && 'opacity-50 hover:opacity-50'
           )}
           aria-label="Customer Dashboard"
           onClick={handleClick}
@@ -302,7 +314,11 @@ function CustomerDashboardButton() {
         </Button>
       </TooltipTrigger>
       <TooltipContent>
-        <p>{!isDashboardAccessible ? 'Sign in and select a customer to access dashboard' : 'Customer Dashboard'}</p>
+        <p>
+          {!isDashboardAccessible
+            ? 'Sign in and select a customer to access dashboard'
+            : 'Customer Dashboard'}
+        </p>
       </TooltipContent>
     </Tooltip>
   )
@@ -399,23 +415,23 @@ function MobileMenu({
         <div className="flex justify-center">
           <CustomerSwitcher />
         </div>
-        
+
         {/* Icons row - Dashboard, Language, Theme */}
         <div className="flex items-center justify-center gap-4">
           {/* Customer Dashboard - Icon only (for customers and admins) */}
-          {authContext.isSignedIn && 
-           (authContext.role === 'customer' || authContext.role === 'admin') && 
-           authContext.hasActiveCustomer && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-9 w-9"
-              onClick={handleDashboardClick}
-              aria-label="Customer Dashboard"
-            >
-              <LayoutDashboard className="h-4 w-4" />
-            </Button>
-          )}
+          {authContext.isSignedIn &&
+            (authContext.role === 'customer' || authContext.role === 'admin') &&
+            authContext.hasActiveCustomer && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9"
+                onClick={handleDashboardClick}
+                aria-label="Customer Dashboard"
+              >
+                <LayoutDashboard className="h-4 w-4" />
+              </Button>
+            )}
 
           {/* Language and Theme toggles - Icons only */}
           <LanguageToggle />

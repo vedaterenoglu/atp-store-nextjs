@@ -20,20 +20,16 @@ import {
   getCategoryById,
   getCategoriesGrouped,
 } from '../categories.service'
-import { createMockCategories } from '@/__tests__/mocks/api-mocks'
 import {
   mockGetCategoriesResponse,
   emptyResponses,
 } from '@/__tests__/mocks/graphql-responses'
-import { FetchMockBuilder, MockResponse } from '@/__tests__/utils/fetch-mock'
+import { FetchMockBuilder } from '@/__tests__/utils/fetch-mock'
 
 // Mock fetch is setup in jest.setup.ts
 // We'll override it here for specific test cases
 
 describe('categories.service', () => {
-  // Mock categories for testing
-  const mockCategories = createMockCategories(3)
-
   beforeEach(() => {
     jest.clearAllMocks()
     clearCategoriesCache()
@@ -138,7 +134,7 @@ describe('categories.service', () => {
     it('should handle network errors', async () => {
       global.fetch = jest.fn(() =>
         Promise.reject(new Error('Network error'))
-      ) as jest.Mock
+      ) as typeof fetch
 
       await expect(getCategories()).rejects.toThrow('Network error')
     })

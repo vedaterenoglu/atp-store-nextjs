@@ -28,10 +28,11 @@ interface ImageProps {
 jest.mock('next/image', () => ({
   __esModule: true,
   default: jest.fn((props: ImageProps) => {
-    const { priority, ...imgProps } = props
+    const { priority, alt = '', ...imgProps } = props
     return (
       <img
         {...imgProps}
+        alt={alt}
         data-priority={priority}
         data-testid="image"
       />
@@ -63,7 +64,11 @@ interface CarouselNavigationProps {
 
 jest.mock('@/components/ui/schadcn/carousel', () => ({
   Carousel: jest.fn(({ children, className, opts }: CarouselProps) => (
-    <div data-testid="carousel" className={className} data-opts={JSON.stringify(opts)}>
+    <div
+      data-testid="carousel"
+      className={className}
+      data-opts={JSON.stringify(opts)}
+    >
       {children}
     </div>
   )),
@@ -111,27 +116,46 @@ import Autoplay from 'embla-carousel-autoplay'
 
 describe('ImageSlider', () => {
   const mockT = jest.fn()
-  const mockUseTranslation = useTranslation as jest.MockedFunction<typeof useTranslation>
+  const mockUseTranslation = useTranslation as jest.MockedFunction<
+    typeof useTranslation
+  >
 
   beforeEach(() => {
     jest.clearAllMocks()
 
     // Default mock implementation
-    mockT.mockImplementation((key: string, options?: Record<string, unknown>) => {
-      if (key === 'slider.slides' && options?.['returnObjects']) {
-        return [
-          { title: 'Trust and Reliability', subtitle: 'Building lasting partnerships' },
-          { title: 'Order Management', subtitle: 'Efficient order processing' },
-          { title: 'Modern Office Solutions', subtitle: 'Complete office supplies' },
-          { title: 'Warehouse Facilities', subtitle: 'Strategic stock management' },
-          { title: 'Fleet Management', subtitle: 'Reliable delivery service' },
-          { title: 'Loading Operations', subtitle: 'Efficient logistics' },
-          { title: 'Dispatch Center', subtitle: 'Coordinated distribution' },
-          { title: 'Dispatch Operations', subtitle: 'Timely deliveries' },
-        ]
+    mockT.mockImplementation(
+      (key: string, options?: Record<string, unknown>) => {
+        if (key === 'slider.slides' && options?.['returnObjects']) {
+          return [
+            {
+              title: 'Trust and Reliability',
+              subtitle: 'Building lasting partnerships',
+            },
+            {
+              title: 'Order Management',
+              subtitle: 'Efficient order processing',
+            },
+            {
+              title: 'Modern Office Solutions',
+              subtitle: 'Complete office supplies',
+            },
+            {
+              title: 'Warehouse Facilities',
+              subtitle: 'Strategic stock management',
+            },
+            {
+              title: 'Fleet Management',
+              subtitle: 'Reliable delivery service',
+            },
+            { title: 'Loading Operations', subtitle: 'Efficient logistics' },
+            { title: 'Dispatch Center', subtitle: 'Coordinated distribution' },
+            { title: 'Dispatch Operations', subtitle: 'Timely deliveries' },
+          ]
+        }
+        return key
       }
-      return key
-    })
+    )
 
     // Mock useTranslation
     mockUseTranslation.mockReturnValue({
@@ -221,14 +245,14 @@ describe('ImageSlider', () => {
 
       // First image should have priority
       expect(images[0]).toHaveAttribute('data-priority', 'true')
-      
+
       // Other images should not have priority
       for (let i = 1; i < images.length; i++) {
         expect(images[i]).toHaveAttribute('data-priority', 'false')
       }
 
       // All images should have alt text
-      images.forEach((img) => {
+      images.forEach(img => {
         expect(img).toHaveAttribute('alt')
         expect(img).toHaveAttribute('width', '900')
         expect(img).toHaveAttribute('height', '300')
@@ -239,7 +263,9 @@ describe('ImageSlider', () => {
       render(<ImageSlider />)
 
       expect(screen.getByText('Trust and Reliability')).toBeInTheDocument()
-      expect(screen.getByText('Building lasting partnerships')).toBeInTheDocument()
+      expect(
+        screen.getByText('Building lasting partnerships')
+      ).toBeInTheDocument()
       expect(screen.getByText('Order Management')).toBeInTheDocument()
       expect(screen.getByText('Efficient order processing')).toBeInTheDocument()
     })
@@ -261,7 +287,7 @@ describe('ImageSlider', () => {
       const carousel = screen.getByTestId('carousel')
       const opts = carousel.getAttribute('data-opts')
       expect(opts).toBeTruthy()
-      
+
       const parsedOpts = JSON.parse(opts || '{}')
       expect(parsedOpts.loop).toBe(true)
       expect(parsedOpts.align).toBe('start')
@@ -287,7 +313,9 @@ describe('ImageSlider', () => {
     it('should request slides with returnObjects option', () => {
       render(<ImageSlider />)
 
-      expect(mockT).toHaveBeenCalledWith('slider.slides', { returnObjects: true })
+      expect(mockT).toHaveBeenCalledWith('slider.slides', {
+        returnObjects: true,
+      })
     })
 
     it('should handle non-array translation response', () => {
@@ -306,12 +334,14 @@ describe('ImageSlider', () => {
     })
 
     it('should handle empty translation array', () => {
-      mockT.mockImplementation((key: string, options?: Record<string, unknown>) => {
-        if (key === 'slider.slides' && options?.['returnObjects']) {
-          return []
+      mockT.mockImplementation(
+        (key: string, options?: Record<string, unknown>) => {
+          if (key === 'slider.slides' && options?.['returnObjects']) {
+            return []
+          }
+          return key
         }
-        return key
-      })
+      )
 
       render(<ImageSlider />)
 
@@ -347,7 +377,7 @@ describe('ImageSlider', () => {
       render(<ImageSlider />)
 
       const items = screen.getAllByTestId('carousel-item')
-      items.forEach((item) => {
+      items.forEach(item => {
         expect(item).toHaveClass('basis-full')
       })
     })
@@ -394,10 +424,10 @@ describe('ImageSlider', () => {
 
       const buttons = [
         screen.getByTestId('carousel-previous'),
-        screen.getByTestId('carousel-next')
+        screen.getByTestId('carousel-next'),
       ]
 
-      buttons.forEach((button) => {
+      buttons.forEach(button => {
         expect(button).toHaveClass('top-1/2', '-translate-y-1/2')
       })
     })
@@ -407,10 +437,10 @@ describe('ImageSlider', () => {
 
       const buttons = [
         screen.getByTestId('carousel-previous'),
-        screen.getByTestId('carousel-next')
+        screen.getByTestId('carousel-next'),
       ]
 
-      buttons.forEach((button) => {
+      buttons.forEach(button => {
         expect(button).toHaveClass('bg-white/80', 'hover:bg-white', 'z-10')
       })
     })
@@ -420,17 +450,23 @@ describe('ImageSlider', () => {
     it('should apply responsive padding classes', () => {
       const { container } = render(<ImageSlider />)
 
-      const paddingElements = container.querySelectorAll('.p-4.md\\:p-6.lg\\:p-8')
+      const paddingElements = container.querySelectorAll(
+        '.p-4.md\\:p-6.lg\\:p-8'
+      )
       expect(paddingElements.length).toBeGreaterThan(0)
     })
 
     it('should apply responsive text sizes', () => {
       const { container } = render(<ImageSlider />)
 
-      const titles = container.querySelectorAll('.text-xl.md\\:text-2xl.lg\\:text-3xl')
+      const titles = container.querySelectorAll(
+        '.text-xl.md\\:text-2xl.lg\\:text-3xl'
+      )
       expect(titles.length).toBeGreaterThan(0)
 
-      const subtitles = container.querySelectorAll('.text-xs.md\\:text-sm.lg\\:text-base')
+      const subtitles = container.querySelectorAll(
+        '.text-xs.md\\:text-sm.lg\\:text-base'
+      )
       expect(subtitles.length).toBeGreaterThan(0)
     })
 
@@ -439,10 +475,10 @@ describe('ImageSlider', () => {
 
       const buttons = [
         screen.getByTestId('carousel-previous'),
-        screen.getByTestId('carousel-next')
+        screen.getByTestId('carousel-next'),
       ]
 
-      buttons.forEach((button) => {
+      buttons.forEach(button => {
         expect(button).toHaveClass('h-8', 'w-8', 'md:h-10', 'md:w-10')
       })
     })
@@ -453,7 +489,7 @@ describe('ImageSlider', () => {
       render(<ImageSlider />)
 
       const images = screen.getAllByTestId('image')
-      images.forEach((img) => {
+      images.forEach(img => {
         expect(img).toHaveAttribute('width', '900')
         expect(img).toHaveAttribute('height', '300')
       })
@@ -463,7 +499,7 @@ describe('ImageSlider', () => {
       render(<ImageSlider />)
 
       const images = screen.getAllByTestId('image')
-      images.forEach((img) => {
+      images.forEach(img => {
         expect(img).toHaveClass('object-contain')
       })
     })
@@ -472,7 +508,7 @@ describe('ImageSlider', () => {
       render(<ImageSlider />)
 
       const images = screen.getAllByTestId('image')
-      images.forEach((img) => {
+      images.forEach(img => {
         expect(img).toHaveClass('bg-gray-100')
       })
     })

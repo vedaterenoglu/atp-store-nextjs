@@ -5,39 +5,60 @@
  * Dependencies: React Testing Library, Jest
  */
 
+import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { SliderControls } from '../SliderControls'
 
 // Mock atoms
 jest.mock('../../atoms', () => ({
-  SliderNavigationButton: jest.fn(({ direction, onClick, disabled }: any) => (
-    <button
-      data-testid={`nav-button-${direction}`}
-      onClick={onClick}
-      disabled={disabled}
-      data-direction={direction}
-    >
-      {direction === 'prev' ? 'Previous' : 'Next'}
-    </button>
-  )),
-  SliderIndicator: jest.fn(({ total, current, onSelect }: any) => (
-    <div
-      data-testid="slider-indicator"
-      data-total={total}
-      data-current={current}
-    >
-      {Array.from({ length: total }, (_, index) => (
-        <button
-          key={index}
-          data-testid={`indicator-${index}`}
-          onClick={() => onSelect?.(index)}
-          data-active={index === current}
-        >
-          {index + 1}
-        </button>
-      ))}
-    </div>
-  )),
+  SliderNavigationButton: jest.fn(
+    ({
+      direction,
+      onClick,
+      disabled,
+    }: {
+      direction: 'prev' | 'next'
+      onClick?: () => void
+      disabled?: boolean
+    }) => (
+      <button
+        data-testid={`nav-button-${direction}`}
+        onClick={onClick}
+        disabled={disabled}
+        data-direction={direction}
+      >
+        {direction === 'prev' ? 'Previous' : 'Next'}
+      </button>
+    )
+  ),
+  SliderIndicator: jest.fn(
+    ({
+      total,
+      current,
+      onSelect,
+    }: {
+      total: number
+      current: number
+      onSelect?: (index: number) => void
+    }) => (
+      <div
+        data-testid="slider-indicator"
+        data-total={total}
+        data-current={current}
+      >
+        {Array.from({ length: total }, (_, index) => (
+          <button
+            key={index}
+            data-testid={`indicator-${index}`}
+            onClick={() => onSelect?.(index)}
+            data-active={index === current}
+          >
+            {index + 1}
+          </button>
+        ))}
+      </div>
+    )
+  ),
 }))
 
 describe('SliderControls', () => {

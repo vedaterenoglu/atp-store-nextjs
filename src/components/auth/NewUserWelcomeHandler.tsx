@@ -12,7 +12,7 @@ import { WelcomeDialog } from './WelcomeDialog'
 
 export function NewUserWelcomeHandler() {
   const { isNewUser, markAsWelcomed } = useNewUserDetection()
-  
+
   const phoneNumber = process.env['NEXT_PUBLIC_CUSTOMER_SERVICE_PHONE']
 
   const handleClose = () => {
@@ -20,8 +20,8 @@ export function NewUserWelcomeHandler() {
   }
 
   return (
-    <WelcomeDialog 
-      isOpen={isNewUser} 
+    <WelcomeDialog
+      isOpen={isNewUser}
       onClose={handleClose}
       {...(phoneNumber && { phoneNumber })}
     />

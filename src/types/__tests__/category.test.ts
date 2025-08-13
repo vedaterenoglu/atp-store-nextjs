@@ -215,7 +215,7 @@ describe('Category Type Exports', () => {
       // This validates that the re-export pattern works correctly
       // The module acts as a facade to simplify imports
       const moduleExports = require('../category')
-      
+
       // For type-only exports, the module should exist but be empty at runtime
       expect(moduleExports).toBeDefined()
       expect(typeof moduleExports).toBe('object')
@@ -239,7 +239,10 @@ describe('Category Type Exports', () => {
         altText: 'Test 2',
       }
 
-      const categoriesArray: categoryExports.CategoriesArray = [category1, category2]
+      const categoriesArray: categoryExports.CategoriesArray = [
+        category1,
+        category2,
+      ]
 
       // Verify that the types work correctly together
       expect(categoriesArray[0]).toEqual(category1)

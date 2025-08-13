@@ -18,18 +18,20 @@ interface MockCampaignGridErrorProps {
 
 // Mock CampaignGridError
 jest.mock('../CampaignGridError', () => ({
-  CampaignGridError: jest.fn(({ error, onRetry }: MockCampaignGridErrorProps) => (
-    <div data-testid="campaign-grid-error">
-      <span data-testid="error-message">
-        {error?.message || 'Something went wrong'}
-      </span>
-      {onRetry && (
-        <button data-testid="retry-button" onClick={onRetry}>
-          Retry
-        </button>
-      )}
-    </div>
-  )),
+  CampaignGridError: jest.fn(
+    ({ error, onRetry }: MockCampaignGridErrorProps) => (
+      <div data-testid="campaign-grid-error">
+        <span data-testid="error-message">
+          {error?.message || 'Something went wrong'}
+        </span>
+        {onRetry && (
+          <button data-testid="retry-button" onClick={onRetry}>
+            Retry
+          </button>
+        )}
+      </div>
+    )
+  ),
 }))
 
 // Test utility components for error testing

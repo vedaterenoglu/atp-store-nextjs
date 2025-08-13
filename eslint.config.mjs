@@ -48,10 +48,11 @@ const eslintConfig = [
     },
   },
   {
-    // Override for test files only - allow img element in mocks
+    // Override for test files only - allow img element in mocks and require imports
     files: ['**/*.test.{ts,tsx}', '**/__tests__/**/*.{ts,tsx}'],
     rules: {
       '@next/next/no-img-element': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
     },
   },
 ]

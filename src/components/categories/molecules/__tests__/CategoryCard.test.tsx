@@ -58,23 +58,25 @@ jest.mock('@/components/ui/schadcn', () => ({
 
 // Mock cn utility
 jest.mock('@/lib/utils', () => ({
-  cn: jest.fn((...classes: (string | undefined | null | false)[]) => 
+  cn: jest.fn((...classes: (string | undefined | null | false)[]) =>
     classes.filter(Boolean).join(' ')
   ),
 }))
 
-// Mock the categories components  
+// Mock the categories components
 jest.mock('@/components/categories', () => ({
-  ImageContainer: jest.fn(({ src, alt, className }: MockImageContainerProps) => (
-    <div
-      data-testid="image-container"
-      data-src={src}
-      data-alt={alt}
-      className={className}
-    >
-      Image: {alt}
-    </div>
-  )),
+  ImageContainer: jest.fn(
+    ({ src, alt, className }: MockImageContainerProps) => (
+      <div
+        data-testid="image-container"
+        data-src={src}
+        data-alt={alt}
+        className={className}
+      >
+        Image: {alt}
+      </div>
+    )
+  ),
   OverlayComponent: jest.fn(({ title, isVisible }: MockOverlayProps) => (
     <div
       data-testid="overlay-component"
@@ -88,7 +90,8 @@ jest.mock('@/components/categories', () => ({
 
 // Type the mocked functions
 const mockUseRouter = useRouter as jest.MockedFunction<typeof useRouter>
-const mockUseCategorySearchStore = useCategorySearchStore as jest.MockedFunction<typeof useCategorySearchStore>
+const mockUseCategorySearchStore =
+  useCategorySearchStore as jest.MockedFunction<typeof useCategorySearchStore>
 
 describe('CategoryCard', () => {
   const mockPush = jest.fn()
@@ -110,7 +113,7 @@ describe('CategoryCard', () => {
       forward: jest.fn(),
       refresh: jest.fn(),
     } as MockRouterReturn)
-    
+
     mockUseCategorySearchStore.mockReturnValue({
       setSearchPrefix: mockSetSearchPrefix,
       searchPrefix: '',

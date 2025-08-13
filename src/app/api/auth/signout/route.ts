@@ -3,7 +3,7 @@
  * SOLID Principles: SRP - Single responsibility for sign out cleanup
  * Design Patterns: API Route Pattern
  * Dependencies: Next.js cookies
- * 
+ *
  * Handles cleanup when user signs out:
  * - Deletes active_customer_id cookie
  * - Returns success response
@@ -15,7 +15,7 @@ import { NextResponse } from 'next/server'
 export async function POST() {
   try {
     const cookieStore = await cookies()
-    
+
     // Delete the active_customer_id cookie (primary)
     cookieStore.delete({
       name: 'active_customer_id',
@@ -23,32 +23,32 @@ export async function POST() {
       // Important: Match the same options used when setting the cookie
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax'
+      sameSite: 'lax',
     })
-    
+
     // Delete legacy impersonating_customer_id cookie (for backwards compatibility)
     cookieStore.delete({
       name: 'impersonating_customer_id',
       path: '/',
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax'
+      sameSite: 'lax',
     })
-    
+
     // Also try to delete with just the names (fallback)
     cookieStore.delete('active_customer_id')
     cookieStore.delete('impersonating_customer_id')
-    
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Sign out cleanup completed' 
+
+    return NextResponse.json({
+      success: true,
+      message: 'Sign out cleanup completed',
     })
   } catch (error) {
     console.error('Sign out cleanup error:', error)
     // Still return success to not block sign out
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Sign out completed with warnings' 
+    return NextResponse.json({
+      success: true,
+      message: 'Sign out completed with warnings',
     })
   }
 }

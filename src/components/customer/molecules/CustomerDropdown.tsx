@@ -80,7 +80,11 @@ export function CustomerDropdown({
       disabled={isLoading}
     >
       <SelectTrigger className={cn('w-[250px]', className)}>
-        <SelectValue placeholder={isAdmin ? "No customer selected" : "Select customer account"}>
+        <SelectValue
+          placeholder={
+            isAdmin ? 'No customer selected' : 'Select customer account'
+          }
+        >
           {activeCustomer && (
             <span className="truncate">
               {activeCustomer.customer_title ||
@@ -111,13 +115,8 @@ export function CustomerDropdown({
         ))}
         {isAdmin && (
           <>
-            {customers.length > 0 && (
-              <div className="my-1 h-px bg-border" />
-            )}
-            <SelectItem
-              value="search-customers"
-              className="cursor-pointer"
-            >
+            {customers.length > 0 && <div className="my-1 h-px bg-border" />}
+            <SelectItem value="search-customers" className="cursor-pointer">
               <div className="flex items-center gap-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

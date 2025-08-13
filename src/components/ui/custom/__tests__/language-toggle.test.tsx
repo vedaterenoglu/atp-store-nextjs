@@ -48,44 +48,48 @@ jest.mock('@/components/ui', () => ({
   DropdownMenu: jest.fn(({ children }: { children: React.ReactNode }) => (
     <div data-testid="dropdown-menu">{children}</div>
   )),
-  DropdownMenuContent: jest.fn(({
-    children,
-    align,
-    className,
-  }: {
-    children: React.ReactNode
-    align?: string
-    className?: string
-  }) => (
-    <div
-      data-testid="dropdown-menu-content"
-      data-align={align}
-      className={className}
-    >
-      {children}
-    </div>
-  )),
-  DropdownMenuItem: jest.fn(({
-    children,
-    onClick,
-    className,
-    disabled,
-  }: {
-    children: React.ReactNode
-    onClick?: () => void
-    className?: string
-    disabled?: boolean
-  }) => (
-    <div
-      data-testid="dropdown-menu-item"
-      onClick={onClick}
-      className={className}
-      data-disabled={disabled}
-      role="menuitem"
-    >
-      {children}
-    </div>
-  )),
+  DropdownMenuContent: jest.fn(
+    ({
+      children,
+      align,
+      className,
+    }: {
+      children: React.ReactNode
+      align?: string
+      className?: string
+    }) => (
+      <div
+        data-testid="dropdown-menu-content"
+        data-align={align}
+        className={className}
+      >
+        {children}
+      </div>
+    )
+  ),
+  DropdownMenuItem: jest.fn(
+    ({
+      children,
+      onClick,
+      className,
+      disabled,
+    }: {
+      children: React.ReactNode
+      onClick?: () => void
+      className?: string
+      disabled?: boolean
+    }) => (
+      <div
+        data-testid="dropdown-menu-item"
+        onClick={onClick}
+        className={className}
+        data-disabled={disabled}
+        role="menuitem"
+      >
+        {children}
+      </div>
+    )
+  ),
   DropdownMenuTrigger: React.forwardRef<
     HTMLDivElement,
     { children: React.ReactNode; asChild?: boolean }

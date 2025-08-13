@@ -64,10 +64,10 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
 
   // If user is not authenticated and has customer cookies, clear them
   if (!userId) {
-    const hasCustomerCookies = 
-      req.cookies.has('active_customer_id') || 
+    const hasCustomerCookies =
+      req.cookies.has('active_customer_id') ||
       req.cookies.has('impersonating_customer_id')
-    
+
     if (hasCustomerCookies) {
       // User signed out but cookies remain - clear them
       const response = NextResponse.next()
@@ -105,9 +105,10 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
       if (pattern.test(pathname)) {
         // Check role requirement
         // Allow admin to access customer routes (admin can do everything customer can)
-        const hasRequiredRole = userRole === requiredRole || 
+        const hasRequiredRole =
+          userRole === requiredRole ||
           (requiredRole === 'customer' && userRole === 'admin')
-        
+
         if (!hasRequiredRole) {
           const homeUrl = new URL('/', req.url)
           homeUrl.searchParams.set('error', 'unauthorized')
@@ -144,10 +145,16 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
           // Admin can view customer routes via impersonation
           // Check both possible cookie names (active_customer_id is the standard one)
           const activeCustomerId = req.cookies.get('active_customer_id')?.value
-          const impersonatingId = req.cookies.get('impersonating_customer_id')?.value
+          const impersonatingId = req.cookies.get(
+            'impersonating_customer_id'
+          )?.value
 
           // Allow admin access if they have selected a customer
-          if (!activeCustomerId && !impersonatingId && pathname !== '/customer/switch') {
+          if (
+            !activeCustomerId &&
+            !impersonatingId &&
+            pathname !== '/customer/switch'
+          ) {
             // Redirect admin to customer selection
             const switchUrl = new URL('/customer/switch', req.url)
             switchUrl.searchParams.set('redirect', pathname)

@@ -63,7 +63,7 @@ export const defaultTranslations: Record<string, string> = {
   'messages.viewingDetails': 'Viewing details for {{product}}',
   'messages.addedToCart': '{{count}} item added to cart',
   'messages.addedToCartPlural': '{{count}} items added to cart',
-  
+
   // Page
   'page.goToAllProducts': 'Go to All Products',
   'page.title': 'Campaign Products',
@@ -173,14 +173,17 @@ export const i18nMocks = {
     useTranslation: jest.fn(() => ({
       t: (key: string, options?: Record<string, unknown>) => {
         let translation = defaultTranslations[key] || key
-        
+
         // Handle interpolation
         if (options) {
           Object.entries(options).forEach(([placeholder, value]) => {
-            translation = translation.replace(`{{${placeholder}}}`, String(value))
+            translation = translation.replace(
+              `{{${placeholder}}}`,
+              String(value)
+            )
           })
         }
-        
+
         return translation
       },
       i18n: {
@@ -198,7 +201,9 @@ export const i18nMocks = {
   },
   i18next: {
     init: jest.fn(() => Promise.resolve()),
-    use: jest.fn(function() { return this }),
+    use: jest.fn(function () {
+      return this
+    }),
     changeLanguage: jest.fn(() => Promise.resolve()),
     language: 'en',
     languages: ['en', 'sv', 'tr', 'da', 'de'],

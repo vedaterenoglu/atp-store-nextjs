@@ -27,7 +27,9 @@ function createMockProduct(overrides: Partial<MockProduct> = {}): MockProduct {
     stockPrice: 1500,
     stockUnit: 'kg',
     stockGroup: 'CAT001',
-    ...(overrides.stockImageLink !== undefined && { stockImageLink: overrides.stockImageLink }),
+    ...(overrides.stockImageLink !== undefined && {
+      stockImageLink: overrides.stockImageLink,
+    }),
     ...overrides,
   }
 }
@@ -109,7 +111,11 @@ jest.mock('lucide-react', () => ({
       </span>
     )
   }),
-  ShoppingCart: jest.fn(function ShoppingCart({ className }: { className?: string }) {
+  ShoppingCart: jest.fn(function ShoppingCart({
+    className,
+  }: {
+    className?: string
+  }) {
     return (
       <span data-testid="shopping-cart-icon" className={className}>
         Cart
@@ -157,7 +163,7 @@ const mockIsBookmarked = jest.fn(() => false)
 const mockInitializeBookmarks = jest.fn()
 
 jest.mock('@/lib/stores/cart.store', () => ({
-  useCartStore: jest.fn((selector) => {
+  useCartStore: jest.fn(selector => {
     const store = {
       addToCart: mockAddToCart,
       findCartItem: jest.fn(() => null),
@@ -182,41 +188,53 @@ jest.mock('@/lib/stores/bookmark-store', () => ({
 
 // Mock shadcn/ui components
 jest.mock('@/components/ui/schadcn', () => ({
-  Card: jest.fn(({ children, className, onClick }: { children: React.ReactNode; className?: string; onClick?: () => void }) => (
-    <div className={className} data-testid="card" onClick={onClick}>
-      {children}
-    </div>
-  )),
-  Button: jest.fn(({ 
-    children, 
-    onClick, 
-    disabled, 
-    variant, 
-    size, 
-    className 
-  }: { 
-    children: React.ReactNode
-    onClick?: () => void
-    disabled?: boolean
-    variant?: string
-    size?: string
-    className?: string
-  }) => (
-    <button 
-      onClick={onClick} 
-      disabled={disabled} 
-      data-variant={variant}
-      data-size={size}
-      className={className}
-    >
-      {children}
-    </button>
-  )),
+  Card: jest.fn(
+    ({
+      children,
+      className,
+      onClick,
+    }: {
+      children: React.ReactNode
+      className?: string
+      onClick?: () => void
+    }) => (
+      <div className={className} data-testid="card" onClick={onClick}>
+        {children}
+      </div>
+    )
+  ),
+  Button: jest.fn(
+    ({
+      children,
+      onClick,
+      disabled,
+      variant,
+      size,
+      className,
+    }: {
+      children: React.ReactNode
+      onClick?: () => void
+      disabled?: boolean
+      variant?: string
+      size?: string
+      className?: string
+    }) => (
+      <button
+        onClick={onClick}
+        disabled={disabled}
+        data-variant={variant}
+        data-size={size}
+        className={className}
+      >
+        {children}
+      </button>
+    )
+  ),
 }))
 
 // Mock cn utility
 jest.mock('@/lib/utils', () => ({
-  cn: jest.fn((...classes: (string | undefined | null | false)[]) => 
+  cn: jest.fn((...classes: (string | undefined | null | false)[]) =>
     classes.filter(Boolean).join(' ')
   ),
 }))
@@ -230,7 +248,6 @@ jest.mock('@/lib/utils/toast', () => ({
     info: jest.fn(),
   },
 }))
-import { toast } from '@/lib/utils/toast'
 
 // No longer need Clerk imports since we're using secure auth
 
@@ -343,7 +360,7 @@ describe('ProductCard', () => {
     mockSecureAuth.auth.canAddToCart = true
     mockSecureAuth.auth.activeCustomerId = 'customer-123'
     mockSecureAuth.auth.role = 'customer'
-    
+
     render(
       <ProductCard
         id={mockProduct.stockId}
@@ -388,7 +405,7 @@ describe('ProductCard', () => {
     mockSecureAuth.auth.canAddToCart = true
     mockSecureAuth.auth.activeCustomerId = 'customer-123'
     mockSecureAuth.auth.role = 'customer'
-    
+
     render(
       <ProductCard
         id={mockProduct.stockId}
@@ -413,7 +430,7 @@ describe('ProductCard', () => {
 
     // Now minus should be enabled
     expect(minusButton).not.toBeDisabled()
-    
+
     // Click minus to decrease
     fireEvent.click(minusButton)
     expect(screen.getByText('0')).toBeInTheDocument()
@@ -448,7 +465,7 @@ describe('ProductCard', () => {
     mockSecureAuth.auth.canAddToCart = true
     mockSecureAuth.auth.activeCustomerId = 'customer-123'
     mockSecureAuth.auth.role = 'customer'
-    
+
     render(
       <ProductCard
         id={mockProduct.stockId}
@@ -467,21 +484,21 @@ describe('ProductCard', () => {
     const plusButton = screen.getByTestId('plus-icon')
       .parentElement as HTMLButtonElement
     fireEvent.click(plusButton)
-    
+
     expect(addToCartButton).not.toBeDisabled()
-    
+
     // Click add to cart
     fireEvent.click(addToCartButton)
     // The component calls addToCart with individual parameters
     expect(mockAddToCart).toHaveBeenCalledWith(
-      'PROD001',      // id
+      'PROD001', // id
       'Test Product', // name
-      1500,           // price
-      1,              // quantity
-      undefined,      // imageUrl
-      'CAT001',       // categoryId (used as productGroup)
-      'kg',           // unit
-      99              // max quantity
+      1500, // price
+      1, // quantity
+      undefined, // imageUrl
+      'CAT001', // categoryId (used as productGroup)
+      'kg', // unit
+      99 // max quantity
     )
   })
 

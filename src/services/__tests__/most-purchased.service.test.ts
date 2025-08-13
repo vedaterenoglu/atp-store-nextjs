@@ -56,8 +56,8 @@ describe('most-purchased.service', () => {
         )
       )
       expect(result).toHaveLength(2) // Default mock has 2 products
-      expect(result[0].rank).toBe(1) // First product should have rank 1
-      expect(result[1].rank).toBe(2) // Second product should have rank 2
+      expect(result[0]?.rank).toBe(1) // First product should have rank 1
+      expect(result[1]?.rank).toBe(2) // Second product should have rank 2
     })
 
     it('should use default company ID when not provided', async () => {

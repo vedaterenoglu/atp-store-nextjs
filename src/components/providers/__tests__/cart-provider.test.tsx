@@ -33,21 +33,6 @@ const mockUpdateQuantity = jest.fn()
 const mockClearCart = jest.fn()
 const mockSyncWithServer = jest.fn()
 
-// Type for mocked cart store return value
-type MockCartStore = {
-  initializeCart: jest.Mock
-  resetCart: jest.Mock
-  isInitialized: boolean
-  items: never[]
-  totalItems: number
-  totalPrice: number
-  addItem: jest.Mock
-  removeItem: jest.Mock
-  updateQuantity: jest.Mock
-  clearCart: jest.Mock
-  syncWithServer: jest.Mock
-}
-
 describe('CartProvider', () => {
   const mockUseUser = useUser as jest.MockedFunction<typeof useUser>
   const mockUseCartStore = useCartStore as jest.MockedFunction<
@@ -616,8 +601,12 @@ describe('CartProvider', () => {
       } as unknown as ReturnType<typeof useUser>)
 
       // Mock fetch to reject
-      ;(global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'))
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+      ;(global.fetch as jest.Mock).mockRejectedValueOnce(
+        new Error('Network error')
+      )
+      const consoleSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {})
 
       render(
         <CartProvider>
@@ -626,12 +615,15 @@ describe('CartProvider', () => {
       )
 
       await waitFor(() => {
-        expect(consoleSpy).toHaveBeenCalledWith('Failed to fetch active customer:', expect.any(Error))
+        expect(consoleSpy).toHaveBeenCalledWith(
+          'Failed to fetch active customer:',
+          expect.any(Error)
+        )
       })
 
       // Should not initialize cart when fetch fails
       expect(mockInitializeCart).not.toHaveBeenCalled()
-      
+
       consoleSpy.mockRestore()
     })
 

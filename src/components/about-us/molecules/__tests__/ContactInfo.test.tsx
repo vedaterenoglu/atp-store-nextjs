@@ -22,22 +22,34 @@ interface IconProps {
 
 jest.mock('lucide-react', () => ({
   MapPin: jest.fn(({ className }: IconProps) => (
-    <div data-testid="map-pin-icon" className={className}>MapPin Icon</div>
+    <div data-testid="map-pin-icon" className={className}>
+      MapPin Icon
+    </div>
   )),
   Phone: jest.fn(({ className }: IconProps) => (
-    <div data-testid="phone-icon" className={className}>Phone Icon</div>
+    <div data-testid="phone-icon" className={className}>
+      Phone Icon
+    </div>
   )),
   Mail: jest.fn(({ className }: IconProps) => (
-    <div data-testid="mail-icon" className={className}>Mail Icon</div>
+    <div data-testid="mail-icon" className={className}>
+      Mail Icon
+    </div>
   )),
   Clock: jest.fn(({ className }: IconProps) => (
-    <div data-testid="clock-icon" className={className}>Clock Icon</div>
+    <div data-testid="clock-icon" className={className}>
+      Clock Icon
+    </div>
   )),
   Globe: jest.fn(({ className }: IconProps) => (
-    <div data-testid="globe-icon" className={className}>Globe Icon</div>
+    <div data-testid="globe-icon" className={className}>
+      Globe Icon
+    </div>
   )),
   MessageCircle: jest.fn(({ className }: IconProps) => (
-    <div data-testid="message-circle-icon" className={className}>Message Icon</div>
+    <div data-testid="message-circle-icon" className={className}>
+      Message Icon
+    </div>
   )),
 }))
 
@@ -79,16 +91,24 @@ interface CardContentProps {
 
 jest.mock('@/components/ui/schadcn/card', () => ({
   Card: jest.fn(({ children, className }: CardProps) => (
-    <div data-testid="card" className={className}>{children}</div>
+    <div data-testid="card" className={className}>
+      {children}
+    </div>
   )),
   CardHeader: jest.fn(({ children, className }: CardHeaderProps) => (
-    <div data-testid="card-header" className={className}>{children}</div>
+    <div data-testid="card-header" className={className}>
+      {children}
+    </div>
   )),
   CardTitle: jest.fn(({ children, className }: CardTitleProps) => (
-    <h2 data-testid="card-title" className={className}>{children}</h2>
+    <h2 data-testid="card-title" className={className}>
+      {children}
+    </h2>
   )),
   CardContent: jest.fn(({ children, className }: CardContentProps) => (
-    <div data-testid="card-content" className={className}>{children}</div>
+    <div data-testid="card-content" className={className}>
+      {children}
+    </div>
   )),
 }))
 

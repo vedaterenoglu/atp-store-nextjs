@@ -17,7 +17,7 @@ interface QuantityCounterProps {
   min?: number
   max?: number
   disabled?: boolean
-  canModify?: boolean  // New prop to determine if user has permission
+  canModify?: boolean // New prop to determine if user has permission
   className?: string
 }
 
@@ -28,7 +28,7 @@ export function QuantityCounter({
   min = 0,
   max = 99,
   disabled = false,
-  canModify = true,  // Default to true for backwards compatibility
+  canModify = true, // Default to true for backwards compatibility
   className = '',
 }: QuantityCounterProps) {
   return (

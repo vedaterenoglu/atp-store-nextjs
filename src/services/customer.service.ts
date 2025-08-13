@@ -6,6 +6,7 @@
  */
 
 import type {
+  CustomerAccount,
   CustomerTitlesResponse,
   CustomerSwitchRequest,
   CustomerSwitchResponse,
@@ -60,7 +61,7 @@ export class CustomerService {
       }
 
       const data = await response.json()
-      
+
       // Client-side validation with Zod (defense-in-depth)
       // The API already validates, but we validate again for safety
       // Note: API returns with customer_nickname added, so we don't validate that strict structure
@@ -68,10 +69,10 @@ export class CustomerService {
       try {
         // Validate core structure without nickname
         const validationData = {
-          customers: data.customers.map((c: any) => ({
+          customers: data.customers.map((c: CustomerAccount) => ({
             customer_id: c.customer_id,
-            customer_title: c.customer_title
-          }))
+            customer_title: c.customer_title,
+          })),
         }
         validateGetCustomerTitlesResponse(validationData)
       } catch (validationError) {
@@ -103,7 +104,7 @@ export class CustomerService {
       }
 
       const data = await response.json()
-      
+
       // Client-side validation with Zod (defense-in-depth)
       // The API already validates, but we validate again for safety
       // Note: API returns with customer_title added, so we don't validate that strict structure
@@ -111,10 +112,10 @@ export class CustomerService {
       try {
         // Validate core structure
         const validationData = {
-          customers: data.customers.map((c: any) => ({
+          customers: data.customers.map((c: CustomerAccount) => ({
             customer_id: c.customer_id,
-            customer_title: c.customer_title
-          }))
+            customer_title: c.customer_title,
+          })),
         }
         validateGetAllActiveCustomersResponse(validationData)
       } catch (validationError) {

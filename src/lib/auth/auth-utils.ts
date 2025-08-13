@@ -17,7 +17,6 @@ interface SessionClaimsMetadata {
   }
 }
 
-
 /**
  * Extract role with consistent priority chain
  * Priority: sessionClaims > publicMetadata > unsafeMetadata

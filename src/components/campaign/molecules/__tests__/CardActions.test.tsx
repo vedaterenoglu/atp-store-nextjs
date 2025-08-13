@@ -41,19 +41,29 @@ interface ButtonProps {
 }
 
 jest.mock('@/components/ui/schadcn/button', () => ({
-  Button: jest.fn(({ children, onClick, disabled, className, variant, size, ...props }: ButtonProps) => (
-    <button
-      data-testid="add-to-cart-button"
-      onClick={disabled ? undefined : onClick}
-      disabled={disabled}
-      className={className}
-      data-variant={variant}
-      data-size={size}
-      {...props}
-    >
-      {children}
-    </button>
-  )),
+  Button: jest.fn(
+    ({
+      children,
+      onClick,
+      disabled,
+      className,
+      variant,
+      size,
+      ...props
+    }: ButtonProps) => (
+      <button
+        data-testid="add-to-cart-button"
+        onClick={disabled ? undefined : onClick}
+        disabled={disabled}
+        className={className}
+        data-variant={variant}
+        data-size={size}
+        {...props}
+      >
+        {children}
+      </button>
+    )
+  ),
 }))
 
 // Mock QuantityCounter with proper typing
@@ -66,25 +76,37 @@ interface QuantityCounterProps {
 }
 
 jest.mock('../../atoms', () => ({
-  QuantityCounter: jest.fn(({ quantity, onDecrease, onIncrease, disabled, canModify }: QuantityCounterProps) => (
-    <div data-testid="quantity-counter" data-disabled={disabled} data-can-modify={canModify}>
-      <button
-        data-testid="decrease-button"
-        onClick={onDecrease}
-        disabled={disabled || !canModify}
+  QuantityCounter: jest.fn(
+    ({
+      quantity,
+      onDecrease,
+      onIncrease,
+      disabled,
+      canModify,
+    }: QuantityCounterProps) => (
+      <div
+        data-testid="quantity-counter"
+        data-disabled={disabled}
+        data-can-modify={canModify}
       >
-        -
-      </button>
-      <span data-testid="quantity-display">{quantity}</span>
-      <button
-        data-testid="increase-button"
-        onClick={onIncrease}
-        disabled={disabled || !canModify}
-      >
-        +
-      </button>
-    </div>
-  )),
+        <button
+          data-testid="decrease-button"
+          onClick={onDecrease}
+          disabled={disabled || !canModify}
+        >
+          -
+        </button>
+        <span data-testid="quantity-display">{quantity}</span>
+        <button
+          data-testid="increase-button"
+          onClick={onIncrease}
+          disabled={disabled || !canModify}
+        >
+          +
+        </button>
+      </div>
+    )
+  ),
 }))
 
 // Mock toast
@@ -110,10 +132,10 @@ jest.mock('@/hooks/use-secure-auth', () => ({
 
 // Mock cart store
 const mockAddToCart = jest.fn(() => Promise.resolve(true))
-const mockFindCartItem = jest.fn(() => null)
+const mockFindCartItem = jest.fn(() => null as { quantity: number } | null)
 
 jest.mock('@/lib/stores/cart.store', () => ({
-  useCartStore: jest.fn((selector) => {
+  useCartStore: jest.fn(selector => {
     const state = {
       addToCart: mockAddToCart,
       findCartItem: mockFindCartItem,
@@ -261,7 +283,7 @@ describe('CardActions', () => {
     })
   })
 
-  // Test add to cart functionality  
+  // Test add to cart functionality
   describe('Add to cart functionality', () => {
     it('does not call onAddToCart when quantity is 0', () => {
       // Arrange
@@ -356,13 +378,19 @@ describe('CardActions', () => {
     it('disables quantity counter when canAddToCart is false', () => {
       // Arrange
       mockSecureAuth.auth.canAddToCart = false
-      
+
       // Act
       render(<CardActions {...mockProps} />)
 
       // Assert
-      expect(screen.getByTestId('quantity-counter')).toHaveAttribute('data-disabled', 'true')
-      expect(screen.getByTestId('quantity-counter')).toHaveAttribute('data-can-modify', 'false')
+      expect(screen.getByTestId('quantity-counter')).toHaveAttribute(
+        'data-disabled',
+        'true'
+      )
+      expect(screen.getByTestId('quantity-counter')).toHaveAttribute(
+        'data-can-modify',
+        'false'
+      )
     })
 
     it('disables add to cart button when quantity is 0', () => {
@@ -478,12 +506,18 @@ describe('CardActions', () => {
       // Arrange
       mockSecureAuth.isAuthenticated = false
       mockSecureAuth.auth.canAddToCart = false
-      
+
       render(<CardActions {...mockProps} />)
 
       // Assert - The quantity counter should be disabled
-      expect(screen.getByTestId('quantity-counter')).toHaveAttribute('data-disabled', 'true')
-      expect(screen.getByTestId('quantity-counter')).toHaveAttribute('data-can-modify', 'false')
+      expect(screen.getByTestId('quantity-counter')).toHaveAttribute(
+        'data-disabled',
+        'true'
+      )
+      expect(screen.getByTestId('quantity-counter')).toHaveAttribute(
+        'data-can-modify',
+        'false'
+      )
       expect(screen.getByTestId('increase-button')).toBeDisabled()
       expect(screen.getByTestId('decrease-button')).toBeDisabled()
     })
@@ -493,12 +527,18 @@ describe('CardActions', () => {
       mockSecureAuth.isAuthenticated = true
       mockSecureAuth.auth.canAddToCart = true
       mockSecureAuth.auth.activeCustomerId = 'customer-123'
-      
+
       render(<CardActions {...mockProps} />)
 
       // Assert - The quantity counter should be enabled
-      expect(screen.getByTestId('quantity-counter')).toHaveAttribute('data-disabled', 'false')
-      expect(screen.getByTestId('quantity-counter')).toHaveAttribute('data-can-modify', 'true')
+      expect(screen.getByTestId('quantity-counter')).toHaveAttribute(
+        'data-disabled',
+        'false'
+      )
+      expect(screen.getByTestId('quantity-counter')).toHaveAttribute(
+        'data-can-modify',
+        'true'
+      )
       expect(screen.getByTestId('increase-button')).not.toBeDisabled()
       expect(screen.getByTestId('decrease-button')).not.toBeDisabled()
     })
@@ -506,7 +546,7 @@ describe('CardActions', () => {
     it('shows existing cart quantity when item is in cart', () => {
       // Arrange
       mockFindCartItem.mockReturnValue({ quantity: 5 })
-      
+
       // Act
       render(<CardActions {...mockProps} />)
 

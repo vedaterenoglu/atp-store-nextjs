@@ -17,9 +17,7 @@ interface CustomerRouteGuardProps {
   requireActiveCustomer?: boolean
 }
 
-export function CustomerRouteGuard({
-  children,
-}: CustomerRouteGuardProps) {
+export function CustomerRouteGuard({ children }: CustomerRouteGuardProps) {
   const { isLoading, canAccessCustomerFeatures } = useAuthGuard()
   const [showSignInModal, setShowSignInModal] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
@@ -29,10 +27,10 @@ export function CustomerRouteGuard({
 
     // Use centralized auth check
     const result = canAccessCustomerFeatures()
-    
+
     if (!result.success) {
       setAuthError(result.message || 'Access denied')
-      
+
       // Show sign-in modal for NOT_SIGNED_IN or INVALID_ROLE
       if (result.error === 'NOT_SIGNED_IN' || result.error === 'INVALID_ROLE') {
         setShowSignInModal(true)
@@ -65,9 +63,7 @@ export function CustomerRouteGuard({
       ) : (
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-md mx-auto text-center">
-            <h2 className="text-2xl font-bold mb-4">
-              Access Required
-            </h2>
+            <h2 className="text-2xl font-bold mb-4">Access Required</h2>
             <p className="text-muted-foreground mb-6">
               {authError || 'Please sign in to access this area.'}
             </p>

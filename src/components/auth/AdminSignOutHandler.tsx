@@ -18,19 +18,19 @@ export function AdminSignOutHandler() {
 
   useEffect(() => {
     const isAdmin = user?.publicMetadata?.['role'] === 'admin'
-    
+
     // Track if user was admin and signed in
     if (isSignedIn && isAdmin) {
       wasAdminRef.current = true
       wasSignedInRef.current = true
     }
-    
+
     // Detect when admin signs out
     if (wasAdminRef.current && wasSignedInRef.current && !isSignedIn) {
       // Admin has signed out, clear the customer cookie
       fetch('/api/customer/clear', { method: 'POST' })
         .then(() => {
-          console.log('Customer selection cleared after admin sign-out')
+          // Customer selection cleared
         })
         .catch(error => {
           console.error('Failed to clear customer selection:', error)
@@ -41,7 +41,7 @@ export function AdminSignOutHandler() {
           wasSignedInRef.current = false
         })
     }
-    
+
     // Update signed-in status
     wasSignedInRef.current = isSignedIn || false
   }, [isSignedIn, user])

@@ -27,18 +27,22 @@ jest.mock('react-i18next', () => ({
 // Mock lucide-react icons
 jest.mock('lucide-react', () => ({
   Filter: jest.fn(({ className }: { className?: string }) => (
-    <span data-testid="filter-icon" className={className}>Filter Icon</span>
+    <span data-testid="filter-icon" className={className}>
+      Filter Icon
+    </span>
   )),
   Search: jest.fn(({ className }: { className?: string }) => (
-    <span data-testid="search-icon" className={className}>Search Icon</span>
+    <span data-testid="search-icon" className={className}>
+      Search Icon
+    </span>
   )),
 }))
 
 // Mock UI components
 jest.mock('@/components/ui/schadcn', () => ({
   Button: jest.fn(({ children, variant, size, ...props }: MockButtonProps) => (
-    <button 
-      data-testid="button" 
+    <button
+      data-testid="button"
       data-variant={variant}
       data-size={size}
       {...props}

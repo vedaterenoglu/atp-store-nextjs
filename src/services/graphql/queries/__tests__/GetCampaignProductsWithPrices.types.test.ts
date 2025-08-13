@@ -98,7 +98,7 @@ describe('GetCampaignProductsWithPrices Types', () => {
         stock_group: 'Groceries',
         stock_image_link: null,
         stock_unit: 'kg',
-        stock_price: 25.50,
+        stock_price: 25.5,
         campaign_price: null,
       }
 
@@ -283,8 +283,8 @@ describe('GetCampaignProductsWithPrices Types', () => {
         stock_group: 'Möbler och Heminredning',
         stock_image_link: null,
         stock_unit: 'stück',
-        stock_price: 250.00,
-        campaign_price: 200.00,
+        stock_price: 250.0,
+        campaign_price: 200.0,
       }
 
       expect(internationalStock.stock_name).toContain('ü')
@@ -332,7 +332,7 @@ describe('GetCampaignProductsWithPrices Types', () => {
       expect(completeStock).toHaveProperty('stock_group')
       expect(completeStock).toHaveProperty('stock_unit')
       expect(completeStock).toHaveProperty('stock_price')
-      
+
       // Check nullable fields exist (even if null)
       expect(completeStock).toHaveProperty('is_campaign_active')
       expect(completeStock).toHaveProperty('stock_image_link')
@@ -404,16 +404,20 @@ describe('GetCampaignProductsWithPrices Types', () => {
     })
 
     it('should handle large stock arrays', () => {
-      const largeStockArray: CampaignStock[] = Array.from({ length: 1000 }, (_, index) => ({
-        is_campaign_active: index % 2 === 0,
-        stock_id: `STOCK_${index.toString().padStart(4, '0')}`,
-        stock_name: `Product ${index + 1}`,
-        stock_group: `Group${(index % 10) + 1}`,
-        stock_image_link: index % 3 === 0 ? null : `https://example.com/img${index}.jpg`,
-        stock_unit: ['pcs', 'kg', 'liter', 'meter'][index % 4] || 'pcs',
-        stock_price: (index + 1) * 10,
-        campaign_price: index % 2 === 0 ? (index + 1) * 8 : null,
-      }))
+      const largeStockArray: CampaignStock[] = Array.from(
+        { length: 1000 },
+        (_, index) => ({
+          is_campaign_active: index % 2 === 0,
+          stock_id: `STOCK_${index.toString().padStart(4, '0')}`,
+          stock_name: `Product ${index + 1}`,
+          stock_group: `Group${(index % 10) + 1}`,
+          stock_image_link:
+            index % 3 === 0 ? null : `https://example.com/img${index}.jpg`,
+          stock_unit: ['pcs', 'kg', 'liter', 'meter'][index % 4] || 'pcs',
+          stock_price: (index + 1) * 10,
+          campaign_price: index % 2 === 0 ? (index + 1) * 8 : null,
+        })
+      )
 
       const largeResponse: GetCampaignProductsWithPricesQueryResponse = {
         stock: largeStockArray,
@@ -422,10 +426,14 @@ describe('GetCampaignProductsWithPrices Types', () => {
       expect(largeResponse.stock).toHaveLength(1000)
       expect(largeResponse.stock[0]?.stock_id).toBe('STOCK_0000')
       expect(largeResponse.stock[999]?.stock_id).toBe('STOCK_0999')
-      
+
       // Verify some items have campaigns
-      const withCampaign = largeResponse.stock.filter(s => s.is_campaign_active === true)
-      const withoutCampaign = largeResponse.stock.filter(s => s.is_campaign_active === false)
+      const withCampaign = largeResponse.stock.filter(
+        s => s.is_campaign_active === true
+      )
+      const withoutCampaign = largeResponse.stock.filter(
+        s => s.is_campaign_active === false
+      )
       expect(withCampaign.length).toBeGreaterThan(0)
       expect(withoutCampaign.length).toBeGreaterThan(0)
     })
@@ -467,7 +475,9 @@ describe('GetCampaignProductsWithPrices Types', () => {
       }
 
       // Test filter
-      const activeCampaigns = response.stock.filter(s => s.is_campaign_active === true)
+      const activeCampaigns = response.stock.filter(
+        s => s.is_campaign_active === true
+      )
       expect(activeCampaigns).toHaveLength(2)
 
       // Test map
@@ -475,11 +485,15 @@ describe('GetCampaignProductsWithPrices Types', () => {
       expect(stockIds).toEqual(['FILTER_001', 'FILTER_002', 'FILTER_003'])
 
       // Test find
-      const electronics = response.stock.find(s => s.stock_group === 'Electronics')
+      const electronics = response.stock.find(
+        s => s.stock_group === 'Electronics'
+      )
       expect(electronics?.stock_id).toBe('FILTER_001')
 
       // Test some
-      const hasGroceries = response.stock.some(s => s.stock_group === 'Groceries')
+      const hasGroceries = response.stock.some(
+        s => s.stock_group === 'Groceries'
+      )
       expect(hasGroceries).toBe(true)
 
       // Test every
@@ -487,7 +501,10 @@ describe('GetCampaignProductsWithPrices Types', () => {
       expect(allHavePrice).toBe(true)
 
       // Test reduce
-      const totalPrice = response.stock.reduce((sum, s) => sum + s.stock_price, 0)
+      const totalPrice = response.stock.reduce(
+        (sum, s) => sum + s.stock_price,
+        0
+      )
       expect(totalPrice).toBe(350)
     })
 
@@ -527,9 +544,15 @@ describe('GetCampaignProductsWithPrices Types', () => {
         ],
       }
 
-      const activeCount = mixedResponse.stock.filter(s => s.is_campaign_active === true).length
-      const inactiveCount = mixedResponse.stock.filter(s => s.is_campaign_active === false).length
-      const nullCount = mixedResponse.stock.filter(s => s.is_campaign_active === null).length
+      const activeCount = mixedResponse.stock.filter(
+        s => s.is_campaign_active === true
+      ).length
+      const inactiveCount = mixedResponse.stock.filter(
+        s => s.is_campaign_active === false
+      ).length
+      const nullCount = mixedResponse.stock.filter(
+        s => s.is_campaign_active === null
+      ).length
 
       expect(activeCount).toBe(1)
       expect(inactiveCount).toBe(1)
@@ -554,12 +577,16 @@ describe('GetCampaignProductsWithPrices Types', () => {
         ],
       }
 
-      expect(isGetCampaignProductsWithPricesQueryResponse(validResponse)).toBe(true)
+      expect(isGetCampaignProductsWithPricesQueryResponse(validResponse)).toBe(
+        true
+      )
     })
 
     it('should identify empty stock array as valid', () => {
       const emptyResponse = { stock: [] }
-      expect(isGetCampaignProductsWithPricesQueryResponse(emptyResponse)).toBe(true)
+      expect(isGetCampaignProductsWithPricesQueryResponse(emptyResponse)).toBe(
+        true
+      )
     })
 
     it('should reject null', () => {
@@ -567,7 +594,9 @@ describe('GetCampaignProductsWithPrices Types', () => {
     })
 
     it('should reject undefined', () => {
-      expect(isGetCampaignProductsWithPricesQueryResponse(undefined)).toBe(false)
+      expect(isGetCampaignProductsWithPricesQueryResponse(undefined)).toBe(
+        false
+      )
     })
 
     it('should reject primitive types', () => {
@@ -578,15 +607,27 @@ describe('GetCampaignProductsWithPrices Types', () => {
 
     it('should reject objects without stock property', () => {
       expect(isGetCampaignProductsWithPricesQueryResponse({})).toBe(false)
-      expect(isGetCampaignProductsWithPricesQueryResponse({ data: [] })).toBe(false)
-      expect(isGetCampaignProductsWithPricesQueryResponse({ items: [] })).toBe(false)
+      expect(isGetCampaignProductsWithPricesQueryResponse({ data: [] })).toBe(
+        false
+      )
+      expect(isGetCampaignProductsWithPricesQueryResponse({ items: [] })).toBe(
+        false
+      )
     })
 
     it('should reject objects with non-array stock property', () => {
-      expect(isGetCampaignProductsWithPricesQueryResponse({ stock: 'not array' })).toBe(false)
-      expect(isGetCampaignProductsWithPricesQueryResponse({ stock: 123 })).toBe(false)
-      expect(isGetCampaignProductsWithPricesQueryResponse({ stock: null })).toBe(false)
-      expect(isGetCampaignProductsWithPricesQueryResponse({ stock: {} })).toBe(false)
+      expect(
+        isGetCampaignProductsWithPricesQueryResponse({ stock: 'not array' })
+      ).toBe(false)
+      expect(isGetCampaignProductsWithPricesQueryResponse({ stock: 123 })).toBe(
+        false
+      )
+      expect(
+        isGetCampaignProductsWithPricesQueryResponse({ stock: null })
+      ).toBe(false)
+      expect(isGetCampaignProductsWithPricesQueryResponse({ stock: {} })).toBe(
+        false
+      )
     })
 
     it('should accept valid response with multiple items', () => {
@@ -615,22 +656,21 @@ describe('GetCampaignProductsWithPrices Types', () => {
         ],
       }
 
-      expect(isGetCampaignProductsWithPricesQueryResponse(multiItemResponse)).toBe(true)
+      expect(
+        isGetCampaignProductsWithPricesQueryResponse(multiItemResponse)
+      ).toBe(true)
     })
 
     it('should not validate internal structure of stock items', () => {
       // Type guard only checks if stock is an array, not the validity of items
       const invalidItemsResponse = {
-        stock: [
-          'invalid item',
-          123,
-          null,
-          { random: 'object' },
-        ],
+        stock: ['invalid item', 123, null, { random: 'object' }],
       }
 
       // Should still return true because stock is an array
-      expect(isGetCampaignProductsWithPricesQueryResponse(invalidItemsResponse)).toBe(true)
+      expect(
+        isGetCampaignProductsWithPricesQueryResponse(invalidItemsResponse)
+      ).toBe(true)
     })
   })
 

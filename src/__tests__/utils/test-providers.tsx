@@ -61,7 +61,12 @@ export function createWrapper(options: TestProviderOptions = {}) {
     }
 
     if (opts.includeTheme) {
-      wrapped = <ThemeInitializer>{wrapped}</ThemeInitializer>
+      wrapped = (
+        <>
+          <ThemeInitializer />
+          {wrapped}
+        </>
+      )
     }
 
     return wrapped

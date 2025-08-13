@@ -34,9 +34,7 @@ jest.mock('react-i18next', () => ({
     t: (key: string, options?: { year?: number }) => {
       if (key === 'footer.copyright') {
         const year =
-          options?.year !== undefined
-            ? options.year
-            : new Date().getFullYear()
+          options?.year !== undefined ? options.year : new Date().getFullYear()
         return `© ${year} Alfe Tissue Paper AB. All rights reserved.`
       }
       if (key === 'footer.createdBy') {

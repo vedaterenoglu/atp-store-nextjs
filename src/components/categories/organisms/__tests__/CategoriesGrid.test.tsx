@@ -31,13 +31,15 @@ interface MockGridItemProps {
 }
 
 // Helper function to create mock category
-function createMockCategory(overrides: Partial<{
-  id: string
-  name: string
-  companyId: string
-  imageUrl: string
-  altText: string
-}> = {}) {
+function createMockCategory(
+  overrides: Partial<{
+    id: string
+    name: string
+    companyId: string
+    imageUrl: string
+    altText: string
+  }> = {}
+) {
   return {
     id: overrides.id || 'CAT_001',
     name: overrides.name || 'Test Category',
@@ -66,7 +68,7 @@ jest.mock('@/components/categories/molecules/CategoryCard', () => ({
   )),
 }))
 
-// Mock the barrel export  
+// Mock the barrel export
 jest.mock('@/components/categories', () => ({
   CategoryCard: jest.fn(({ id, name, imageUrl }: MockCategoryCardProps) => (
     <div
@@ -85,11 +87,7 @@ jest.mock('@/components/ui/custom/grid', () => ({
     <div data-testid="grid-error-boundary">{children}</div>
   )),
   GridSkeleton: jest.fn(({ count, variant }: MockGridSkeletonProps) => (
-    <div
-      data-testid="grid-skeleton"
-      data-count={count}
-      data-variant={variant}
-    >
+    <div data-testid="grid-skeleton" data-count={count} data-variant={variant}>
       Loading skeletons...
     </div>
   )),
@@ -100,7 +98,7 @@ jest.mock('@/components/ui/custom/grid', () => ({
 
 // Mock the cn utility
 jest.mock('@/lib/utils', () => ({
-  cn: jest.fn((...classes: (string | undefined | null | false)[]) => 
+  cn: jest.fn((...classes: (string | undefined | null | false)[]) =>
     classes.filter(Boolean).join(' ')
   ),
 }))
@@ -196,9 +194,7 @@ describe('CategoriesGrid', () => {
     })
 
     it('should show categories when isLoading is false', () => {
-      render(
-        <CategoriesGrid categories={mockCategories} isLoading={false} />
-      )
+      render(<CategoriesGrid categories={mockCategories} isLoading={false} />)
 
       // Should not show skeleton
       expect(screen.queryByTestId('grid-skeleton')).not.toBeInTheDocument()
@@ -210,9 +206,7 @@ describe('CategoriesGrid', () => {
     })
 
     it('should prefer loading state over categories', () => {
-      render(
-        <CategoriesGrid categories={mockCategories} isLoading={true} />
-      )
+      render(<CategoriesGrid categories={mockCategories} isLoading={true} />)
 
       // Should show skeleton even with categories provided
       expect(screen.getByTestId('grid-skeleton')).toBeInTheDocument()
@@ -225,9 +219,7 @@ describe('CategoriesGrid', () => {
       const testError = new Error('Test error message')
 
       expect(() => {
-        render(
-          <CategoriesGrid categories={[]} error={testError} />
-        )
+        render(<CategoriesGrid categories={[]} error={testError} />)
       }).toThrow('Test error message')
     })
 
@@ -247,9 +239,7 @@ describe('CategoriesGrid', () => {
 
     it('should not throw when error is null', () => {
       expect(() => {
-        render(
-          <CategoriesGrid categories={mockCategories} error={null} />
-        )
+        render(<CategoriesGrid categories={mockCategories} error={null} />)
       }).not.toThrow()
 
       expect(screen.getAllByTestId('grid-item')).toHaveLength(
@@ -259,9 +249,7 @@ describe('CategoriesGrid', () => {
 
     it('should not throw when error is undefined', () => {
       expect(() => {
-        render(
-          <CategoriesGrid categories={mockCategories} error={undefined} />
-        )
+        render(<CategoriesGrid categories={mockCategories} error={undefined} />)
       }).not.toThrow()
 
       expect(screen.getAllByTestId('grid-item')).toHaveLength(
@@ -274,9 +262,7 @@ describe('CategoriesGrid', () => {
       const testError = new Error('Early error')
 
       try {
-        render(
-          <CategoriesGrid categories={mockCategories} error={testError} />
-        )
+        render(<CategoriesGrid categories={mockCategories} error={testError} />)
       } catch {
         // Error boundary should not be rendered
         expect(

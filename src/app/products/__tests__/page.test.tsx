@@ -31,7 +31,7 @@ jest.mock('@/components/products', () => ({
     <div data-testid="products-page">
       Products Page
       <div data-testid="products-count">{products?.length || 0}</div>
-      {products.map((product) => (
+      {products.map(product => (
         <div key={product.id} data-testid={`product-${product.id}`}>
           {product.name} - {product.imageUrl}
         </div>

@@ -32,7 +32,10 @@ interface MockCategoriesPageProps {
 
 jest.mock('@/components/categories', () => ({
   CategoriesPage: jest.fn(({ categories, error }: MockCategoriesPageProps) => (
-    <div data-testid="categories-page" data-categories={JSON.stringify(categories)}>
+    <div
+      data-testid="categories-page"
+      data-categories={JSON.stringify(categories)}
+    >
       Categories Page
       <div data-testid="categories-count">{categories?.length || 0}</div>
       {error && <div data-testid="error-state">Error: {error.message}</div>}

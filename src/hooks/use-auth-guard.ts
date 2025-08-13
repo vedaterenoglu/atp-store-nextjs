@@ -9,23 +9,23 @@
 
 import { useAuth, useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useMemo } from 'react'
 import { toast } from '@/lib/utils/toast'
-import { 
-  AuthorizationService, 
-  type AuthContext, 
-  type AuthCheckResult
+import {
+  AuthorizationService,
+  type AuthContext,
+  type AuthCheckResult,
 } from '@/lib/auth/authorization.service'
 
 interface UseAuthGuardReturn {
   // State
   isLoading: boolean
   authContext: AuthContext
-  
+
   // Check methods
   canAccessCustomerFeatures: () => AuthCheckResult
   canAccessAdminDashboard: () => AuthCheckResult
-  
+
   // Action methods
   requireCustomerAccess: (
     callback: () => void,
@@ -68,13 +68,24 @@ export function useAuthGuard(): UseAuthGuardReturn {
       })
   }, [isLoaded, isSignedIn])
 
-  // Build auth context
-  const authContext: AuthContext = {
-    isSignedIn: isSignedIn || false,
-    role: AuthorizationService.extractRole(user as any),
-    hasActiveCustomer: !!activeCustomerId,
-    customerId: activeCustomerId || undefined
-  }
+  // Build auth context with useMemo to prevent dependency changes
+  const authContext: AuthContext = useMemo(() => {
+    // Extract role directly from publicMetadata
+    let role: 'customer' | 'admin' | null = null
+    if (user?.publicMetadata?.['role']) {
+      const metadataRole = user.publicMetadata['role']
+      if (metadataRole === 'admin' || metadataRole === 'customer') {
+        role = metadataRole
+      }
+    }
+
+    return {
+      isSignedIn: isSignedIn || false,
+      role,
+      hasActiveCustomer: !!activeCustomerId,
+      customerId: activeCustomerId || undefined,
+    }
+  }, [isSignedIn, user, activeCustomerId])
 
   // Check if user can access customer features
   const canAccessCustomerFeatures = useCallback(() => {
@@ -87,54 +98,74 @@ export function useAuthGuard(): UseAuthGuardReturn {
   }, [authContext])
 
   // Require customer access with error handling
-  const requireCustomerAccess = useCallback((
-    callback: () => void,
-    options: { showToast?: boolean; redirectOnFail?: boolean } = { showToast: true, redirectOnFail: false }
-  ) => {
-    const result = canAccessCustomerFeatures()
-    
-    if (result.success) {
-      callback()
-    } else {
-      // Only show toast for non-sign-in errors
-      if (options.showToast && result.message && result.error !== 'NOT_SIGNED_IN') {
-        toast.error(result.message)
+  const requireCustomerAccess = useCallback(
+    (
+      callback: () => void,
+      options: { showToast?: boolean; redirectOnFail?: boolean } = {
+        showToast: true,
+        redirectOnFail: false,
       }
-      
-      if (options.redirectOnFail && result.error) {
-        const redirectUrl = AuthorizationService.getRedirectUrl(
-          result.error,
-          window.location.pathname
-        )
-        router.push(redirectUrl)
+    ) => {
+      const result = canAccessCustomerFeatures()
+
+      if (result.success) {
+        callback()
+      } else {
+        // Only show toast for non-sign-in errors
+        if (
+          options.showToast &&
+          result.message &&
+          result.error !== 'NOT_SIGNED_IN'
+        ) {
+          toast.error(result.message)
+        }
+
+        if (options.redirectOnFail && result.error) {
+          const redirectUrl = AuthorizationService.getRedirectUrl(
+            result.error,
+            window.location.pathname
+          )
+          router.push(redirectUrl)
+        }
       }
-    }
-  }, [canAccessCustomerFeatures, router])
+    },
+    [canAccessCustomerFeatures, router]
+  )
 
   // Require admin access with error handling
-  const requireAdminAccess = useCallback((
-    callback: () => void,
-    options: { showToast?: boolean; redirectOnFail?: boolean } = { showToast: true, redirectOnFail: false }
-  ) => {
-    const result = canAccessAdminDashboard()
-    
-    if (result.success) {
-      callback()
-    } else {
-      // Only show toast for non-sign-in errors
-      if (options.showToast && result.message && result.error !== 'NOT_SIGNED_IN') {
-        toast.error(result.message)
+  const requireAdminAccess = useCallback(
+    (
+      callback: () => void,
+      options: { showToast?: boolean; redirectOnFail?: boolean } = {
+        showToast: true,
+        redirectOnFail: false,
       }
-      
-      if (options.redirectOnFail && result.error) {
-        const redirectUrl = AuthorizationService.getRedirectUrl(
-          result.error,
-          window.location.pathname
-        )
-        router.push(redirectUrl)
+    ) => {
+      const result = canAccessAdminDashboard()
+
+      if (result.success) {
+        callback()
+      } else {
+        // Only show toast for non-sign-in errors
+        if (
+          options.showToast &&
+          result.message &&
+          result.error !== 'NOT_SIGNED_IN'
+        ) {
+          toast.error(result.message)
+        }
+
+        if (options.redirectOnFail && result.error) {
+          const redirectUrl = AuthorizationService.getRedirectUrl(
+            result.error,
+            window.location.pathname
+          )
+          router.push(redirectUrl)
+        }
       }
-    }
-  }, [canAccessAdminDashboard, router])
+    },
+    [canAccessAdminDashboard, router]
+  )
 
   return {
     isLoading: !isLoaded || isCheckingCustomer,
@@ -142,6 +173,6 @@ export function useAuthGuard(): UseAuthGuardReturn {
     canAccessCustomerFeatures,
     canAccessAdminDashboard,
     requireCustomerAccess,
-    requireAdminAccess
+    requireAdminAccess,
   }
 }

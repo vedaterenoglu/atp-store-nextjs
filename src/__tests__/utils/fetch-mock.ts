@@ -184,7 +184,7 @@ export function mockApiRoutes() {
  */
 export function setupFetchMock() {
   const fetchMock = mockApiRoutes()
-  global.fetch = fetchMock as any
+  global.fetch = fetchMock as typeof global.fetch
   return fetchMock
 }
 
@@ -193,7 +193,7 @@ export function setupFetchMock() {
  */
 export function restoreFetch() {
   if ('fetch' in global) {
-    delete (global as any).fetch
+    delete (global as { fetch?: typeof fetch }).fetch
   }
 }
 

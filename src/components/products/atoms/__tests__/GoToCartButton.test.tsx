@@ -203,7 +203,9 @@ describe('GoToCartButton', () => {
     fireEvent.click(button)
 
     // Should show error about selecting customer
-    expect(toast.error).toHaveBeenCalledWith('Please select a customer account to access cart')
+    expect(toast.error).toHaveBeenCalledWith(
+      'Please select a customer account to access cart'
+    )
     expect(mockPush).not.toHaveBeenCalled()
   })
 })

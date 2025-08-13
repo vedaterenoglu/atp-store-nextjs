@@ -17,16 +17,15 @@ import {
   calculateCustomerPrice,
   calculateDiscountPercentage,
   getBulkProductPrices,
-  type ProductPriceResult,
 } from '../price.service'
-import type { 
+import type {
   GetProductPricesQueryResponse,
-  StockPriceItem 
+  StockPriceItem,
 } from '@/services/graphql/queries/GetProductPricesQuery.types'
 
 // Mock the validation function
 jest.mock('@/services/graphql/queries/GetProductPricesQuery.schema', () => ({
-  validateGetProductPricesResponse: jest.fn((data) => data),
+  validateGetProductPricesResponse: jest.fn(data => data),
 }))
 
 // Mock the env config
@@ -46,7 +45,9 @@ const mockFetch = jest.fn()
 // The setup file suppresses specific error messages but still logs others
 
 // Helper function to create a valid StockPriceItem
-function createMockStockItem(overrides: Partial<StockPriceItem> = {}): StockPriceItem {
+function createMockStockItem(
+  overrides: Partial<StockPriceItem> = {}
+): StockPriceItem {
   return {
     stock_price: 10000,
     stock_price_a: null,
@@ -62,7 +63,7 @@ function createMockStockItem(overrides: Partial<StockPriceItem> = {}): StockPric
     campaign_price: null,
     is_campaign_active: false,
     stock_moms: 25,
-    ...overrides
+    ...overrides,
   }
 }
 
@@ -220,7 +221,9 @@ describe('Price Service', () => {
 
       await getProductPrices('STOCK_001', 'CUST_001')
 
-      expect(validateGetProductPricesResponse).toHaveBeenCalledWith(mockResponse)
+      expect(validateGetProductPricesResponse).toHaveBeenCalledWith(
+        mockResponse
+      )
     })
   })
 
@@ -326,8 +329,19 @@ describe('Price Service', () => {
     })
 
     it('should handle all price classes', async () => {
-      const priceClasses = ['A', 'B', 'C', 'D', 'S', 'HRA', 'HRB', 'HRC', 'HRD', 'Z']
-      
+      const priceClasses = [
+        'A',
+        'B',
+        'C',
+        'D',
+        'S',
+        'HRA',
+        'HRB',
+        'HRC',
+        'HRD',
+        'Z',
+      ]
+
       for (const priceClass of priceClasses) {
         const mockData: GetProductPricesQueryResponse = {
           stock: [
@@ -610,7 +624,11 @@ describe('Price Service', () => {
         json: async () => mockData,
       })
 
-      await getBulkProductPrices(['STOCK_001', 'STOCK_002'], 'CUST_001', 'custom-company')
+      await getBulkProductPrices(
+        ['STOCK_001', 'STOCK_002'],
+        'CUST_001',
+        'custom-company'
+      )
 
       expect(mockFetch).toHaveBeenCalledTimes(2)
       expect(mockFetch).toHaveBeenCalledWith(
@@ -661,11 +679,11 @@ describe('Price Service', () => {
       })
 
       const priceResult = await calculateCustomerPrice('STOCK_001', 'CUST_001')
-      
+
       // Campaign price should take priority
       expect(priceResult.finalPrice).toBe(15000)
       expect(priceResult.isCampaignActive).toBe(true)
-      
+
       // Calculate discount
       const discount = calculateDiscountPercentage(20000, 15000)
       expect(discount).toBe(25)
@@ -686,9 +704,9 @@ describe('Price Service', () => {
           json: async () => ({
             stock: [
               createMockStockItem({
-                stock_price: product?.price,
+                stock_price: product?.price ?? 10000,
                 is_campaign_active: product?.campaign !== null,
-                campaign_price: product?.campaign,
+                campaign_price: product?.campaign ?? null,
               }),
             ],
             customer_price_list: [],
@@ -701,15 +719,15 @@ describe('Price Service', () => {
       const result = await getBulkProductPrices(stockIds, 'CUST_001')
 
       expect(result.size).toBe(3)
-      
+
       const prod1 = result.get('PROD_1')
       expect(prod1?.finalPrice).toBe(8000)
       expect(prod1?.isCampaignActive).toBe(true)
-      
+
       const prod2 = result.get('PROD_2')
       expect(prod2?.finalPrice).toBe(15000)
       expect(prod2?.isCampaignActive).toBe(false)
-      
+
       const prod3 = result.get('PROD_3')
       expect(prod3?.finalPrice).toBe(4000)
       expect(prod3?.isCampaignActive).toBe(true)

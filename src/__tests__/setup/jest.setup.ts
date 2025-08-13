@@ -1,6 +1,6 @@
 /**
  * Jest Setup File - CLEAN VERSION
- * 
+ *
  * This file contains ONLY essential polyfills and browser API mocks.
  * All component mocks should be defined inline in individual test files.
  */
@@ -19,7 +19,8 @@ dotenv.config({ path: path.resolve(process.cwd(), '.env.test') })
 // Configure Clerk for test environment
 process.env['CLERK_TESTING'] = 'true'
 process.env['CLERK_API_URL'] = 'https://api.clerk.dev'
-process.env['CLERK_FRONTEND_API'] = 'https://charmed-primate-18.clerk.accounts.dev'
+process.env['CLERK_FRONTEND_API'] =
+  'https://charmed-primate-18.clerk.accounts.dev'
 
 // ============================================
 // POLYFILLS AND BROWSER API MOCKS ONLY
@@ -31,13 +32,15 @@ global.TextDecoder = TextDecoder as unknown as typeof globalThis.TextDecoder
 
 // Add fetch polyfills for MSW in Node.js environment
 import * as nodeFetch from 'node-fetch'
-
 ;(() => {
   if (!globalThis.fetch) {
     globalThis.fetch = nodeFetch.default as unknown as typeof globalThis.fetch
-    globalThis.Headers = nodeFetch.Headers as unknown as typeof globalThis.Headers
-    globalThis.Request = nodeFetch.Request as unknown as typeof globalThis.Request
-    globalThis.Response = nodeFetch.Response as unknown as typeof globalThis.Response
+    globalThis.Headers =
+      nodeFetch.Headers as unknown as typeof globalThis.Headers
+    globalThis.Request =
+      nodeFetch.Request as unknown as typeof globalThis.Request
+    globalThis.Response =
+      nodeFetch.Response as unknown as typeof globalThis.Response
   }
 
   // Also set on global object for compatibility
@@ -115,7 +118,8 @@ class MockIntersectionObserver implements IntersectionObserver {
   }
 }
 
-global.IntersectionObserver = MockIntersectionObserver as unknown as typeof IntersectionObserver
+global.IntersectionObserver =
+  MockIntersectionObserver as unknown as typeof IntersectionObserver
 
 // Mock localStorage
 const localStorageMock = {
@@ -157,18 +161,21 @@ jest.mock('next/image', () => {
   return {
     __esModule: true,
     default: function Image(
-      props: React.ImgHTMLAttributes<HTMLImageElement> & { priority?: boolean; fill?: boolean; sizes?: string }
+      props: React.ImgHTMLAttributes<HTMLImageElement> & {
+        priority?: boolean
+        fill?: boolean
+        sizes?: string
+      }
     ) {
       // Filter out Next.js specific props
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { priority, fill, sizes, ...imgProps } = props
       // Return an img element with data attributes for testing
-      return React.createElement('img', { 
-        ...imgProps, 
+      return React.createElement('img', {
+        ...imgProps,
         'data-priority': priority,
         'data-fill': fill,
         'data-sizes': sizes,
-        'data-testid': 'product-image'
+        'data-testid': 'product-image',
       })
     },
   }
@@ -177,8 +184,9 @@ jest.mock('next/image', () => {
 // Mock next/dynamic (external package)
 jest.mock('next/dynamic', () => ({
   __esModule: true,
-  default: jest.fn((importFn: () => Promise<unknown>) => {
-    const MockComponent = () => React.createElement('div', null, 'Mock Component')
+  default: jest.fn(() => {
+    const MockComponent = () =>
+      React.createElement('div', null, 'Mock Component')
     MockComponent.displayName = 'MockComponent'
     return MockComponent
   }),

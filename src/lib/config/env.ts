@@ -56,7 +56,7 @@ const serverEnvSchema = z.object({
 
   // Business
   COMPANY_ID: z.string().min(1).default('alfe'),
-  
+
   // Customer Service
   NEXT_PUBLIC_CUSTOMER_SERVICE_PHONE: z.string().optional(),
   NEXT_PUBLIC_COLLECTOR_MAIL: z.string().email().optional(),

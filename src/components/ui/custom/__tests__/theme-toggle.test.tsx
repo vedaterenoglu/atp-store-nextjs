@@ -61,40 +61,40 @@ jest.mock('@/components/ui', () => ({
   DropdownMenu: jest.fn(({ children }: { children: React.ReactNode }) => (
     <div data-testid="dropdown-root">{children}</div>
   )),
-  DropdownMenuContent: jest.fn(({
-    children,
-    align,
-    className,
-  }: {
-    children: React.ReactNode
-    align?: string
-    className?: string
-  }) => (
-    <div
-      data-testid="dropdown-menu-content"
-      data-align={align}
-      className={className}
-    >
-      {children}
-    </div>
-  )),
-  DropdownMenuItem: jest.fn(({
-    children,
-    onClick,
-    className,
-  }: {
-    children: React.ReactNode
-    onClick?: () => void
-    className?: string
-  }) => (
-    <div
-      role="menuitem"
-      onClick={onClick}
-      className={className}
-    >
-      {children}
-    </div>
-  )),
+  DropdownMenuContent: jest.fn(
+    ({
+      children,
+      align,
+      className,
+    }: {
+      children: React.ReactNode
+      align?: string
+      className?: string
+    }) => (
+      <div
+        data-testid="dropdown-menu-content"
+        data-align={align}
+        className={className}
+      >
+        {children}
+      </div>
+    )
+  ),
+  DropdownMenuItem: jest.fn(
+    ({
+      children,
+      onClick,
+      className,
+    }: {
+      children: React.ReactNode
+      onClick?: () => void
+      className?: string
+    }) => (
+      <div role="menuitem" onClick={onClick} className={className}>
+        {children}
+      </div>
+    )
+  ),
   DropdownMenuTrigger: React.forwardRef<
     HTMLDivElement,
     { children: React.ReactNode; asChild?: boolean }
@@ -309,33 +309,33 @@ describe('ThemeToggle', () => {
     // Start with light theme to ensure we can click all options
     mockThemeStore.theme = 'light'
     mockThemeStore.resolvedTheme = 'light'
-    
+
     render(<ThemeToggle />)
-    
+
     // Test that the component handles all theme options correctly
     const menuItems = screen.getAllByRole('menuitem')
     expect(menuItems).toHaveLength(3)
-    
+
     // Verify each menu item has proper structure even with edge cases
     menuItems.forEach(item => {
       expect(item).toBeInTheDocument()
-      
+
       // Check that icons are rendered
       const icons = item.querySelectorAll('[data-testid*="-icon"]')
       expect(icons.length).toBeGreaterThan(0)
-      
+
       // Verify structure without clicking (to avoid test order issues)
       expect(item).toBeTruthy()
     })
-    
+
     // Test clicking dark menu item (should work since we're on light)
     fireEvent.click(menuItems[1]!) // Dark
     expect(mockSetTheme).toHaveBeenCalledWith('dark')
-    
+
     // Test clicking system menu item
-    fireEvent.click(menuItems[2]!) // System  
+    fireEvent.click(menuItems[2]!) // System
     expect(mockSetTheme).toHaveBeenCalledWith('system')
-    
+
     // Verify calls were made
     expect(mockSetTheme).toHaveBeenCalledTimes(2)
   })

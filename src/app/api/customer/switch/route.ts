@@ -42,16 +42,15 @@ export async function POST(request: NextRequest) {
 
     // Get user role and customer IDs
     const userRole = user.publicMetadata?.['role'] as string
-    const customerIds = user.publicMetadata?.['customerids'] as string[] | undefined
+    const customerIds = user.publicMetadata?.['customerids'] as
+      | string[]
+      | undefined
 
     // Admin can switch to any customer
     if (userRole === 'admin') {
-      console.log('🔧 API/switch: Admin switching to customer:', customerId)
-      
       // Set active customer cookie for admin (same as customer role)
       const cookieStore = await cookies()
-      
-      console.log('🍪 API/switch: Setting active_customer_id cookie for admin')
+
       cookieStore.set('active_customer_id', customerId, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
@@ -59,15 +58,13 @@ export async function POST(request: NextRequest) {
         path: '/',
         maxAge: 60 * 60 * 24 * 7, // 7 days
       })
-      
-      console.log('✅ API/switch: Cookie set successfully for admin, customerId:', customerId)
 
       // Create response with explicit cookie header
       const response = NextResponse.json({
         success: true,
         customerId,
       } as CustomerSwitchResponse)
-      
+
       // Also set cookie in response headers for redundancy
       response.cookies.set('active_customer_id', customerId, {
         httpOnly: true,
@@ -76,9 +73,7 @@ export async function POST(request: NextRequest) {
         path: '/',
         maxAge: 60 * 60 * 24 * 7, // 7 days
       })
-      
-      console.log('🍪 API/switch: Cookie also set in response headers')
-      
+
       return response
     }
 

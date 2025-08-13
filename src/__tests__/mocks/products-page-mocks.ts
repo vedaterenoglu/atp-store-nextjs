@@ -12,7 +12,7 @@ export const createProductsPageMock = () => {
     ProductsPage:
       require('@/__tests__/utils/fetch-mock').createMockComponentWithRender(
         (props: Record<string, unknown>) => {
-          const products = props.products as Array<{
+          const products = props['products'] as Array<{
             id: string
             imageUrl: string
           }>

@@ -28,7 +28,8 @@ describe('GetCampaignProductsWithPrices Schema Validation', () => {
         company_id: 'COMP_001',
       }
 
-      const result = GetCampaignProductsWithPricesQueryVariablesSchema.parse(validVariables)
+      const result =
+        GetCampaignProductsWithPricesQueryVariablesSchema.parse(validVariables)
       expect(result).toEqual(validVariables)
       expect(result.company_id).toBe('COMP_001')
     })
@@ -37,7 +38,9 @@ describe('GetCampaignProductsWithPrices Schema Validation', () => {
       const invalidVariables = {}
 
       expect(() => {
-        GetCampaignProductsWithPricesQueryVariablesSchema.parse(invalidVariables)
+        GetCampaignProductsWithPricesQueryVariablesSchema.parse(
+          invalidVariables
+        )
       }).toThrow(z.ZodError)
     })
 
@@ -47,7 +50,9 @@ describe('GetCampaignProductsWithPrices Schema Validation', () => {
       }
 
       expect(() => {
-        GetCampaignProductsWithPricesQueryVariablesSchema.parse(invalidVariables)
+        GetCampaignProductsWithPricesQueryVariablesSchema.parse(
+          invalidVariables
+        )
       }).toThrow(z.ZodError)
     })
 
@@ -57,7 +62,9 @@ describe('GetCampaignProductsWithPrices Schema Validation', () => {
       }
 
       expect(() => {
-        GetCampaignProductsWithPricesQueryVariablesSchema.parse(invalidVariables)
+        GetCampaignProductsWithPricesQueryVariablesSchema.parse(
+          invalidVariables
+        )
       }).toThrow(z.ZodError)
     })
 
@@ -66,7 +73,8 @@ describe('GetCampaignProductsWithPrices Schema Validation', () => {
         company_id: '',
       }
 
-      const result = GetCampaignProductsWithPricesQueryVariablesSchema.parse(variables)
+      const result =
+        GetCampaignProductsWithPricesQueryVariablesSchema.parse(variables)
       expect(result.company_id).toBe('')
     })
 
@@ -82,7 +90,8 @@ describe('GetCampaignProductsWithPrices Schema Validation', () => {
       ]
 
       testCases.forEach(testCase => {
-        const result = GetCampaignProductsWithPricesQueryVariablesSchema.parse(testCase)
+        const result =
+          GetCampaignProductsWithPricesQueryVariablesSchema.parse(testCase)
         expect(result).toEqual(testCase)
       })
     })
@@ -113,7 +122,7 @@ describe('GetCampaignProductsWithPrices Schema Validation', () => {
         stock_group: 'Group',
         stock_image_link: null,
         stock_unit: 'kg',
-        stock_price: 25.50,
+        stock_price: 25.5,
         campaign_price: null,
       }
 
@@ -166,12 +175,12 @@ describe('GetCampaignProductsWithPrices Schema Validation', () => {
         stock_image_link: null,
         stock_unit: 'unit',
         stock_price: 0,
-        campaign_price: -10.50, // Negative price
+        campaign_price: -10.5, // Negative price
       }
 
       const result = CampaignStockSchema.parse(edgeCaseStock)
       expect(result.stock_price).toBe(0)
-      expect(result.campaign_price).toBe(-10.50)
+      expect(result.campaign_price).toBe(-10.5)
     })
 
     it('should handle special characters in strings', () => {
@@ -180,7 +189,8 @@ describe('GetCampaignProductsWithPrices Schema Validation', () => {
         stock_id: 'SPECIAL_#$%_001',
         stock_name: 'Product™ © ® with "quotes" and \'apostrophes\'',
         stock_group: 'Café & Résumé',
-        stock_image_link: 'https://example.com/image%20with%20spaces.jpg?param=value&other=123',
+        stock_image_link:
+          'https://example.com/image%20with%20spaces.jpg?param=value&other=123',
         stock_unit: 'm²/kg·h',
         stock_price: 999.99,
         campaign_price: 799.99,
@@ -220,7 +230,8 @@ describe('GetCampaignProductsWithPrices Schema Validation', () => {
         ],
       }
 
-      const result = GetCampaignProductsWithPricesQueryResponseSchema.parse(validResponse)
+      const result =
+        GetCampaignProductsWithPricesQueryResponseSchema.parse(validResponse)
       expect(result.stock).toHaveLength(2)
       expect(result.stock[0]?.stock_id).toBe('RESP_001')
     })
@@ -230,7 +241,8 @@ describe('GetCampaignProductsWithPrices Schema Validation', () => {
         stock: [],
       }
 
-      const result = GetCampaignProductsWithPricesQueryResponseSchema.parse(emptyResponse)
+      const result =
+        GetCampaignProductsWithPricesQueryResponseSchema.parse(emptyResponse)
       expect(result.stock).toEqual([])
     })
 
@@ -295,7 +307,8 @@ describe('GetCampaignProductsWithPrices Schema Validation', () => {
         stock: largeArray,
       }
 
-      const result = GetCampaignProductsWithPricesQueryResponseSchema.parse(response)
+      const result =
+        GetCampaignProductsWithPricesQueryResponseSchema.parse(response)
       expect(result.stock).toHaveLength(1000)
     })
   })
@@ -387,7 +400,8 @@ describe('GetCampaignProductsWithPrices Schema Validation', () => {
         company_id: 'TEST_COMPANY_001',
       }
 
-      const result = validateGetCampaignProductsWithPricesVariables(validVariables)
+      const result =
+        validateGetCampaignProductsWithPricesVariables(validVariables)
       expect(result).toEqual(validVariables)
       expect(result.company_id).toBe('TEST_COMPANY_001')
     })
@@ -494,7 +508,8 @@ describe('GetCampaignProductsWithPrices Schema Validation', () => {
         another_field: 123,
       }
 
-      const result = validateGetCampaignProductsWithPricesVariables(variablesWithExtra)
+      const result =
+        validateGetCampaignProductsWithPricesVariables(variablesWithExtra)
       // Zod strips unknown keys by default
       expect(result).toEqual({ company_id: 'VALID_ID' })
       expect(result).not.toHaveProperty('extra_field')
@@ -545,11 +560,19 @@ describe('GetCampaignProductsWithPrices Schema Validation', () => {
       const response = { stock: [stock] }
 
       // All should parse without errors
-      expect(() => GetCampaignProductsWithPricesQueryVariablesSchema.parse(variables)).not.toThrow()
+      expect(() =>
+        GetCampaignProductsWithPricesQueryVariablesSchema.parse(variables)
+      ).not.toThrow()
       expect(() => CampaignStockSchema.parse(stock)).not.toThrow()
-      expect(() => GetCampaignProductsWithPricesQueryResponseSchema.parse(response)).not.toThrow()
-      expect(() => validateGetCampaignProductsWithPricesVariables(variables)).not.toThrow()
-      expect(() => validateGetCampaignProductsWithPricesResponse(response)).not.toThrow()
+      expect(() =>
+        GetCampaignProductsWithPricesQueryResponseSchema.parse(response)
+      ).not.toThrow()
+      expect(() =>
+        validateGetCampaignProductsWithPricesVariables(variables)
+      ).not.toThrow()
+      expect(() =>
+        validateGetCampaignProductsWithPricesResponse(response)
+      ).not.toThrow()
     })
   })
 })

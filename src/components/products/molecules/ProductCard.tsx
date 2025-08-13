@@ -136,7 +136,7 @@ export function ProductCard({
           unit,
           99 // max quantity
         )
-        
+
         if (success) {
           toast.success(`Added ${quantity} ${name} to cart`)
           setQuantity(0) // Reset quantity after adding

@@ -20,54 +20,62 @@ import { BookmarkButton, BookmarkIndicator } from '../bookmark-button'
 // Mock Lucide icons
 jest.mock('lucide-react', () => ({
   Bookmark: jest.fn(({ className }: { className?: string }) => (
-    <span data-testid="bookmark-icon" className={className}>Bookmark</span>
+    <span data-testid="bookmark-icon" className={className}>
+      Bookmark
+    </span>
   )),
   BookmarkCheck: jest.fn(({ className }: { className?: string }) => (
-    <span data-testid="bookmark-check-icon" className={className}>BookmarkCheck</span>
+    <span data-testid="bookmark-check-icon" className={className}>
+      BookmarkCheck
+    </span>
   )),
   Loader2: jest.fn(({ className }: { className?: string }) => (
-    <span data-testid="loader-icon" className={className}>Loading</span>
+    <span data-testid="loader-icon" className={className}>
+      Loading
+    </span>
   )),
 }))
 
 // Mock shadcn/ui Button
 jest.mock('@/components/ui/schadcn', () => ({
-  Button: jest.fn(({ 
-    children, 
-    className, 
-    variant, 
-    size, 
-    onClick,
-    disabled,
-    type = 'button',
-    ...props 
-  }: {
-    children: React.ReactNode
-    className?: string
-    variant?: string
-    size?: string
-    onClick?: (e: React.MouseEvent) => void
-    disabled?: boolean
-    type?: string
-    [key: string]: unknown
-  }) => (
-    <button
-      className={className}
-      data-variant={variant}
-      data-size={size}
-      onClick={onClick}
-      disabled={disabled}
-      type={type}
-      {...props}
-    >
-      {children}
-    </button>
-  )),
+  Button: jest.fn(
+    ({
+      children,
+      className,
+      variant,
+      size,
+      onClick,
+      disabled,
+      type = 'button',
+      ...props
+    }: {
+      children: React.ReactNode
+      className?: string
+      variant?: string
+      size?: string
+      onClick?: (e: React.MouseEvent) => void
+      disabled?: boolean
+      type?: 'button' | 'reset' | 'submit'
+      [key: string]: unknown
+    }) => (
+      <button
+        className={className}
+        data-variant={variant}
+        data-size={size}
+        onClick={onClick}
+        disabled={disabled}
+        type={type}
+        {...props}
+      >
+        {children}
+      </button>
+    )
+  ),
 }))
 
 // Mock cn utility
 jest.mock('@/lib/utils', () => ({
-  cn: jest.fn((...classes: (string | undefined | null | false)[]) => 
+  cn: jest.fn((...classes: (string | undefined | null | false)[]) =>
     classes.filter(Boolean).join(' ')
   ),
 }))
@@ -242,7 +250,9 @@ describe('BookmarkButton', () => {
     it('should show loading state during async operation', async () => {
       // This test verifies that when showLoading is true,
       // the component uses React's useTransition to manage loading state
-      const onToggle = jest.fn(() => new Promise(resolve => setTimeout(resolve, 50)))
+      const onToggle = jest.fn(
+        () => new Promise<void>(resolve => setTimeout(resolve, 50))
+      )
 
       render(
         <BookmarkButton

@@ -24,10 +24,11 @@ interface WelcomeDialogProps {
   phoneNumber?: string
 }
 
-export function WelcomeDialog({ 
-  isOpen, 
-  onClose, 
-  phoneNumber = process.env['NEXT_PUBLIC_CUSTOMER_SERVICE_PHONE'] || '1-800-SUPPORT' 
+export function WelcomeDialog({
+  isOpen,
+  onClose,
+  phoneNumber = process.env['NEXT_PUBLIC_CUSTOMER_SERVICE_PHONE'] ||
+    '1-800-SUPPORT',
 }: WelcomeDialogProps) {
   const [open, setOpen] = useState(isOpen)
 
@@ -63,8 +64,8 @@ export function WelcomeDialog({
               </a>
             </div>
             <p className="text-sm text-muted-foreground">
-              Our customer service team will activate your account right away, 
-              and you'll be ready to start shopping!
+              Our customer service team will activate your account right away,
+              and you&apos;ll be ready to start shopping!
             </p>
           </div>
           <p className="text-sm text-muted-foreground italic text-center">

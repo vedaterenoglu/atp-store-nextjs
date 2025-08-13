@@ -8,17 +8,26 @@
 import { BookmarkService } from '../bookmark.service'
 
 // Mock validation functions
-jest.mock('@/services/graphql/mutations/BookmarkProductMutation.schema', () => ({
-  validateBookmarkProductResponse: jest.fn((data) => data),
-}))
+jest.mock(
+  '@/services/graphql/mutations/BookmarkProductMutation.schema',
+  () => ({
+    validateBookmarkProductResponse: jest.fn(data => data),
+  })
+)
 
-jest.mock('@/services/graphql/mutations/UnbookmarkProductMutation.schema', () => ({
-  validateUnbookmarkProductResponse: jest.fn((data) => data),
-}))
+jest.mock(
+  '@/services/graphql/mutations/UnbookmarkProductMutation.schema',
+  () => ({
+    validateUnbookmarkProductResponse: jest.fn(data => data),
+  })
+)
 
-jest.mock('@/services/graphql/queries/GetCustomerBookmarksQuery.schema', () => ({
-  validateGetCustomerBookmarksResponse: jest.fn((data) => data),
-}))
+jest.mock(
+  '@/services/graphql/queries/GetCustomerBookmarksQuery.schema',
+  () => ({
+    validateGetCustomerBookmarksResponse: jest.fn(data => data),
+  })
+)
 
 // Store original fetch to restore later
 const originalFetch = global.fetch
@@ -128,10 +137,10 @@ describe('Bookmark Service', () => {
     it('should use environment company ID when available', () => {
       const originalEnv = process.env['COMPANY_ID']
       process.env['COMPANY_ID'] = 'env-company'
-      
+
       const service = new BookmarkService()
       expect(service).toBeDefined()
-      
+
       // Restore environment
       if (originalEnv) {
         process.env['COMPANY_ID'] = originalEnv
@@ -151,7 +160,10 @@ describe('Bookmark Service', () => {
         }),
       })
 
-      const result = await bookmarkService.bookmarkProduct(mockCustomerId, mockProductId)
+      const result = await bookmarkService.bookmarkProduct(
+        mockCustomerId,
+        mockProductId
+      )
 
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/bookmark/add'),
@@ -170,7 +182,7 @@ describe('Bookmark Service', () => {
     })
 
     it('should handle server-side execution with environment URL', async () => {
-      // Note: Server-side URL construction (line 56) cannot be tested in jest-dom 
+      // Note: Server-side URL construction (line 56) cannot be tested in jest-dom
       // environment where window is always defined. This test verifies client-side behavior.
       mockFetch.mockResolvedValueOnce({
         ok: true,
@@ -203,7 +215,10 @@ describe('Bookmark Service', () => {
         }),
       })
 
-      const result = await bookmarkService.bookmarkProduct(mockCustomerId, mockProductId)
+      const result = await bookmarkService.bookmarkProduct(
+        mockCustomerId,
+        mockProductId
+      )
 
       expect(result.success).toBe(true)
       expect(result.bookmark).toEqual({
@@ -227,7 +242,10 @@ describe('Bookmark Service', () => {
         }),
       })
 
-      const result = await bookmarkService.bookmarkProduct(mockCustomerId, mockProductId)
+      const result = await bookmarkService.bookmarkProduct(
+        mockCustomerId,
+        mockProductId
+      )
 
       expect(result.success).toBe(false)
       expect(result.error).toBe('Failed to create bookmark - no data returned')
@@ -242,7 +260,10 @@ describe('Bookmark Service', () => {
         }),
       })
 
-      const result = await bookmarkService.bookmarkProduct(mockCustomerId, mockProductId)
+      const result = await bookmarkService.bookmarkProduct(
+        mockCustomerId,
+        mockProductId
+      )
 
       expect(result.success).toBe(false)
       expect(result.error).toBe('API validation failed')
@@ -254,7 +275,10 @@ describe('Bookmark Service', () => {
         statusText: 'Bad Request',
       })
 
-      const result = await bookmarkService.bookmarkProduct(mockCustomerId, mockProductId)
+      const result = await bookmarkService.bookmarkProduct(
+        mockCustomerId,
+        mockProductId
+      )
 
       expect(result.success).toBe(false)
       expect(result.error).toBe('Failed to bookmark: Bad Request')
@@ -263,7 +287,10 @@ describe('Bookmark Service', () => {
     it('should handle network errors', async () => {
       mockFetch.mockRejectedValueOnce(new Error('Network connection failed'))
 
-      const result = await bookmarkService.bookmarkProduct(mockCustomerId, mockProductId)
+      const result = await bookmarkService.bookmarkProduct(
+        mockCustomerId,
+        mockProductId
+      )
 
       expect(result.success).toBe(false)
       expect(result.error).toBe('Network connection failed')
@@ -272,7 +299,10 @@ describe('Bookmark Service', () => {
     it('should handle non-Error exceptions', async () => {
       mockFetch.mockRejectedValueOnce('String error')
 
-      const result = await bookmarkService.bookmarkProduct(mockCustomerId, mockProductId)
+      const result = await bookmarkService.bookmarkProduct(
+        mockCustomerId,
+        mockProductId
+      )
 
       expect(result.success).toBe(false)
       expect(result.error).toBe('Failed to bookmark product')
@@ -306,7 +336,10 @@ describe('Bookmark Service', () => {
         }),
       })
 
-      const result = await bookmarkService.bookmarkProduct(mockCustomerId, mockProductId)
+      const result = await bookmarkService.bookmarkProduct(
+        mockCustomerId,
+        mockProductId
+      )
 
       expect(result.success).toBe(true)
       expect(result.bookmark?.customer?.customer_nickname).toBe('John Doe')
@@ -324,7 +357,10 @@ describe('Bookmark Service', () => {
         }),
       })
 
-      const result = await bookmarkService.unbookmarkProduct(mockCustomerId, mockProductId)
+      const result = await bookmarkService.unbookmarkProduct(
+        mockCustomerId,
+        mockProductId
+      )
 
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/bookmark/remove'),
@@ -351,7 +387,10 @@ describe('Bookmark Service', () => {
         }),
       })
 
-      const result = await bookmarkService.unbookmarkProduct(mockCustomerId, mockProductId)
+      const result = await bookmarkService.unbookmarkProduct(
+        mockCustomerId,
+        mockProductId
+      )
 
       expect(result.success).toBe(false)
       expect(result.error).toBe('Bookmark does not exist')
@@ -371,7 +410,10 @@ describe('Bookmark Service', () => {
         }),
       })
 
-      const result = await bookmarkService.unbookmarkProduct(mockCustomerId, mockProductId)
+      const result = await bookmarkService.unbookmarkProduct(
+        mockCustomerId,
+        mockProductId
+      )
 
       expect(result.success).toBe(true)
       expect(result.bookmark).toEqual({
@@ -387,7 +429,10 @@ describe('Bookmark Service', () => {
         statusText: 'Internal Server Error',
       })
 
-      const result = await bookmarkService.unbookmarkProduct(mockCustomerId, mockProductId)
+      const result = await bookmarkService.unbookmarkProduct(
+        mockCustomerId,
+        mockProductId
+      )
 
       expect(result.success).toBe(false)
       expect(result.error).toBe('Failed to unbookmark: Internal Server Error')
@@ -396,7 +441,10 @@ describe('Bookmark Service', () => {
     it('should handle network errors (line 236 coverage)', async () => {
       mockFetch.mockRejectedValueOnce(new Error('Connection timeout'))
 
-      const result = await bookmarkService.unbookmarkProduct(mockCustomerId, mockProductId)
+      const result = await bookmarkService.unbookmarkProduct(
+        mockCustomerId,
+        mockProductId
+      )
 
       expect(result.success).toBe(false)
       expect(result.error).toBe('Connection timeout')
@@ -405,7 +453,10 @@ describe('Bookmark Service', () => {
     it('should handle non-Error exceptions in unbookmark', async () => {
       mockFetch.mockRejectedValueOnce({ message: 'Unknown error' })
 
-      const result = await bookmarkService.unbookmarkProduct(mockCustomerId, mockProductId)
+      const result = await bookmarkService.unbookmarkProduct(
+        mockCustomerId,
+        mockProductId
+      )
 
       expect(result.success).toBe(false)
       expect(result.error).toBe('Failed to unbookmark product')
@@ -419,7 +470,10 @@ describe('Bookmark Service', () => {
         json: async () => ({ isBookmarked: true }),
       })
 
-      const result = await bookmarkService.isProductBookmarked(mockCustomerId, mockProductId)
+      const result = await bookmarkService.isProductBookmarked(
+        mockCustomerId,
+        mockProductId
+      )
 
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/bookmark/check')
@@ -433,7 +487,10 @@ describe('Bookmark Service', () => {
         json: async () => ({ isBookmarked: false }),
       })
 
-      const result = await bookmarkService.isProductBookmarked(mockCustomerId, mockProductId)
+      const result = await bookmarkService.isProductBookmarked(
+        mockCustomerId,
+        mockProductId
+      )
 
       expect(result).toBe(false)
     })
@@ -460,7 +517,10 @@ describe('Bookmark Service', () => {
         statusText: 'Not Found',
       })
 
-      const result = await bookmarkService.isProductBookmarked(mockCustomerId, mockProductId)
+      const result = await bookmarkService.isProductBookmarked(
+        mockCustomerId,
+        mockProductId
+      )
 
       expect(result).toBe(false)
     })
@@ -468,7 +528,10 @@ describe('Bookmark Service', () => {
     it('should handle network errors', async () => {
       mockFetch.mockRejectedValueOnce(new Error('Network down'))
 
-      const result = await bookmarkService.isProductBookmarked(mockCustomerId, mockProductId)
+      const result = await bookmarkService.isProductBookmarked(
+        mockCustomerId,
+        mockProductId
+      )
 
       expect(result).toBe(false)
     })
@@ -646,7 +709,10 @@ describe('Bookmark Service', () => {
         json: async () => ({ isBookmarked: true }),
       })
 
-      await bookmarkService.isProductBookmarked(specialCustomerId, specialProductId)
+      await bookmarkService.isProductBookmarked(
+        specialCustomerId,
+        specialProductId
+      )
 
       const callArg = mockFetch.mock.calls[0]?.[0] as string
       expect(callArg).toContain(encodeURIComponent(specialCustomerId))
@@ -689,7 +755,10 @@ describe('Bookmark Service', () => {
         }),
       })
 
-      const result = await bookmarkService.bookmarkProduct(mockCustomerId, mockProductId)
+      const result = await bookmarkService.bookmarkProduct(
+        mockCustomerId,
+        mockProductId
+      )
 
       expect(result.success).toBe(true)
       expect(result.bookmark?.customer).toBeUndefined()
@@ -720,7 +789,10 @@ describe('Bookmark Service', () => {
         }),
       })
 
-      const result = await bookmarkService.bookmarkProduct(mockCustomerId, mockProductId)
+      const result = await bookmarkService.bookmarkProduct(
+        mockCustomerId,
+        mockProductId
+      )
 
       expect(result.success).toBe(true)
       expect(result.bookmark?.stock).toBeUndefined()

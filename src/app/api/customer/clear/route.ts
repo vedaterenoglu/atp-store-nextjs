@@ -27,7 +27,7 @@ export async function POST() {
 
     // Clear active customer cookie for both roles (we use same cookie name now)
     cookieStore.delete('active_customer_id')
-    
+
     // Also clear legacy cookie name for backwards compatibility
     if (userRole === 'admin') {
       cookieStore.delete('impersonating_customer_id')

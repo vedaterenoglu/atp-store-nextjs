@@ -27,7 +27,7 @@ export function AdminRouteGuard({ children }: AdminRouteGuardProps) {
 
     // Use centralized auth check for admin
     const result = canAccessAdminDashboard()
-    
+
     if (!result.success) {
       setAuthError(result.message || 'Admin access required')
     } else {
@@ -53,9 +53,7 @@ export function AdminRouteGuard({ children }: AdminRouteGuardProps) {
   ) : (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-md mx-auto text-center">
-        <h2 className="text-2xl font-bold mb-4">
-          Admin Access Required
-        </h2>
+        <h2 className="text-2xl font-bold mb-4">Admin Access Required</h2>
         <p className="text-muted-foreground mb-6">
           {authError || 'This area is restricted to administrators only.'}
         </p>

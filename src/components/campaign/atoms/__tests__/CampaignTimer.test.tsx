@@ -11,8 +11,10 @@ import { CampaignTimer } from '../CampaignTimer'
 
 // Mock lucide-react icons
 jest.mock('lucide-react', () => ({
-  Tag: jest.fn(({ className }: any) => (
-    <div data-testid="tag-icon" className={className}>Tag Icon</div>
+  Tag: jest.fn(({ className }: { className?: string }) => (
+    <div data-testid="tag-icon" className={className}>
+      Tag Icon
+    </div>
   )),
 }))
 

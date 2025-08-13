@@ -20,6 +20,7 @@ interface MockAuthReturn {
   isSignedIn: boolean
   userId: string | null
   sessionId: string | null
+  sessionClaims: null
   actor: null
   orgId: string | null
   orgRole: string | null
@@ -42,22 +43,6 @@ interface MockUserReturn {
   } | null
 }
 
-interface MockRoleAuthReturn {
-  isSignedIn: boolean
-  isAdmin: boolean
-  isCustomer: boolean
-  customerId: string | null
-  isLoading: boolean
-  isLoaded: boolean
-  error: Error | null
-  hasRole: jest.Mock
-  requireAuth: jest.Mock
-  checkAuth: jest.Mock
-  hasAnyRole: jest.Mock
-  userRole: 'public' | 'customer' | 'admin'
-  getUserInfo: jest.Mock
-}
-
 // Helper functions for mock data
 function mockAuthSignedOut(): MockAuthReturn {
   return {
@@ -65,6 +50,7 @@ function mockAuthSignedOut(): MockAuthReturn {
     isSignedIn: false,
     userId: null,
     sessionId: null,
+    sessionClaims: null,
     actor: null,
     orgId: null,
     orgRole: null,
@@ -89,6 +75,7 @@ function mockAuthSignedIn(): MockAuthReturn {
     isSignedIn: true,
     userId: 'user_test123',
     sessionId: 'sess_test123',
+    sessionClaims: null,
     actor: null,
     orgId: null,
     orgRole: null,
@@ -120,6 +107,7 @@ function mockAuthAdmin(): MockAuthReturn {
     isSignedIn: true,
     userId: 'user_admin123',
     sessionId: 'sess_admin123',
+    sessionClaims: null,
     actor: null,
     orgId: null,
     orgRole: null,
@@ -148,36 +136,26 @@ function mockUserAdmin(): MockUserReturn {
 function mockRoleAuthCustomer() {
   return {
     isSignedIn: true,
-    isAdmin: false,
-    isCustomer: true,
-    customerId: 'cust_test123',
-    isLoading: false,
     isLoaded: true,
-    error: null,
-    hasRole: jest.fn((role: string) => role === 'customer'),
+    hasRole: jest.fn((role: string | null) => role === 'customer'),
     requireAuth: jest.fn(),
     checkAuth: jest.fn(),
     hasAnyRole: jest.fn(() => true),
     userRole: 'customer' as const,
-    getUserInfo: jest.fn(),
+    getUserRole: jest.fn(() => 'customer' as const),
   }
 }
 
 function mockRoleAuthAdmin() {
   return {
     isSignedIn: true,
-    isAdmin: true,
-    isCustomer: false,
-    customerId: null,
-    isLoading: false,
     isLoaded: true,
-    error: null,
-    hasRole: jest.fn((role: string) => role === 'admin'),
+    hasRole: jest.fn((role: string | null) => role === 'admin'),
     requireAuth: jest.fn(),
     checkAuth: jest.fn(),
     hasAnyRole: jest.fn(() => true),
     userRole: 'admin' as const,
-    getUserInfo: jest.fn(),
+    getUserRole: jest.fn(() => 'admin' as const),
   }
 }
 
@@ -185,11 +163,13 @@ function mockRoleAuthAdmin() {
 jest.mock('@clerk/nextjs', () => ({
   useAuth: jest.fn(),
   useUser: jest.fn(),
-  SignInButton: jest.fn(({ children, mode }: { children: React.ReactNode; mode?: string }) => (
-    <div data-testid="sign-in-button" data-mode={mode}>
-      {children}
-    </div>
-  )),
+  SignInButton: jest.fn(
+    ({ children, mode }: { children: React.ReactNode; mode?: string }) => (
+      <div data-testid="sign-in-button" data-mode={mode}>
+        {children}
+      </div>
+    )
+  ),
   UserButton: jest.fn(() => <div data-testid="user-button" />),
 }))
 
@@ -217,7 +197,7 @@ jest.mock('@/hooks/use-safe-translation', () => ({
 
 // Mock CartBadge component
 jest.mock('@/components/cart/atoms/CartBadge', () => ({
-  CartBadge: jest.fn(({ count }: { count: number }) => 
+  CartBadge: jest.fn(({ count }: { count: number }) =>
     count > 0 ? <span data-testid="cart-badge">{count}</span> : null
   ),
 }))
@@ -236,7 +216,9 @@ jest.mock('react-i18next', () => ({
 
 // Mock Tooltip components
 jest.mock('@/components/ui/schadcn', () => ({
-  Tooltip: jest.fn(({ children }: { children: React.ReactNode }) => <>{children}</>),
+  Tooltip: jest.fn(({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  )),
   TooltipTrigger: jest.fn(({ children }: { children: React.ReactNode }) => (
     <>{children}</>
   )),
@@ -333,12 +315,12 @@ jest.mock('next/navigation', () => ({
 
 // Mock @/components/ui/custom to avoid importing BookmarkButton which imports Clerk server code
 jest.mock('@/components/ui/custom', () => ({
-  ThemeToggle: jest.fn(() => 
+  ThemeToggle: jest.fn(() => (
     <div data-testid="theme-toggle">Theme Toggle</div>
-  ),
-  LanguageToggle: jest.fn(() => 
+  )),
+  LanguageToggle: jest.fn(() => (
     <div data-testid="language-toggle">Language Toggle</div>
-  ),
+  )),
   BookmarkButton: jest.fn(() => null),
 }))
 
@@ -347,7 +329,7 @@ jest.mock('@/components/customer/organisms/CustomerSwitcher', () => ({
   CustomerSwitcher: jest.fn(() => null),
 }))
 
-// Mock ImpersonationBanner to prevent async operations  
+// Mock ImpersonationBanner to prevent async operations
 jest.mock('@/components/customer/molecules/ImpersonationBanner', () => ({
   ImpersonationBanner: jest.fn(() => null),
 }))
@@ -359,13 +341,8 @@ jest.mock('@/hooks/use-auth-guard', () => ({
       isSignedIn: false,
       role: null as 'customer' | 'admin' | null,
       hasActiveCustomer: false,
-      activeCustomerId: null,
-      customerIds: [] as string[],
+      customerId: null,
     },
-    isAuthenticated: false,
-    isAdmin: false,
-    isCustomer: false,
-    canAddToCart: false,
     activeCustomerId: null,
   })),
 }))
@@ -382,18 +359,20 @@ jest.mock('@/lib/utils/toast', () => ({
 
 // Mock style utilities
 jest.mock('@/lib/styles/utilities', () => ({
-  getLayoutClasses: jest.fn(({ component, part }: { component: string; part: string }) => {
-    if (component === 'navbar') {
-      if (part === 'container') return 'border-b -mx-4'
-      if (part === 'inner') return 'px-4 sm:px-8 py-3 sm:py-4'
+  getLayoutClasses: jest.fn(
+    ({ component, part }: { component: string; part: string }) => {
+      if (component === 'navbar') {
+        if (part === 'container') return 'border-b -mx-4'
+        if (part === 'inner') return 'px-4 sm:px-8 py-3 sm:py-4'
+      }
+      return ''
     }
-    return ''
-  }),
+  ),
 }))
 
 // Mock cn utility
 jest.mock('@/lib/utils', () => ({
-  cn: jest.fn((...classes: (string | undefined | null | false)[]) => 
+  cn: jest.fn((...classes: (string | undefined | null | false)[]) =>
     classes.filter(Boolean).join(' ')
   ),
 }))
@@ -414,28 +393,29 @@ import { useAuthGuard } from '@/hooks/use-auth-guard'
 const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>
 const mockUseUser = useUser as jest.MockedFunction<typeof useUser>
 const mockUseRoleAuth = useRoleAuth as jest.MockedFunction<typeof useRoleAuth>
-const mockUseAuthGuard = useAuthGuard as jest.MockedFunction<typeof useAuthGuard>
+const mockUseAuthGuard = useAuthGuard as jest.MockedFunction<
+  typeof useAuthGuard
+>
 
 describe('Navbar', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     // Default to signed out state
-    mockUseAuth.mockReturnValue(mockAuthSignedOut())
-    mockUseUser.mockReturnValue(mockUserSignedOut())
+    mockUseAuth.mockReturnValue(
+      mockAuthSignedOut() as ReturnType<typeof useAuth>
+    )
+    mockUseUser.mockReturnValue(
+      mockUserSignedOut() as ReturnType<typeof useUser>
+    )
     mockUseRoleAuth.mockReturnValue({
       isSignedIn: false,
-      isAdmin: false,
-      isCustomer: false,
-      customerId: null,
-      isLoading: false,
       isLoaded: true,
-      error: null,
+      userRole: null,
       hasRole: jest.fn(() => false),
       requireAuth: jest.fn(),
       checkAuth: jest.fn(),
       hasAnyRole: jest.fn(() => false),
-      userRole: 'public',
-      getUserInfo: jest.fn(),
+      getUserRole: jest.fn(() => null),
     })
   })
 
@@ -527,8 +507,12 @@ describe('Navbar', () => {
 
     it('should show sign-in button when user is not authenticated', () => {
       // Already mocked as signed out by default
-      mockUseAuth.mockReturnValue(mockAuthSignedOut())
-      mockUseUser.mockReturnValue(mockUserSignedOut())
+      mockUseAuth.mockReturnValue(
+        mockAuthSignedOut() as ReturnType<typeof useAuth>
+      )
+      mockUseUser.mockReturnValue(
+        mockUserSignedOut() as ReturnType<typeof useUser>
+      )
 
       render(<Navbar />)
 
@@ -540,23 +524,21 @@ describe('Navbar', () => {
 
     it('should show dashboard link when signed in as customer', () => {
       // Mock signed-in customer
-      mockUseAuth.mockReturnValue(mockAuthSignedIn())
-      mockUseUser.mockReturnValue(mockUserSignedIn())
+      mockUseAuth.mockReturnValue(
+        mockAuthSignedIn() as ReturnType<typeof useAuth>
+      )
+      mockUseUser.mockReturnValue(
+        mockUserSignedIn() as ReturnType<typeof useUser>
+      )
       mockUseRoleAuth.mockReturnValue(mockRoleAuthCustomer())
       mockUseAuthGuard.mockReturnValue({
         authContext: {
           isSignedIn: true,
           role: 'customer',
           hasActiveCustomer: true,
-          activeCustomerId: 'cust_test123',
-          customerIds: ['cust_test123'],
+          customerId: 'cust_test123',
         },
-        isAuthenticated: true,
-        isAdmin: false,
-        isCustomer: true,
-        canAddToCart: true,
-        activeCustomerId: 'cust_test123',
-      })
+      } as ReturnType<typeof useAuthGuard>)
 
       render(<Navbar />)
 
@@ -566,8 +548,12 @@ describe('Navbar', () => {
 
     it('should show user button when authenticated', () => {
       // Mock as signed in
-      mockUseAuth.mockReturnValue(mockAuthSignedIn())
-      mockUseUser.mockReturnValue(mockUserSignedIn())
+      mockUseAuth.mockReturnValue(
+        mockAuthSignedIn() as ReturnType<typeof useAuth>
+      )
+      mockUseUser.mockReturnValue(
+        mockUserSignedIn() as ReturnType<typeof useUser>
+      )
 
       render(<Navbar />)
 
@@ -579,8 +565,12 @@ describe('Navbar', () => {
 
     it('should not show user button when not authenticated', () => {
       // Already mocked as signed out by default
-      mockUseAuth.mockReturnValue(mockAuthSignedOut())
-      mockUseUser.mockReturnValue(mockUserSignedOut())
+      mockUseAuth.mockReturnValue(
+        mockAuthSignedOut() as ReturnType<typeof useAuth>
+      )
+      mockUseUser.mockReturnValue(
+        mockUserSignedOut() as ReturnType<typeof useUser>
+      )
 
       render(<Navbar />)
 
@@ -591,51 +581,43 @@ describe('Navbar', () => {
     })
 
     it('should show correct links for admin users', () => {
-      mockUseAuth.mockReturnValue(mockAuthAdmin())
-      mockUseUser.mockReturnValue(mockUserAdmin())
+      mockUseAuth.mockReturnValue(mockAuthAdmin() as ReturnType<typeof useAuth>)
+      mockUseUser.mockReturnValue(mockUserAdmin() as ReturnType<typeof useUser>)
       mockUseRoleAuth.mockReturnValue(mockRoleAuthAdmin())
       mockUseAuthGuard.mockReturnValue({
         authContext: {
           isSignedIn: true,
           role: 'admin',
           hasActiveCustomer: true,
-          activeCustomerId: 'admin-customer',
-          customerIds: ['admin-customer'],
+          customerId: 'admin-customer',
         },
-        isAuthenticated: true,
-        isAdmin: true,
-        isCustomer: false,
-        canAddToCart: true,
-        activeCustomerId: 'admin-customer',
-      })
+      } as ReturnType<typeof useAuthGuard>)
 
       render(<Navbar />)
 
       // For admin users, check that dashboard icons are present
       const dashboardIcons = screen.getAllByTestId('dashboard-icon')
       expect(dashboardIcons.length).toBeGreaterThan(0)
-      
+
       // Admin functionality is present through dashboard access
     })
 
     it('should show correct links for authenticated customer', () => {
-      mockUseAuth.mockReturnValue(mockAuthSignedIn())
-      mockUseUser.mockReturnValue(mockUserSignedIn())
+      mockUseAuth.mockReturnValue(
+        mockAuthSignedIn() as ReturnType<typeof useAuth>
+      )
+      mockUseUser.mockReturnValue(
+        mockUserSignedIn() as ReturnType<typeof useUser>
+      )
       mockUseRoleAuth.mockReturnValue(mockRoleAuthCustomer())
       mockUseAuthGuard.mockReturnValue({
         authContext: {
           isSignedIn: true,
           role: 'customer',
           hasActiveCustomer: true,
-          activeCustomerId: 'cust_test123',
-          customerIds: ['cust_test123'],
+          customerId: 'cust_test123',
         },
-        isAuthenticated: true,
-        isAdmin: false,
-        isCustomer: true,
-        canAddToCart: true,
-        activeCustomerId: 'cust_test123',
-      })
+      } as ReturnType<typeof useAuthGuard>)
 
       render(<Navbar />)
 
@@ -651,8 +633,12 @@ describe('Navbar', () => {
     })
 
     it('should show user button for authenticated users', () => {
-      mockUseAuth.mockReturnValue(mockAuthSignedIn())
-      mockUseUser.mockReturnValue(mockUserSignedIn())
+      mockUseAuth.mockReturnValue(
+        mockAuthSignedIn() as ReturnType<typeof useAuth>
+      )
+      mockUseUser.mockReturnValue(
+        mockUserSignedIn() as ReturnType<typeof useUser>
+      )
 
       render(<Navbar />)
 
@@ -662,8 +648,12 @@ describe('Navbar', () => {
     })
 
     it('should render all UI toggles regardless of auth state', () => {
-      mockUseAuth.mockReturnValue(mockAuthSignedOut())
-      mockUseUser.mockReturnValue(mockUserSignedOut())
+      mockUseAuth.mockReturnValue(
+        mockAuthSignedOut() as ReturnType<typeof useAuth>
+      )
+      mockUseUser.mockReturnValue(
+        mockUserSignedOut() as ReturnType<typeof useUser>
+      )
 
       render(<Navbar />)
 
@@ -714,13 +704,24 @@ describe('Navbar', () => {
   describe('Loading states', () => {
     it('should handle auth loading state gracefully', () => {
       mockUseAuth.mockReturnValue({
-        ...mockAuthSignedOut(),
         isLoaded: false,
-      })
+        isSignedIn: undefined,
+        userId: undefined,
+        sessionId: undefined,
+        sessionClaims: undefined,
+        actor: undefined,
+        orgId: undefined,
+        orgRole: undefined,
+        orgSlug: undefined,
+        has: undefined,
+        signOut: jest.fn(),
+        getToken: jest.fn(),
+      } as unknown as ReturnType<typeof useAuth>)
       mockUseUser.mockReturnValue({
-        ...mockUserSignedOut(),
         isLoaded: false,
-      })
+        isSignedIn: undefined,
+        user: undefined,
+      } as unknown as ReturnType<typeof useUser>)
 
       render(<Navbar />)
 

@@ -6,8 +6,8 @@
  */
 
 // Re-export from centralized mocks
-export { 
-  productsComponentModule, 
+export {
+  productsComponentModule,
   bookmarkProviderModule,
-  mockConsoleError 
+  mockConsoleError,
 } from './component-mocks'

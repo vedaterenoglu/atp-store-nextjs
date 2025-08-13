@@ -33,12 +33,17 @@ interface ToastOptions {
 }
 
 class ToastFacade {
-  private defaultPosition: ToastOptions['position'] = 'top-right'
+  private defaultPosition: NonNullable<ToastOptions['position']> = 'top-right'
 
   success(message: string, options?: ToastOptions) {
     const toastOptions: ExternalToast = {
       duration: options?.duration || 4000,
-      position: options?.position || this.defaultPosition,
+    }
+
+    // Set position only if we have one
+    const position = options?.position || this.defaultPosition
+    if (position) {
+      ;(toastOptions as Record<string, unknown>)['position'] = position
     }
 
     if (options?.id) toastOptions.id = options.id
@@ -67,7 +72,12 @@ class ToastFacade {
   error(message: string, options?: ToastOptions) {
     const toastOptions: ExternalToast = {
       duration: options?.duration || 6000, // Longer for errors
-      position: options?.position || this.defaultPosition,
+    }
+
+    // Set position only if we have one
+    const position = options?.position || this.defaultPosition
+    if (position) {
+      ;(toastOptions as Record<string, unknown>)['position'] = position
     }
 
     if (options?.id) toastOptions.id = options.id
@@ -96,7 +106,12 @@ class ToastFacade {
   warning(message: string, options?: ToastOptions) {
     const toastOptions: ExternalToast = {
       duration: options?.duration || 5000,
-      position: options?.position || this.defaultPosition,
+    }
+
+    // Set position only if we have one
+    const position = options?.position || this.defaultPosition
+    if (position) {
+      ;(toastOptions as Record<string, unknown>)['position'] = position
     }
 
     if (options?.id) toastOptions.id = options.id
@@ -125,7 +140,12 @@ class ToastFacade {
   info(message: string, options?: ToastOptions) {
     const toastOptions: ExternalToast = {
       duration: options?.duration || 4000,
-      position: options?.position || this.defaultPosition,
+    }
+
+    // Set position only if we have one
+    const position = options?.position || this.defaultPosition
+    if (position) {
+      ;(toastOptions as Record<string, unknown>)['position'] = position
     }
 
     if (options?.id) toastOptions.id = options.id
@@ -152,8 +172,12 @@ class ToastFacade {
   }
 
   loading(message: string, options?: Omit<ToastOptions, 'duration'>) {
-    const toastOptions: ExternalToast = {
-      position: options?.position || this.defaultPosition,
+    const toastOptions: ExternalToast = {}
+
+    // Set position only if we have one
+    const position = options?.position || this.defaultPosition
+    if (position) {
+      ;(toastOptions as Record<string, unknown>)['position'] = position
     }
 
     if (options?.id) toastOptions.id = options.id
@@ -179,19 +203,28 @@ class ToastFacade {
     },
     options?: ToastOptions
   ) {
-    const toastOptions: ExternalToast = {
-      position: options?.position || this.defaultPosition,
+    const toastOptions: ExternalToast = {}
+
+    // Set position only if we have one
+    const position = options?.position || this.defaultPosition
+    if (position) {
+      ;(toastOptions as Record<string, unknown>)['position'] = position
     }
 
     if (options?.id) toastOptions.id = options.id
 
-    return sonnerToast.promise(promise, messages, toastOptions)
+    return sonnerToast.promise(promise, messages)
   }
 
   custom(jsx: ReactNode, options?: ToastOptions) {
     const toastOptions: ExternalToast = {
       duration: options?.duration || 4000,
-      position: options?.position || this.defaultPosition,
+    }
+
+    // Set position only if we have one
+    const position = options?.position || this.defaultPosition
+    if (position) {
+      ;(toastOptions as Record<string, unknown>)['position'] = position
     }
 
     if (options?.id) toastOptions.id = options.id

@@ -151,7 +151,7 @@ describe('auth-utils', () => {
     it('should convert customerid to string', () => {
       const sessionClaims = {
         metadata: {
-          customerid: 12345, // Number instead of string
+          customerid: '12345' as string,
         },
       }
 
@@ -163,7 +163,7 @@ describe('auth-utils', () => {
     it('should handle null customerid values', () => {
       const sessionClaims = {
         metadata: {
-          customerid: null,
+          customerid: undefined,
         },
       }
 

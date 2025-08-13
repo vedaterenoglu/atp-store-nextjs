@@ -11,33 +11,52 @@ import { SliderNavigationButton } from '../SliderNavigationButton'
 
 // Mock lucide-react icons
 jest.mock('lucide-react', () => ({
-  ChevronLeft: jest.fn(({ className }: any) => (
-    <div data-testid="chevron-left-icon" className={className}>{'<'}</div>
+  ChevronLeft: jest.fn(({ className }: { className?: string }) => (
+    <div data-testid="chevron-left-icon" className={className}>
+      {'<'}
+    </div>
   )),
-  ChevronRight: jest.fn(({ className }: any) => (
-    <div data-testid="chevron-right-icon" className={className}>{'>'}</div>
+  ChevronRight: jest.fn(({ className }: { className?: string }) => (
+    <div data-testid="chevron-right-icon" className={className}>
+      {'>'}
+    </div>
   )),
 }))
 
 // Mock shadcn/ui Button
 jest.mock('@/components/ui/schadcn/button', () => ({
-  Button: jest.fn(({ children, onClick, disabled, className, variant, size, ...props }: any) => (
-    <button
-      onClick={disabled ? undefined : onClick}
-      disabled={disabled}
-      className={className}
-      data-variant={variant}
-      data-size={size}
-      {...props}
-    >
-      {children}
-    </button>
-  )),
+  Button: jest.fn(
+    ({
+      children,
+      onClick,
+      disabled,
+      className,
+      variant,
+      size,
+      ...props
+    }: React.ButtonHTMLAttributes<HTMLButtonElement> & {
+      variant?: string
+      size?: string
+    }) => (
+      <button
+        onClick={disabled ? undefined : onClick}
+        disabled={disabled}
+        className={className}
+        data-variant={variant}
+        data-size={size}
+        {...props}
+      >
+        {children}
+      </button>
+    )
+  ),
 }))
 
 // Mock cn utility
 jest.mock('@/lib/utils', () => ({
-  cn: jest.fn((...classes: any[]) => classes.filter(Boolean).join(' ')),
+  cn: jest.fn((...classes: Array<string | undefined | null | false>) =>
+    classes.filter(Boolean).join(' ')
+  ),
 }))
 
 describe('SliderNavigationButton', () => {

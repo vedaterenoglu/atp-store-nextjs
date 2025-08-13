@@ -42,7 +42,6 @@ export async function GET() {
       })
     }
 
-
     // Fetch from Hasura
     const response = await fetch(env.NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT, {
       method: 'POST',

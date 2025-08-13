@@ -10,17 +10,23 @@ import { SliderOverlay } from '../SliderOverlay'
 
 // Mock price service
 jest.mock('@/services/price.service', () => ({
-  calculateDiscountPercentage: jest.fn((originalPrice: number, discountedPrice: number) => {
-    if (originalPrice <= 0) return 0
-    if (discountedPrice >= originalPrice) return 0
-    if (discountedPrice === 0) return 100
-    return Math.round(((originalPrice - discountedPrice) / originalPrice) * 100)
-  }),
+  calculateDiscountPercentage: jest.fn(
+    (originalPrice: number, discountedPrice: number) => {
+      if (originalPrice <= 0) return 0
+      if (discountedPrice >= originalPrice) return 0
+      if (discountedPrice === 0) return 100
+      return Math.round(
+        ((originalPrice - discountedPrice) / originalPrice) * 100
+      )
+    }
+  ),
 }))
 
 // Mock cn utility
 jest.mock('@/lib/utils', () => ({
-  cn: jest.fn((...classes: any[]) => classes.filter(Boolean).join(' ')),
+  cn: jest.fn((...classes: Array<string | undefined | null | false>) =>
+    classes.filter(Boolean).join(' ')
+  ),
 }))
 
 describe('SliderOverlay', () => {

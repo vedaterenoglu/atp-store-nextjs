@@ -155,7 +155,9 @@ describe('DeliveriesHeader', () => {
       const mockTWithMissingKeys = jest.fn((key: string) => key)
 
       mockUseTranslation.mockReturnValue({
-        t: mockTWithMissingKeys as unknown as ReturnType<typeof useTranslation>['t'],
+        t: mockTWithMissingKeys as unknown as ReturnType<
+          typeof useTranslation
+        >['t'],
         i18n: {} as ReturnType<typeof useTranslation>['i18n'],
         ready: true,
       } as unknown as ReturnType<typeof useTranslation>)
@@ -327,7 +329,9 @@ describe('DeliveriesHeader', () => {
       })
 
       mockUseTranslation.mockReturnValue({
-        t: specialCharMockT as unknown as ReturnType<typeof useTranslation>['t'],
+        t: specialCharMockT as unknown as ReturnType<
+          typeof useTranslation
+        >['t'],
         i18n: {} as ReturnType<typeof useTranslation>['i18n'],
         ready: true,
       } as unknown as ReturnType<typeof useTranslation>)

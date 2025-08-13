@@ -5,31 +5,51 @@
  * Dependencies: React Testing Library, Jest, Next.js Image mock
  */
 
+import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { ProductImage } from '../ProductImage'
 
 // Mock Next.js Image
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: jest.fn((props: any) => {
-    const { onLoad, onError, priority, fill, sizes, ...imgProps } = props
-    return (
-      <img
-        {...imgProps}
-        data-priority={priority}
-        data-fill={fill}
-        data-sizes={sizes}
-        data-testid="product-image"
-        onLoad={() => onLoad?.()}
-        onError={() => onError?.()}
-      />
-    )
-  }),
+  default: jest.fn(
+    (
+      props: React.ImgHTMLAttributes<HTMLImageElement> & {
+        priority?: boolean
+        fill?: boolean
+        sizes?: string
+        onLoad?: () => void
+        onError?: () => void
+      }
+    ) => {
+      const {
+        onLoad,
+        onError,
+        priority,
+        fill,
+        sizes,
+        alt = '',
+        ...imgProps
+      } = props
+      return (
+        <img
+          {...imgProps}
+          alt={alt}
+          data-priority={priority}
+          data-fill={fill}
+          data-sizes={sizes}
+          data-testid="product-image"
+          onLoad={() => onLoad?.()}
+          onError={() => onError?.()}
+        />
+      )
+    }
+  ),
 }))
 
 // Mock Skeleton component
 jest.mock('@/components/ui/schadcn/skeleton', () => ({
-  Skeleton: jest.fn(({ className }: any) => (
+  Skeleton: jest.fn(({ className }: { className?: string }) => (
     <div data-testid="skeleton" className={className} />
   )),
 }))

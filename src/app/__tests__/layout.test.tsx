@@ -42,41 +42,49 @@ jest.mock('@clerk/nextjs', () => ({
 
 // Mock providers before importing component
 jest.mock('../../components/providers', () => ({
-  ThemeInitializer: jest.fn(() => React.createElement('div', { 'data-testid': 'theme-initializer' })),
-  I18nProvider: jest.fn(({ children }: { children: React.ReactNode }) => 
+  ThemeInitializer: jest.fn(() =>
+    React.createElement('div', { 'data-testid': 'theme-initializer' })
+  ),
+  I18nProvider: jest.fn(({ children }: { children: React.ReactNode }) =>
     React.createElement('div', { 'data-testid': 'i18n-provider' }, children)
   ),
-  ClerkLocaleProvider: jest.fn(({ children }: { children: React.ReactNode }) => 
-    React.createElement('div', { 'data-testid': 'clerk-locale-provider' }, children)
+  ClerkLocaleProvider: jest.fn(({ children }: { children: React.ReactNode }) =>
+    React.createElement(
+      'div',
+      { 'data-testid': 'clerk-locale-provider' },
+      children
+    )
   ),
-  CartProvider: jest.fn(({ children }: { children: React.ReactNode }) => 
+  CartProvider: jest.fn(({ children }: { children: React.ReactNode }) =>
     React.createElement('div', { 'data-testid': 'cart-provider' }, children)
   ),
 }))
 
 // Mock layout components
 jest.mock('../../components/layout', () => ({
-  AppLayout: jest.fn(({ children }: { children: React.ReactNode }) => 
+  AppLayout: jest.fn(({ children }: { children: React.ReactNode }) =>
     React.createElement('div', { 'data-testid': 'app-layout' }, children)
   ),
 }))
 
 // Mock auth components
 jest.mock('../../components/auth/NewUserWelcomeHandler', () => ({
-  NewUserWelcomeHandler: jest.fn(() => 
+  NewUserWelcomeHandler: jest.fn(() =>
     React.createElement('div', { 'data-testid': 'new-user-welcome-handler' })
   ),
 }))
 
 jest.mock('../../components/auth/SignOutHandler', () => ({
-  SignOutHandler: jest.fn(() => 
+  SignOutHandler: jest.fn(() =>
     React.createElement('div', { 'data-testid': 'sign-out-handler' })
   ),
 }))
 
 // Mock sonner toast
 jest.mock('sonner', () => ({
-  Toaster: jest.fn(() => React.createElement('div', { 'data-testid': 'toaster' })),
+  Toaster: jest.fn(() =>
+    React.createElement('div', { 'data-testid': 'toaster' })
+  ),
 }))
 
 // Mock stores
@@ -128,7 +136,9 @@ jest.mock('../../lib/stores/cart.store', () => ({
 
 // Mock bookmark actions
 jest.mock('../../app/actions/bookmark-actions', () => ({
-  getBookmarks: jest.fn(() => Promise.resolve({ success: true, bookmarks: [] })),
+  getBookmarks: jest.fn(() =>
+    Promise.resolve({ success: true, bookmarks: [] })
+  ),
   addBookmark: jest.fn(() => Promise.resolve({ success: true })),
   removeBookmark: jest.fn(() => Promise.resolve({ success: true })),
 }))
@@ -136,14 +146,13 @@ jest.mock('../../app/actions/bookmark-actions', () => ({
 // Mock CSS imports
 jest.mock('../globals.css', () => ({}))
 
-// Import the component after mocks - need to handle dynamic imports
-const mockLayout = jest.requireActual('../layout')
+// Import the component after mocks
 import type { Metadata } from 'next'
 
-// Mock Next.js Image component 
+// Mock Next.js Image component
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: jest.fn((props: { src: string; alt: string }) => 
+  default: jest.fn((props: { src: string; alt: string }) =>
     React.createElement('img', props)
   ),
 }))
@@ -159,13 +168,22 @@ jest.mock('../layout', () => {
         { lang: 'sv', suppressHydrationWarning: true },
         React.createElement(
           'body',
-          { className: '--font-geist-sans variable --font-geist-mono variable antialiased' },
+          {
+            className:
+              '--font-geist-sans variable --font-geist-mono variable antialiased',
+          },
           React.createElement(
             require('../../components/providers').ClerkLocaleProvider,
             {},
             [
-              React.createElement(require('../../components/providers').ThemeInitializer, { key: 'theme' }),
-              React.createElement(require('../../components/auth/SignOutHandler').SignOutHandler, { key: 'signout' }),
+              React.createElement(
+                require('../../components/providers').ThemeInitializer,
+                { key: 'theme' }
+              ),
+              React.createElement(
+                require('../../components/auth/SignOutHandler').SignOutHandler,
+                { key: 'signout' }
+              ),
               React.createElement(
                 require('../../components/providers').I18nProvider,
                 { key: 'i18n' },
@@ -178,7 +196,11 @@ jest.mock('../layout', () => {
                       { key: 'layout' },
                       children
                     ),
-                    React.createElement(require('../../components/auth/NewUserWelcomeHandler').NewUserWelcomeHandler, { key: 'welcome' }),
+                    React.createElement(
+                      require('../../components/auth/NewUserWelcomeHandler')
+                        .NewUserWelcomeHandler,
+                      { key: 'welcome' }
+                    ),
                   ]
                 ),
                 React.createElement(require('sonner').Toaster, {
@@ -209,7 +231,12 @@ jest.mock('../layout', () => {
 
 // Import the component after mocks
 import RootLayout, { metadata } from '../layout'
-import { ThemeInitializer, I18nProvider, ClerkLocaleProvider, CartProvider } from '../../components/providers'
+import {
+  ThemeInitializer,
+  I18nProvider,
+  ClerkLocaleProvider,
+  CartProvider,
+} from '../../components/providers'
 import { AppLayout } from '../../components/layout'
 import { NewUserWelcomeHandler } from '../../components/auth/NewUserWelcomeHandler'
 import { SignOutHandler } from '../../components/auth/SignOutHandler'
@@ -240,7 +267,11 @@ function renderLayout(children: React.ReactNode) {
 }
 
 describe('RootLayout', () => {
-  const mockChildren = React.createElement('div', { 'data-testid': 'children' }, 'Test Content')
+  const mockChildren = React.createElement(
+    'div',
+    { 'data-testid': 'children' },
+    'Test Content'
+  )
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -275,7 +306,9 @@ describe('RootLayout', () => {
     ) as React.ReactElement<{ className?: string; children: React.ReactNode }>
 
     // Render the body content to test provider hierarchy
-    rtlRender(React.createElement(React.Fragment, {}, bodyElement.props.children))
+    rtlRender(
+      React.createElement(React.Fragment, {}, bodyElement.props.children)
+    )
 
     const clerkProvider = screen.getByTestId('clerk-locale-provider')
     const i18nProvider = screen.getByTestId('i18n-provider')
@@ -297,7 +330,9 @@ describe('RootLayout', () => {
     ) as React.ReactElement<{ className?: string; children: React.ReactNode }>
 
     // Render the body content to trigger component calls
-    rtlRender(React.createElement(React.Fragment, {}, bodyElement.props.children))
+    rtlRender(
+      React.createElement(React.Fragment, {}, bodyElement.props.children)
+    )
 
     expect(ThemeInitializer).toHaveBeenCalledTimes(1)
   })
@@ -309,7 +344,9 @@ describe('RootLayout', () => {
     ) as React.ReactElement<{ className?: string; children: React.ReactNode }>
 
     // Render the body content to trigger component calls
-    rtlRender(React.createElement(React.Fragment, {}, bodyElement.props.children))
+    rtlRender(
+      React.createElement(React.Fragment, {}, bodyElement.props.children)
+    )
 
     expect(SignOutHandler).toHaveBeenCalledTimes(1)
   })
@@ -321,7 +358,9 @@ describe('RootLayout', () => {
     ) as React.ReactElement<{ className?: string; children: React.ReactNode }>
 
     // Render the body content to trigger component calls
-    rtlRender(React.createElement(React.Fragment, {}, bodyElement.props.children))
+    rtlRender(
+      React.createElement(React.Fragment, {}, bodyElement.props.children)
+    )
 
     expect(NewUserWelcomeHandler).toHaveBeenCalledTimes(1)
   })
@@ -333,12 +372,14 @@ describe('RootLayout', () => {
     ) as React.ReactElement<{ className?: string; children: React.ReactNode }>
 
     // Render the body content to trigger component calls
-    rtlRender(React.createElement(React.Fragment, {}, bodyElement.props.children))
+    rtlRender(
+      React.createElement(React.Fragment, {}, bodyElement.props.children)
+    )
 
     expect(Toaster).toHaveBeenCalledTimes(1)
     const toasterMock = Toaster as jest.MockedFunction<typeof Toaster>
     const toasterCall = toasterMock.mock.calls[0]?.[0]
-    
+
     if (toasterCall) {
       expect(toasterCall).toHaveProperty('position', 'top-right')
       expect(toasterCall).toHaveProperty('toastOptions')
@@ -352,7 +393,9 @@ describe('RootLayout', () => {
     ) as React.ReactElement<{ className?: string; children: React.ReactNode }>
 
     // Render the body content
-    rtlRender(React.createElement(React.Fragment, {}, bodyElement.props.children))
+    rtlRender(
+      React.createElement(React.Fragment, {}, bodyElement.props.children)
+    )
 
     const children = screen.getByTestId('children')
     const appLayout = screen.getByTestId('app-layout')
@@ -368,7 +411,9 @@ describe('RootLayout', () => {
     ) as React.ReactElement<{ className?: string; children: React.ReactNode }>
 
     // Render to trigger provider calls
-    rtlRender(React.createElement(React.Fragment, {}, bodyElement.props.children))
+    rtlRender(
+      React.createElement(React.Fragment, {}, bodyElement.props.children)
+    )
 
     // Verify each provider was called
     expect(ClerkLocaleProvider).toHaveBeenCalled()
@@ -395,7 +440,10 @@ describe('RootLayout', () => {
   it('should handle different children types', () => {
     const testCases = [
       { children: 'String child', testId: 'string-child' },
-      { children: React.createElement('span', {}, 'Element child'), testId: 'element-child' },
+      {
+        children: React.createElement('span', {}, 'Element child'),
+        testId: 'element-child',
+      },
       {
         children: [
           React.createElement('div', { key: '1' }, 'Child 1'),

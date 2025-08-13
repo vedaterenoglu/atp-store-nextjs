@@ -5,80 +5,126 @@
  * Dependencies: React Testing Library, Jest
  */
 
+import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { CampaignProductCard } from '../CampaignProductCard'
 import type { CampaignProduct } from '@/types/campaign'
 
 // Mock shadcn/ui Card components
 jest.mock('@/components/ui/schadcn/card', () => ({
-  Card: jest.fn(({ children, className, ...props }: any) => (
-    <div data-testid="error-card" className={className} {...props}>
-      {children}
-    </div>
-  )),
-  CardContent: jest.fn(({ children, className }: any) => (
-    <div data-testid="card-content" className={className}>
-      {children}
-    </div>
-  )),
-  CardFooter: jest.fn(({ children, className }: any) => (
-    <div data-testid="card-footer" className={className}>
-      {children}
-    </div>
-  )),
+  Card: jest.fn(
+    ({
+      children,
+      className,
+      ...props
+    }: React.HTMLAttributes<HTMLDivElement>) => (
+      <div data-testid="error-card" className={className} {...props}>
+        {children}
+      </div>
+    )
+  ),
+  CardContent: jest.fn(
+    ({ children, className }: React.HTMLAttributes<HTMLDivElement>) => (
+      <div data-testid="card-content" className={className}>
+        {children}
+      </div>
+    )
+  ),
+  CardFooter: jest.fn(
+    ({ children, className }: React.HTMLAttributes<HTMLDivElement>) => (
+      <div data-testid="card-footer" className={className}>
+        {children}
+      </div>
+    )
+  ),
 }))
 
 // Mock atoms
 jest.mock('../../atoms', () => ({
-  DiscountBadge: jest.fn(({ originalPrice, discountedPrice }: any) => (
-    <div
-      data-testid="discount-badge"
-      data-original-price={originalPrice}
-      data-discounted-price={discountedPrice}
-    >
-      Discount Badge
-    </div>
-  )),
+  DiscountBadge: jest.fn(
+    ({
+      originalPrice,
+      discountedPrice,
+    }: {
+      originalPrice: number
+      discountedPrice: number
+    }) => (
+      <div
+        data-testid="discount-badge"
+        data-original-price={originalPrice}
+        data-discounted-price={discountedPrice}
+      >
+        Discount Badge
+      </div>
+    )
+  ),
 }))
 
 // Mock molecules
 jest.mock('../../molecules', () => ({
-  PriceDisplay: jest.fn(({ stock_price, campaign_price }: any) => (
-    <div
-      data-testid="price-display"
-      data-stock-price={stock_price}
-      data-campaign-price={campaign_price}
-    >
-      Price Display
-    </div>
-  )),
-  ProductImage: jest.fn(({ src, alt }: any) => (
+  PriceDisplay: jest.fn(
+    ({
+      stock_price,
+      campaign_price,
+    }: {
+      stock_price?: number
+      campaign_price?: number
+    }) => (
+      <div
+        data-testid="price-display"
+        data-stock-price={stock_price}
+        data-campaign-price={campaign_price}
+      >
+        Price Display
+      </div>
+    )
+  ),
+  ProductImage: jest.fn(({ src, alt }: { src?: string; alt: string }) => (
     <div data-testid="product-image" data-src={src} data-alt={alt}>
       Product Image
     </div>
   )),
-  ProductInfo: jest.fn((props: any) => (
-    <div
-      data-testid="product-info"
-      data-stock-name={props.stock_name}
-      data-stock-group={props.stock_group}
-      data-stock-id={props.stock_id}
-      data-stock-unit={props.stock_unit}
-    >
-      Product Info
-    </div>
-  )),
-  CardActions: jest.fn(({ product, disabled, onAddToCart, className }: any) => (
-    <div
-      data-testid="card-actions"
-      data-stock-id={product?.stock_id}
-      data-disabled={disabled}
-      data-has-callback={!!onAddToCart}
-      className={className}
-    >
-      <button onClick={() => onAddToCart?.(product, 1)}>Add to Cart</button>
-    </div>
-  )),
+  ProductInfo: jest.fn(
+    (props: {
+      stock_name: string
+      stock_group?: string
+      stock_id: string
+      stock_unit?: string
+    }) => (
+      <div
+        data-testid="product-info"
+        data-stock-name={props.stock_name}
+        data-stock-group={props.stock_group}
+        data-stock-id={props.stock_id}
+        data-stock-unit={props.stock_unit}
+      >
+        Product Info
+      </div>
+    )
+  ),
+  CardActions: jest.fn(
+    ({
+      product,
+      disabled,
+      onAddToCart,
+      className,
+    }: {
+      product: CampaignProduct
+      disabled?: boolean
+      onAddToCart?: (product: CampaignProduct, quantity: number) => void
+      className?: string
+    }) => (
+      <div
+        data-testid="card-actions"
+        data-stock-id={product?.stock_id}
+        data-disabled={disabled}
+        data-has-callback={!!onAddToCart}
+        className={className}
+      >
+        <button onClick={() => onAddToCart?.(product, 1)}>Add to Cart</button>
+      </div>
+    )
+  ),
 }))
 
 describe('CampaignProductCard', () => {

@@ -87,9 +87,7 @@ jest.mock('@/app/actions/contact.action', () => ({
 
 // Need to mock each module separately as they have different exports
 jest.mock('@/components/ui/schadcn/form', () => ({
-  Form: jest.fn(({ children }: MockFormProps) => (
-    <>{children}</>
-  )),
+  Form: jest.fn(({ children }: MockFormProps) => <>{children}</>),
   FormControl: jest.fn(({ children }: MockFieldProps) => <div>{children}</div>),
   FormField: jest.fn(({ render, name }: MockFormFieldProps) => {
     const field = { onChange: jest.fn(), onBlur: jest.fn(), value: '', name }
@@ -107,27 +105,43 @@ jest.mock('@/components/ui/schadcn/form', () => ({
 }))
 
 jest.mock('@/components/ui/schadcn/input', () => ({
-  Input: jest.fn((props: MockInputProps) => <input data-testid="input" {...props} />),
+  Input: jest.fn((props: MockInputProps) => (
+    <input data-testid="input" {...props} />
+  )),
 }))
 
 jest.mock('@/components/ui/schadcn/textarea', () => ({
-  Textarea: jest.fn((props: MockTextareaProps) => <textarea data-testid="textarea" {...props} />),
+  Textarea: jest.fn((props: MockTextareaProps) => (
+    <textarea data-testid="textarea" {...props} />
+  )),
 }))
 
 jest.mock('@/components/ui/schadcn/button', () => ({
   Button: jest.fn(({ children, ...props }: MockButtonProps) => (
-    <button data-testid="submit-button" {...props}>{children}</button>
+    <button data-testid="submit-button" {...props}>
+      {children}
+    </button>
   )),
 }))
 
 jest.mock('@/components/ui/schadcn/card', () => ({
   Card: jest.fn(({ children, className }: MockFieldProps) => (
-    <div className={className} data-testid="card">{children}</div>
+    <div className={className} data-testid="card">
+      {children}
+    </div>
   )),
-  CardHeader: jest.fn(({ children }: MockFieldProps) => <div data-testid="card-header">{children}</div>),
-  CardTitle: jest.fn(({ children }: MockFieldProps) => <h3 data-testid="card-title">{children}</h3>),
-  CardDescription: jest.fn(({ children }: MockFieldProps) => <p data-testid="card-description">{children}</p>),
-  CardContent: jest.fn(({ children }: MockFieldProps) => <div data-testid="card-content">{children}</div>),
+  CardHeader: jest.fn(({ children }: MockFieldProps) => (
+    <div data-testid="card-header">{children}</div>
+  )),
+  CardTitle: jest.fn(({ children }: MockFieldProps) => (
+    <h3 data-testid="card-title">{children}</h3>
+  )),
+  CardDescription: jest.fn(({ children }: MockFieldProps) => (
+    <p data-testid="card-description">{children}</p>
+  )),
+  CardContent: jest.fn(({ children }: MockFieldProps) => (
+    <div data-testid="card-content">{children}</div>
+  )),
 }))
 
 jest.mock('@/components/ui/schadcn/label', () => ({
@@ -136,9 +150,13 @@ jest.mock('@/components/ui/schadcn/label', () => ({
 
 jest.mock('@/components/ui/schadcn/select', () => ({
   Select: jest.fn(({ children }: MockFieldProps) => <div>{children}</div>),
-  SelectContent: jest.fn(({ children }: MockFieldProps) => <div>{children}</div>),
+  SelectContent: jest.fn(({ children }: MockFieldProps) => (
+    <div>{children}</div>
+  )),
   SelectItem: jest.fn(({ children }: MockFieldProps) => <div>{children}</div>),
-  SelectTrigger: jest.fn(({ children }: MockFieldProps) => <div>{children}</div>),
+  SelectTrigger: jest.fn(({ children }: MockFieldProps) => (
+    <div>{children}</div>
+  )),
   SelectValue: jest.fn(() => <span />),
 }))
 
@@ -154,16 +172,18 @@ interface FormData {
 jest.mock('react-hook-form', () => ({
   useForm: jest.fn(() => ({
     control: {},
-    handleSubmit: jest.fn((onSubmit: (data: FormData) => void) => (e?: React.FormEvent) => {
-      e?.preventDefault?.()
-      return onSubmit({
-        name: 'Test Name',
-        email: 'test@example.com',
-        phone: '1234567890',
-        subject: 'Test Subject',
-        message: 'Test Message',
-      })
-    }),
+    handleSubmit: jest.fn(
+      (onSubmit: (data: FormData) => void) => (e?: React.FormEvent) => {
+        e?.preventDefault?.()
+        return onSubmit({
+          name: 'Test Name',
+          email: 'test@example.com',
+          phone: '1234567890',
+          subject: 'Test Subject',
+          message: 'Test Message',
+        })
+      }
+    ),
     formState: { errors: {}, isSubmitting: false, isSubmitSuccessful: false },
     reset: jest.fn(),
     setValue: jest.fn(),
@@ -194,9 +214,15 @@ jest.mock('lucide-react', () => ({
 
 describe('ContactForm', () => {
   const mockT = jest.fn()
-  const mockUseTranslation = useTranslation as jest.MockedFunction<typeof useTranslation>
-  const mockUseAuthService = useAuthService as jest.MockedFunction<typeof useAuthService>
-  const mockSubmitContactForm = submitContactForm as jest.MockedFunction<typeof submitContactForm>
+  const mockUseTranslation = useTranslation as jest.MockedFunction<
+    typeof useTranslation
+  >
+  const mockUseAuthService = useAuthService as jest.MockedFunction<
+    typeof useAuthService
+  >
+  const mockSubmitContactForm = submitContactForm as jest.MockedFunction<
+    typeof submitContactForm
+  >
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -222,7 +248,8 @@ describe('ContactForm', () => {
         'contact.form.fields.message.label': 'Message',
         'contact.form.fields.message.placeholder': 'Your message',
         'contact.form.fields.customerId.label': 'Customer ID',
-        'contact.form.fields.customerId.helper': 'Your company registration number',
+        'contact.form.fields.customerId.helper':
+          'Your company registration number',
         'contact.form.submit': 'Send Message',
         'contact.form.sending': 'Sending...',
         'contact.form.success': 'Message sent successfully!',
@@ -239,7 +266,12 @@ describe('ContactForm', () => {
 
     // Setup auth service mock
     mockUseAuthService.mockReturnValue({
-      user: { id: 'user-123', name: 'Test User', email: 'user@test.com', customerId: 'CUST-123' },
+      user: {
+        id: 'user-123',
+        name: 'Test User',
+        email: 'user@test.com',
+        customerId: 'CUST-123',
+      },
       isAuthenticated: true,
       isLoading: false,
       login: jest.fn(),
@@ -251,7 +283,7 @@ describe('ContactForm', () => {
   describe('Component Rendering', () => {
     it('should render the contact form card', () => {
       render(<ContactForm />)
-      
+
       expect(screen.getByTestId('card')).toBeInTheDocument()
       expect(screen.getByTestId('card-header')).toBeInTheDocument()
       expect(screen.getByTestId('card-content')).toBeInTheDocument()
@@ -259,7 +291,7 @@ describe('ContactForm', () => {
 
     it('should render form title and description', () => {
       render(<ContactForm />)
-      
+
       const cardTitle = screen.getByTestId('card-title')
       expect(cardTitle).toBeInTheDocument()
       // The ContactForm doesn't use CardDescription
@@ -267,7 +299,7 @@ describe('ContactForm', () => {
 
     it('should render all form fields', () => {
       render(<ContactForm />)
-      
+
       // Check that form renders (the actual field rendering depends on FormField mock)
       const form = screen.getByTestId('submit-button').closest('form')
       expect(form).toBeInTheDocument()
@@ -275,7 +307,7 @@ describe('ContactForm', () => {
 
     it('should render submit button with correct text', () => {
       render(<ContactForm />)
-      
+
       const submitButton = screen.getByTestId('submit-button')
       expect(submitButton).toBeInTheDocument()
       expect(submitButton).toHaveTextContent('Send Message')
@@ -283,7 +315,7 @@ describe('ContactForm', () => {
 
     it('should render send icon in submit button', () => {
       render(<ContactForm />)
-      
+
       expect(screen.getByTestId('send-icon')).toBeInTheDocument()
     })
   })
@@ -291,12 +323,12 @@ describe('ContactForm', () => {
   describe('Form Submission', () => {
     it('should handle successful form submission', async () => {
       mockSubmitContactForm.mockResolvedValueOnce({ success: true })
-      
+
       render(<ContactForm />)
-      
+
       const form = screen.getByTestId('submit-button').closest('form')
       fireEvent.submit(form!)
-      
+
       await waitFor(() => {
         expect(mockSubmitContactForm).toHaveBeenCalledWith({
           name: 'Test Name',
@@ -308,26 +340,26 @@ describe('ContactForm', () => {
           language: 'en',
         })
       })
-      
+
       // Component doesn't use toast, it resets the form on success
       // The reset function is tested in another test case
     })
 
     it('should handle form submission error', async () => {
-      mockSubmitContactForm.mockResolvedValueOnce({ 
-        success: false, 
-        error: 'Server error' 
+      mockSubmitContactForm.mockResolvedValueOnce({
+        success: false,
+        error: 'Server error',
       })
-      
+
       render(<ContactForm />)
-      
+
       const form = screen.getByTestId('submit-button').closest('form')
       fireEvent.submit(form!)
-      
+
       await waitFor(() => {
         expect(mockSubmitContactForm).toHaveBeenCalled()
       })
-      
+
       // Component doesn't use toast, it sets form errors
       // Error handling is managed by setError on the form
     })
@@ -341,14 +373,14 @@ describe('ContactForm', () => {
         logout: jest.fn(),
         register: jest.fn(),
       } as unknown as ReturnType<typeof useAuthService>)
-      
+
       mockSubmitContactForm.mockResolvedValueOnce({ success: true })
-      
+
       render(<ContactForm />)
-      
+
       const form = screen.getByTestId('submit-button').closest('form')
       fireEvent.submit(form!)
-      
+
       await waitFor(() => {
         expect(mockSubmitContactForm).toHaveBeenCalledWith({
           name: 'Test Name',
@@ -364,16 +396,16 @@ describe('ContactForm', () => {
 
     it('should handle network error during submission', async () => {
       mockSubmitContactForm.mockRejectedValueOnce(new Error('Network error'))
-      
+
       render(<ContactForm />)
-      
+
       const form = screen.getByTestId('submit-button').closest('form')
       fireEvent.submit(form!)
-      
+
       await waitFor(() => {
         expect(mockSubmitContactForm).toHaveBeenCalled()
       })
-      
+
       // Component doesn't use toast, it sets form errors
       // Error handling is managed by setError on the form
     })
@@ -384,13 +416,16 @@ describe('ContactForm', () => {
       const useFormMock = require('react-hook-form').useForm
       useFormMock.mockReturnValueOnce({
         control: {},
-        handleSubmit: jest.fn((onSubmit: (data: FormData) => void) => () => onSubmit({
-          name: 'Test Name',
-          email: 'test@example.com',
-          phone: '1234567890',
-          subject: 'Test Subject',
-          message: 'Test Message',
-        })),
+        handleSubmit: jest.fn(
+          (onSubmit: (data: FormData) => void) => () =>
+            onSubmit({
+              name: 'Test Name',
+              email: 'test@example.com',
+              phone: '1234567890',
+              subject: 'Test Subject',
+              message: 'Test Message',
+            })
+        ),
         formState: { errors: {}, isSubmitting: true },
         reset: jest.fn(),
         setValue: jest.fn(),
@@ -398,9 +433,9 @@ describe('ContactForm', () => {
         setError: jest.fn(),
         clearErrors: jest.fn(),
       })
-      
+
       render(<ContactForm />)
-      
+
       const submitButton = screen.getByTestId('submit-button')
       expect(submitButton).toBeDisabled()
     })
@@ -409,13 +444,16 @@ describe('ContactForm', () => {
       const useFormMock = require('react-hook-form').useForm
       useFormMock.mockReturnValueOnce({
         control: {},
-        handleSubmit: jest.fn((onSubmit: (data: FormData) => void) => () => onSubmit({
-          name: 'Test Name',
-          email: 'test@example.com',
-          phone: '1234567890',
-          subject: 'Test Subject',
-          message: 'Test Message',
-        })),
+        handleSubmit: jest.fn(
+          (onSubmit: (data: FormData) => void) => () =>
+            onSubmit({
+              name: 'Test Name',
+              email: 'test@example.com',
+              phone: '1234567890',
+              subject: 'Test Subject',
+              message: 'Test Message',
+            })
+        ),
         formState: { errors: {}, isSubmitting: true },
         reset: jest.fn(),
         setValue: jest.fn(),
@@ -423,10 +461,12 @@ describe('ContactForm', () => {
         setError: jest.fn(),
         clearErrors: jest.fn(),
       })
-      
+
       render(<ContactForm />)
-      
-      expect(screen.getByTestId('submit-button')).toHaveTextContent('Sending...')
+
+      expect(screen.getByTestId('submit-button')).toHaveTextContent(
+        'Sending...'
+      )
     })
 
     it('should reset form after successful submission', async () => {
@@ -434,13 +474,16 @@ describe('ContactForm', () => {
       const useFormMock = require('react-hook-form').useForm
       useFormMock.mockReturnValueOnce({
         control: {},
-        handleSubmit: jest.fn((onSubmit: (data: FormData) => void) => () => onSubmit({
-          name: 'Test Name',
-          email: 'test@example.com',
-          phone: '1234567890',
-          subject: 'Test Subject',
-          message: 'Test Message',
-        })),
+        handleSubmit: jest.fn(
+          (onSubmit: (data: FormData) => void) => () =>
+            onSubmit({
+              name: 'Test Name',
+              email: 'test@example.com',
+              phone: '1234567890',
+              subject: 'Test Subject',
+              message: 'Test Message',
+            })
+        ),
         formState: { errors: {}, isSubmitting: false },
         reset: resetMock,
         setValue: jest.fn(),
@@ -448,14 +491,14 @@ describe('ContactForm', () => {
         setError: jest.fn(),
         clearErrors: jest.fn(),
       })
-      
+
       mockSubmitContactForm.mockResolvedValueOnce({ success: true })
-      
+
       render(<ContactForm />)
-      
+
       const form = screen.getByTestId('submit-button').closest('form')
       fireEvent.submit(form!)
-      
+
       await waitFor(() => {
         expect(resetMock).toHaveBeenCalled()
       })
@@ -465,13 +508,13 @@ describe('ContactForm', () => {
   describe('Translation Integration', () => {
     it('should use correct translation namespace', () => {
       render(<ContactForm />)
-      
+
       expect(mockUseTranslation).toHaveBeenCalledWith('aboutUs')
     })
 
     it('should translate all form labels', () => {
       render(<ContactForm />)
-      
+
       expect(mockT).toHaveBeenCalledWith('contact.form.fields.name.label')
       expect(mockT).toHaveBeenCalledWith('contact.form.fields.email.label')
       expect(mockT).toHaveBeenCalledWith('contact.form.fields.phone.label')
@@ -481,23 +524,31 @@ describe('ContactForm', () => {
 
     it('should translate all placeholders', () => {
       render(<ContactForm />)
-      
+
       expect(mockT).toHaveBeenCalledWith('contact.form.fields.name.placeholder')
-      expect(mockT).toHaveBeenCalledWith('contact.form.fields.email.placeholder')
-      expect(mockT).toHaveBeenCalledWith('contact.form.fields.phone.placeholder')
-      expect(mockT).toHaveBeenCalledWith('contact.form.fields.subject.placeholder')
-      expect(mockT).toHaveBeenCalledWith('contact.form.fields.message.placeholder')
+      expect(mockT).toHaveBeenCalledWith(
+        'contact.form.fields.email.placeholder'
+      )
+      expect(mockT).toHaveBeenCalledWith(
+        'contact.form.fields.phone.placeholder'
+      )
+      expect(mockT).toHaveBeenCalledWith(
+        'contact.form.fields.subject.placeholder'
+      )
+      expect(mockT).toHaveBeenCalledWith(
+        'contact.form.fields.message.placeholder'
+      )
     })
   })
 
   describe('Styling and Layout', () => {
     it('should apply correct grid layout to form items', () => {
       const { container } = render(<ContactForm />)
-      
+
       // Check for grid containers with responsive classes
       const gridContainers = container.querySelectorAll('.grid')
       expect(gridContainers.length).toBeGreaterThan(0)
-      
+
       // Check for responsive grid columns
       const responsiveGrids = container.querySelectorAll('.md\\:grid-cols-2')
       expect(responsiveGrids.length).toBeGreaterThan(0)
@@ -505,7 +556,7 @@ describe('ContactForm', () => {
 
     it('should apply proper spacing to form elements', () => {
       render(<ContactForm />)
-      
+
       // Check that form has spacing applied
       const form = screen.getByTestId('submit-button').closest('form')
       expect(form).toHaveClass('space-y-4')
@@ -513,7 +564,7 @@ describe('ContactForm', () => {
 
     it('should render textarea with correct rows', () => {
       render(<ContactForm />)
-      
+
       // The ContactForm doesn't set rows attribute explicitly, it uses min-h-[500px] class
       const textarea = screen.getByTestId('textarea')
       expect(textarea).toBeInTheDocument()
@@ -523,14 +574,14 @@ describe('ContactForm', () => {
   describe('Accessibility', () => {
     it('should have accessible form structure', () => {
       render(<ContactForm />)
-      
+
       const form = screen.getByTestId('submit-button').closest('form')
       expect(form).toBeInTheDocument()
     })
 
     it('should have labels for all form fields', () => {
       render(<ContactForm />)
-      
+
       // Check that FormLabel components are rendered (they render as <label> elements)
       const labels = document.querySelectorAll('label')
       expect(labels.length).toBeGreaterThan(0)
@@ -538,7 +589,7 @@ describe('ContactForm', () => {
 
     it('should have submit button with type submit', () => {
       render(<ContactForm />)
-      
+
       const submitButton = screen.getByTestId('submit-button')
       expect(submitButton).toHaveAttribute('type', 'submit')
     })

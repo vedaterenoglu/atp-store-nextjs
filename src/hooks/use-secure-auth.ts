@@ -3,7 +3,7 @@
  * SOLID Principles: SRP - Single responsibility for fetching secure auth context
  * Design Patterns: Hook Pattern, Facade Pattern
  * Dependencies: SWR for data fetching, API route
- * 
+ *
  * SECURITY: Fetches auth context from server-side API.
  * Cannot be manipulated from browser console.
  */
@@ -37,13 +37,13 @@ const defaultContext: SecureAuthContext = {
 
 /**
  * Secure authentication hook that fetches context from server
- * 
+ *
  * SECURITY FEATURES:
  * - Auth context comes from server-side API (cannot be manipulated)
  * - Automatic revalidation on focus/reconnect
  * - SWR caching for performance
  * - Real-time updates when customer changes
- * 
+ *
  * @returns Secure auth context and loading state
  */
 export function useSecureAuth() {
@@ -74,16 +74,16 @@ export function useSecureAuth() {
   return {
     // Auth state (secure, from server)
     auth: data || defaultContext,
-    
+
     // Loading state
     isLoading,
-    
+
     // Error state
     error,
-    
+
     // Refresh function (for customer selection)
     refreshAuth,
-    
+
     // Convenience getters
     isAuthenticated: data?.isAuthenticated || false,
     canAddToCart: data?.canAddToCart || false,
@@ -95,15 +95,15 @@ export function useSecureAuth() {
 
 /**
  * Hook for components that need to check specific permissions
- * 
+ *
  * @example
  * const { canAddToCart, canBookmark } = usePermissions()
- * 
+ *
  * <Button disabled={!canAddToCart}>Add to Cart</Button>
  */
 export function usePermissions() {
   const { auth } = useSecureAuth()
-  
+
   return {
     canAddToCart: auth.canAddToCart,
     canBookmark: auth.canBookmark,

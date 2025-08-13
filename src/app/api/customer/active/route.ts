@@ -34,10 +34,10 @@ export async function GET() {
     if (userRole === 'admin') {
       // Use the same cookie name as we set in switch route
       const activeId = cookieStore.get('active_customer_id')?.value
-      
+
       // Also check legacy cookie for backwards compatibility
       const legacyId = cookieStore.get('impersonating_customer_id')?.value
-      
+
       const impersonatingId = activeId || legacyId
 
       if (impersonatingId) {

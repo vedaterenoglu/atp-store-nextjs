@@ -9,9 +9,12 @@ import { getCampaignProducts, hasCampaignProducts } from '../campaign.service'
 import type { GetCampaignProductsWithPricesQueryResponse } from '@/services/graphql/queries/GetCampaignProductsWithPrices.types'
 
 // Mock the validation function
-jest.mock('@/services/graphql/queries/GetCampaignProductsWithPrices.schema', () => ({
-  validateGetCampaignProductsWithPricesResponse: jest.fn((data) => data),
-}))
+jest.mock(
+  '@/services/graphql/queries/GetCampaignProductsWithPrices.schema',
+  () => ({
+    validateGetCampaignProductsWithPricesResponse: jest.fn(data => data),
+  })
+)
 
 // Store original fetch to restore later
 const originalFetch = global.fetch
@@ -39,7 +42,9 @@ describe('Campaign Service', () => {
   })
 
   // Helper function to create mock campaign response
-  function createMockCampaignResponse(overrides?: Partial<GetCampaignProductsWithPricesQueryResponse>): GetCampaignProductsWithPricesQueryResponse {
+  function createMockCampaignResponse(
+    overrides?: Partial<GetCampaignProductsWithPricesQueryResponse>
+  ): GetCampaignProductsWithPricesQueryResponse {
     return {
       stock: [
         {
@@ -78,11 +83,13 @@ describe('Campaign Service', () => {
       const result = await getCampaignProducts(mockCompanyId)
 
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining(`/api/campaign-products?company_id=${mockCompanyId}`)
+        expect.stringContaining(
+          `/api/campaign-products?company_id=${mockCompanyId}`
+        )
       )
       expect(Array.isArray(result)).toBe(true)
       expect(result.length).toBe(2)
-      
+
       // Check transformation
       expect(result[0]).toMatchObject({
         stock_id: '8501 1001 0002',
@@ -113,7 +120,7 @@ describe('Campaign Service', () => {
 
     it('should handle various company ID formats correctly', async () => {
       const testCases = ['company-123', 'COMP_ABC', 'test.company.co', '12345']
-      
+
       for (const companyId of testCases) {
         const mockResponse = createMockCampaignResponse()
         mockFetch.mockResolvedValueOnce({
@@ -126,7 +133,7 @@ describe('Campaign Service', () => {
         expect(mockFetch).toHaveBeenCalledWith(
           expect.stringContaining(`company_id=${companyId}`)
         )
-        
+
         mockFetch.mockClear()
       }
     })
@@ -266,9 +273,10 @@ describe('Campaign Service', () => {
     })
 
     it('should validate response with schema validation', async () => {
-      const { validateGetCampaignProductsWithPricesResponse } = jest.requireMock(
-        '@/services/graphql/queries/GetCampaignProductsWithPrices.schema'
-      )
+      const { validateGetCampaignProductsWithPricesResponse } =
+        jest.requireMock(
+          '@/services/graphql/queries/GetCampaignProductsWithPrices.schema'
+        )
 
       const mockResponse = createMockCampaignResponse()
       mockFetch.mockResolvedValueOnce({
@@ -278,7 +286,9 @@ describe('Campaign Service', () => {
 
       await getCampaignProducts(mockCompanyId)
 
-      expect(validateGetCampaignProductsWithPricesResponse).toHaveBeenCalledWith(mockResponse)
+      expect(
+        validateGetCampaignProductsWithPricesResponse
+      ).toHaveBeenCalledWith(mockResponse)
     })
   })
 

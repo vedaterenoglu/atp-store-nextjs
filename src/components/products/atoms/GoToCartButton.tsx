@@ -31,7 +31,7 @@ export function GoToCartButton({ className }: GoToCartButtonProps) {
       toast.error('Please sign in to access cart')
       return
     }
-    
+
     // Check if user can access customer features (includes admin with customer)
     if (!auth.canAccessCustomerFeatures) {
       if (!auth.role || (auth.role !== 'customer' && auth.role !== 'admin')) {
@@ -41,7 +41,7 @@ export function GoToCartButton({ className }: GoToCartButtonProps) {
       }
       return
     }
-    
+
     // All checks passed, navigate to cart
     router.push('/cart')
   }

@@ -5,6 +5,7 @@
  * Dependencies: React Testing Library, Jest
  */
 
+import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { CampaignProductsGrid } from '../CampaignProductsGrid'
 import type { CampaignProduct } from '@/types/campaign'
@@ -24,15 +25,23 @@ jest.mock('react-i18next', () => ({
 
 // Mock CampaignProductCard
 jest.mock('../CampaignProductCard', () => ({
-  CampaignProductCard: jest.fn(({ product, onAddToCart }: any) => (
-    <div
-      data-testid={`product-card-${product.stock_id}`}
-      data-product-id={product.stock_id}
-      data-has-callback={!!onAddToCart}
-    >
-      Product Card: {product.stock_name}
-    </div>
-  )),
+  CampaignProductCard: jest.fn(
+    ({
+      product,
+      onAddToCart,
+    }: {
+      product: CampaignProduct
+      onAddToCart?: (product: CampaignProduct, quantity: number) => void
+    }) => (
+      <div
+        data-testid={`product-card-${product.stock_id}`}
+        data-product-id={product.stock_id}
+        data-has-callback={!!onAddToCart}
+      >
+        Product Card: {product.stock_name}
+      </div>
+    )
+  ),
 }))
 
 // Mock molecules
@@ -40,17 +49,33 @@ jest.mock('../../molecules', () => ({
   CampaignCardSkeleton: jest.fn(() => (
     <div data-testid="skeleton">Loading Skeleton</div>
   )),
-  CampaignErrorBoundary: jest.fn(({ children, onRetry }: any) => (
-    <div data-testid="error-boundary" data-has-retry={!!onRetry}>
-      {children}
-    </div>
-  )),
-  CampaignGridError: jest.fn(({ error, onRetry }: any) => (
-    <div data-testid="grid-error" data-has-retry={!!onRetry}>
-      <span>Error: {error.message}</span>
-      {onRetry && <button onClick={onRetry}>Retry</button>}
-    </div>
-  )),
+  CampaignErrorBoundary: jest.fn(
+    ({
+      children,
+      onRetry,
+    }: {
+      children: React.ReactNode
+      onRetry?: () => void
+    }) => (
+      <div data-testid="error-boundary" data-has-retry={!!onRetry}>
+        {children}
+      </div>
+    )
+  ),
+  CampaignGridError: jest.fn(
+    ({
+      error,
+      onRetry,
+    }: {
+      error: { message: string }
+      onRetry?: () => void
+    }) => (
+      <div data-testid="grid-error" data-has-retry={!!onRetry}>
+        <span>Error: {error.message}</span>
+        {onRetry && <button onClick={onRetry}>Retry</button>}
+      </div>
+    )
+  ),
 }))
 
 describe('CampaignProductsGrid', () => {

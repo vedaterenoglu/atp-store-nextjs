@@ -1,9 +1,9 @@
 /**
  * Mock Factory Functions
- * 
+ *
  * IMPORTANT: These functions ONLY return mock implementations.
  * They do NOT call jest.mock() - that must be done in the test file.
- * 
+ *
  * Usage in test file:
  * import { createButtonMock } from '@/__tests__/utils/mock-factories'
  * jest.mock('@/components/ui/button', () => ({
@@ -12,41 +12,61 @@
  */
 
 import React from 'react'
+import type {
+  ButtonHTMLAttributes,
+  HTMLAttributes,
+  InputHTMLAttributes,
+} from 'react'
 
 /**
  * Create a mock button component
  */
-export const createButtonMock = (testId = 'button') => 
-  jest.fn(({ children, onClick, disabled, className, ...props }: any) => 
-    React.createElement('button', { 
-      'data-testid': testId,
-      onClick: disabled ? undefined : onClick,
+export const createButtonMock = (testId = 'button') =>
+  jest.fn(
+    ({
+      children,
+      onClick,
       disabled,
       className,
       ...props
-    }, children)
+    }: ButtonHTMLAttributes<HTMLButtonElement>) =>
+      React.createElement(
+        'button',
+        {
+          'data-testid': testId,
+          onClick: disabled ? undefined : onClick,
+          disabled,
+          className,
+          ...props,
+        },
+        children
+      )
   )
 
 /**
  * Create a mock card component
  */
 export const createCardMock = (testId = 'card') =>
-  jest.fn(({ children, className, ...props }: any) =>
-    React.createElement('div', { 
-      'data-testid': testId,
-      className,
-      ...props
-    }, children)
+  jest.fn(({ children, className, ...props }: HTMLAttributes<HTMLDivElement>) =>
+    React.createElement(
+      'div',
+      {
+        'data-testid': testId,
+        className,
+        ...props,
+      },
+      children
+    )
   )
 
 /**
  * Create a mock skeleton component
  */
 export const createSkeletonMock = () =>
-  jest.fn(({ className }: any) =>
-    React.createElement('div', { 
+  jest.fn(({ className }: { className?: string }) =>
+    React.createElement('div', {
       'data-testid': 'skeleton',
-      className: `${className} skeleton animate-pulse`
+      className: `${className} skeleton animate-pulse`,
     })
   )
 
@@ -54,27 +74,29 @@ export const createSkeletonMock = () =>
  * Create a mock input component
  */
 export const createInputMock = () =>
-  jest.fn((props: any) =>
-    React.createElement('input', { 
+  jest.fn((props: InputHTMLAttributes<HTMLInputElement>) =>
+    React.createElement('input', {
       'data-testid': `input-${props.id}`,
-      ...props
+      ...props,
     })
   )
 
 /**
  * Create a mock translation function
  */
-export const createTranslationMock = (translations: Record<string, string> = {}) => {
+export const createTranslationMock = (
+  translations: Record<string, string> = {}
+) => {
   return (key: string, params?: Record<string, unknown>) => {
     let translation = translations[key] || key
-    
+
     // Handle interpolation
     if (params) {
       Object.entries(params).forEach(([placeholder, value]) => {
         translation = translation.replace(`{{${placeholder}}}`, String(value))
       })
     }
-    
+
     return translation
   }
 }
@@ -82,7 +104,9 @@ export const createTranslationMock = (translations: Record<string, string> = {})
 /**
  * Create a mock useTranslation hook
  */
-export const createUseTranslationMock = (translations: Record<string, string> = {}) => ({
+export const createUseTranslationMock = (
+  translations: Record<string, string> = {}
+) => ({
   t: createTranslationMock(translations),
   i18n: {
     language: 'en',
@@ -97,9 +121,9 @@ export const createUseTranslationMock = (translations: Record<string, string> = 
 export const createStoreMock = <T>(initialState: T) => {
   let state = initialState
   const subscribers: Array<() => void> = []
-  
+
   const store = Object.assign(
-    jest.fn((selector?: (state: T) => any) => {
+    jest.fn((selector?: (state: T) => unknown) => {
       if (typeof selector === 'function') {
         return selector(state)
       }
@@ -123,7 +147,7 @@ export const createStoreMock = <T>(initialState: T) => {
       }),
     }
   )
-  
+
   return store
 }
 

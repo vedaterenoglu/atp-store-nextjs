@@ -7,9 +7,9 @@
 
 import type { User } from '@clerk/nextjs/server'
 
-export type AuthError = 
+export type AuthError =
   | 'NOT_SIGNED_IN'
-  | 'INVALID_ROLE' 
+  | 'INVALID_ROLE'
   | 'NO_CUSTOMER_SELECTED'
   | 'ADMIN_ONLY'
 
@@ -41,7 +41,7 @@ export class AuthorizationService {
       return {
         success: false,
         error: 'NOT_SIGNED_IN',
-        message: 'Please sign in to continue'
+        message: 'Please sign in to continue',
       }
     }
 
@@ -50,7 +50,7 @@ export class AuthorizationService {
       return {
         success: false,
         error: 'INVALID_ROLE',
-        message: 'Customer or admin account required'
+        message: 'Customer or admin account required',
       }
     }
 
@@ -59,7 +59,7 @@ export class AuthorizationService {
       return {
         success: false,
         error: 'NO_CUSTOMER_SELECTED',
-        message: 'Please select a customer account'
+        message: 'Please select a customer account',
       }
     }
 
@@ -76,7 +76,7 @@ export class AuthorizationService {
       return {
         success: false,
         error: 'NOT_SIGNED_IN',
-        message: 'Please sign in to continue'
+        message: 'Please sign in to continue',
       }
     }
 
@@ -85,7 +85,7 @@ export class AuthorizationService {
       return {
         success: false,
         error: 'ADMIN_ONLY',
-        message: 'Admin access required'
+        message: 'Admin access required',
       }
     }
 
@@ -98,11 +98,11 @@ export class AuthorizationService {
    */
   static extractRole(user: User | null): 'customer' | 'admin' | null {
     if (!user) return null
-    
+
     const role = user.publicMetadata?.['role'] as string | undefined
     if (role === 'admin') return 'admin'
     if (role === 'customer') return 'customer'
-    
+
     return null
   }
 

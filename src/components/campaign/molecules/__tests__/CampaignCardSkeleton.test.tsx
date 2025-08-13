@@ -11,27 +11,36 @@ import { CampaignCardSkeleton } from '../CampaignCardSkeleton'
 
 // Mock shadcn/ui Card components
 jest.mock('@/components/ui/schadcn/card', () => ({
-  Card: jest.fn(({ children, className }: any) => (
-    <div data-testid="card" className={className}>
-      {children}
-    </div>
-  )),
-  CardContent: jest.fn(({ children, className }: any) => (
-    <div data-testid="card-content" className={className}>
-      {children}
-    </div>
-  )),
-  CardFooter: jest.fn(({ children, className }: any) => (
-    <div data-testid="card-footer" className={className}>
-      {children}
-    </div>
-  )),
+  Card: jest.fn(
+    ({ children, className }: React.HTMLAttributes<HTMLDivElement>) => (
+      <div data-testid="card" className={className}>
+        {children}
+      </div>
+    )
+  ),
+  CardContent: jest.fn(
+    ({ children, className }: React.HTMLAttributes<HTMLDivElement>) => (
+      <div data-testid="card-content" className={className}>
+        {children}
+      </div>
+    )
+  ),
+  CardFooter: jest.fn(
+    ({ children, className }: React.HTMLAttributes<HTMLDivElement>) => (
+      <div data-testid="card-footer" className={className}>
+        {children}
+      </div>
+    )
+  ),
 }))
 
 // Mock Skeleton component
 jest.mock('@/components/ui/schadcn/skeleton', () => ({
-  Skeleton: jest.fn(({ className }: any) => (
-    <div data-testid="skeleton" className={`${className} skeleton animate-pulse`} />
+  Skeleton: jest.fn(({ className }: { className?: string }) => (
+    <div
+      data-testid="skeleton"
+      className={`${className} skeleton animate-pulse`}
+    />
   )),
 }))
 

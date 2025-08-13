@@ -73,7 +73,9 @@ export function CardActions({
     // Check auth first
     if (!canAddToCart()) {
       if (!isAuthenticated) {
-        toast.error('Please sign in with a customer account to add items to cart')
+        toast.error(
+          'Please sign in with a customer account to add items to cart'
+        )
       } else if (!auth.activeCustomerId) {
         toast.error('Please select a customer account to add items to cart')
       } else {
@@ -86,20 +88,20 @@ export function CardActions({
       try {
         // Use cart store directly with campaign price
         const success = await addToCart(
-          product.stock_id,           // productId
-          product.stock_name,         // productName
-          product.campaign_price,     // unitPrice (use campaign price)
-          quantity,                   // quantity
-          product.stock_image_link,   // productImage
-          product.stock_group,        // productGroup
-          product.stock_unit,         // stockUnit
-          99                         // maxQuantity
+          product.stock_id, // productId
+          product.stock_name, // productName
+          product.campaign_price, // unitPrice (use campaign price)
+          quantity, // quantity
+          product.stock_image_link, // productImage
+          product.stock_group, // productGroup
+          product.stock_unit, // stockUnit
+          99 // maxQuantity
         )
-        
+
         if (success) {
           toast.success(`Added ${quantity} ${product.stock_name} to cart`)
           setQuantity(0) // Reset quantity after adding
-          
+
           // Call legacy callback if provided (for backwards compatibility)
           if (onAddToCart) {
             onAddToCart(product, quantity)
@@ -131,7 +133,7 @@ export function CardActions({
         disabled={quantity === 0 || !canAddToCart()}
       >
         <ShoppingCart className="h-4 w-4 mr-2" />
-        {cartQuantity > 0 
+        {cartQuantity > 0
           ? `${t('card.addToCart')} (${cartQuantity} in cart)`
           : t('card.addToCart')}
       </Button>

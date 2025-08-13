@@ -5,6 +5,7 @@
  * Dependencies: React Testing Library, Jest, i18n mock
  */
 
+import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { CampaignGridError } from '../CampaignGridError'
 
@@ -24,40 +25,58 @@ jest.mock('react-i18next', () => ({
 
 // Mock lucide-react icons
 jest.mock('lucide-react', () => ({
-  AlertCircle: jest.fn(({ className }: any) => (
-    <div data-testid="alert-circle" className={className}>Alert Icon</div>
+  AlertCircle: jest.fn(({ className }: { className?: string }) => (
+    <div data-testid="alert-circle" className={className}>
+      Alert Icon
+    </div>
   )),
-  RefreshCw: jest.fn(({ className }: any) => (
-    <div data-testid="refresh-cw" className={className}>Refresh Icon</div>
+  RefreshCw: jest.fn(({ className }: { className?: string }) => (
+    <div data-testid="refresh-cw" className={className}>
+      Refresh Icon
+    </div>
   )),
 }))
 
 // Mock shadcn/ui components
 jest.mock('@/components/ui/schadcn/button', () => ({
-  Button: jest.fn(({ children, onClick, className, variant, ...props }: any) => (
-    <button
-      data-testid="retry-button"
-      onClick={onClick}
-      className={className}
-      data-variant={variant}
-      {...props}
-    >
-      {children}
-    </button>
-  )),
+  Button: jest.fn(
+    ({
+      children,
+      onClick,
+      className,
+      variant,
+      ...props
+    }: React.ButtonHTMLAttributes<HTMLButtonElement> & {
+      variant?: string
+    }) => (
+      <button
+        data-testid="retry-button"
+        onClick={onClick}
+        className={className}
+        data-variant={variant}
+        {...props}
+      >
+        {children}
+      </button>
+    )
+  ),
 }))
 
 jest.mock('@/components/ui/schadcn/card', () => ({
-  Card: jest.fn(({ children, className }: any) => (
-    <div data-testid="error-card" className={className}>
-      {children}
-    </div>
-  )),
-  CardContent: jest.fn(({ children, className }: any) => (
-    <div data-testid="card-content" className={className}>
-      {children}
-    </div>
-  )),
+  Card: jest.fn(
+    ({ children, className }: React.HTMLAttributes<HTMLDivElement>) => (
+      <div data-testid="error-card" className={className}>
+        {children}
+      </div>
+    )
+  ),
+  CardContent: jest.fn(
+    ({ children, className }: React.HTMLAttributes<HTMLDivElement>) => (
+      <div data-testid="card-content" className={className}>
+        {children}
+      </div>
+    )
+  ),
 }))
 
 describe('CampaignGridError', () => {

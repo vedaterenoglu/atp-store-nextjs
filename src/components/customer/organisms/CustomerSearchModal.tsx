@@ -46,17 +46,23 @@ export function CustomerSearchModal({
   showWelcome = false,
 }: CustomerSearchModalProps) {
   const [search, setSearch] = useState('')
-  
+
   // Manual filtering with substring matching (not fuzzy)
   const filteredCustomers = customers.filter(customer => {
     if (!search) return true
-    
+
     const searchLower = search.toLowerCase()
     const customerId = customer.customer_id.toLowerCase()
-    const customerTitle = (customer.customer_title || customer.customer_nickname || '').toLowerCase()
-    
+    const customerTitle = (
+      customer.customer_title ||
+      customer.customer_nickname ||
+      ''
+    ).toLowerCase()
+
     // Check if search term appears as a substring in ID or title
-    return customerId.includes(searchLower) || customerTitle.includes(searchLower)
+    return (
+      customerId.includes(searchLower) || customerTitle.includes(searchLower)
+    )
   })
 
   const handleSelect = (customerId: string) => {
@@ -75,7 +81,8 @@ export function CustomerSearchModal({
           {showWelcome && (
             <div className="space-y-1 mt-1">
               <p className="text-sm text-muted-foreground">
-                Please select which customer account you'd like to work with today.
+                Please select which customer account you&apos;d like to work
+                with today.
               </p>
             </div>
           )}
@@ -108,21 +115,21 @@ export function CustomerSearchModal({
                     onSelect={() => handleSelect(customer.customer_id)}
                     className="cursor-pointer"
                   >
-                      <div className="flex w-full items-center justify-between">
-                        <div className="flex flex-col">
-                          <span className="font-medium">
-                            {customer.customer_title ||
-                              customer.customer_nickname ||
-                              'Unnamed Customer'}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            ID: {customer.customer_id}
-                          </span>
-                        </div>
+                    <div className="flex w-full items-center justify-between">
+                      <div className="flex flex-col">
+                        <span className="font-medium">
+                          {customer.customer_title ||
+                            customer.customer_nickname ||
+                            'Unnamed Customer'}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          ID: {customer.customer_id}
+                        </span>
                       </div>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
+                    </div>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
             )}
           </CommandList>
         </Command>

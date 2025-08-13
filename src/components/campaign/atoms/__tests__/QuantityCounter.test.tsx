@@ -11,28 +11,45 @@ import { QuantityCounter } from '../QuantityCounter'
 
 // Mock lucide-react icons
 jest.mock('lucide-react', () => ({
-  Minus: jest.fn(({ className }: any) => (
-    <div data-testid="minus-icon" className={className}>-</div>
+  Minus: jest.fn(({ className }: { className?: string }) => (
+    <div data-testid="minus-icon" className={className}>
+      -
+    </div>
   )),
-  Plus: jest.fn(({ className }: any) => (
-    <div data-testid="plus-icon" className={className}>+</div>
+  Plus: jest.fn(({ className }: { className?: string }) => (
+    <div data-testid="plus-icon" className={className}>
+      +
+    </div>
   )),
 }))
 
 // Mock shadcn/ui Button
 jest.mock('@/components/ui/schadcn/button', () => ({
-  Button: jest.fn(({ children, onClick, disabled, className, variant, size, ...props }: any) => (
-    <button
-      onClick={disabled ? undefined : onClick}
-      disabled={disabled}
-      className={className}
-      data-variant={variant}
-      data-size={size}
-      {...props}
-    >
-      {children}
-    </button>
-  )),
+  Button: jest.fn(
+    ({
+      children,
+      onClick,
+      disabled,
+      className,
+      variant,
+      size,
+      ...props
+    }: React.ButtonHTMLAttributes<HTMLButtonElement> & {
+      variant?: string
+      size?: string
+    }) => (
+      <button
+        onClick={disabled ? undefined : onClick}
+        disabled={disabled}
+        className={className}
+        data-variant={variant}
+        data-size={size}
+        {...props}
+      >
+        {children}
+      </button>
+    )
+  ),
 }))
 
 describe('QuantityCounter', () => {

@@ -17,17 +17,25 @@ jest.mock('react-i18next', () => ({
 
 // Mock lucide-react icons
 jest.mock('lucide-react', () => ({
-  Users: jest.fn(({ className }: any) => (
-    <div data-testid="users-icon" className={className}>Users Icon</div>
+  Users: jest.fn(({ className }: { className?: string }) => (
+    <div data-testid="users-icon" className={className}>
+      Users Icon
+    </div>
   )),
-  Globe: jest.fn(({ className }: any) => (
-    <div data-testid="globe-icon" className={className}>Globe Icon</div>
+  Globe: jest.fn(({ className }: { className?: string }) => (
+    <div data-testid="globe-icon" className={className}>
+      Globe Icon
+    </div>
   )),
-  Award: jest.fn(({ className }: any) => (
-    <div data-testid="award-icon" className={className}>Award Icon</div>
+  Award: jest.fn(({ className }: { className?: string }) => (
+    <div data-testid="award-icon" className={className}>
+      Award Icon
+    </div>
   )),
-  CheckCircle: jest.fn(({ className }: any) => (
-    <div data-testid="check-circle-icon" className={className}>Check Icon</div>
+  CheckCircle: jest.fn(({ className }: { className?: string }) => (
+    <div data-testid="check-circle-icon" className={className}>
+      Check Icon
+    </div>
   )),
 }))
 
@@ -83,19 +91,19 @@ describe('AboutContent', () => {
     )
 
     mockUseTranslation.mockReturnValue({
-      t: mockT,
+      t: mockT as unknown as ReturnType<typeof useTranslation>['t'],
       i18n: {} as ReturnType<typeof useTranslation>['i18n'],
       ready: true,
-    })
+    } as unknown as ReturnType<typeof useTranslation>)
   })
 
   describe('Loading State', () => {
     it('should render loading skeleton when translations are not ready', () => {
       mockUseTranslation.mockReturnValue({
-        t: mockT,
+        t: mockT as unknown as ReturnType<typeof useTranslation>['t'],
         i18n: {} as ReturnType<typeof useTranslation>['i18n'],
         ready: false,
-      })
+      } as unknown as ReturnType<typeof useTranslation>)
 
       const { container } = render(<AboutContent />)
 

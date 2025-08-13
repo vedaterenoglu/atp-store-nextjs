@@ -39,7 +39,13 @@ jest.mock('@/lib/utils/toast', () => ({
 // Mock Next.js Link
 jest.mock('next/link', () => ({
   __esModule: true,
-  default: ({ children, href }: { children: React.ReactNode; href: string }) => {
+  default: ({
+    children,
+    href,
+  }: {
+    children: React.ReactNode
+    href: string
+  }) => {
     const React = require('react')
     return React.createElement('a', { href }, children)
   },
@@ -49,16 +55,25 @@ jest.mock('next/link', () => ({
 jest.mock('lucide-react', () => ({
   ArrowRight: ({ className }: { className?: string }) => {
     const React = require('react')
-    return React.createElement('span', { 
-      'data-testid': 'arrow-right-icon', 
-      className 
-    }, '→')
+    return React.createElement(
+      'span',
+      {
+        'data-testid': 'arrow-right-icon',
+        className,
+      },
+      '→'
+    )
   },
 }))
 
 // Mock shadcn Button
 jest.mock('@/components/ui/schadcn', () => ({
-  Button: ({ children, size, className, asChild }: {
+  Button: ({
+    children,
+    size,
+    className,
+    asChild,
+  }: {
     children: React.ReactNode
     size?: string
     className?: string
@@ -66,26 +81,34 @@ jest.mock('@/components/ui/schadcn', () => ({
   }) => {
     const React = require('react')
     if (asChild) {
-      return React.createElement('span', {
-        'data-testid': 'button-wrapper',
+      return React.createElement(
+        'span',
+        {
+          'data-testid': 'button-wrapper',
+          'data-size': size,
+          className,
+          'data-as-child': asChild,
+        },
+        children
+      )
+    }
+    return React.createElement(
+      'button',
+      {
+        'data-testid': 'button',
         'data-size': size,
         className,
         'data-as-child': asChild,
-      }, children)
-    }
-    return React.createElement('button', {
-      'data-testid': 'button',
-      'data-size': size,
-      className,
-      'data-as-child': asChild,
-    }, children)
+      },
+      children
+    )
   },
 }))
 
 // Mock cart store to prevent warnings
 const mockAddToCart = jest.fn(() => Promise.resolve(true))
 jest.mock('@/lib/stores/cart.store', () => ({
-  useCartStore: jest.fn((selector) => {
+  useCartStore: jest.fn(selector => {
     const state = {
       isInitialized: true,
       addToCart: mockAddToCart,
@@ -108,7 +131,14 @@ jest.mock('@/hooks/use-secure-auth', () => ({
 
 // Mock CampaignProductsGrid
 jest.mock('@/components/campaign/organisms', () => ({
-  CampaignProductsGrid: ({ products, isLoading, error, onAddToCart, onRetry, skeletonCount }: {
+  CampaignProductsGrid: ({
+    products,
+    isLoading,
+    error,
+    onAddToCart,
+    onRetry,
+    skeletonCount,
+  }: {
     products: Array<{ stock_id: string; stock_name: string }>
     isLoading: boolean
     error: Error | null
@@ -117,45 +147,73 @@ jest.mock('@/components/campaign/organisms', () => ({
     skeletonCount?: number
   }) => {
     const React = require('react')
-    return React.createElement('div', {
-      'data-testid': 'campaign-products-grid',
-      'data-products-count': products.length,
-      'data-is-loading': isLoading,
-      'data-has-error': !!error,
-      'data-skeleton-count': skeletonCount,
-    }, [
-      error && React.createElement('div', { 
-        key: 'error', 
-        'data-testid': 'error-display' 
-      }, [
-        `Error: ${error.message}`,
-        onRetry && React.createElement('button', {
-          key: 'retry',
-          'data-testid': 'retry-button',
-          onClick: onRetry,
-        }, 'Retry'),
-      ]),
-      !error && products.map(product =>
-        React.createElement('div', {
-          key: product.stock_id,
-          'data-testid': `product-${product.stock_id}`,
-        }, [
-          product.stock_name,
-          onAddToCart && React.createElement(React.Fragment, { key: 'buttons' }, [
-            React.createElement('button', {
-              key: 'add-single',
-              'data-testid': `add-to-cart-${product.stock_id}`,
-              onClick: () => onAddToCart(product.stock_id, 1),
-            }, 'Add to Cart'),
-            React.createElement('button', {
-              key: 'add-multiple',
-              'data-testid': `add-to-cart-multiple-${product.stock_id}`,
-              onClick: () => onAddToCart(product.stock_id, 3),
-            }, 'Add 3 to Cart'),
-          ]),
-        ])
-      ),
-    ].filter(Boolean))
+    return React.createElement(
+      'div',
+      {
+        'data-testid': 'campaign-products-grid',
+        'data-products-count': products.length,
+        'data-is-loading': isLoading,
+        'data-has-error': !!error,
+        'data-skeleton-count': skeletonCount,
+      },
+      [
+        error &&
+          React.createElement(
+            'div',
+            {
+              key: 'error',
+              'data-testid': 'error-display',
+            },
+            [
+              `Error: ${error.message}`,
+              onRetry &&
+                React.createElement(
+                  'button',
+                  {
+                    key: 'retry',
+                    'data-testid': 'retry-button',
+                    onClick: onRetry,
+                  },
+                  'Retry'
+                ),
+            ]
+          ),
+        !error &&
+          products.map(product =>
+            React.createElement(
+              'div',
+              {
+                key: product.stock_id,
+                'data-testid': `product-${product.stock_id}`,
+              },
+              [
+                product.stock_name,
+                onAddToCart &&
+                  React.createElement(React.Fragment, { key: 'buttons' }, [
+                    React.createElement(
+                      'button',
+                      {
+                        key: 'add-single',
+                        'data-testid': `add-to-cart-${product.stock_id}`,
+                        onClick: () => onAddToCart(product.stock_id, 1),
+                      },
+                      'Add to Cart'
+                    ),
+                    React.createElement(
+                      'button',
+                      {
+                        key: 'add-multiple',
+                        'data-testid': `add-to-cart-multiple-${product.stock_id}`,
+                        onClick: () => onAddToCart(product.stock_id, 3),
+                      },
+                      'Add 3 to Cart'
+                    ),
+                  ]),
+              ]
+            )
+          ),
+      ].filter(Boolean)
+    )
   },
 }))
 

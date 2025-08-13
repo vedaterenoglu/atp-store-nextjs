@@ -43,7 +43,9 @@ async function getSecureCustomerId(): Promise<string | null> {
   }
 
   const role = user.publicMetadata?.['role'] as string | undefined
-  const customerids = user.publicMetadata?.['customerids'] as string[] | undefined
+  const customerids = user.publicMetadata?.['customerids'] as
+    | string[]
+    | undefined
 
   // Check if user has customer access (customer or admin role)
   if (role !== 'customer' && role !== 'admin') {
@@ -61,7 +63,11 @@ async function getSecureCustomerId(): Promise<string | null> {
 
   if (activeCustomerId) {
     // Validate that this customer ID is in the user's list (for customer role)
-    if (role === 'customer' && customerids && !customerids.includes(activeCustomerId)) {
+    if (
+      role === 'customer' &&
+      customerids &&
+      !customerids.includes(activeCustomerId)
+    ) {
       // Invalid selection, clear it
       return null
     }
@@ -96,7 +102,7 @@ export async function bookmarkProduct(
 
     // Get customer ID securely from session
     const customerId = await getSecureCustomerId()
-    
+
     // Check if customer is selected
     if (!customerId) {
       return {
@@ -146,7 +152,7 @@ export async function unbookmarkProduct(
 
     // Get customer ID securely from session
     const customerId = await getSecureCustomerId()
-    
+
     // Check if customer is selected
     if (!customerId) {
       return {
@@ -198,7 +204,7 @@ export async function toggleBookmark(
 
     // Get customer ID securely from session
     const customerId = await getSecureCustomerId()
-    
+
     // Check if customer is selected
     if (!customerId) {
       return {
@@ -250,7 +256,7 @@ export async function isProductBookmarked(stockId: string): Promise<boolean> {
 
     // Get customer ID securely from session
     const customerId = await getSecureCustomerId()
-    
+
     // If no customer selected, not bookmarked
     if (!customerId) {
       return false
@@ -273,7 +279,7 @@ export async function getCustomerBookmarks(forceRefresh = false) {
   try {
     // Get customer ID securely from session
     const customerId = await getSecureCustomerId()
-    
+
     // If no customer selected, return empty array
     if (!customerId) {
       return []

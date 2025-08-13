@@ -159,7 +159,7 @@ export const useBookmarkStore = create<BookmarkState>()(
                 error: result.error || 'Failed to update bookmark',
               })
               console.error('❌ Bookmark toggle failed:', result.error)
-              
+
               // Show user-friendly error message
               if (result.error === 'Please select a customer first') {
                 toast.error('Please select a customer to use bookmarks')

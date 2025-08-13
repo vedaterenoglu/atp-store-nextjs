@@ -20,6 +20,11 @@ interface GetProductsWithPriceListByCategoryQueryResponse {
     stock_group: string | null
     stock_image_link: string | null
   }>
+  stock_aggregate?: {
+    aggregate: {
+      count: number
+    }
+  }
 }
 import type { GetCampaignProductsWithPricesQueryResponse } from '@/services/graphql/queries/GetCampaignProductsWithPrices.types'
 import type { GetProductPricesQueryResponse } from '@/services/graphql/queries/GetProductPricesQuery.types'
@@ -136,6 +141,7 @@ export function mockGetProductsByCategoryResponse(
         stock_unit: 'förp.',
         stock_price: 23000,
         stock_group: '1000 - Pizzakartonger',
+        stock_image_link: null,
       },
       {
         stock_id: '1001 1002 0028',
@@ -143,6 +149,7 @@ export function mockGetProductsByCategoryResponse(
         stock_unit: 'förp.',
         stock_price: 28900,
         stock_group: '1000 - Pizzakartonger',
+        stock_image_link: null,
       },
     ],
     stock_aggregate: {
@@ -307,29 +314,31 @@ export function mockGetBookmarksWithDetailsResponse(
   overrides?: Partial<GetCustomerBookmarksWithDetailsQueryResponse>
 ): GetCustomerBookmarksWithDetailsQueryResponse {
   return {
-    customer_bookmarks: [
+    bookmarks: [
       {
-        company_id: 'alfe',
-        customer_id: 'SE0 1001 1086',
+        customerid: 'SE0 1001 1086',
         stock_id: '1001 1001 0026',
+        created_at: '2024-01-01T00:00:00Z',
         stock: {
           stock_id: '1001 1001 0026',
           stock_name: 'Pizzakartonger 26*26*3,5 100 st./förp.',
           stock_price: 23000,
           stock_unit: 'förp.',
           stock_group: '1000 - Pizzakartonger',
+          stock_image_link: null,
         },
       },
       {
-        company_id: 'alfe',
-        customer_id: 'SE0 1001 1086',
+        customerid: 'SE0 1001 1086',
         stock_id: '2001 1001 0200',
+        created_at: '2024-01-01T00:00:00Z',
         stock: {
           stock_id: '2001 1001 0200',
           stock_name: 'Salladsbägare med Lock 200 ml 400 st/.kolli',
           stock_price: 24400,
           stock_unit: 'kolli',
           stock_group: '2000 - Bägare',
+          stock_image_link: null,
         },
       },
     ],
@@ -462,11 +471,6 @@ export const emptyResponses = {
   }),
   productsByCategory: (): GetProductsWithPriceListByCategoryQueryResponse => ({
     stock: [],
-    stock_aggregate: {
-      aggregate: {
-        count: 0,
-      },
-    },
   }),
   campaignProducts: (): GetCampaignProductsWithPricesQueryResponse => ({
     stock: [],
