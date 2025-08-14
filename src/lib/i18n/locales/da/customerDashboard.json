@@ -1,0 +1,58 @@
+{
+  "title": "Kunde Dashboard",
+  "navigation": {
+    "waitingOrders": "Ventende ordrer",
+    "waitingOrdersDesc": "Ordrer der venter på forsendelse",
+    "uninvoicedDeliveries": "Ufakturerede leverancer",
+    "uninvoicedDeliveriesDesc": "Leveret men ikke faktureret",
+    "unpaidInvoices": "Ubetalte fakturaer",
+    "unpaidInvoicesDesc": "Udestående fakturabetalinger"
+  },
+  "waitingOrders": {
+    "title": "Ventende ordrer",
+    "orderItems": "Ordrevarer:",
+    "moreItems": "+{{count}} flere varer",
+    "item": "vare",
+    "items": "varer",
+    "order": "ordre",
+    "orders": "ordrer",
+    "empty": "Ingen ventende ordrer fundet. Alle dine ordrer er blevet afsendt."
+  },
+  "uninvoicedDeliveries": {
+    "title": "Ufakturerede leverancer",
+    "deliveredItems": "Leverede varer:",
+    "moreItems": "+{{count}} flere varer",
+    "item": "vare",
+    "items": "varer",
+    "itemsDelivered": "{{count}} {{items}} leveret",
+    "delivery": "leverance",
+    "deliveries": "leverancer",
+    "uninvoiced": "Ufaktureret",
+    "empty": "Ingen ufakturerede leverancer fundet. Alle dine leverancer er blevet faktureret."
+  },
+  "unpaidInvoices": {
+    "title": "Ubetalte fakturaer",
+    "invoice": "faktura",
+    "invoices": "fakturaer",
+    "total": "Total",
+    "totalAmount": "Samlet beløb:",
+    "payment": "Betaling:",
+    "remaining": "Resterende:",
+    "issued": "Udstedt:",
+    "due": "Forfald:",
+    "daysOverdue": "({{days}} dage forsinket)",
+    "paymentWarning": "Bemærk!!! Hvis du har foretaget en betaling inden for de sidste 4 dage, er den muligvis ikke blevet registreret i vores system endnu",
+    "empty": "Ingen ubetalte fakturaer fundet. Alle dine fakturaer er betalt."
+  },
+  "status": {
+    "overdue": "Forfalden",
+    "inkasso": "Inkasso",
+    "sentReminder": "Påmindelse sendt"
+  },
+  "loading": {
+    "fetchingData": "Indlæser..."
+  },
+  "errors": {
+    "fetchFailed": "Kunne ikke hente data"
+  }
+}

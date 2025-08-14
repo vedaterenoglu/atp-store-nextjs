@@ -7,19 +7,21 @@
 
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { CustomerDropdown } from '../molecules/CustomerDropdown'
 import { CustomerSearchModal } from './CustomerSearchModal'
 import { toast } from '@/lib/utils/toast'
 import { customerService } from '@/services/customer.service'
 import { useSecureAuth } from '@/hooks/use-secure-auth'
+import { useSafeTranslation } from '@/hooks/use-safe-translation'
 import type {
   CustomerAccount,
   ActiveCustomerContext,
 } from '@/lib/types/customer.types'
 
 export function CustomerSwitcher() {
+  const { t } = useSafeTranslation('common')
   const { user } = useUser()
   const { refreshAuth } = useSecureAuth()
   const [activeContext, setActiveContext] =
@@ -110,22 +112,6 @@ export function CustomerSwitcher() {
     }
   }, [user, isCustomer, isAdmin, customerIds, activeContext?.customerId])
 
-  // Fetch all customers for admin search using service
-  const fetchAllCustomers = useCallback(async () => {
-    if (!isAdmin) return
-
-    setIsAdminCustomersLoading(true)
-    try {
-      const data = await customerService.fetchAllActiveCustomers()
-      setAllCustomers(data.customers || [])
-      setIsAdminCustomersLoading(false)
-    } catch (error) {
-      console.error('Failed to fetch all customers:', error)
-      toast.error('Failed to load customer list')
-      setIsAdminCustomersLoading(false)
-    }
-  }, [isAdmin])
-
   // Auto-open modal on sign-in for customer selection
   useEffect(() => {
     // Only check once per session per user
@@ -211,6 +197,21 @@ export function CustomerSwitcher() {
         setSearchModalOpen(true)
         // Fetch all customers for admin to choose from
         if (allCustomers.length === 0 && !isAdminCustomersLoading) {
+          // Fetch all customers for admin search using service
+          const fetchAllCustomers = async () => {
+            if (!isAdmin) return
+
+            setIsAdminCustomersLoading(true)
+            try {
+              const data = await customerService.fetchAllActiveCustomers()
+              setAllCustomers(data.customers || [])
+              setIsAdminCustomersLoading(false)
+            } catch (error) {
+              console.error('Failed to fetch all customers:', error)
+              toast.error(t('messages.customer.failedToLoadList'))
+              setIsAdminCustomersLoading(false)
+            }
+          }
           fetchAllCustomers()
         }
       }
@@ -229,7 +230,7 @@ export function CustomerSwitcher() {
     allCustomers.length,
     isAdminCustomersLoading,
     activeContext?.customerId,
-    fetchAllCustomers,
+    t,
   ])
 
   const handleCustomerSwitch = async (customerId: string) => {
@@ -260,8 +261,9 @@ export function CustomerSwitcher() {
           })
         }
 
+        const customerName = customer?.customer_title || customerId
         toast.success(
-          `Switched to customer: ${customer?.customer_title || customerId}`
+          t('messages.customer.switchedTo', { customer: customerName })
         )
 
         // Force refresh the auth context to get updated permissions
@@ -277,11 +279,11 @@ export function CustomerSwitcher() {
           window.location.reload()
         }, 500)
       } else {
-        toast.error(data.error || 'Failed to switch customer')
+        toast.error(data.error || t('messages.customer.failedToSwitch'))
       }
     } catch (error) {
       console.error('Failed to switch customer:', error)
-      toast.error('Failed to switch customer account')
+      toast.error(t('messages.customer.failedToSwitchAccount'))
     }
   }
 
@@ -289,6 +291,21 @@ export function CustomerSwitcher() {
     setIsWelcomeModal(false) // Not a welcome modal when manually opened
     setSearchModalOpen(true)
     if (isAdmin && allCustomers.length === 0) {
+      // Fetch all customers for admin search using service
+      const fetchAllCustomers = async () => {
+        if (!isAdmin) return
+
+        setIsAdminCustomersLoading(true)
+        try {
+          const data = await customerService.fetchAllActiveCustomers()
+          setAllCustomers(data.customers || [])
+          setIsAdminCustomersLoading(false)
+        } catch (error) {
+          console.error('Failed to fetch all customers:', error)
+          toast.error('Failed to load customer list')
+          setIsAdminCustomersLoading(false)
+        }
+      }
       fetchAllCustomers()
     }
   }

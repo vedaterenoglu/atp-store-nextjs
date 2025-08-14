@@ -27,7 +27,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/schadcn'
 import { ThemeToggle, LanguageToggle } from '@/components/ui/custom'
-import { LayoutDashboard, ShoppingCart, Menu, X } from 'lucide-react'
+import { LayoutDashboard, ShoppingCart, Menu, X, UserCog } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useSafeTranslation } from '@/hooks/use-safe-translation'
 import { useCartCount } from '@/lib/stores/cart.store'
@@ -123,6 +123,7 @@ function NavbarActions({
 
       {/* Desktop Navigation Items */}
       <div className="hidden sm:flex items-center gap-4">
+        <AdminDashboardButton />
         <CustomerDashboardButton />
         <LanguageToggleWithTooltip />
         <ThemeToggleWithTooltip />
@@ -177,7 +178,7 @@ function CartButton() {
   const handleCartClick = () => {
     // Check auth conditions and show appropriate toast
     if (!authContext.isSignedIn) {
-      toast.error('Please sign in to access cart')
+      toast.error(t('messages.auth.signInToAccessCart'))
       return
     }
 
@@ -185,12 +186,12 @@ function CartButton() {
       !authContext.role ||
       (authContext.role !== 'customer' && authContext.role !== 'admin')
     ) {
-      toast.error('You need a customer or admin account to access cart')
+      toast.error(t('messages.auth.needCustomerAccount'))
       return
     }
 
     if (!authContext.hasActiveCustomer) {
-      toast.error('Please select a customer account to access cart')
+      toast.error(t('messages.auth.selectCustomerFirst'))
       return
     }
 
@@ -221,7 +222,7 @@ function CartButton() {
       <TooltipContent>
         <p>
           {!isCartAccessible
-            ? 'Sign in and select a customer to access cart'
+            ? t('messages.auth.signInToAccessCart')
             : t('tooltips.navbar.cart')}
         </p>
       </TooltipContent>
@@ -230,7 +231,7 @@ function CartButton() {
 }
 
 function ThemeToggleWithTooltip() {
-  // const { t } = useSafeTranslation('common')
+  const { t } = useSafeTranslation('common')
 
   return (
     <Tooltip>
@@ -240,14 +241,14 @@ function ThemeToggleWithTooltip() {
         </div>
       </TooltipTrigger>
       <TooltipContent>
-        <p>Toggle theme</p>
+        <p>{t('tooltips.navbar.toggleTheme')}</p>
       </TooltipContent>
     </Tooltip>
   )
 }
 
 function LanguageToggleWithTooltip() {
-  // const { t } = useSafeTranslation('common')
+  const { t } = useSafeTranslation('common')
 
   return (
     <Tooltip>
@@ -257,13 +258,50 @@ function LanguageToggleWithTooltip() {
         </div>
       </TooltipTrigger>
       <TooltipContent>
-        <p>Change language</p>
+        <p>{t('tooltips.navbar.changeLanguage')}</p>
+      </TooltipContent>
+    </Tooltip>
+  )
+}
+
+function AdminDashboardButton() {
+  const { t } = useSafeTranslation('common')
+  const router = useRouter()
+  const { user } = useUser()
+
+  // Only show for admin users
+  const isAdmin = user?.publicMetadata?.['role'] === 'admin'
+  
+  if (!isAdmin) {
+    return null
+  }
+
+  const handleClick = () => {
+    router.push('/admin/dashboard')
+  }
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          onClick={handleClick}
+          variant="ghost"
+          size="icon"
+          className="h-9 w-9"
+          aria-label="Admin Dashboard"
+        >
+          <UserCog className="h-5 w-5" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>{t('tooltips.navbar.adminDashboard')}</p>
       </TooltipContent>
     </Tooltip>
   )
 }
 
 function CustomerDashboardButton() {
+  const { t } = useSafeTranslation('common')
   const router = useRouter()
   const { authContext } = useAuthGuard()
 
@@ -277,7 +315,7 @@ function CustomerDashboardButton() {
   const handleClick = () => {
     // Check auth conditions and show appropriate toast
     if (!authContext.isSignedIn) {
-      toast.error('Please sign in to access dashboard')
+      toast.error(t('messages.auth.signInToAccessDashboard'))
       return
     }
 
@@ -285,12 +323,12 @@ function CustomerDashboardButton() {
       !authContext.role ||
       (authContext.role !== 'customer' && authContext.role !== 'admin')
     ) {
-      toast.error('You need a customer or admin account to access dashboard')
+      toast.error(t('messages.auth.needCustomerAccount'))
       return
     }
 
     if (!authContext.hasActiveCustomer) {
-      toast.error('Please select a customer account to access dashboard')
+      toast.error(t('messages.auth.selectCustomerFirst'))
       return
     }
 
@@ -307,7 +345,7 @@ function CustomerDashboardButton() {
             'h-9 w-9',
             !isDashboardAccessible && 'opacity-50 hover:opacity-50'
           )}
-          aria-label="Customer Dashboard"
+          aria-label={t('navbar.customerDashboard')}
           onClick={handleClick}
         >
           <LayoutDashboard className="h-4 w-4" />
@@ -316,8 +354,8 @@ function CustomerDashboardButton() {
       <TooltipContent>
         <p>
           {!isDashboardAccessible
-            ? 'Sign in and select a customer to access dashboard'
-            : 'Customer Dashboard'}
+            ? t('messages.auth.signInToAccessDashboard')
+            : t('navbar.customerDashboard')}
         </p>
       </TooltipContent>
     </Tooltip>
@@ -369,7 +407,7 @@ function NavbarSignIn() {
 }
 
 function NavbarUserButton() {
-  // const { t } = useSafeTranslation('common')
+  const { t } = useSafeTranslation('common')
 
   return (
     <div className="flex items-center gap-2">
@@ -380,7 +418,7 @@ function NavbarUserButton() {
           </div>
         </TooltipTrigger>
         <TooltipContent>
-          <p>User menu</p>
+          <p>{t('navbar.userMenu')}</p>
         </TooltipContent>
       </Tooltip>
     </div>
@@ -394,7 +432,7 @@ function MobileMenu({
   isOpen: boolean
   onClose: () => void
 }) {
-  const { isSignedIn } = useAuth()
+  const { t } = useSafeTranslation('common')
   const { user } = useUser()
   const router = useRouter()
   const { authContext } = useAuthGuard()
@@ -403,6 +441,11 @@ function MobileMenu({
 
   const handleDashboardClick = () => {
     router.push('/customer/dashboard')
+    onClose()
+  }
+
+  const handleAdminDashboardClick = () => {
+    router.push('/admin/dashboard')
     onClose()
   }
 
@@ -416,8 +459,21 @@ function MobileMenu({
           <CustomerSwitcher />
         </div>
 
-        {/* Icons row - Dashboard, Language, Theme */}
+        {/* Icons row - Admin Dashboard (if admin), Customer Dashboard, Language, Theme */}
         <div className="flex items-center justify-center gap-4">
+          {/* Admin Dashboard - Icon only (for admins) */}
+          {isAdmin && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9"
+              onClick={handleAdminDashboardClick}
+              aria-label={t('navbar.adminDashboard')}
+            >
+              <UserCog className="h-4 w-4" />
+            </Button>
+          )}
+
           {/* Customer Dashboard - Icon only (for customers and admins) */}
           {authContext.isSignedIn &&
             (authContext.role === 'customer' || authContext.role === 'admin') &&
@@ -427,7 +483,7 @@ function MobileMenu({
                 size="icon"
                 className="h-9 w-9"
                 onClick={handleDashboardClick}
-                aria-label="Customer Dashboard"
+                aria-label={t('navbar.customerDashboard')}
               >
                 <LayoutDashboard className="h-4 w-4" />
               </Button>
@@ -437,17 +493,6 @@ function MobileMenu({
           <LanguageToggle />
           <ThemeToggle />
         </div>
-
-        {/* Admin Link - Only for admins */}
-        {isSignedIn && isAdmin && (
-          <div className="border-t pt-3">
-            <Link href="/admin" onClick={onClose}>
-              <Button variant="ghost" className="w-full justify-start">
-                Admin Panel
-              </Button>
-            </Link>
-          </div>
-        )}
       </div>
     </div>
   )

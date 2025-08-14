@@ -1,32 +1,18 @@
 /**
- * Customer Dashboard Page - Protected Route
- *
- * Main dashboard overview page for customers with authentication guard
- *
- * SOLID Principles: Single Responsibility - Dashboard view with auth protection
- * Design Patterns: Guard Pattern - Protected route implementation
- * Dependencies: CustomerRouteGuard for authentication
+ * @file page.tsx
+ * @role Customer Dashboard Page - Server Component with client-side interactivity
+ * @patterns Protected Route Pattern, Server Component Pattern
+ * @solid SRP - Single responsibility for dashboard page rendering
+ * @tests /src/app/customer/dashboard/__tests__/page.test.tsx
  */
 
 import { CustomerRouteGuard } from '@/components/auth/CustomerRouteGuard'
-
-function DashboardContent() {
-  return (
-    <div>
-      <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">
-        Customer Dashboard
-      </h1>
-      <p className="text-sm sm:text-base text-muted-foreground">
-        Welcome to your dashboard
-      </p>
-    </div>
-  )
-}
+import { DashboardLayout } from '@/components/dashboard/organisms/DashboardLayout'
 
 export default function CustomerDashboardPage() {
   return (
     <CustomerRouteGuard requireActiveCustomer={true}>
-      <DashboardContent />
+      <DashboardLayout />
     </CustomerRouteGuard>
   )
 }

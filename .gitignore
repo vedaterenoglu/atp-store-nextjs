@@ -44,7 +44,8 @@ next-env.d.ts
 *.backup
 
 # documents
-/src/documents/ignore/
+/src/documents/project/
+/src/documents/prompts/
 
 CLAUDE.md
 test-results/

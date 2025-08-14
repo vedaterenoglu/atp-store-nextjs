@@ -6,10 +6,10 @@
  */
 
 /**
- * Formats a price from öre to SEK with Swedish locale formatting
+ * Formats a price from öre to kr with Swedish locale formatting
  * @param priceInOre - Price in öre (smallest unit)
- * @param showCurrency - Whether to append "SEK" to the formatted price
- * @returns Formatted price string (e.g., "1 154,38" or "1 154,38 SEK")
+ * @param showCurrency - Whether to append "kr" to the formatted price
+ * @returns Formatted price string (e.g., "1 154,38" or "1 154,38 kr")
  */
 export function formatPrice(
   priceInOre: number,
@@ -24,17 +24,17 @@ export function formatPrice(
     maximumFractionDigits: 2,
   }).format(priceInSEK)
 
-  return showCurrency ? `${formatted} SEK` : formatted
+  return showCurrency ? `${formatted} kr` : formatted
 }
 
 /**
- * Formats a price range from öre to SEK
+ * Formats a price range from öre to kr
  * @param minPrice - Minimum price in öre
  * @param maxPrice - Maximum price in öre
- * @returns Formatted price range string (e.g., "100,00 - 500,00 SEK")
+ * @returns Formatted price range string (e.g., "100,00 - 500,00 kr")
  */
 export function formatPriceRange(minPrice: number, maxPrice: number): string {
   const min = formatPrice(minPrice, false)
   const max = formatPrice(maxPrice, false)
-  return `${min} - ${max} SEK`
+  return `${min} - ${max} kr`
 }

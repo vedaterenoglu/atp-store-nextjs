@@ -2,7 +2,7 @@
  * Cart items list organism component
  * SOLID Principles: SRP - Single responsibility for managing cart items list
  * Design Patterns: Container Component Pattern
- * Dependencies: React, cart types, molecules
+ * Dependencies: React, cart types, molecules, i18n
  */
 
 'use client'
@@ -13,6 +13,7 @@ import type { CartItem } from '@/types/cart'
 import { CartItemCard } from '../molecules'
 import { CartEmptyState } from '../atoms'
 import { ShoppingBag } from 'lucide-react'
+import { useSafeTranslation } from '@/hooks/use-safe-translation'
 
 interface CartItemsListProps {
   items: CartItem[]
@@ -29,9 +30,13 @@ export function CartItemsList({
   onRemove,
   readonly = false,
   className,
-  emptyMessage = 'Your cart is empty',
+  emptyMessage,
 }: CartItemsListProps) {
+  const { t } = useSafeTranslation('cart')
   const [updatingItems, setUpdatingItems] = useState<Set<string>>(new Set())
+
+  // Use provided emptyMessage or fallback to translation
+  const displayEmptyMessage = emptyMessage || t('emptyCart.title')
 
   const handleQuantityChange = async (itemId: string, quantity: number) => {
     if (!onQuantityChange) return
@@ -66,8 +71,8 @@ export function CartItemsList({
   if (items.length === 0) {
     return (
       <CartEmptyState
-        title="Empty Cart"
-        description={emptyMessage}
+        title={t('emptyState.emptyCart')}
+        description={displayEmptyMessage}
         icon={<ShoppingBag className="h-12 w-12" />}
         {...(className && { className })}
       />

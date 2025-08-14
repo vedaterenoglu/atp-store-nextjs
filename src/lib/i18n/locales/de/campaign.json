@@ -39,5 +39,24 @@
     "decrease": "Menge verringern",
     "increase": "Menge erhöhen",
     "current": "Aktuelle Menge: {{value}}"
+  },
+  "productInfo": {
+    "category": "Kategorie",
+    "id": "ID",
+    "unit": "Einheit"
+  },
+  "auth": {
+    "notAuthenticated": "Bitte melden Sie sich an, um Artikel in den Warenkorb zu legen",
+    "signInRequired": "Anmeldung erforderlich",
+    "noCustomerSelected": "Bitte wählen Sie einen Kunden aus, um fortzufahren",
+    "selectCustomer": "Kunde auswählen",
+    "noPermission": "Sie haben keine Berechtigung, diese Bestellung zu ändern",
+    "contactAdmin": "Wenden Sie sich an Ihren Administrator für Unterstützung",
+    "sessionExpired": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an"
+  },
+  "cart": {
+    "addedSuccess": "{{quantity}} {{product}} in den Warenkorb gelegt",
+    "updateSuccess": "{{product}} Menge auf {{quantity}} aktualisiert",
+    "removeSuccess": "{{product}} aus dem Warenkorb entfernt"
   }
 }

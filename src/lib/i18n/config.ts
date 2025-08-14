@@ -29,6 +29,7 @@ import enAboutUs from './locales/en/aboutUs.json'
 import enCampaign from './locales/en/campaign.json'
 import enCart from './locales/en/cart.json'
 import enAdmin from './locales/en/admin.json'
+import enCustomerDashboard from './locales/en/customerDashboard.json'
 
 import svCommon from './locales/sv/common.json'
 import svAuth from './locales/sv/auth.json'
@@ -40,6 +41,7 @@ import svAboutUs from './locales/sv/aboutUs.json'
 import svCampaign from './locales/sv/campaign.json'
 import svCart from './locales/sv/cart.json'
 import svAdmin from './locales/sv/admin.json'
+import svCustomerDashboard from './locales/sv/customerDashboard.json'
 
 import trCommon from './locales/tr/common.json'
 import trAuth from './locales/tr/auth.json'
@@ -51,6 +53,7 @@ import trAboutUs from './locales/tr/aboutUs.json'
 import trCampaign from './locales/tr/campaign.json'
 import trCart from './locales/tr/cart.json'
 import trAdmin from './locales/tr/admin.json'
+import trCustomerDashboard from './locales/tr/customerDashboard.json'
 
 import daCommon from './locales/da/common.json'
 import daAuth from './locales/da/auth.json'
@@ -62,6 +65,7 @@ import daAboutUs from './locales/da/aboutUs.json'
 import daCampaign from './locales/da/campaign.json'
 import daCart from './locales/da/cart.json'
 import daAdmin from './locales/da/admin.json'
+import daCustomerDashboard from './locales/da/customerDashboard.json'
 
 import deCommon from './locales/de/common.json'
 import deAuth from './locales/de/auth.json'
@@ -73,6 +77,7 @@ import deAboutUs from './locales/de/aboutUs.json'
 import deCampaign from './locales/de/campaign.json'
 import deCart from './locales/de/cart.json'
 import deAdmin from './locales/de/admin.json'
+import deCustomerDashboard from './locales/de/customerDashboard.json'
 
 export const defaultNS = 'common'
 export const resources = {
@@ -87,6 +92,7 @@ export const resources = {
     campaign: enCampaign,
     cart: enCart,
     admin: enAdmin,
+    customerDashboard: enCustomerDashboard,
   },
   sv: {
     common: svCommon,
@@ -99,6 +105,7 @@ export const resources = {
     campaign: svCampaign,
     cart: svCart,
     admin: svAdmin,
+    customerDashboard: svCustomerDashboard,
   },
   tr: {
     common: trCommon,
@@ -111,6 +118,7 @@ export const resources = {
     campaign: trCampaign,
     cart: trCart,
     admin: trAdmin,
+    customerDashboard: trCustomerDashboard,
   },
   da: {
     common: daCommon,
@@ -123,6 +131,7 @@ export const resources = {
     campaign: daCampaign,
     cart: daCart,
     admin: daAdmin,
+    customerDashboard: daCustomerDashboard,
   },
   de: {
     common: deCommon,
@@ -135,6 +144,7 @@ export const resources = {
     campaign: deCampaign,
     cart: deCart,
     admin: deAdmin,
+    customerDashboard: deCustomerDashboard,
   },
 } as const
 

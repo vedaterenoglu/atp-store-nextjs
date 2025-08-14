@@ -1,0 +1,40 @@
+query GetCustomerAddressesQuery($company_id: String!, $owner_id: String!) {
+  addresses(where: {is_active: {_eq: true}, company_id: {_eq: $company_id}, owner_id: {_eq: $owner_id}}) {
+    address_id
+    address_nickname
+    line_1
+    line_2
+    city
+    country
+  }
+}
+
+# {
+#   "company_id": "alfe",
+#   "owner_id": "SE0 1001 1583"
+# }
+
+# todo: response
+
+# {
+#   "data": {
+#     "addresses": [
+#       {
+#         "address_id": "0d4bb43d-b45b-5ebe-952e-7f047dd480a7",
+#         "address_nickname": "Södergatan 2 - Svedala",
+#         "line_1": "Södergatan 2",
+#         "line_2": "",
+#         "city": "Svedala",
+#         "country": "Sverige"
+#       },
+#       {
+#         "address_id": "52a4cd94-d006-5045-96c2-9ff65c7af017",
+#         "address_nickname": "Cevapi Bulltofta - Malmö",
+#         "line_1": "Flygplansgatan 12",
+#         "line_2": "",
+#         "city": "Malmö",
+#         "country": "Sverige"
+#       }
+#     ]
+#   }
+# }

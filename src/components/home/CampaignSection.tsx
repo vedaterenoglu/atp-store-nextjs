@@ -21,9 +21,12 @@ interface CampaignSectionProps {
 
 export function CampaignSection({ products }: CampaignSectionProps) {
   const { t } = useTranslation('common')
+  const { t: tCampaign } = useTranslation('campaign')
 
   const handleProductClick = (product: CampaignProduct) => {
-    toast.info(`Viewing details for ${product.stock_name}`)
+    toast.info(
+      tCampaign('messages.viewingDetails', { product: product.stock_name })
+    )
     // TODO: Navigate to product detail page
     // router.push(`/products/${product.stock_id}`)
   }

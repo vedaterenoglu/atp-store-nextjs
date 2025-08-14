@@ -1,0 +1,53 @@
+query GetCustomersWaitingOrdersQuery(
+  $company_id: String!
+  $customer_id: String!
+) {
+  order_headers(
+    where: {
+      customer_id: { _eq: $customer_id }
+      company_id: { _eq: $company_id }
+      order_dispatched: { _eq: false }
+      order_canceled: { _eq: false }
+    }
+  ) {
+    order_date
+    order_number
+    order_source
+    order_heders_goods_transactions_rel {
+      amount_credit
+      line_info
+    }
+  }
+}
+
+# {
+#   "company_id": "alfe",
+#   "customer_id": "SE0 1001 1697"
+# }
+
+# todo: response
+# {
+#   "data": {
+#     "order_headers": [
+#       {
+#         "order_date": "2025-08-13",
+#         "order_number": "AL 130122",
+#         "order_source": "us",
+#         "order_heders_goods_transactions_rel": [
+#           {
+#             "amount_credit": 1,
+#             "line_info": "1601 1003 0003 - Minirulle 12 st./kolli - kolli"
+#           },
+#           {
+#             "amount_credit": 1,
+#             "line_info": "1601 1009 0007 - Toalettpapper Hemma 3L - förp."
+#           },
+#           {
+#             "amount_credit": 1,
+#             "line_info": "8501 1012 M004 - Handskar M 100 pack - st."
+#           }
+#         ]
+#       }
+#     ]
+#   }
+# }

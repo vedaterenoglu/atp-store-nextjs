@@ -66,6 +66,12 @@ function Button({
   // Enhanced click handler with debounce
   const handleClick = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
+      // For submit buttons, don't interfere with form submission
+      if (type === 'submit' && !onClick) {
+        // Let the form handle the submission naturally
+        return
+      }
+      
       // Prevent if disabled or debouncing
       if (disabled || isDebouncing) {
         event.preventDefault()
@@ -91,7 +97,7 @@ function Button({
         setIsDebouncing(false)
       }, 250)
     },
-    [onClick, disabled, isDebouncing]
+    [onClick, disabled, isDebouncing, type]
   )
 
   const Comp = asChild ? Slot : "button"

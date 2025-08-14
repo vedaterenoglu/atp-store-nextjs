@@ -1,0 +1,58 @@
+{
+  "title": "Müşteri Panosu",
+  "navigation": {
+    "waitingOrders": "Bekleyen Siparişler",
+    "waitingOrdersDesc": "Gönderim bekleyen siparişler",
+    "uninvoicedDeliveries": "Faturalanmamış Teslimatlar",
+    "uninvoicedDeliveriesDesc": "Teslim edilmiş ama faturalanmamış",
+    "unpaidInvoices": "Ödenmemiş Faturalar",
+    "unpaidInvoicesDesc": "Bekleyen fatura ödemeleri"
+  },
+  "waitingOrders": {
+    "title": "Bekleyen Siparişler",
+    "orderItems": "Sipariş kalemleri:",
+    "moreItems": "+{{count}} daha fazla kalem",
+    "item": "kalem",
+    "items": "kalem",
+    "order": "sipariş",
+    "orders": "sipariş",
+    "empty": "Bekleyen sipariş bulunamadı. Tüm siparişleriniz gönderildi."
+  },
+  "uninvoicedDeliveries": {
+    "title": "Faturalanmamış Teslimatlar",
+    "deliveredItems": "Teslim edilen kalemler:",
+    "moreItems": "+{{count}} daha fazla kalem",
+    "item": "kalem",
+    "items": "kalem",
+    "itemsDelivered": "{{count}} {{items}} teslim edildi",
+    "delivery": "teslimat",
+    "deliveries": "teslimat",
+    "uninvoiced": "Faturalanmamış",
+    "empty": "Faturalanmamış teslimat bulunamadı. Tüm teslimatlarınız faturalandı."
+  },
+  "unpaidInvoices": {
+    "title": "Ödenmemiş Faturalar",
+    "invoice": "fatura",
+    "invoices": "fatura",
+    "total": "Toplam",
+    "totalAmount": "Toplam Tutar:",
+    "payment": "Ödeme:",
+    "remaining": "Kalan:",
+    "issued": "Düzenlenme:",
+    "due": "Vade:",
+    "daysOverdue": "({{days}} gün gecikmiş)",
+    "paymentWarning": "Dikkat!!! Son 4 gün içinde ödeme yaptıysanız, henüz kayıtlarımıza yansımamış olabilir",
+    "empty": "Ödenmemiş fatura bulunamadı. Tüm faturalarınız ödenmiştir."
+  },
+  "status": {
+    "overdue": "Vadesi geçmiş",
+    "inkasso": "İcra",
+    "sentReminder": "Hatırlatma gönderildi"
+  },
+  "loading": {
+    "fetchingData": "Yükleniyor..."
+  },
+  "errors": {
+    "fetchFailed": "Veri yüklenemedi"
+  }
+}

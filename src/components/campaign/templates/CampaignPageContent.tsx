@@ -46,7 +46,7 @@ export function CampaignPageContent({ products }: CampaignPageContentProps) {
           : t('messages.addedToCart', { count: quantity })
       toast.success(message)
     } catch (error) {
-      toast.error('Failed to add to cart')
+      toast.error(t('errors.somethingWentWrong'))
       console.error('Error adding to cart:', error)
     }
   }

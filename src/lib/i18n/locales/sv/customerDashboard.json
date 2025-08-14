@@ -1,0 +1,58 @@
+{
+  "title": "Kunddashboard",
+  "navigation": {
+    "waitingOrders": "Väntande beställningar",
+    "waitingOrdersDesc": "Beställningar som väntar på leverans",
+    "uninvoicedDeliveries": "Ofakturerade leveranser",
+    "uninvoicedDeliveriesDesc": "Levererat men ej fakturerat",
+    "unpaidInvoices": "Obetalda fakturor",
+    "unpaidInvoicesDesc": "Utestående fakturabetalningar"
+  },
+  "waitingOrders": {
+    "title": "Väntande beställningar",
+    "orderItems": "Beställningsartiklar:",
+    "moreItems": "+{{count}} fler artiklar",
+    "item": "artikel",
+    "items": "artiklar",
+    "order": "beställning",
+    "orders": "beställningar",
+    "empty": "Inga väntande beställningar hittades. Alla dina beställningar har skickats."
+  },
+  "uninvoicedDeliveries": {
+    "title": "Ofakturerade leveranser",
+    "deliveredItems": "Levererade artiklar:",
+    "moreItems": "+{{count}} fler artiklar",
+    "item": "artikel",
+    "items": "artiklar",
+    "itemsDelivered": "{{count}} {{items}} levererade",
+    "delivery": "leverans",
+    "deliveries": "leveranser",
+    "uninvoiced": "Ofakturerad",
+    "empty": "Inga ofakturerade leveranser hittades. Alla dina leveranser har fakturerats."
+  },
+  "unpaidInvoices": {
+    "title": "Obetalda fakturor",
+    "invoice": "faktura",
+    "invoices": "fakturor",
+    "total": "Totalt",
+    "totalAmount": "Totalt belopp:",
+    "payment": "Betalning:",
+    "remaining": "Återstående:",
+    "issued": "Utfärdad:",
+    "due": "Förfaller:",
+    "daysOverdue": "({{days}} dagar försenad)",
+    "paymentWarning": "Observera!!! Om du har gjort en betalning inom de senaste 4 dagarna kan det hända att den inte har registrerats i våra system ännu",
+    "empty": "Inga obetalda fakturor hittades. Alla dina fakturor är betalda."
+  },
+  "status": {
+    "overdue": "Förfallen",
+    "inkasso": "Inkasso",
+    "sentReminder": "Påminnelse skickad"
+  },
+  "loading": {
+    "fetchingData": "Laddar..."
+  },
+  "errors": {
+    "fetchFailed": "Kunde inte hämta data"
+  }
+}

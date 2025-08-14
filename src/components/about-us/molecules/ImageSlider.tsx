@@ -78,11 +78,16 @@ export function ImageSlider() {
   const slidesRaw = t('slider.slides', { returnObjects: true })
   const slideTranslations = Array.isArray(slidesRaw) ? slidesRaw : []
 
+  // Get image alt translations
+  const imageAltsRaw = t('slider.imageAlts', { returnObjects: true })
+  const imageAltTranslations = Array.isArray(imageAltsRaw) ? imageAltsRaw : []
+
   // Combine images with translations
   const slides = slideImages.map((img, index) => ({
     ...img,
     title: slideTranslations[index]?.title || '',
     subtitle: slideTranslations[index]?.subtitle || '',
+    alt: imageAltTranslations[index] || img.alt, // Use translated alt or fallback to original
   }))
 
   if (!ready) {

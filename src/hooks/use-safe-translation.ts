@@ -18,7 +18,9 @@ export function useSafeTranslation(namespace: string = 'common') {
   })
 
   // Safe fallback function that returns the key if translation isn't ready
-  const t = translationResult.ready ? translationResult.t : (key: string) => key
+  const t = translationResult.ready
+    ? translationResult.t
+    : (key: string, ..._args: unknown[]) => key
 
   return {
     t,

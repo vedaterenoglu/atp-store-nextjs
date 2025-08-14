@@ -46,7 +46,10 @@
     "en": "İngilizce",
     "sv": "İsveççe",
     "tr": "Türkçe",
-    "selectLanguage": "Dil seçin"
+    "da": "Danca",
+    "de": "Almanca",
+    "selectLanguage": "Dil seçin",
+    "changeLanguage": "Dili değiştir"
   },
   "status": {
     "loading": "Yükleniyor...",
@@ -102,6 +105,27 @@
     "copyright": "© {{year}} Alfe Tissue Paper AB. Tüm hakları saklıdır.",
     "createdBy": "Oluşturan"
   },
+  "navbar": {
+    "customerDashboard": "Müşteri Panosu",
+    "adminPanel": "Yönetici Paneli",
+    "adminMode": "Yönetici Modu",
+    "userMenu": "Kullanıcı menüsü",
+    "viewingAs": "Görüntüleniyor:"
+  },
+  "messages": {
+    "auth": {
+      "signInToAccessCart": "Sepete erişmek için giriş yapın ve bir müşteri seçin",
+      "signInToAccessDashboard": "Panoya erişmek için giriş yapın ve bir müşteri seçin",
+      "needCustomerAccount": "Bu özelliğe erişmek için bir müşteri veya yönetici hesabına ihtiyacınız var",
+      "selectCustomerFirst": "Lütfen önce bir müşteri hesabı seçin"
+    },
+    "customer": {
+      "failedToLoadList": "Müşteri listesi yüklenemedi",
+      "switchedTo": "{{customer}} hesabına geçildi",
+      "failedToSwitch": "Müşteri değiştirilemedi",
+      "failedToSwitchAccount": "Müşteri hesabı değiştirilemedi"
+    }
+  },
   "tooltips": {
     "navbar": {
       "home": "Ana sayfaya git",
@@ -111,7 +135,10 @@
       "signIn": "Hesabınıza giriş yapın",
       "userMenu": "Kullanıcı menüsü",
       "admin": "Yönetici paneli",
-      "cart": "Alışveriş sepetini görüntüle"
+      "cart": "Alışveriş sepetini görüntüle",
+      "toggleTheme": "Temayı değiştir",
+      "changeLanguage": "Dili değiştir",
+      "adminDashboard": "Yönetici Paneli"
     },
     "footer": {
       "developerWebsite": "Geliştirici web sitesini ziyaret et",

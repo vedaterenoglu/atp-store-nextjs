@@ -10,10 +10,7 @@
 import { useState } from 'react'
 import { ShoppingCart, ArrowLeft, CreditCard } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useSafeTranslation } from '@/hooks/use-safe-translation'
-import { useAuth } from '@clerk/nextjs'
-import { useRoleAuth } from '@/lib/auth/role-auth'
 import { CartItemsList } from '../organisms'
 import { CartSummaryCard } from '../molecules'
 import { CartEmptyState, EmptyCartButton } from '../atoms'
@@ -26,13 +23,35 @@ import {
 import { useCartSync } from '@/hooks/use-cart-sync'
 import { toast } from '@/lib/utils/toast'
 import { formatPrice } from '@/lib/utils/price'
+import { AddressSelectionModal } from '@/components/organisms/AddressSelectionModal'
+import { OrderConfirmationModal } from '@/components/organisms/OrderConfirmationModal'
+import { OrderService, type OrderLineInput } from '@/services/order.service'
+import {
+  AddressService,
+  type FormattedAddress,
+} from '@/services/address.service'
+import { useOrderStore } from '@/lib/stores/order.store'
+import { useAddressStore } from '@/lib/stores/address.store'
+import type {
+  OrderData,
+  OrderSummary,
+  OrderMetadata,
+} from '@/components/organisms/order-confirmation/types/order-confirmation.types'
 
 export function CustomerCartTemplate() {
-  const router = useRouter()
   const { t } = useSafeTranslation('cart')
   const [isUpdating, setIsUpdating] = useState(false)
-  const { isSignedIn } = useAuth()
-  const { requireAuth, hasRole } = useRoleAuth()
+
+  // Order confirmation modal state
+  const [showOrderModal, setShowOrderModal] = useState(false)
+  const [orderConfirmationData, setOrderConfirmationData] = useState<{
+    orderData: OrderData
+    dispatchAddress: FormattedAddress
+    invoiceAddress: FormattedAddress
+    orderLines: OrderLineInput[]
+    orderSummary: OrderSummary
+    orderMetadata: OrderMetadata
+  } | null>(null)
 
   // Sync cart with backend on mount (SSOT pattern)
   useCartSync({ syncOnMount: true })
@@ -43,8 +62,20 @@ export function CustomerCartTemplate() {
   const summary = useCartSummary()
   const updateQuantity = useCartStore(state => state.updateQuantity)
   const removeFromCart = useCartStore(state => state.removeFromCart)
-  const checkout = useCartStore(state => state.checkout)
+  const clearCart = useCartStore(state => state.clearCart)
   const isLoading = useCartStore(state => state.isLoading)
+  const companyId = useCartStore(state => state.companyId)
+
+  // Order store
+  const showAddressModal = useOrderStore(state => state.showAddressModal)
+  const setShowAddressModal = useOrderStore(state => state.setShowAddressModal)
+
+  // Address store
+  const setCustomerAddresses = useAddressStore(
+    state => state.setCustomerAddresses
+  )
+  const getAddressById = useAddressStore(state => state.getAddressById)
+  const setSubmitting = useOrderStore(state => state.setSubmitting)
 
   const handleQuantityChange = async (itemId: string, quantity: number) => {
     setIsUpdating(true)
@@ -73,53 +104,202 @@ export function CustomerCartTemplate() {
   }
 
   const handleCheckout = async () => {
-    if (!cart || cart.items.length === 0) return
+    if (!cart || cart.items.length === 0 || !cart.customerId) return
 
-    // Check if user is signed in and has customer role
-    if (!isSignedIn || !hasRole('customer')) {
-      // Require authentication before checkout
-      requireAuth(
-        'customer',
-        async () => {
-          // User is now authenticated, proceed with checkout
-          setIsUpdating(true)
-          try {
-            const success = await checkout()
-            if (success) {
-              toast.success(t('messages.checkoutSuccess'))
-              router.push('/orders')
-            } else {
-              toast.error(t('messages.checkoutFailed'))
-            }
-          } catch (error) {
-            toast.error(t('messages.checkoutError'))
-            console.error('Checkout failed:', error)
-          } finally {
-            setIsUpdating(false)
-          }
-        },
-        {
-          showToast: true,
-          redirectTo: '/checkout', // After sign-in, go to checkout
-        }
+    setIsUpdating(true)
+
+    try {
+      // Fetch customer addresses
+      const result = await AddressService.getCustomerAddresses(
+        companyId,
+        cart.customerId
       )
-    } else {
-      // User is already authenticated, proceed with checkout
-      setIsUpdating(true)
-      try {
-        const success = await checkout()
-        if (success) {
-          toast.success(t('messages.checkoutSuccess'))
-          router.push('/orders')
-        } else {
-          toast.error(t('messages.checkoutFailed'))
-        }
-      } catch (error) {
-        toast.error(t('messages.checkoutError'))
-        console.error('Checkout failed:', error)
-      } finally {
+
+      if (!result.success || !result.data) {
+        toast.error(t('errors.fetchAddressesFailed'))
         setIsUpdating(false)
+        return
       }
+
+      const addresses = result.data.formattedAddresses
+      setCustomerAddresses(addresses) // Store addresses for later use
+
+      if (addresses.length === 0) {
+        toast.error(t('addressSelection.noAddresses'))
+        setIsUpdating(false)
+        return
+      }
+
+      if (addresses.length === 1) {
+        // Single address - auto-select for both dispatch and invoice
+        const singleAddress = addresses[0]
+        if (singleAddress) {
+          await handleAddressSelect(singleAddress.id, singleAddress.id)
+        }
+      } else {
+        // Multiple addresses - show modal for selection
+        setIsUpdating(false)
+        setShowAddressModal(true)
+      }
+    } catch (error) {
+      console.error('Error fetching addresses:', error)
+      toast.error(t('errors.fetchAddressesFailed'))
+      setIsUpdating(false)
+    }
+  }
+
+  const handleAddressSelect = async (
+    dispatchAddressId: string,
+    invoiceAddressId: string
+  ) => {
+    if (!cart || !cart.customerId) {
+      toast.error(t('errors.orderCreationFailed'))
+      return
+    }
+
+    setSubmitting(true)
+    setIsUpdating(true)
+
+    try {
+      // Get the invoice address to determine country
+      const invoiceAddress = getAddressById(invoiceAddressId)
+      if (!invoiceAddress) {
+        toast.error(t('errors.orderCreationFailed'))
+        setSubmitting(false)
+        setIsUpdating(false)
+        return
+      }
+
+      // Get country from invoice address
+      const country = invoiceAddress.fullAddress.country
+
+      // Determine order type based on country
+      const orderType = OrderService.getOrderType(country)
+
+      // Determine language based on order type
+      const orderLanguage = orderType === 'Inland' ? 'se' : 'en'
+
+      // Transform cart items to order lines
+      const orderLines: OrderLineInput[] = items.map(item => ({
+        stockId: item.productId,
+        lineInfo: item.productName,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        vatPercent: item.vatRate || 0,
+      }))
+
+      // Get company nickname from environment variable
+      const companyNickname = process.env['NEXT_PUBLIC_COMPANY_ID'] || 'alfe'
+
+      // Create the order
+      const result = await OrderService.createOrder({
+        companyId,
+        companyNickname,
+        customerId: cart.customerId,
+        dispatchAddressId,
+        invoiceAddressId,
+        orderLines,
+        country,
+        exchangeUnit: 'kr.',
+        exchangeRate: 1,
+        language: orderLanguage,
+      })
+
+      if (result.success && result.data) {
+        // Transform addresses from API response to FormattedAddress format
+        const transformAddress = (
+          address:
+            | {
+                address_nickname?: string
+                line_1?: string
+                line_2?: string | null
+                city?: string
+              }
+            | null
+            | undefined,
+          addressId: string,
+          addressCountry: string
+        ): FormattedAddress => ({
+          id: addressId,
+          label: `${address?.address_nickname || ''}: ${address?.line_1 || ''}${
+            address?.line_2 ? ` ${address.line_2}` : ''
+          } ${address?.city || ''}`,
+          fullAddress: {
+            address_id: addressId,
+            address_nickname: address?.address_nickname || '',
+            line_1: address?.line_1 || '',
+            line_2: address?.line_2 || '',
+            city: address?.city || '',
+            country: addressCountry,
+          },
+        })
+
+        // Use addresses directly from API response
+        // Note: country was already used when creating the order
+        // Transform addresses safely - handle cases where addresses might be undefined
+        const dispatchAddr = transformAddress(
+          result.data.dispatchAddress || null,
+          dispatchAddressId,
+          country
+        )
+        const invoiceAddr = transformAddress(
+          result.data.invoiceAddress || null,
+          invoiceAddressId,
+          country
+        )
+
+        // Calculate totals from cart summary
+        const subtotal = summary?.subtotal || 0
+        const vatTotal = summary?.tax || 0
+        const grandTotal = summary?.total || 0
+
+        // Count total items and quantity
+        const totalItems = items.length
+        const totalQuantity = items.reduce(
+          (sum, item) => sum + item.quantity,
+          0
+        )
+
+        // Prepare order confirmation data
+        setOrderConfirmationData({
+          orderData: {
+            orderNumber: result.data.orderNumber || 'N/A',
+            orderDate: result.data.orderDate || new Date().toISOString(),
+            customerTitle: result.data.customerTitle || cart.customerId || '',
+            customerId: cart.customerId || '',
+          },
+          dispatchAddress: dispatchAddr,
+          invoiceAddress: invoiceAddr,
+          orderLines,
+          orderSummary: {
+            subtotal,
+            vatTotal,
+            total: grandTotal,
+          },
+          orderMetadata: {
+            orderType,
+            orderLanguage,
+            exchangeUnit: 'kr.',
+            exchangeRate: 1,
+            totalItems,
+            totalQuantity,
+          },
+        })
+
+        // Show the confirmation modal
+        setShowOrderModal(true)
+
+        // Close address modal (cart will be cleared when user closes confirmation)
+        setShowAddressModal(false)
+      } else {
+        toast.error(result.error || t('errors.orderCreationFailed'))
+      }
+    } catch (error) {
+      console.error('Order creation failed:', error)
+      toast.error(t('errors.orderCreationFailed'))
+    } finally {
+      setSubmitting(false)
+      setIsUpdating(false)
     }
   }
 
@@ -250,6 +430,35 @@ export function CustomerCartTemplate() {
           <div className="h-32 lg:hidden" />
         </div>
       </div>
+
+      {/* Address Selection Modal */}
+      {cart?.customerId && (
+        <AddressSelectionModal
+          isOpen={showAddressModal}
+          onClose={() => setShowAddressModal(false)}
+          companyId={companyId}
+          customerId={cart.customerId}
+          onAddressSelect={handleAddressSelect}
+        />
+      )}
+
+      {/* Order Confirmation Modal */}
+      {orderConfirmationData && (
+        <OrderConfirmationModal
+          isOpen={showOrderModal}
+          onClose={() => {
+            setShowOrderModal(false)
+            setOrderConfirmationData(null)
+            clearCart() // Clear cart after user closes the confirmation
+          }}
+          orderData={orderConfirmationData.orderData}
+          dispatchAddress={orderConfirmationData.dispatchAddress}
+          invoiceAddress={orderConfirmationData.invoiceAddress}
+          orderLines={orderConfirmationData.orderLines}
+          orderSummary={orderConfirmationData.orderSummary}
+          orderMetadata={orderConfirmationData.orderMetadata}
+        />
+      )}
     </div>
   )
 }

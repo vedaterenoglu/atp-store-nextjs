@@ -59,6 +59,17 @@ jest.mock('@/lib/utils', () => ({
   ),
 }))
 
+// Mock react-i18next
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => {
+      if (key === 'slider.previousSlide') return 'Previous slide'
+      if (key === 'slider.nextSlide') return 'Next slide'
+      return key
+    },
+  }),
+}))
+
 describe('SliderNavigationButton', () => {
   const defaultProps = {
     direction: 'next' as const,

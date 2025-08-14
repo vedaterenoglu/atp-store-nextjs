@@ -39,5 +39,24 @@
     "decrease": "Formindsk antal",
     "increase": "Øg antal",
     "current": "Nuværende antal: {{value}}"
+  },
+  "productInfo": {
+    "category": "Kategori",
+    "id": "ID",
+    "unit": "Enhed"
+  },
+  "auth": {
+    "notAuthenticated": "Log venligst ind for at tilføje varer til din kurv",
+    "signInRequired": "Log ind påkrævet",
+    "noCustomerSelected": "Vælg venligst en kunde for at fortsætte",
+    "selectCustomer": "Vælg kunde",
+    "noPermission": "Du har ikke tilladelse til at ændre denne ordre",
+    "contactAdmin": "Kontakt din administrator for hjælp",
+    "sessionExpired": "Din session er udløbet. Log venligst ind igen"
+  },
+  "cart": {
+    "addedSuccess": "Tilføjede {{quantity}} {{product}} til kurven",
+    "updateSuccess": "Opdaterede {{product}} antal til {{quantity}}",
+    "removeSuccess": "Fjernede {{product}} fra kurven"
   }
 }

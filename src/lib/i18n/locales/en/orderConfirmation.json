@@ -1,0 +1,52 @@
+{
+  "modal": {
+    "title": "Order Confirmation",
+    "description": "Your order has been successfully placed. Below are the details of your order.",
+    "closeButton": "Close",
+    "continueButton": "Continue Shopping"
+  },
+  "header": {
+    "orderNumber": "Order #{{number}}",
+    "orderDate": "Order Date",
+    "customer": "Customer",
+    "customerId": "Customer ID",
+    "dispatchAddress": "Dispatch Address",
+    "invoiceAddress": "Invoice Address"
+  },
+  "orderType": {
+    "inland": "Domestic",
+    "insideEU": "EU",
+    "outsideEU": "International"
+  },
+  "table": {
+    "title": "Order Items",
+    "columns": {
+      "productId": "Product ID",
+      "productName": "Product Name",
+      "quantity": "Quantity",
+      "unitPrice": "Unit Price",
+      "vatPercent": "VAT %",
+      "vatAmount": "VAT Amount",
+      "lineTotal": "Line Total"
+    },
+    "empty": "No order lines found"
+  },
+  "summary": {
+    "title": "Order Summary",
+    "statistics": "Order Statistics",
+    "items": "Items",
+    "itemsCount": "{{count}} item",
+    "itemsCount_plural": "{{count}} items",
+    "quantity": "Quantity",
+    "quantityCount": "{{count}} piece",
+    "quantityCount_plural": "{{count}} pieces",
+    "subtotal": "Subtotal",
+    "vatTotal": "VAT Total",
+    "total": "Total",
+    "exchangeRate": "Exchange Rate"
+  },
+  "units": {
+    "pieces": "pcs",
+    "currency": "kr"
+  }
+}

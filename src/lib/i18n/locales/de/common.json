@@ -46,7 +46,10 @@
     "en": "Englisch",
     "sv": "Schwedisch",
     "tr": "Türkisch",
-    "selectLanguage": "Sprache auswählen"
+    "da": "Dänisch",
+    "de": "Deutsch",
+    "selectLanguage": "Sprache auswählen",
+    "changeLanguage": "Sprache ändern"
   },
   "status": {
     "loading": "Laden...",
@@ -102,6 +105,27 @@
     "copyright": "© {{year}} Alfe Tissue Paper AB. Alle Rechte vorbehalten.",
     "createdBy": "Erstellt von"
   },
+  "navbar": {
+    "customerDashboard": "Kunden-Dashboard",
+    "adminPanel": "Admin-Panel",
+    "adminMode": "Admin-Modus",
+    "userMenu": "Benutzermenü",
+    "viewingAs": "Anzeigen als:"
+  },
+  "messages": {
+    "auth": {
+      "signInToAccessCart": "Melden Sie sich an und wählen Sie einen Kunden aus, um auf den Warenkorb zuzugreifen",
+      "signInToAccessDashboard": "Melden Sie sich an und wählen Sie einen Kunden aus, um auf das Dashboard zuzugreifen",
+      "needCustomerAccount": "Sie benötigen ein Kunden- oder Administratorkonto, um auf diese Funktion zuzugreifen",
+      "selectCustomerFirst": "Bitte wählen Sie zuerst ein Kundenkonto aus"
+    },
+    "customer": {
+      "failedToLoadList": "Kundenliste konnte nicht geladen werden",
+      "switchedTo": "Gewechselt zu {{customer}}",
+      "failedToSwitch": "Kundenwechsel fehlgeschlagen",
+      "failedToSwitchAccount": "Kundenkontowechsel fehlgeschlagen"
+    }
+  },
   "tooltips": {
     "navbar": {
       "home": "Zur Startseite gehen",
@@ -111,7 +135,9 @@
       "signIn": "In Ihr Konto einloggen",
       "userMenu": "Benutzermenü",
       "admin": "Admin-Panel",
-      "cart": "Warenkorb anzeigen"
+      "cart": "Warenkorb anzeigen",
+      "toggleTheme": "Theme wechseln",
+      "changeLanguage": "Sprache ändern"
     },
     "footer": {
       "developerWebsite": "Entwickler-Website besuchen",

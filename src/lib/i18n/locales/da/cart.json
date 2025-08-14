@@ -49,5 +49,32 @@
     "price": "Pris",
     "quantity": "Antal",
     "total": "Total"
+  },
+  "status": {
+    "active": "Aktiv",
+    "pending": "Afventer",
+    "checkedOut": "Betalt",
+    "abandoned": "Forladt",
+    "expired": "Udløbet"
+  },
+  "emptyState": {
+    "noCartsFound": "Ingen kurve fundet",
+    "noCartsMatching": "Der er ingen kurve, der matcher dine kriterier",
+    "emptyCart": "Tom kurv"
+  },
+  "addressSelection": {
+    "title": "Vælg leveringsadresse",
+    "description": "Vælg venligst adresser til levering og fakturering",
+    "dispatchAddress": "Leveringsadresse",
+    "invoiceAddress": "Faktureringsadresse",
+    "selectAddress": "Vælg en adresse",
+    "noAddresses": "Ingen adresser fundet for denne kunde",
+    "cancel": "Annuller",
+    "confirm": "Bekræft valg"
+  },
+  "errors": {
+    "fetchAddressesFailed": "Kunne ikke hente adresser",
+    "selectDispatchAddress": "Vælg venligst en leveringsadresse",
+    "orderCreationFailed": "Kunne ikke oprette ordre. Prøv venligst igen."
   }
 }

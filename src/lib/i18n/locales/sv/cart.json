@@ -49,5 +49,32 @@
     "price": "Pris",
     "quantity": "Antal",
     "total": "Totalt"
+  },
+  "status": {
+    "active": "Aktiv",
+    "pending": "Väntande",
+    "checkedOut": "Utcheckad",
+    "abandoned": "Övergiven",
+    "expired": "Utgången"
+  },
+  "emptyState": {
+    "noCartsFound": "Inga kundvagnar hittades",
+    "noCartsMatching": "Det finns inga kundvagnar som matchar dina kriterier",
+    "emptyCart": "Tom kundvagn"
+  },
+  "addressSelection": {
+    "title": "Välj leveransadress",
+    "description": "Vänligen välj adresser för leverans och fakturering",
+    "dispatchAddress": "Leveransadress",
+    "invoiceAddress": "Fakturaadress",
+    "selectAddress": "Välj en adress",
+    "noAddresses": "Inga adresser hittades för denna kund",
+    "cancel": "Avbryt",
+    "confirm": "Bekräfta val"
+  },
+  "errors": {
+    "fetchAddressesFailed": "Kunde inte hämta adresser",
+    "selectDispatchAddress": "Vänligen välj en leveransadress",
+    "orderCreationFailed": "Kunde inte skapa beställning. Försök igen."
   }
 }

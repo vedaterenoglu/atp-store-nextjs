@@ -49,5 +49,32 @@
     "price": "Fiyat",
     "quantity": "Miktar",
     "total": "Toplam"
+  },
+  "status": {
+    "active": "Aktif",
+    "pending": "Beklemede",
+    "checkedOut": "Ödeme Yapıldı",
+    "abandoned": "Terk Edilmiş",
+    "expired": "Süresi Dolmuş"
+  },
+  "emptyState": {
+    "noCartsFound": "Sepet bulunamadı",
+    "noCartsMatching": "Kriterlerinize uygun sepet bulunmuyor",
+    "emptyCart": "Boş Sepet"
+  },
+  "addressSelection": {
+    "title": "Teslimat Adresi Seçin",
+    "description": "Lütfen teslimat ve fatura adresleri seçin",
+    "dispatchAddress": "Teslimat Adresi",
+    "invoiceAddress": "Fatura Adresi",
+    "selectAddress": "Bir adres seçin",
+    "noAddresses": "Bu müşteri için adres bulunamadı",
+    "cancel": "İptal",
+    "confirm": "Seçimi Onayla"
+  },
+  "errors": {
+    "fetchAddressesFailed": "Adresler alınamadı",
+    "selectDispatchAddress": "Lütfen bir teslimat adresi seçin",
+    "orderCreationFailed": "Sipariş oluşturulamadı. Lütfen tekrar deneyin."
   }
 }

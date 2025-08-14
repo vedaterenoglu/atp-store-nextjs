@@ -8,6 +8,22 @@
 import { render, screen } from '@testing-library/react'
 import { ProductInfo } from '../ProductInfo'
 
+// Mock the translation hook
+jest.mock('@/hooks/use-safe-translation', () => ({
+  useSafeTranslation: () => ({
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        'productInfo.category': 'Category',
+        'productInfo.id': 'ID',
+        'productInfo.unit': 'Unit',
+      }
+      return translations[key] || key
+    },
+    ready: true,
+    i18n: {},
+  }),
+}))
+
 describe('ProductInfo', () => {
   const mockProps = {
     stock_name: 'Test Product Name',

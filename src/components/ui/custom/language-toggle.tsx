@@ -14,6 +14,7 @@
 
 import { Check } from 'lucide-react'
 import { Button } from '@/components/ui/schadcn/button'
+import { useSafeTranslation } from '@/hooks/use-safe-translation'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,13 +30,14 @@ interface LanguageOption {
   label: string
 }
 
-const languages: LanguageOption[] = [
-  { value: 'en', flag: '🇬🇧', label: 'English' },
-  { value: 'sv', flag: '🇸🇪', label: 'Svenska' },
-  { value: 'tr', flag: '🇹🇷', label: 'Türkçe' },
-  { value: 'da', flag: '🇩🇰', label: 'Dansk' },
-  { value: 'de', flag: '🇩🇪', label: 'Deutsch' },
-]
+// Static labels for aria-label (tests don't have i18n)
+const staticLabels: Record<SupportedLanguage, string> = {
+  en: 'English',
+  sv: 'Svenska',
+  tr: 'Türkçe',
+  da: 'Dansk',
+  de: 'Deutsch',
+}
 
 export function LanguageToggle() {
   return (
@@ -75,12 +77,26 @@ function LanguageToggleSkeleton() {
 
 function LanguageToggleDropdown() {
   const { language, setLanguage, isLoading } = useLanguageStore()
+  const { t } = useSafeTranslation('common')
+
+  const languages: LanguageOption[] = [
+    { value: 'en', flag: '🇬🇧', label: t('language.en') },
+    { value: 'sv', flag: '🇸🇪', label: t('language.sv') },
+    { value: 'tr', flag: '🇹🇷', label: t('language.tr') },
+    { value: 'da', flag: '🇩🇰', label: t('language.da') },
+    { value: 'de', flag: '🇩🇪', label: t('language.de') },
+  ]
 
   return (
     <DropdownMenu>
-      <LanguageToggleTrigger language={language} isLoading={isLoading} />
+      <LanguageToggleTrigger
+        language={language}
+        languages={languages}
+        isLoading={isLoading}
+      />
       <LanguageToggleContent
         language={language}
+        languages={languages}
         onLanguageChange={setLanguage}
         isLoading={isLoading}
       />
@@ -90,9 +106,11 @@ function LanguageToggleDropdown() {
 
 function LanguageToggleTrigger({
   language,
+  languages,
   isLoading,
 }: {
   language: SupportedLanguage
+  languages: LanguageOption[]
   isLoading: boolean
 }) {
   const currentLanguage = languages.find(lang => lang.value === language)
@@ -104,7 +122,7 @@ function LanguageToggleTrigger({
         size="icon"
         className="w-9 h-9"
         disabled={isLoading}
-        aria-label={`Current language: ${currentLanguage?.label || language}`}
+        aria-label={`Current language: ${staticLabels[language] || language}`}
       >
         <span className="text-xl">{currentLanguage?.flag || '🌐'}</span>
       </Button>
@@ -114,10 +132,12 @@ function LanguageToggleTrigger({
 
 function LanguageToggleContent({
   language,
+  languages,
   onLanguageChange,
   isLoading,
 }: {
   language: SupportedLanguage
+  languages: LanguageOption[]
   onLanguageChange: (language: SupportedLanguage) => Promise<void>
   isLoading: boolean
 }) {

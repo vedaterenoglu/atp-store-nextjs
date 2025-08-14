@@ -39,5 +39,24 @@
     "decrease": "Decrease quantity",
     "increase": "Increase quantity",
     "current": "Current quantity: {{value}}"
+  },
+  "productInfo": {
+    "category": "Category",
+    "id": "ID",
+    "unit": "Unit"
+  },
+  "auth": {
+    "notAuthenticated": "Please sign in to add items to your cart",
+    "signInRequired": "Sign in required",
+    "noCustomerSelected": "Please select a customer to continue",
+    "selectCustomer": "Select customer",
+    "noPermission": "You don't have permission to modify this order",
+    "contactAdmin": "Contact your administrator for assistance",
+    "sessionExpired": "Your session has expired. Please sign in again"
+  },
+  "cart": {
+    "addedSuccess": "Added {{quantity}} {{product}} to cart",
+    "updateSuccess": "Updated {{product}} quantity to {{quantity}}",
+    "removeSuccess": "Removed {{product}} from cart"
   }
 }

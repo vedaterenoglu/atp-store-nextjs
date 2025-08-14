@@ -1,0 +1,58 @@
+{
+  "title": "Customer Dashboard",
+  "navigation": {
+    "waitingOrders": "Waiting Orders",
+    "waitingOrdersDesc": "Orders pending dispatch",
+    "uninvoicedDeliveries": "Uninvoiced Deliveries",
+    "uninvoicedDeliveriesDesc": "Delivered but not invoiced",
+    "unpaidInvoices": "Unpaid Invoices",
+    "unpaidInvoicesDesc": "Outstanding invoice payments"
+  },
+  "waitingOrders": {
+    "title": "Waiting Orders",
+    "orderItems": "Order items:",
+    "moreItems": "+{{count}} more items",
+    "item": "item",
+    "items": "items",
+    "order": "order",
+    "orders": "orders",
+    "empty": "No waiting orders found. All your orders have been dispatched."
+  },
+  "uninvoicedDeliveries": {
+    "title": "Uninvoiced Deliveries",
+    "deliveredItems": "Delivered items:",
+    "moreItems": "+{{count}} more items",
+    "item": "item",
+    "items": "items",
+    "itemsDelivered": "{{count}} {{items}} delivered",
+    "delivery": "delivery",
+    "deliveries": "deliveries",
+    "uninvoiced": "Uninvoiced",
+    "empty": "No uninvoiced deliveries found. All your deliveries have been invoiced."
+  },
+  "unpaidInvoices": {
+    "title": "Unpaid Invoices",
+    "invoice": "invoice",
+    "invoices": "invoices",
+    "total": "Total",
+    "totalAmount": "Total Amount:",
+    "payment": "Payment:",
+    "remaining": "Remaining:",
+    "issued": "Issued:",
+    "due": "Due:",
+    "daysOverdue": "({{days}} days overdue)",
+    "paymentWarning": "Attention!!! If you have made a payment within the last 4 days, it may not have been reflected in our records yet",
+    "empty": "No unpaid invoices found. All your invoices are paid."
+  },
+  "status": {
+    "overdue": "Overdue",
+    "inkasso": "Collection",
+    "sentReminder": "Reminder sent"
+  },
+  "loading": {
+    "fetchingData": "Loading..."
+  },
+  "errors": {
+    "fetchFailed": "Failed to fetch data"
+  }
+}

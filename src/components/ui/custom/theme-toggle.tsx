@@ -15,6 +15,7 @@
 import { Moon, Sun, Monitor, Check } from 'lucide-react'
 import { useThemeStore } from '@/lib/stores'
 import { Button } from '@/components/ui/schadcn/button'
+import { useSafeTranslation } from '@/hooks/use-safe-translation'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,11 +30,12 @@ interface ThemeOption {
   label: string
 }
 
-const themes: ThemeOption[] = [
-  { value: 'light', icon: Sun, label: 'Light' },
-  { value: 'dark', icon: Moon, label: 'Dark' },
-  { value: 'system', icon: Monitor, label: 'System' },
-]
+// Static labels for aria-label (tests don't have i18n)
+const staticLabels = {
+  light: 'Light',
+  dark: 'Dark',
+  system: 'System',
+}
 
 export function ThemeToggle() {
   return (
@@ -73,17 +75,34 @@ function ThemeToggleSkeleton() {
 
 function ThemeToggleDropdown() {
   const { theme, setTheme } = useThemeStore()
+  const { t } = useSafeTranslation('common')
+
+  const themes: ThemeOption[] = [
+    { value: 'light', icon: Sun, label: t('theme.light') },
+    { value: 'dark', icon: Moon, label: t('theme.dark') },
+    { value: 'system', icon: Monitor, label: t('theme.system') },
+  ]
 
   return (
     <DropdownMenu>
-      <ThemeToggleTrigger theme={theme} />
-      <ThemeToggleContent theme={theme} onThemeChange={setTheme} />
+      <ThemeToggleTrigger theme={theme} themes={themes} />
+      <ThemeToggleContent
+        theme={theme}
+        themes={themes}
+        onThemeChange={setTheme}
+      />
     </DropdownMenu>
   )
 }
 
-function ThemeToggleTrigger({ theme }: { theme: 'light' | 'dark' | 'system' }) {
-  const currentTheme = themes.find(t => t.value === theme)
+function ThemeToggleTrigger({
+  theme,
+  themes,
+}: {
+  theme: 'light' | 'dark' | 'system'
+  themes: ThemeOption[]
+}) {
+  const currentTheme = themes.find(th => th.value === theme)
   const Icon = currentTheme?.icon || Sun
 
   const getIconColor = () => {
@@ -112,7 +131,7 @@ function ThemeToggleTrigger({ theme }: { theme: 'light' | 'dark' | 'system' }) {
         variant="ghost"
         size="icon"
         className="w-9 h-9 focus:outline-none focus:ring-0"
-        aria-label={`Current theme: ${currentTheme?.label || theme}`}
+        aria-label={`Current theme: ${staticLabels[theme] || theme}`}
         onClick={handleClick}
         onMouseDown={e => e.preventDefault()}
       >
@@ -124,9 +143,11 @@ function ThemeToggleTrigger({ theme }: { theme: 'light' | 'dark' | 'system' }) {
 
 function ThemeToggleContent({
   theme,
+  themes,
   onThemeChange,
 }: {
   theme: 'light' | 'dark' | 'system'
+  themes: ThemeOption[]
   onThemeChange: (theme: 'light' | 'dark' | 'system') => void
 }) {
   return (

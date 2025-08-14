@@ -2,12 +2,15 @@
  * SliderNavigationButton - Navigation buttons for slider
  * SOLID Principles: SRP - Single responsibility for navigation controls
  * Design Patterns: Atomic Component Pattern
- * Dependencies: React, lucide-react
+ * Dependencies: React, lucide-react, i18n
  */
+
+'use client'
 
 import { Button } from '@/components/ui/schadcn/button'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 
 interface SliderNavigationButtonProps {
   direction: 'prev' | 'next'
@@ -22,6 +25,7 @@ export function SliderNavigationButton({
   disabled = false,
   className = '',
 }: SliderNavigationButtonProps) {
+  const { t } = useTranslation('campaign')
   const Icon = direction === 'prev' ? ChevronLeft : ChevronRight
 
   return (
@@ -36,7 +40,9 @@ export function SliderNavigationButton({
         disabled ? 'opacity-50' : 'opacity-100',
         className
       )}
-      aria-label={direction === 'prev' ? 'Previous slide' : 'Next slide'}
+      aria-label={
+        direction === 'prev' ? t('slider.previousSlide') : t('slider.nextSlide')
+      }
     >
       <Icon className="h-6 w-6" />
     </Button>

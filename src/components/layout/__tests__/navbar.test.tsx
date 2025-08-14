@@ -383,6 +383,7 @@ jest.mock('lucide-react', () => ({
   ShoppingCart: jest.fn(() => <span data-testid="cart-icon" />),
   Menu: jest.fn(() => <span data-testid="menu-icon" />),
   X: jest.fn(() => <span data-testid="x-icon" />),
+  UserCog: jest.fn(() => <span data-testid="user-cog-icon" />),
 }))
 
 // Import mocked functions

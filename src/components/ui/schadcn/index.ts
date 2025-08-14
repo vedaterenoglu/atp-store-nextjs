@@ -19,6 +19,9 @@
  * enabling clean imports and maintaining component library consistency
  */
 
+// Alert components
+export { Alert, AlertTitle, AlertDescription } from './alert'
+
 // Form components
 export { Badge, badgeVariants } from './badge'
 

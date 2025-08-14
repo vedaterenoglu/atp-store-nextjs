@@ -43,11 +43,11 @@ export function CardActions({
     // Check auth first
     if (!canAddToCart()) {
       if (!isAuthenticated) {
-        toast.error('Please sign in to modify cart items')
+        toast.error(t('auth.notAuthenticated'))
       } else if (!auth.activeCustomerId) {
-        toast.error('Please select a customer account')
+        toast.error(t('auth.noCustomerSelected'))
       } else {
-        toast.error('You need proper permissions to modify cart')
+        toast.error(t('auth.noPermission'))
       }
       return
     }
@@ -58,11 +58,11 @@ export function CardActions({
     // Check auth first
     if (!canAddToCart()) {
       if (!isAuthenticated) {
-        toast.error('Please sign in to add items to cart')
+        toast.error(t('auth.notAuthenticated'))
       } else if (!auth.activeCustomerId) {
-        toast.error('Please select a customer account')
+        toast.error(t('auth.noCustomerSelected'))
       } else {
-        toast.error('You need proper permissions to add to cart')
+        toast.error(t('auth.noPermission'))
       }
       return
     }
@@ -73,13 +73,11 @@ export function CardActions({
     // Check auth first
     if (!canAddToCart()) {
       if (!isAuthenticated) {
-        toast.error(
-          'Please sign in with a customer account to add items to cart'
-        )
+        toast.error(t('auth.notAuthenticated'))
       } else if (!auth.activeCustomerId) {
-        toast.error('Please select a customer account to add items to cart')
+        toast.error(t('auth.noCustomerSelected'))
       } else {
-        toast.error('You need proper permissions to add to cart')
+        toast.error(t('auth.noPermission'))
       }
       return
     }
@@ -99,7 +97,12 @@ export function CardActions({
         )
 
         if (success) {
-          toast.success(`Added ${quantity} ${product.stock_name} to cart`)
+          toast.success(
+            t('cart.addedSuccess', {
+              quantity,
+              product: product.stock_name,
+            })
+          )
           setQuantity(0) // Reset quantity after adding
 
           // Call legacy callback if provided (for backwards compatibility)
@@ -107,10 +110,10 @@ export function CardActions({
             onAddToCart(product, quantity)
           }
         } else {
-          toast.error('Failed to add to cart. Please try again.')
+          toast.error(t('errors.somethingWentWrong'))
         }
       } catch (error) {
-        toast.error('Failed to add to cart')
+        toast.error(t('errors.somethingWentWrong'))
         console.error('Error adding to cart:', error)
       }
     }

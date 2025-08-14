@@ -1,0 +1,31 @@
+mutation CreateOrderNumberMutation($company_nickname: String!) {
+  update_companies(
+    where: { company_nickname: { _eq: $company_nickname } }
+    _inc: { order_number: 1 }
+  ) {
+    returning {
+      order_number
+      letter_code
+    }
+  }
+}
+
+
+# {
+#   "company_nickname": "alfe"
+# }
+
+# # todo: response
+
+# {
+#   "data": {
+#     "update_companies": {
+#       "returning": [
+#         {
+#           "order_number": 130130,
+#           "letter_code": "AL"
+#         }
+#       ]
+#     }
+#   }
+# }

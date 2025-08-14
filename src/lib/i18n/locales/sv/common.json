@@ -46,7 +46,10 @@
     "en": "Engelska",
     "sv": "Svenska",
     "tr": "Turkiska",
-    "selectLanguage": "Välj språk"
+    "da": "Danska",
+    "de": "Tyska",
+    "selectLanguage": "Välj språk",
+    "changeLanguage": "Ändra språk"
   },
   "status": {
     "loading": "Laddar...",
@@ -102,6 +105,27 @@
     "copyright": "© {{year}} Alfe Tissue Paper AB. Alla rättigheter förbehållna.",
     "createdBy": "Skapad av"
   },
+  "navbar": {
+    "customerDashboard": "Kunddashboard",
+    "adminPanel": "Adminpanel",
+    "adminMode": "Adminläge",
+    "userMenu": "Användarmeny",
+    "viewingAs": "Visas som:"
+  },
+  "messages": {
+    "auth": {
+      "signInToAccessCart": "Logga in och välj en kund för att komma åt varukorgen",
+      "signInToAccessDashboard": "Logga in och välj en kund för att komma åt dashboarden",
+      "needCustomerAccount": "Du behöver ett kund- eller administratörskonto för att komma åt denna funktion",
+      "selectCustomerFirst": "Välj ett kundkonto först"
+    },
+    "customer": {
+      "failedToLoadList": "Misslyckades med att ladda kundlistan",
+      "switchedTo": "Bytt till {{customer}}",
+      "failedToSwitch": "Misslyckades med att byta kund",
+      "failedToSwitchAccount": "Misslyckades med att byta kundkonto"
+    }
+  },
   "tooltips": {
     "navbar": {
       "home": "Gå till startsidan",
@@ -111,7 +135,9 @@
       "signIn": "Logga in på ditt konto",
       "userMenu": "Användarmeny",
       "admin": "Administratörspanel",
-      "cart": "Visa kundvagn"
+      "cart": "Visa kundvagn",
+      "toggleTheme": "Växla tema",
+      "changeLanguage": "Ändra språk"
     },
     "footer": {
       "developerWebsite": "Besök utvecklarens webbplats",

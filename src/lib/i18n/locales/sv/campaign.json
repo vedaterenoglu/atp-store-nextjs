@@ -39,5 +39,24 @@
     "decrease": "Minska antal",
     "increase": "Öka antal",
     "current": "Nuvarande antal: {{value}}"
+  },
+  "productInfo": {
+    "category": "Kategori",
+    "id": "ID",
+    "unit": "Enhet"
+  },
+  "auth": {
+    "notAuthenticated": "Vänligen logga in för att lägga till varor i kundvagnen",
+    "signInRequired": "Inloggning krävs",
+    "noCustomerSelected": "Vänligen välj en kund för att fortsätta",
+    "selectCustomer": "Välj kund",
+    "noPermission": "Du har inte behörighet att ändra denna beställning",
+    "contactAdmin": "Kontakta din administratör för hjälp",
+    "sessionExpired": "Din session har gått ut. Vänligen logga in igen"
+  },
+  "cart": {
+    "addedSuccess": "Lade till {{quantity}} {{product}} i kundvagnen",
+    "updateSuccess": "Uppdaterade {{product}} antal till {{quantity}}",
+    "removeSuccess": "Tog bort {{product}} från kundvagnen"
   }
 }

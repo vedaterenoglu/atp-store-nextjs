@@ -1,0 +1,58 @@
+{
+  "title": "Kunden-Dashboard",
+  "navigation": {
+    "waitingOrders": "Wartende Bestellungen",
+    "waitingOrdersDesc": "Bestellungen warten auf Versand",
+    "uninvoicedDeliveries": "Nicht fakturierte Lieferungen",
+    "uninvoicedDeliveriesDesc": "Geliefert aber nicht fakturiert",
+    "unpaidInvoices": "Unbezahlte Rechnungen",
+    "unpaidInvoicesDesc": "Ausstehende Rechnungszahlungen"
+  },
+  "waitingOrders": {
+    "title": "Wartende Bestellungen",
+    "orderItems": "Bestellartikel:",
+    "moreItems": "+{{count}} weitere Artikel",
+    "item": "Artikel",
+    "items": "Artikel",
+    "order": "Bestellung",
+    "orders": "Bestellungen",
+    "empty": "Keine wartenden Bestellungen gefunden. Alle Ihre Bestellungen wurden versandt."
+  },
+  "uninvoicedDeliveries": {
+    "title": "Nicht fakturierte Lieferungen",
+    "deliveredItems": "Gelieferte Artikel:",
+    "moreItems": "+{{count}} weitere Artikel",
+    "item": "Artikel",
+    "items": "Artikel",
+    "itemsDelivered": "{{count}} {{items}} geliefert",
+    "delivery": "Lieferung",
+    "deliveries": "Lieferungen",
+    "uninvoiced": "Nicht fakturiert",
+    "empty": "Keine nicht fakturierten Lieferungen gefunden. Alle Ihre Lieferungen wurden fakturiert."
+  },
+  "unpaidInvoices": {
+    "title": "Unbezahlte Rechnungen",
+    "invoice": "Rechnung",
+    "invoices": "Rechnungen",
+    "total": "Gesamt",
+    "totalAmount": "Gesamtbetrag:",
+    "payment": "Zahlung:",
+    "remaining": "Verbleibend:",
+    "issued": "Ausgestellt:",
+    "due": "Fällig:",
+    "daysOverdue": "({{days}} Tage überfällig)",
+    "paymentWarning": "Achtung!!! Wenn Sie innerhalb der letzten 4 Tage eine Zahlung geleistet haben, wurde diese möglicherweise noch nicht in unserem System erfasst",
+    "empty": "Keine unbezahlten Rechnungen gefunden. Alle Ihre Rechnungen sind bezahlt."
+  },
+  "status": {
+    "overdue": "Überfällig",
+    "inkasso": "Inkasso",
+    "sentReminder": "Mahnung gesendet"
+  },
+  "loading": {
+    "fetchingData": "Wird geladen..."
+  },
+  "errors": {
+    "fetchFailed": "Daten konnten nicht geladen werden"
+  }
+}

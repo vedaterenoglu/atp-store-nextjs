@@ -46,7 +46,10 @@
     "en": "English",
     "sv": "Swedish",
     "tr": "Turkish",
-    "selectLanguage": "Select language"
+    "da": "Danish",
+    "de": "German",
+    "selectLanguage": "Select language",
+    "changeLanguage": "Change language"
   },
   "status": {
     "loading": "Loading...",
@@ -102,6 +105,27 @@
     "copyright": "© {{year}} Alfe Tissue Paper AB. All rights reserved.",
     "createdBy": "Created by"
   },
+  "navbar": {
+    "customerDashboard": "Customer Dashboard",
+    "adminPanel": "Admin Panel",
+    "adminMode": "Admin Mode",
+    "userMenu": "User menu",
+    "viewingAs": "Viewing as:"
+  },
+  "messages": {
+    "auth": {
+      "signInToAccessCart": "Sign in and select a customer to access cart",
+      "signInToAccessDashboard": "Sign in and select a customer to access dashboard",
+      "needCustomerAccount": "You need a customer or admin account to access this feature",
+      "selectCustomerFirst": "Please select a customer account first"
+    },
+    "customer": {
+      "failedToLoadList": "Failed to load customer list",
+      "switchedTo": "Switched to {{customer}}",
+      "failedToSwitch": "Failed to switch customer",
+      "failedToSwitchAccount": "Failed to switch customer account"
+    }
+  },
   "tooltips": {
     "navbar": {
       "home": "Go to home page",
@@ -111,7 +135,10 @@
       "language": "Change language",
       "signIn": "Sign in to your account",
       "userMenu": "User menu",
-      "admin": "Admin panel"
+      "admin": "Admin panel",
+      "toggleTheme": "Toggle theme",
+      "changeLanguage": "Change language",
+      "adminDashboard": "Admin Dashboard"
     },
     "footer": {
       "developerWebsite": "Visit developer website",

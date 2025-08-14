@@ -12,9 +12,11 @@ import { Alert, AlertDescription } from '@/components/ui/schadcn/alert'
 import { Badge } from '@/components/ui/schadcn/badge'
 import { User } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useSafeTranslation } from '@/hooks/use-safe-translation'
 import type { ActiveCustomerContext } from '@/lib/types/customer.types'
 
 export function ImpersonationBanner() {
+  const { t } = useSafeTranslation('common')
   const [context, setContext] = useState<ActiveCustomerContext | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -76,10 +78,10 @@ export function ImpersonationBanner() {
         <div className="flex items-center gap-3">
           <Badge variant="destructive" className="gap-1">
             <User className="h-3 w-3" />
-            Admin Mode
+            {t('navbar.adminMode')}
           </Badge>
           <span className="text-sm">
-            Viewing as:{' '}
+            {t('navbar.viewingAs')}{' '}
             <strong>
               {context.customerTitle || context.customerId || 'Unknown'}
             </strong>

@@ -1,0 +1,81 @@
+query GetCustomersUnpaidInvoicesQuery(
+  $company_id: String!
+  $customer_id: String!
+) {
+  document_transactions(
+    order_by: { invoice_date: desc }
+    where: {
+      is_invoice_paid: { _eq: "false" }
+      customer_id: { _eq: $customer_id }
+      our_company: { _eq: $company_id }
+      transaction_type: { _eq: "sales invoice " }
+    }
+  ) {
+    invoice_date
+    invoice_due_date
+    invoice_number
+    is_invoice_paid
+    is_invoice_reminded
+    is_sent_in_the_bailiffs
+    is_fee_addable
+    paper_invoice_fee
+    paper_invoice_fee_vat
+    _invoice_lines_aggregate {
+      aggregate {
+        sum {
+          line_price_total_credit_exchange
+          vat_credit_exchange
+        }
+      }
+    }
+    invoice_exchange_unit
+    invoice_payments_aggregate {
+      aggregate {
+        sum {
+          payment_credit_in_exchange
+        }
+      }
+    }
+  }
+}
+
+# {
+#   "company_id": "alfe",
+#   "customer_id": "SE0 1001 1075"
+# }
+
+# todo: response
+
+# {
+#   "data": {
+#     "document_transactions": [
+#       {
+#         "invoice_date": "2025-07-30",
+#         "invoice_due_date": "2025-08-11",
+#         "invoice_number": "AL 120138",
+#         "is_invoice_paid": "false",
+#         "is_invoice_reminded": false,
+#         "is_sent_in_the_bailiffs": false,
+#         "is_fee_addable": false,
+#         "paper_invoice_fee": 3000,
+#         "paper_invoice_fee_vat": 750,
+#         "_invoice_lines_aggregate": {
+#           "aggregate": {
+#             "sum": {
+#               "line_price_total_credit_exchange": 287700,
+#               "vat_credit_exchange": 71925
+#             }
+#           }
+#         },
+#         "invoice_exchange_unit": "kr.",
+#         "invoice_payments_aggregate": {
+#           "aggregate": {
+#             "sum": {
+#               "payment_credit_in_exchange": null
+#             }
+#           }
+#         }
+#       }
+#     ]
+#   }
+# }

@@ -1,0 +1,72 @@
+query GetCustomersUninvoicedDispatchesQuery(
+  $company_id: String!
+  $customer_id: String!
+) {
+  dispatch_headers(
+    where: {
+      customer_id: { _eq: $customer_id }
+      company_id: { _eq: $company_id }
+      dispatch_invoiced: { _eq: false }
+      dispatch_canceled: { _eq: false }
+    }
+    order_by: { dispatch_date: desc }
+  ) {
+    dispatch_date
+    dispatch_number
+    _goods_transactions {
+      amount_credit
+      line_info
+    }
+  }
+}
+
+# {
+#   "company_id": "alfe",
+#   "customer_id": "SE0 1001 1075"
+# }
+
+# todo: response
+# {
+#   "data": {
+#     "dispatch_headers": [
+#       {
+#         "dispatch_date": "2025-08-01",
+#         "dispatch_number": "AL 129373",
+#         "_goods_transactions": [
+#           {
+#             "amount_credit": 1,
+#             "line_info": "6001 1001 0001 - Maskindiskmedel Diversy 12,8 kg - dunk"
+#           },
+#           {
+#             "amount_credit": 1,
+#             "line_info": "8501 1004 0004 - Handskar L 100 pack - förp."
+#           }
+#         ]
+#       },
+#       {
+#         "dispatch_date": "2025-08-06",
+#         "dispatch_number": "AL 129457",
+#         "_goods_transactions": [
+#           {
+#             "amount_credit": 2,
+#             "line_info": "1001 1004 R030 - Pizzakrtong 30*30*3,5 Premium 100 st./förp. - förp."
+#           }
+#         ]
+#       },
+#       {
+#         "dispatch_date": "2025-08-13",
+#         "dispatch_number": "AL 129592",
+#         "_goods_transactions": [
+#           {
+#             "amount_credit": 1,
+#             "line_info": "1001 1004 R030 - Pizzakrtong 30*30*3,5 Premium 100 st./förp. - förp."
+#           },
+#           {
+#             "amount_credit": 1,
+#             "line_info": "1001 1011 2816 - Pizzakartong Calzone 28*16*8 100 st./förp. Röda - förp."
+#           }
+#         ]
+#       }
+#     ]
+#   }
+# }

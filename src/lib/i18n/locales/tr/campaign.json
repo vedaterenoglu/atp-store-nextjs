@@ -39,5 +39,24 @@
     "decrease": "Miktarı azalt",
     "increase": "Miktarı artır",
     "current": "Mevcut miktar: {{value}}"
+  },
+  "productInfo": {
+    "category": "Kategori",
+    "id": "Kimlik",
+    "unit": "Birim"
+  },
+  "auth": {
+    "notAuthenticated": "Sepete ürün eklemek için lütfen giriş yapın",
+    "signInRequired": "Giriş yapmanız gerekiyor",
+    "noCustomerSelected": "Devam etmek için lütfen bir müşteri seçin",
+    "selectCustomer": "Müşteri seç",
+    "noPermission": "Bu siparişi değiştirme yetkiniz yok",
+    "contactAdmin": "Yardım için yöneticinizle iletişime geçin",
+    "sessionExpired": "Oturumunuzun süresi doldu. Lütfen tekrar giriş yapın"
+  },
+  "cart": {
+    "addedSuccess": "{{quantity}} {{product}} sepete eklendi",
+    "updateSuccess": "{{product}} miktarı {{quantity}} olarak güncellendi",
+    "removeSuccess": "{{product}} sepetten kaldırıldı"
   }
 }

@@ -1,0 +1,50 @@
+mutation CreateOrderHeadersMutation($input: [order_headers_insert_input!]!) {
+  insert_order_headers(objects: $input) {
+    affected_rows
+    returning {
+      order_number
+      order_date
+      _dispatch_address{
+        address_nickname
+        line_1
+        line_2
+        city
+      }
+      _invoice_address{
+        address_nickname
+        line_1
+        line_2
+        city
+      }
+      customer {
+        customer_title
+      }
+    }
+  }
+}
+
+
+# todo: order_headers_insert_input
+
+# _customer: customers_obj_rel_insert_input
+# _dispatch_address: addresses_obj_rel_insert_input
+# _goods_transactions: goods_transactions_arr_rel_insert_input
+# company: companies_obj_rel_insert_input
+# company_id: String
+# customer: customers_obj_rel_insert_input
+# customer_id: String
+# dispatch_address_id: String
+# invoice_address_id: String
+# order_canceled: Boolean
+# order_date: date
+# order_dispatched: Boolean
+# order_exchange_rate: numeric
+# order_exchange_unit: String
+# order_headers_dispatch_address_addresses_rel: addresses_obj_rel_insert_input
+# order_headers_invoice_address_addresses_rel: addresses_obj_rel_insert_input
+# order_heders_goods_transactions_rel: goods_transactions_arr_rel_insert_input
+# order_language: String
+# order_lock: Boolean
+# order_number: String
+# order_source: String
+# order_type: String

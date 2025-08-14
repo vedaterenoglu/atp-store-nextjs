@@ -49,5 +49,32 @@
     "price": "Preis",
     "quantity": "Menge",
     "total": "Gesamt"
+  },
+  "status": {
+    "active": "Aktiv",
+    "pending": "Ausstehend",
+    "checkedOut": "Bezahlt",
+    "abandoned": "Verlassen",
+    "expired": "Abgelaufen"
+  },
+  "emptyState": {
+    "noCartsFound": "Keine Warenkörbe gefunden",
+    "noCartsMatching": "Es gibt keine Warenkörbe, die Ihren Kriterien entsprechen",
+    "emptyCart": "Leerer Warenkorb"
+  },
+  "addressSelection": {
+    "title": "Lieferadresse auswählen",
+    "description": "Bitte wählen Sie Adressen für Lieferung und Rechnung",
+    "dispatchAddress": "Lieferadresse",
+    "invoiceAddress": "Rechnungsadresse",
+    "selectAddress": "Adresse auswählen",
+    "noAddresses": "Keine Adressen für diesen Kunden gefunden",
+    "cancel": "Abbrechen",
+    "confirm": "Auswahl bestätigen"
+  },
+  "errors": {
+    "fetchAddressesFailed": "Adressen konnten nicht abgerufen werden",
+    "selectDispatchAddress": "Bitte wählen Sie eine Lieferadresse",
+    "orderCreationFailed": "Bestellung konnte nicht erstellt werden. Bitte versuchen Sie es erneut."
   }
 }

@@ -49,5 +49,32 @@
     "price": "Price",
     "quantity": "Quantity",
     "total": "Total"
+  },
+  "status": {
+    "active": "Active",
+    "pending": "Pending",
+    "checkedOut": "Checked Out",
+    "abandoned": "Abandoned",
+    "expired": "Expired"
+  },
+  "emptyState": {
+    "noCartsFound": "No carts found",
+    "noCartsMatching": "There are no carts matching your criteria",
+    "emptyCart": "Empty Cart"
+  },
+  "addressSelection": {
+    "title": "Select Delivery Address",
+    "description": "Please select addresses for delivery and billing",
+    "dispatchAddress": "Delivery Address",
+    "invoiceAddress": "Billing Address",
+    "selectAddress": "Select an address",
+    "noAddresses": "No addresses found for this customer",
+    "cancel": "Cancel",
+    "confirm": "Confirm Selection"
+  },
+  "errors": {
+    "fetchAddressesFailed": "Failed to fetch addresses",
+    "selectDispatchAddress": "Please select a delivery address",
+    "orderCreationFailed": "Failed to create order. Please try again."
   }
 }
