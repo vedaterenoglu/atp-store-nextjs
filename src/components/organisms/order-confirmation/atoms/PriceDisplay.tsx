@@ -56,7 +56,7 @@ export function PriceDisplayInline({
 }: Omit<PriceDisplayProps, 'size' | 'showCurrency'>) {
   return (
     <span className={cn('text-sm tabular-nums', className)}>
-      {formatPrice(amount, currency, false)}
+      {formatPrice(amount, currency)}
     </span>
   )
 }

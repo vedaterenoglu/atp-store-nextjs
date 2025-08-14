@@ -63,17 +63,19 @@ export async function POST(request: NextRequest) {
     if (result.errors) {
       console.error('GraphQL errors:', result.errors)
       return NextResponse.json(
-        { 
+        {
           success: false,
-          error: 'Failed to fetch customer addresses', 
-          details: result.errors 
+          error: 'Failed to fetch customer addresses',
+          details: result.errors,
         },
         { status: 500 }
       )
     }
 
     // Validate response with Zod
-    const validatedData = GetCustomerAddressesQueryResponseSchema.parse(result.data)
+    const validatedData = GetCustomerAddressesQueryResponseSchema.parse(
+      result.data
+    )
 
     // Format addresses for UI
     const formattedAddresses = validatedData.addresses.map(address => ({

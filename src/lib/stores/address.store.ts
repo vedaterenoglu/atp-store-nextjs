@@ -12,15 +12,15 @@ import type { FormattedAddress } from '@/services/address.service'
 export interface AddressState {
   // Customer addresses
   customerAddresses: FormattedAddress[]
-  
+
   // Selected addresses for current order
   selectedDispatchAddress: FormattedAddress | null
   selectedInvoiceAddress: FormattedAddress | null
-  
+
   // Loading state
   isLoadingAddresses: boolean
   addressError: string | null
-  
+
   // Actions
   setCustomerAddresses: (addresses: FormattedAddress[]) => void
   setSelectedAddresses: (
@@ -33,7 +33,7 @@ export interface AddressState {
   clearAllAddresses: () => void
   setLoadingAddresses: (loading: boolean) => void
   setAddressError: (error: string | null) => void
-  
+
   // Getters
   getAddressById: (id: string) => FormattedAddress | undefined
   hasAddresses: () => boolean

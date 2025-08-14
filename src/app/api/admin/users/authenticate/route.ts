@@ -12,34 +12,30 @@ import { z } from 'zod'
 // Request validation schema
 const authenticateUserSchema = z.object({
   userId: z.string().min(1, 'User ID is required'),
-  customerIds: z.array(z.string()).min(1, 'At least one customer ID is required'),
+  customerIds: z
+    .array(z.string())
+    .min(1, 'At least one customer ID is required'),
 })
 
-// Response schemas
-const successResponseSchema = z.object({
-  success: z.literal(true),
-  userId: z.string(),
-  customerIds: z.array(z.string()),
-  message: z.string(),
-})
+// Response types
+type SuccessResponse = {
+  success: true
+  userId: string
+  customerIds: string[]
+  message: string
+}
 
-const errorResponseSchema = z.object({
-  success: z.literal(false),
-  error: z.string(),
-})
-
-type SuccessResponse = z.infer<typeof successResponseSchema>
-type ErrorResponse = z.infer<typeof errorResponseSchema>
+type ErrorResponse = {
+  success: false
+  error: string
+}
 
 export async function POST(
   req: NextRequest
 ): Promise<NextResponse<SuccessResponse | ErrorResponse>> {
-  console.log('=== AUTHENTICATE USER API CALLED ===')
-
   try {
     // Check admin authentication
     const { userId: adminId, sessionClaims } = await auth()
-    console.log('Auth check - adminId:', adminId)
 
     if (!adminId) {
       return NextResponse.json(
@@ -49,7 +45,9 @@ export async function POST(
     }
 
     // Check admin role
-    const metadata = sessionClaims?.['metadata'] as { role?: string } | undefined
+    const metadata = sessionClaims?.['metadata'] as
+      | { role?: string }
+      | undefined
     const userRole = metadata?.role
 
     if (userRole !== 'admin') {
@@ -61,10 +59,8 @@ export async function POST(
 
     // Parse and validate request body
     const body = await req.json()
-    console.log('Request body:', body)
 
     const validationResult = authenticateUserSchema.safeParse(body)
-    console.log('Validation result:', validationResult)
 
     if (!validationResult.success) {
       return NextResponse.json(
@@ -83,12 +79,10 @@ export async function POST(
     const clerk = await clerkClient()
 
     // Get the user to verify they exist
-    console.log('Fetching user:', userId)
     let user
     try {
       user = await clerk.users.getUser(userId)
-    } catch (error) {
-      console.error('Error fetching user:', error)
+    } catch {
       return NextResponse.json(
         { success: false, error: 'User not found' },
         { status: 404 }
@@ -97,10 +91,10 @@ export async function POST(
 
     // Get current metadata
     const currentMetadata = user.publicMetadata || {}
-    const currentRole = (currentMetadata as { role?: string }).role || 'customer'
+    const currentRole =
+      (currentMetadata as { role?: string }).role || 'customer'
 
     // Update user metadata with new customer IDs
-    console.log('Updating user metadata with customer IDs:', customerIds)
     const updatedUser = await clerk.users.updateUser(userId, {
       publicMetadata: {
         ...currentMetadata,
@@ -108,8 +102,6 @@ export async function POST(
         customerids: customerIds, // Update customer access
       },
     })
-
-    console.log('User updated successfully')
 
     // Return success response
     return NextResponse.json(
@@ -122,8 +114,6 @@ export async function POST(
       { status: 200 }
     )
   } catch (error) {
-    console.error('Error authenticating user:', error)
-
     // Handle Clerk-specific errors
     if (error && typeof error === 'object' && 'errors' in error) {
       const clerkError = error as { errors: Array<{ message: string }> }

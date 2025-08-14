@@ -17,14 +17,9 @@ import type { OrderLineWithCalculations } from '../types/order-confirmation.type
  * Formats a price amount with currency (converts from öre to kr)
  * @param amount - The amount to format in öre
  * @param currency - Currency symbol (default: kr)
- * @param includeDecimals - Whether to include decimals (not used, kept for compatibility)
  * @returns Formatted price string
  */
-export function formatPrice(
-  amount: number,
-  currency = 'kr',
-  _includeDecimals = true
-): string {
+export function formatPrice(amount: number, currency = 'kr'): string {
   // Use the utility that properly converts öre to kr
   // The formatPriceUtil already adds currency, so we check if currency matches
   if (currency === 'kr') {

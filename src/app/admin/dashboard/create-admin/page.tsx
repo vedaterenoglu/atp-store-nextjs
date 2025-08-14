@@ -23,16 +23,21 @@ import {
   CardTitle,
 } from '@/components/ui/schadcn/card'
 import { Alert, AlertDescription } from '@/components/ui/schadcn/alert'
+import { useSafeTranslation } from '@/hooks/use-safe-translation'
 
-// Form validation schema
-const createAdminSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-})
-
-type CreateAdminForm = z.infer<typeof createAdminSchema>
+type CreateAdminForm = {
+  email: string
+  password: string
+}
 
 export default function CreateAdminPage() {
+  const { t } = useSafeTranslation('admin')
+
+  // Form validation schema with translations
+  const createAdminSchema = z.object({
+    email: z.string().email(t('createAdmin.validation.invalidEmail')),
+    password: z.string().min(8, t('createAdmin.validation.passwordMin')),
+  })
   const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -42,40 +47,26 @@ export default function CreateAdminPage() {
     handleSubmit,
     reset,
     formState: { errors },
-    watch,
   } = useForm<CreateAdminForm>({
     resolver: zodResolver(createAdminSchema),
   })
 
-  // Log form state
-  const watchedValues = watch()
-  console.log('Form values:', watchedValues)
-  console.log('Form validation errors:', errors)
-
   const onSubmit = async (data: CreateAdminForm) => {
-    console.log('=== FORM SUBMISSION STARTED ===')
-    console.log('Form data received:', data)
-    console.log('Email:', data.email)
-    console.log('Password:', data.password)
-    
     setIsLoading(true)
     setError(null)
     setSuccess(false)
 
     try {
-      console.log('Calling API...')
       const response = await fetch('/api/admin/users/create-admin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       })
 
-      console.log('Response status:', response.status)
       const result = await response.json()
-      console.log('Response data:', result)
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to create admin account')
+        throw new Error(result.error || t('createAdmin.errors.createFailed'))
       }
 
       setSuccess(true)
@@ -84,8 +75,9 @@ export default function CreateAdminPage() {
       // Clear success message after 5 seconds
       setTimeout(() => setSuccess(false), 5000)
     } catch (err) {
-      console.error('Error in form submission:', err)
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      setError(
+        err instanceof Error ? err.message : t('createAdmin.errors.default')
+      )
     } finally {
       setIsLoading(false)
     }
@@ -94,9 +86,9 @@ export default function CreateAdminPage() {
   return (
     <div className="max-w-2xl">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Create Admin Account</h1>
+        <h1 className="text-3xl font-bold">{t('createAdmin.title')}</h1>
         <p className="text-muted-foreground mt-2">
-          Create a new administrator account with full system access
+          {t('createAdmin.subtitle')}
         </p>
       </div>
 
@@ -104,46 +96,24 @@ export default function CreateAdminPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <ShieldCheck className="h-5 w-5" />
-            New Admin Account
+            {t('createAdmin.cardTitle')}
           </CardTitle>
-          <CardDescription>
-            Enter the admin details below. This account will have full
-            administrative privileges.
-          </CardDescription>
+          <CardDescription>{t('createAdmin.cardDescription')}</CardDescription>
         </CardHeader>
         <CardContent>
-          <form
-            onSubmit={(e) => {
-              console.log('=== FORM onSubmit EVENT TRIGGERED ===')
-              console.log('Event:', e)
-              console.log('Current form values:', watchedValues)
-              console.log('Current form errors:', errors)
-              
-              const submitHandler = handleSubmit(
-                (data) => {
-                  console.log('handleSubmit SUCCESS callback called with:', data)
-                  onSubmit(data)
-                },
-                (errors) => {
-                  console.log('handleSubmit ERROR callback called with:', errors)
-                  console.error('Form validation failed:', errors)
-                }
-              )
-              
-              console.log('Calling handleSubmit...')
-              return submitHandler(e)
-            }}
-            className="space-y-4"
-          >
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* Email Field */}
             <div className="space-y-2">
               <Label htmlFor="email">
-                Email Address <span className="text-destructive">*</span>
+                {t('createAdmin.form.email')}{' '}
+                <span className="text-destructive">
+                  {t('createAdmin.form.required')}
+                </span>
               </Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@example.com"
+                placeholder={t('createAdmin.form.emailPlaceholder')}
                 {...register('email')}
                 disabled={isLoading}
               />
@@ -157,12 +127,15 @@ export default function CreateAdminPage() {
             {/* Password Field */}
             <div className="space-y-2">
               <Label htmlFor="password">
-                Password <span className="text-destructive">*</span>
+                {t('createAdmin.form.password')}{' '}
+                <span className="text-destructive">
+                  {t('createAdmin.form.required')}
+                </span>
               </Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="••••••••"
+                placeholder={t('createAdmin.form.passwordPlaceholder')}
                 {...register('password')}
                 disabled={isLoading}
               />
@@ -178,7 +151,7 @@ export default function CreateAdminPage() {
               <Alert className="border-green-500 bg-green-50 dark:bg-green-950/20">
                 <CheckCircle className="h-4 w-4 text-green-600" />
                 <AlertDescription className="text-green-600">
-                  Admin account created successfully!
+                  {t('createAdmin.success')}
                 </AlertDescription>
               </Alert>
             )}
@@ -191,20 +164,16 @@ export default function CreateAdminPage() {
             )}
 
             {/* Submit Button */}
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="w-full"
-            >
+            <Button type="submit" disabled={isLoading} className="w-full">
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating Account...
+                  {t('createAdmin.form.submitting')}
                 </>
               ) : (
                 <>
                   <ShieldCheck className="mr-2 h-4 w-4" />
-                  Create Admin Account
+                  {t('createAdmin.form.submit')}
                 </>
               )}
             </Button>
@@ -216,25 +185,15 @@ export default function CreateAdminPage() {
       <Card className="mt-6 border-amber-500/50 bg-amber-50/50 dark:bg-amber-950/20">
         <CardHeader>
           <CardTitle className="text-sm text-amber-900 dark:text-amber-500">
-            ⚠️ Important Security Notice
+            {t('createAdmin.warning.title')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm text-amber-800 dark:text-amber-400">
-          <p>
-            • Admin accounts have full system access and can manage all users
-          </p>
-          <p>
-            • Admin accounts can create, modify, and delete other accounts
-          </p>
-          <p>
-            • Admin accounts have access to all customer data and orders
-          </p>
-          <p>
-            • Only create admin accounts for trusted personnel
-          </p>
-          <p>
-            • Use strong, unique passwords for admin accounts
-          </p>
+          <p>• {t('createAdmin.warning.note1')}</p>
+          <p>• {t('createAdmin.warning.note2')}</p>
+          <p>• {t('createAdmin.warning.note3')}</p>
+          <p>• {t('createAdmin.warning.note4')}</p>
+          <p>• {t('createAdmin.warning.note5')}</p>
         </CardContent>
       </Card>
     </div>

@@ -39,7 +39,7 @@ jest.mock('@/lib/utils/price', () => ({
 
 // Mock the OrderConfirmationModal component
 jest.mock('@/components/organisms/OrderConfirmationModal', () => ({
-  OrderConfirmationModal: jest.fn((props) => {
+  OrderConfirmationModal: jest.fn(props => {
     const { isOpen, onClose, orderData } = props
     if (!isOpen) return null
     return (

@@ -271,7 +271,7 @@ function AdminDashboardButton() {
 
   // Only show for admin users
   const isAdmin = user?.publicMetadata?.['role'] === 'admin'
-  
+
   if (!isAdmin) {
     return null
   }

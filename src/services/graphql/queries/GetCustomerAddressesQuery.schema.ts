@@ -58,8 +58,10 @@ if (process.env['NODE_ENV'] === 'development') {
 
   try {
     GetCustomerAddressesQueryResponseSchema.parse(exampleResponse)
-    console.log('✅ GetCustomerAddressesQuery schema validation passed')
   } catch (error) {
-    console.error('❌ GetCustomerAddressesQuery schema validation failed:', error)
+    console.error(
+      '❌ GetCustomerAddressesQuery schema validation failed:',
+      error
+    )
   }
 }

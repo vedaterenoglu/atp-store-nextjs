@@ -1,86 +1,135 @@
 {
-  "dashboard": "Kunden-Dashboard",
-  "pendingOrders": "Ausstehende Bestellungen",
-  "deliveries": "Lieferscheine (Lieferungen)",
-  "invoices": "Rechnungen",
-  "unpaidInvoices": "Unbezahlte Rechnungen",
-  "cart": {
-    "title": "Warenkorbverwaltung",
-    "subtitle": "Verwalten Sie Kundenwarenkörbe und stellen Sie verlassene Warenkörbe wieder her",
-    "empty": {
-      "title": "Keine Warenkörbe gefunden",
-      "description": "Es gibt keine Warenkörbe, die Ihren Kriterien entsprechen",
-      "action": "Filter löschen"
+  "sidebar": {
+    "title": "Verwaltungspanel",
+    "dashboard": "Übersicht",
+    "createCustomer": "Kunde erstellen",
+    "createAdmin": "Administrator erstellen",
+    "authenticateUser": "Benutzer authentifizieren",
+    "modifyUser": "Benutzer bearbeiten",
+    "deliveries": "Lieferungen",
+    "invoices": "Rechnungen",
+    "pendingOrders": "Ausstehende Bestellungen",
+    "unpaidInvoices": "Unbezahlte Rechnungen"
+  },
+  "createCustomer": {
+    "title": "Kundenkonto erstellen",
+    "subtitle": "Erstellen Sie ein neues Kundenkonto im Clerk-Authentifizierungssystem",
+    "cardTitle": "Neues Kundenkonto",
+    "cardDescription": "Geben Sie unten die Kundendaten ein. Das Konto wird mit der Kundenrolle erstellt.",
+    "form": {
+      "email": "E-Mail-Adresse",
+      "emailPlaceholder": "kunde@beispiel.de",
+      "password": "Passwort",
+      "passwordPlaceholder": "••••••••",
+      "required": "*",
+      "submit": "Kundenkonto erstellen",
+      "submitting": "Konto wird erstellt..."
     },
-    "status": {
-      "active": "Aktiv",
-      "pending": "Ausstehend",
-      "checkedOut": "Ausgecheckt",
-      "abandoned": "Verlassen",
-      "expired": "Abgelaufen"
+    "validation": {
+      "invalidEmail": "Ungültige E-Mail-Adresse",
+      "passwordMin": "Das Passwort muss mindestens 8 Zeichen lang sein"
     },
-    "filter": {
-      "title": "Filter",
-      "search": "Nach Benutzer, Kunde oder Unternehmen suchen...",
-      "status": "Nach Status filtern",
-      "dateRange": "Datumsbereich",
-      "totalRange": "Gesamtbereich",
-      "from": "Von",
-      "to": "Bis",
-      "min": "Min",
-      "max": "Max",
-      "clearAll": "Alle löschen",
-      "apply": "Filter anwenden"
+    "success": "Kundenkonto erfolgreich erstellt!",
+    "errors": {
+      "default": "Ein Fehler ist aufgetreten",
+      "createFailed": "Kundenkonto konnte nicht erstellt werden"
     },
-    "sort": {
-      "recentlyUpdated": "Kürzlich aktualisiert",
-      "oldestUpdated": "Älteste aktualisiert",
-      "recentlyCreated": "Kürzlich erstellt",
-      "oldestCreated": "Älteste erstellt",
-      "highestTotal": "Höchste Summe",
-      "lowestTotal": "Niedrigste Summe",
-      "mostItems": "Meiste Artikel",
-      "fewestItems": "Wenigste Artikel"
+    "notes": {
+      "title": "Wichtige Hinweise",
+      "note1": "Das Konto wird automatisch mit der 'Kunden'-Rolle erstellt",
+      "note2": "Der Benutzer kann sich sofort mit diesen Anmeldedaten anmelden",
+      "note3": "Der Kundenzugriff auf bestimmte Unternehmen muss separat konfiguriert werden",
+      "note4": "Verwenden Sie den Abschnitt 'Benutzer authentifizieren', um Kunden mit Unternehmen zu verknüpfen"
+    }
+  },
+  "createAdmin": {
+    "title": "Administratorkonto erstellen",
+    "subtitle": "Erstellen Sie ein neues Administratorkonto mit vollem Systemzugriff",
+    "cardTitle": "Neues Administratorkonto",
+    "cardDescription": "Geben Sie unten die Administratordaten ein. Dieses Konto erhält volle administrative Rechte.",
+    "form": {
+      "email": "E-Mail-Adresse",
+      "emailPlaceholder": "admin@beispiel.de",
+      "password": "Passwort",
+      "passwordPlaceholder": "••••••••",
+      "required": "*",
+      "submit": "Administratorkonto erstellen",
+      "submitting": "Konto wird erstellt..."
     },
-    "detail": {
-      "customerInfo": "Kundeninformationen",
-      "userId": "Benutzer-ID",
-      "customerId": "Kunden-ID",
-      "companyId": "Unternehmen",
-      "timeline": "Zeitleiste",
+    "validation": {
+      "invalidEmail": "Ungültige E-Mail-Adresse",
+      "passwordMin": "Das Passwort muss mindestens 8 Zeichen lang sein"
+    },
+    "success": "Administratorkonto erfolgreich erstellt!",
+    "errors": {
+      "default": "Ein Fehler ist aufgetreten",
+      "createFailed": "Administratorkonto konnte nicht erstellt werden"
+    },
+    "warning": {
+      "title": "⚠️ Wichtiger Sicherheitshinweis",
+      "note1": "Administratorkonten haben vollen Systemzugriff und können alle Benutzer verwalten",
+      "note2": "Administratorkonten können andere Konten erstellen, ändern und löschen",
+      "note3": "Administratorkonten haben Zugriff auf alle Kundendaten und Bestellungen",
+      "note4": "Erstellen Sie Administratorkonten nur für vertrauenswürdiges Personal",
+      "note5": "Verwenden Sie starke, eindeutige Passwörter für Administratorkonten"
+    }
+  },
+  "authenticateUser": {
+    "title": "Benutzer authentifizieren",
+    "subtitle": "Suchen Sie nach Benutzern und verknüpfen Sie sie mit Kundenkonten",
+    "validation": {
+      "invalidEmail": "Ungültige E-Mail-Adresse"
+    },
+    "search": {
+      "title": "Benutzer suchen",
+      "description": "Geben Sie die E-Mail-Adresse des Benutzers ein, den Sie authentifizieren möchten",
+      "emailPlaceholder": "benutzer@beispiel.de",
+      "button": "Suchen",
+      "searching": "Suche läuft...",
+      "notFound": "Kein Benutzer mit dieser E-Mail-Adresse gefunden",
+      "error": "Suche fehlgeschlagen"
+    },
+    "userDetails": {
+      "title": "Benutzerdetails",
+      "email": "E-Mail",
+      "name": "Name",
+      "notSet": "Nicht festgelegt",
+      "role": "Rolle",
+      "roleAdmin": "Administrator",
+      "roleCustomer": "Kunde",
+      "roleNone": "Keine Rolle",
       "created": "Erstellt",
-      "updated": "Zuletzt aktualisiert",
-      "expires": "Läuft ab",
-      "notes": "Notizen",
-      "items": "Warenkorbartikel",
-      "summary": "Bestellübersicht",
-      "subtotal": "Zwischensumme",
-      "discount": "Rabatt",
-      "tax": "Steuer",
-      "shipping": "Versand",
-      "total": "Gesamt",
-      "itemCount": "Artikel",
-      "uniqueItems": "einzigartige"
+      "currentAccess": "Aktueller Kundenzugriff"
     },
-    "actions": {
-      "refresh": "Aktualisieren",
-      "export": "Exportieren",
-      "convertToOrder": "In Bestellung umwandeln",
-      "delete": "Löschen",
-      "removeItem": "Artikel entfernen",
-      "updateQuantity": "Menge aktualisieren",
-      "selectCart": "Wählen Sie einen Warenkorb aus, um Details anzuzeigen"
+    "adminWarning": {
+      "title": "Administratorbenutzer erkannt",
+      "message": "Sie können Administratorbenutzer nicht bearbeiten! Administratorkonten haben vollen Systemzugriff und benötigen keine Kundenverknüpfungen. Kunden-IDs sind nur für Benutzer mit der 'Kunden'-Rolle."
     },
-    "messages": {
-      "updateSuccess": "Warenkorb erfolgreich aktualisiert",
-      "updateError": "Warenkorb konnte nicht aktualisiert werden",
-      "deleteSuccess": "Warenkorb erfolgreich gelöscht",
-      "deleteError": "Warenkorb konnte nicht gelöscht werden",
-      "exportSuccess": "Warenkorb erfolgreich exportiert",
-      "exportError": "Warenkorb konnte nicht exportiert werden",
-      "convertSuccess": "Warenkorb erfolgreich in Bestellung umgewandelt",
-      "convertError": "Warenkorb konnte nicht in Bestellung umgewandelt werden",
-      "itemUnavailable": "Dieser Artikel ist derzeit nicht verfügbar"
+    "selectedCustomers": {
+      "title": "Ausgewählte Kunden",
+      "description": "Diese Kunden werden mit dem Benutzer verknüpft",
+      "removeHint": "Klicken Sie auf ein Kundenetikett, um es aus der Auswahl zu entfernen"
+    },
+    "linkCustomers": {
+      "title": "Mit Kunden verknüpfen",
+      "description": "Wählen Sie aus, auf welche Kundenkonten dieser Benutzer Zugriff haben soll",
+      "searchPlaceholder": "Kunden nach Name oder ID suchen...",
+      "searchResults": "Zeige {{filtered}} von {{total}} Kunden",
+      "noResults": "Keine passenden Kunden gefunden",
+      "loading": "Kunden werden geladen...",
+      "noCustomers": "Keine Kunden verfügbar. Stellen Sie sicher, dass Kunden im System vorhanden sind.",
+      "selected": "Kunde(n) ausgewählt",
+      "updateButton": "Zugriff aktualisieren",
+      "updating": "Wird aktualisiert...",
+      "customerId": "ID"
+    },
+    "success": {
+      "title": "Erfolg!",
+      "message": "Benutzerzugriff wurde erfolgreich aktualisiert."
+    },
+    "errors": {
+      "loadCustomers": "Kundenliste konnte nicht geladen werden",
+      "authenticate": "Authentifizierung fehlgeschlagen"
     }
   }
 }

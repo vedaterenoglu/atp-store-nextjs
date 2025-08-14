@@ -31,9 +31,14 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/schadcn/card'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/schadcn/alert'
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from '@/components/ui/schadcn/alert'
 import { Badge } from '@/components/ui/schadcn/badge'
 import { Checkbox } from '@/components/ui/schadcn/checkbox'
+import { useSafeTranslation } from '@/hooks/use-safe-translation'
 
 // Types
 interface Customer {
@@ -52,14 +57,13 @@ interface FoundUser {
   createdAt: string
 }
 
-// Form schemas
-const searchFormSchema = z.object({
-  email: z.string().email('Invalid email address'),
-})
-
-type SearchForm = z.infer<typeof searchFormSchema>
+// Form schemas will be defined inside component to use translations
+type SearchForm = {
+  email: string
+}
 
 export default function AuthenticateUserPage() {
+  const { t } = useSafeTranslation('admin')
   const [isSearching, setIsSearching] = useState(false)
   const [isAuthenticating, setIsAuthenticating] = useState(false)
   const [searchError, setSearchError] = useState<string | null>(null)
@@ -70,6 +74,15 @@ export default function AuthenticateUserPage() {
   const [selectedCustomers, setSelectedCustomers] = useState<string[]>([])
   const [isLoadingCustomers, setIsLoadingCustomers] = useState(true)
   const [customerFilter, setCustomerFilter] = useState('')
+
+  // Form validation schema with translations
+  const searchFormSchema = z.object({
+    email: z
+      .string()
+      .email(
+        t('authenticateUser.validation.invalidEmail') || 'Invalid email address'
+      ),
+  })
 
   // Search form
   const searchForm = useForm<SearchForm>({
@@ -86,19 +99,17 @@ export default function AuthenticateUserPage() {
         }
         const data = await response.json()
         setCustomers(data.customers || [])
-      } catch (error) {
-        console.error('Error loading customers:', error)
-        setAuthError('Failed to load customer list')
+      } catch {
+        setAuthError(t('authenticateUser.errors.loadCustomers'))
       } finally {
         setIsLoadingCustomers(false)
       }
     }
     loadCustomers()
-  }, [])
+  }, [t])
 
   // Search for user
   const onSearch = async (data: SearchForm) => {
-    console.log('Searching for user:', data.email)
     setIsSearching(true)
     setSearchError(null)
     setFoundUser(null)
@@ -112,7 +123,7 @@ export default function AuthenticateUserPage() {
       const result = await response.json()
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to search user')
+        throw new Error(result.error || t('authenticateUser.search.error'))
       }
 
       if (result.user) {
@@ -124,11 +135,12 @@ export default function AuthenticateUserPage() {
           setSelectedCustomers([])
         }
       } else {
-        setSearchError('No user found with this email address')
+        setSearchError(t('authenticateUser.search.notFound'))
       }
     } catch (err) {
-      console.error('Error searching user:', err)
-      setSearchError(err instanceof Error ? err.message : 'Search failed')
+      setSearchError(
+        err instanceof Error ? err.message : t('authenticateUser.search.error')
+      )
     } finally {
       setIsSearching(false)
     }
@@ -138,7 +150,6 @@ export default function AuthenticateUserPage() {
   const onAuthenticate = async () => {
     if (!foundUser || selectedCustomers.length === 0) return
 
-    console.log('Authenticating user with customers:', selectedCustomers)
     setIsAuthenticating(true)
     setAuthError(null)
     setAuthSuccess(false)
@@ -156,7 +167,9 @@ export default function AuthenticateUserPage() {
       const result = await response.json()
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to authenticate user')
+        throw new Error(
+          result.error || t('authenticateUser.errors.authenticate')
+        )
       }
 
       setAuthSuccess(true)
@@ -169,8 +182,11 @@ export default function AuthenticateUserPage() {
       // Clear success message after 5 seconds
       setTimeout(() => setAuthSuccess(false), 5000)
     } catch (err) {
-      console.error('Error authenticating user:', err)
-      setAuthError(err instanceof Error ? err.message : 'Authentication failed')
+      setAuthError(
+        err instanceof Error
+          ? err.message
+          : t('authenticateUser.errors.authenticate')
+      )
     } finally {
       setIsAuthenticating(false)
     }
@@ -186,17 +202,20 @@ export default function AuthenticateUserPage() {
   }
 
   // Filter customers based on search
-  const filteredCustomers = customers.filter(customer =>
-    customer.customer_title.toLowerCase().includes(customerFilter.toLowerCase()) ||
-    customer.customer_id.toLowerCase().includes(customerFilter.toLowerCase())
+  const filteredCustomers = customers.filter(
+    customer =>
+      customer.customer_title
+        .toLowerCase()
+        .includes(customerFilter.toLowerCase()) ||
+      customer.customer_id.toLowerCase().includes(customerFilter.toLowerCase())
   )
 
   return (
     <div className="max-w-4xl">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Authenticate User</h1>
+        <h1 className="text-3xl font-bold">{t('authenticateUser.title')}</h1>
         <p className="text-muted-foreground mt-2">
-          Search for users and link them to customer accounts
+          {t('authenticateUser.subtitle')}
         </p>
       </div>
 
@@ -205,19 +224,22 @@ export default function AuthenticateUserPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Search className="h-5 w-5" />
-            Search User
+            {t('authenticateUser.search.title')}
           </CardTitle>
           <CardDescription>
-            Enter the email address of the user you want to authenticate
+            {t('authenticateUser.search.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={searchForm.handleSubmit(onSearch)} className="space-y-4">
+          <form
+            onSubmit={searchForm.handleSubmit(onSearch)}
+            className="space-y-4"
+          >
             <div className="flex gap-2">
               <div className="flex-1">
                 <Input
                   type="email"
-                  placeholder="user@example.com"
+                  placeholder={t('authenticateUser.search.emailPlaceholder')}
                   {...searchForm.register('email')}
                   disabled={isSearching}
                 />
@@ -231,12 +253,12 @@ export default function AuthenticateUserPage() {
                 {isSearching ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Searching...
+                    {t('authenticateUser.search.searching')}
                   </>
                 ) : (
                   <>
                     <Search className="mr-2 h-4 w-4" />
-                    Search
+                    {t('authenticateUser.search.button')}
                   </>
                 )}
               </Button>
@@ -258,43 +280,53 @@ export default function AuthenticateUserPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="h-5 w-5" />
-              User Details
+              {t('authenticateUser.userDetails.title')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label className="text-muted-foreground">Email</Label>
+                <Label className="text-muted-foreground">
+                  {t('authenticateUser.userDetails.email')}
+                </Label>
                 <p className="font-medium">{foundUser.email}</p>
               </div>
               <div>
-                <Label className="text-muted-foreground">Name</Label>
+                <Label className="text-muted-foreground">
+                  {t('authenticateUser.userDetails.name')}
+                </Label>
                 <p className="font-medium">
                   {foundUser.firstName || foundUser.lastName
                     ? `${foundUser.firstName || ''} ${foundUser.lastName || ''}`.trim()
-                    : 'Not set'}
+                    : t('authenticateUser.userDetails.notSet')}
                 </p>
               </div>
               <div>
-                <Label className="text-muted-foreground">Role</Label>
+                <Label className="text-muted-foreground">
+                  {t('authenticateUser.userDetails.role')}
+                </Label>
                 <div className="mt-1">
                   {foundUser.role === 'admin' ? (
                     <Badge className="bg-purple-100 text-purple-800">
                       <Shield className="mr-1 h-3 w-3" />
-                      Admin
+                      {t('authenticateUser.userDetails.roleAdmin')}
                     </Badge>
                   ) : foundUser.role === 'customer' ? (
                     <Badge className="bg-blue-100 text-blue-800">
                       <Users className="mr-1 h-3 w-3" />
-                      Customer
+                      {t('authenticateUser.userDetails.roleCustomer')}
                     </Badge>
                   ) : (
-                    <Badge variant="secondary">No role</Badge>
+                    <Badge variant="secondary">
+                      {t('authenticateUser.userDetails.roleNone')}
+                    </Badge>
                   )}
                 </div>
               </div>
               <div>
-                <Label className="text-muted-foreground">Created</Label>
+                <Label className="text-muted-foreground">
+                  {t('authenticateUser.userDetails.created')}
+                </Label>
                 <p className="font-medium">
                   {new Date(foundUser.createdAt).toLocaleDateString()}
                 </p>
@@ -304,7 +336,8 @@ export default function AuthenticateUserPage() {
             {foundUser.customerIds.length > 0 && (
               <div>
                 <Label className="text-muted-foreground">
-                  Current Customer Access ({foundUser.customerIds.length})
+                  {t('authenticateUser.userDetails.currentAccess')} (
+                  {foundUser.customerIds.length})
                 </Label>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {foundUser.customerIds.map(id => {
@@ -327,50 +360,54 @@ export default function AuthenticateUserPage() {
         <Alert className="mb-6 border-amber-500/50 bg-amber-50/50 dark:bg-amber-950/20">
           <AlertCircle className="h-4 w-4 text-amber-600" />
           <AlertTitle className="text-amber-900 dark:text-amber-500">
-            Admin User Detected
+            {t('authenticateUser.adminWarning.title')}
           </AlertTitle>
           <AlertDescription className="text-amber-800 dark:text-amber-400">
-            You cannot edit admin users! Admin accounts have full system access and don't need customer associations.
-            Customer IDs are only for users with 'customer' role.
+            {t('authenticateUser.adminWarning.message')}
           </AlertDescription>
         </Alert>
       )}
 
       {/* Selected Customers Card */}
-      {foundUser && foundUser.role !== 'admin' && selectedCustomers.length > 0 && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              Selected Customers ({selectedCustomers.length})
-            </CardTitle>
-            <CardDescription>
-              These customers will be linked to the user
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
-              {selectedCustomers.map(customerId => {
-                const customer = customers.find(c => c.customer_id === customerId)
-                return (
-                  <Badge
-                    key={customerId}
-                    variant="secondary"
-                    className="px-3 py-1.5 flex items-center gap-2 cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-colors"
-                    onClick={() => toggleCustomer(customerId)}
-                  >
-                    <span>{customer?.customer_title || customerId}</span>
-                    <span className="text-xs opacity-60">×</span>
-                  </Badge>
-                )
-              })}
-            </div>
-            <p className="text-xs text-muted-foreground mt-3">
-              Click on any customer badge to remove it from selection
-            </p>
-          </CardContent>
-        </Card>
-      )}
+      {foundUser &&
+        foundUser.role !== 'admin' &&
+        selectedCustomers.length > 0 && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                {t('authenticateUser.selectedCustomers.title')} (
+                {selectedCustomers.length})
+              </CardTitle>
+              <CardDescription>
+                {t('authenticateUser.selectedCustomers.description')}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {selectedCustomers.map(customerId => {
+                  const customer = customers.find(
+                    c => c.customer_id === customerId
+                  )
+                  return (
+                    <Badge
+                      key={customerId}
+                      variant="secondary"
+                      className="px-3 py-1.5 flex items-center gap-2 cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-colors"
+                      onClick={() => toggleCustomer(customerId)}
+                    >
+                      <span>{customer?.customer_title || customerId}</span>
+                      <span className="text-xs opacity-60">×</span>
+                    </Badge>
+                  )
+                })}
+              </div>
+              <p className="text-xs text-muted-foreground mt-3">
+                {t('authenticateUser.selectedCustomers.removeHint')}
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
       {/* Customer Selection Card - Only for non-admin users */}
       {foundUser && foundUser.role !== 'admin' && (
@@ -378,10 +415,10 @@ export default function AuthenticateUserPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <UserCheck className="h-5 w-5" />
-              Link to Customers
+              {t('authenticateUser.linkCustomers.title')}
             </CardTitle>
             <CardDescription>
-              Select which customer accounts this user should have access to
+              {t('authenticateUser.linkCustomers.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -393,7 +430,7 @@ export default function AuthenticateUserPage() {
               <Alert>
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  No customers available. Please ensure customers exist in the system.
+                  {t('authenticateUser.linkCustomers.noCustomers')}
                 </AlertDescription>
               </Alert>
             ) : (
@@ -404,15 +441,20 @@ export default function AuthenticateUserPage() {
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
                       type="text"
-                      placeholder="Search customers by name or ID..."
+                      placeholder={t(
+                        'authenticateUser.linkCustomers.searchPlaceholder'
+                      )}
                       value={customerFilter}
-                      onChange={(e) => setCustomerFilter(e.target.value)}
+                      onChange={e => setCustomerFilter(e.target.value)}
                       className="pl-9"
                     />
                   </div>
                   {customerFilter && (
                     <p className="mt-2 text-sm text-muted-foreground">
-                      Showing {filteredCustomers.length} of {customers.length} customers
+                      {t('authenticateUser.linkCustomers.searchResults', {
+                        filtered: filteredCustomers.length,
+                        total: customers.length,
+                      })}
                     </p>
                   )}
                 </div>
@@ -420,33 +462,43 @@ export default function AuthenticateUserPage() {
                 <div className="space-y-2 max-h-96 overflow-y-auto border rounded-lg p-4">
                   {filteredCustomers.length === 0 ? (
                     <div className="text-center py-8 text-muted-foreground">
-                      No customers found matching "{customerFilter}"
+                      {t('authenticateUser.linkCustomers.noResults')} &quot;
+                      {customerFilter}&quot;
                     </div>
                   ) : (
                     filteredCustomers.map(customer => (
-                    <div
-                      key={customer.customer_id}
-                      className="flex items-center space-x-3 py-2 px-3 hover:bg-accent rounded-md cursor-pointer"
-                      onClick={() => toggleCustomer(customer.customer_id)}
-                    >
-                      <Checkbox
-                        checked={selectedCustomers.includes(customer.customer_id)}
-                        onCheckedChange={() => toggleCustomer(customer.customer_id)}
-                        onClick={(e: React.MouseEvent) => e.stopPropagation()}
-                      />
-                      <Label className="flex-1 cursor-pointer">
-                        <div className="font-medium">{customer.customer_title}</div>
-                        <div className="text-sm text-muted-foreground">
-                          ID: {customer.customer_id}
-                        </div>
-                      </Label>
-                    </div>
-                  )))}
+                      <div
+                        key={customer.customer_id}
+                        className="flex items-center space-x-3 py-2 px-3 hover:bg-accent rounded-md cursor-pointer"
+                        onClick={() => toggleCustomer(customer.customer_id)}
+                      >
+                        <Checkbox
+                          checked={selectedCustomers.includes(
+                            customer.customer_id
+                          )}
+                          onCheckedChange={() =>
+                            toggleCustomer(customer.customer_id)
+                          }
+                          onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                        />
+                        <Label className="flex-1 cursor-pointer">
+                          <div className="font-medium">
+                            {customer.customer_title}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {t('authenticateUser.linkCustomers.customerId')}:{' '}
+                            {customer.customer_id}
+                          </div>
+                        </Label>
+                      </div>
+                    ))
+                  )}
                 </div>
 
                 <div className="mt-4 flex items-center justify-between">
                   <p className="text-sm text-muted-foreground">
-                    {selectedCustomers.length} customer(s) selected
+                    {selectedCustomers.length}{' '}
+                    {t('authenticateUser.linkCustomers.selected')}
                   </p>
                   <Button
                     onClick={onAuthenticate}
@@ -457,12 +509,12 @@ export default function AuthenticateUserPage() {
                     {isAuthenticating ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Updating...
+                        {t('authenticateUser.linkCustomers.updating')}
                       </>
                     ) : (
                       <>
                         <UserCheck className="mr-2 h-4 w-4" />
-                        Update Access
+                        {t('authenticateUser.linkCustomers.updateButton')}
                       </>
                     )}
                   </Button>
@@ -471,9 +523,11 @@ export default function AuthenticateUserPage() {
                 {authSuccess && (
                   <Alert className="mt-4 border-green-500 bg-green-50 dark:bg-green-950/20">
                     <CheckCircle className="h-4 w-4 text-green-600" />
-                    <AlertTitle className="text-green-600">Success!</AlertTitle>
+                    <AlertTitle className="text-green-600">
+                      {t('authenticateUser.success.title')}
+                    </AlertTitle>
                     <AlertDescription className="text-green-600">
-                      User access has been updated successfully.
+                      {t('authenticateUser.success.message')}
                     </AlertDescription>
                   </Alert>
                 )}

@@ -1,86 +1,135 @@
 {
-  "dashboard": "Kundedashboard",
-  "pendingOrders": "Afventende Ordrer",
-  "deliveries": "Leveringsnotater (Leverancer)",
-  "invoices": "Fakturaer",
-  "unpaidInvoices": "Ubetalte Fakturaer",
-  "cart": {
-    "title": "Kurvadministration",
-    "subtitle": "Administrer kundekurve og genoprette forladte kurve",
-    "empty": {
-      "title": "Ingen kurve fundet",
-      "description": "Der er ingen kurve der matcher dine kriterier",
-      "action": "Ryd filtre"
+  "sidebar": {
+    "title": "Administrationspanel",
+    "dashboard": "Oversigt",
+    "createCustomer": "Opret kunde",
+    "createAdmin": "Opret administrator",
+    "authenticateUser": "Godkend bruger",
+    "modifyUser": "Rediger bruger",
+    "deliveries": "Leverancer",
+    "invoices": "Fakturaer",
+    "pendingOrders": "Afventende ordrer",
+    "unpaidInvoices": "Ubetalte fakturaer"
+  },
+  "createCustomer": {
+    "title": "Opret kundekonto",
+    "subtitle": "Opret en ny kundekonto i Clerk-godkendelsessystemet",
+    "cardTitle": "Ny kundekonto",
+    "cardDescription": "Indtast kundeoplysningerne nedenfor. Kontoen oprettes med kunderollen.",
+    "form": {
+      "email": "E-mailadresse",
+      "emailPlaceholder": "kunde@eksempel.dk",
+      "password": "Adgangskode",
+      "passwordPlaceholder": "••••••••",
+      "required": "*",
+      "submit": "Opret kundekonto",
+      "submitting": "Opretter konto..."
     },
-    "status": {
-      "active": "Aktiv",
-      "pending": "Afventende",
-      "checkedOut": "Tjekket ud",
-      "abandoned": "Forladt",
-      "expired": "Udløbet"
+    "validation": {
+      "invalidEmail": "Ugyldig e-mailadresse",
+      "passwordMin": "Adgangskoden skal være mindst 8 tegn"
     },
-    "filter": {
-      "title": "Filtre",
-      "search": "Søg efter bruger, kunde eller virksomhed...",
-      "status": "Filtrer efter status",
-      "dateRange": "Datoområde",
-      "totalRange": "Total område",
-      "from": "Fra",
-      "to": "Til",
-      "min": "Min",
-      "max": "Maks",
-      "clearAll": "Ryd alle",
-      "apply": "Anvend filtre"
+    "success": "Kundekonto oprettet succesfuldt!",
+    "errors": {
+      "default": "Der opstod en fejl",
+      "createFailed": "Kunne ikke oprette kundekonto"
     },
-    "sort": {
-      "recentlyUpdated": "Senest opdateret",
-      "oldestUpdated": "Ældst opdateret",
-      "recentlyCreated": "Senest oprettet",
-      "oldestCreated": "Ældst oprettet",
-      "highestTotal": "Højeste total",
-      "lowestTotal": "Laveste total",
-      "mostItems": "Flest elementer",
-      "fewestItems": "Færrest elementer"
+    "notes": {
+      "title": "Vigtige bemærkninger",
+      "note1": "Kontoen oprettes automatisk med 'kunde'-rollen",
+      "note2": "Brugeren kan logge ind øjeblikkeligt med disse legitimationsoplysninger",
+      "note3": "Kundeadgang til specifikke virksomheder skal konfigureres separat",
+      "note4": "Brug 'Godkend bruger'-sektionen til at linke kunder til virksomheder"
+    }
+  },
+  "createAdmin": {
+    "title": "Opret administratorkonto",
+    "subtitle": "Opret en ny administratorkonto med fuld systemadgang",
+    "cardTitle": "Ny administratorkonto",
+    "cardDescription": "Indtast administratoroplysningerne nedenfor. Denne konto vil have fulde administrative rettigheder.",
+    "form": {
+      "email": "E-mailadresse",
+      "emailPlaceholder": "admin@eksempel.dk",
+      "password": "Adgangskode",
+      "passwordPlaceholder": "••••••••",
+      "required": "*",
+      "submit": "Opret administratorkonto",
+      "submitting": "Opretter konto..."
     },
-    "detail": {
-      "customerInfo": "Kundeoplysninger",
-      "userId": "Bruger ID",
-      "customerId": "Kunde ID",
-      "companyId": "Virksomhed",
-      "timeline": "Tidslinje",
+    "validation": {
+      "invalidEmail": "Ugyldig e-mailadresse",
+      "passwordMin": "Adgangskoden skal være mindst 8 tegn"
+    },
+    "success": "Administratorkonto oprettet succesfuldt!",
+    "errors": {
+      "default": "Der opstod en fejl",
+      "createFailed": "Kunne ikke oprette administratorkonto"
+    },
+    "warning": {
+      "title": "⚠️ Vigtig sikkerhedsmeddelelse",
+      "note1": "Administratorkonti har fuld systemadgang og kan administrere alle brugere",
+      "note2": "Administratorkonti kan oprette, ændre og slette andre konti",
+      "note3": "Administratorkonti har adgang til alle kundedata og ordrer",
+      "note4": "Opret kun administratorkonti til betroet personale",
+      "note5": "Brug stærke, unikke adgangskoder til administratorkonti"
+    }
+  },
+  "authenticateUser": {
+    "title": "Godkend bruger",
+    "subtitle": "Søg efter brugere og link dem til kundekonti",
+    "validation": {
+      "invalidEmail": "Ugyldig e-mailadresse"
+    },
+    "search": {
+      "title": "Søg bruger",
+      "description": "Indtast e-mailadressen på den bruger, du vil godkende",
+      "emailPlaceholder": "bruger@eksempel.dk",
+      "button": "Søg",
+      "searching": "Søger...",
+      "notFound": "Ingen bruger fundet med denne e-mailadresse",
+      "error": "Søgning mislykkedes"
+    },
+    "userDetails": {
+      "title": "Brugerdetaljer",
+      "email": "E-mail",
+      "name": "Navn",
+      "notSet": "Ikke angivet",
+      "role": "Rolle",
+      "roleAdmin": "Administrator",
+      "roleCustomer": "Kunde",
+      "roleNone": "Ingen rolle",
       "created": "Oprettet",
-      "updated": "Sidst opdateret",
-      "expires": "Udløber",
-      "notes": "Noter",
-      "items": "Kurvelementer",
-      "summary": "Ordreoversigt",
-      "subtotal": "Subtotal",
-      "discount": "Rabat",
-      "tax": "Skat",
-      "shipping": "Forsendelse",
-      "total": "Total",
-      "itemCount": "Elementer",
-      "uniqueItems": "unikke"
+      "currentAccess": "Nuværende kundeadgang"
     },
-    "actions": {
-      "refresh": "Opdater",
-      "export": "Eksporter",
-      "convertToOrder": "Konverter til ordre",
-      "delete": "Slet",
-      "removeItem": "Fjern element",
-      "updateQuantity": "Opdater antal",
-      "selectCart": "Vælg en kurv for at se detaljer"
+    "adminWarning": {
+      "title": "Administratorbruger registreret",
+      "message": "Du kan ikke redigere administratorbrugere! Administratorkonti har fuld systemadgang og behøver ikke kundeassociationer. Kunde-ID'er er kun til brugere med 'kunde'-rollen."
     },
-    "messages": {
-      "updateSuccess": "Kurv opdateret succesfuldt",
-      "updateError": "Kunne ikke opdatere kurv",
-      "deleteSuccess": "Kurv slettet succesfuldt",
-      "deleteError": "Kunne ikke slette kurv",
-      "exportSuccess": "Kurv eksporteret succesfuldt",
-      "exportError": "Kunne ikke eksportere kurv",
-      "convertSuccess": "Kurv konverteret til ordre succesfuldt",
-      "convertError": "Kunne ikke konvertere kurv til ordre",
-      "itemUnavailable": "Dette element er i øjeblikket ikke tilgængeligt"
+    "selectedCustomers": {
+      "title": "Valgte kunder",
+      "description": "Disse kunder vil blive linket til brugeren",
+      "removeHint": "Klik på ethvert kundemærke for at fjerne det fra valget"
+    },
+    "linkCustomers": {
+      "title": "Link til kunder",
+      "description": "Vælg hvilke kundekonti denne bruger skal have adgang til",
+      "searchPlaceholder": "Søg kunder efter navn eller ID...",
+      "searchResults": "Viser {{filtered}} af {{total}} kunder",
+      "noResults": "Ingen kunder fundet som matcher",
+      "loading": "Indlæser kunder...",
+      "noCustomers": "Ingen kunder tilgængelige. Sørg for at kunder findes i systemet.",
+      "selected": "kunde(r) valgt",
+      "updateButton": "Opdater adgang",
+      "updating": "Opdaterer...",
+      "customerId": "ID"
+    },
+    "success": {
+      "title": "Succes!",
+      "message": "Brugeradgang er blevet opdateret succesfuldt."
+    },
+    "errors": {
+      "loadCustomers": "Kunne ikke indlæse kundeliste",
+      "authenticate": "Godkendelse mislykkedes"
     }
   }
 }

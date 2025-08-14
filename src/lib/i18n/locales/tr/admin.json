@@ -1,86 +1,135 @@
 {
-  "dashboard": "Müşteri Paneli",
-  "pendingOrders": "Bekleyen Siparişler",
-  "deliveries": "İrsaliyeler (Teslimatlar)",
-  "invoices": "Faturalar",
-  "unpaidInvoices": "Ödenmemiş Faturalar",
-  "cart": {
-    "title": "Sepet Yönetimi",
-    "subtitle": "Müşteri sepetlerini ve terk edilmiş sepetleri yönetin",
-    "empty": {
-      "title": "Sepet bulunamadı",
-      "description": "Kriterlerinize uyan sepet bulunmamaktadır",
-      "action": "Filtreleri temizle"
+  "sidebar": {
+    "title": "Yönetim Paneli",
+    "dashboard": "Genel Bakış",
+    "createCustomer": "Müşteri Oluştur",
+    "createAdmin": "Yönetici Oluştur",
+    "authenticateUser": "Kullanıcı Doğrula",
+    "modifyUser": "Kullanıcı Düzenle",
+    "deliveries": "Teslimatlar",
+    "invoices": "Faturalar",
+    "pendingOrders": "Bekleyen Siparişler",
+    "unpaidInvoices": "Ödenmemiş Faturalar"
+  },
+  "createCustomer": {
+    "title": "Müşteri Hesabı Oluştur",
+    "subtitle": "Clerk kimlik doğrulama sisteminde yeni bir müşteri hesabı oluşturun",
+    "cardTitle": "Yeni Müşteri Hesabı",
+    "cardDescription": "Aşağıya müşteri bilgilerini girin. Hesap müşteri rolüyle oluşturulacaktır.",
+    "form": {
+      "email": "E-posta Adresi",
+      "emailPlaceholder": "musteri@ornek.com",
+      "password": "Şifre",
+      "passwordPlaceholder": "••••••••",
+      "required": "*",
+      "submit": "Müşteri Hesabı Oluştur",
+      "submitting": "Hesap Oluşturuluyor..."
     },
-    "status": {
-      "active": "Aktif",
-      "pending": "Beklemede",
-      "checkedOut": "Ödeme Yapıldı",
-      "abandoned": "Terk Edilmiş",
-      "expired": "Süresi Dolmuş"
+    "validation": {
+      "invalidEmail": "Geçersiz e-posta adresi",
+      "passwordMin": "Şifre en az 8 karakter olmalıdır"
     },
-    "filter": {
-      "title": "Filtreler",
-      "search": "Kullanıcı, müşteri veya şirket ara...",
-      "status": "Duruma göre filtrele",
-      "dateRange": "Tarih Aralığı",
-      "totalRange": "Tutar Aralığı",
-      "from": "Başlangıç",
-      "to": "Bitiş",
-      "min": "Min",
-      "max": "Maks",
-      "clearAll": "Tümünü Temizle",
-      "apply": "Filtreleri Uygula"
+    "success": "Müşteri hesabı başarıyla oluşturuldu!",
+    "errors": {
+      "default": "Bir hata oluştu",
+      "createFailed": "Müşteri hesabı oluşturulamadı"
     },
-    "sort": {
-      "recentlyUpdated": "Son Güncellenen",
-      "oldestUpdated": "İlk Güncellenen",
-      "recentlyCreated": "Son Oluşturulan",
-      "oldestCreated": "İlk Oluşturulan",
-      "highestTotal": "En Yüksek Tutar",
-      "lowestTotal": "En Düşük Tutar",
-      "mostItems": "En Çok Ürün",
-      "fewestItems": "En Az Ürün"
+    "notes": {
+      "title": "Önemli Notlar",
+      "note1": "Hesap otomatik olarak 'müşteri' rolüyle oluşturulacaktır",
+      "note2": "Kullanıcı bu kimlik bilgileriyle hemen giriş yapabilir",
+      "note3": "Belirli şirketlere müşteri erişimi ayrıca yapılandırılmalıdır",
+      "note4": "Müşterileri şirketlere bağlamak için 'Kullanıcı Doğrula' bölümünü kullanın"
+    }
+  },
+  "createAdmin": {
+    "title": "Yönetici Hesabı Oluştur",
+    "subtitle": "Tam sistem erişimine sahip yeni bir yönetici hesabı oluşturun",
+    "cardTitle": "Yeni Yönetici Hesabı",
+    "cardDescription": "Aşağıya yönetici bilgilerini girin. Bu hesap tam yönetici yetkilerine sahip olacaktır.",
+    "form": {
+      "email": "E-posta Adresi",
+      "emailPlaceholder": "yonetici@ornek.com",
+      "password": "Şifre",
+      "passwordPlaceholder": "••••••••",
+      "required": "*",
+      "submit": "Yönetici Hesabı Oluştur",
+      "submitting": "Hesap Oluşturuluyor..."
     },
-    "detail": {
-      "customerInfo": "Müşteri Bilgileri",
-      "userId": "Kullanıcı ID",
-      "customerId": "Müşteri ID",
-      "companyId": "Şirket",
-      "timeline": "Zaman Çizelgesi",
+    "validation": {
+      "invalidEmail": "Geçersiz e-posta adresi",
+      "passwordMin": "Şifre en az 8 karakter olmalıdır"
+    },
+    "success": "Yönetici hesabı başarıyla oluşturuldu!",
+    "errors": {
+      "default": "Bir hata oluştu",
+      "createFailed": "Yönetici hesabı oluşturulamadı"
+    },
+    "warning": {
+      "title": "⚠️ Önemli Güvenlik Bildirimi",
+      "note1": "Yönetici hesapları tam sistem erişimine sahiptir ve tüm kullanıcıları yönetebilir",
+      "note2": "Yönetici hesapları diğer hesapları oluşturabilir, değiştirebilir ve silebilir",
+      "note3": "Yönetici hesapları tüm müşteri verilerine ve siparişlere erişebilir",
+      "note4": "Yönetici hesaplarını yalnızca güvenilir personel için oluşturun",
+      "note5": "Yönetici hesapları için güçlü, benzersiz şifreler kullanın"
+    }
+  },
+  "authenticateUser": {
+    "title": "Kullanıcı Doğrula",
+    "subtitle": "Kullanıcıları arayın ve müşteri hesaplarına bağlayın",
+    "validation": {
+      "invalidEmail": "Geçersiz e-posta adresi"
+    },
+    "search": {
+      "title": "Kullanıcı Ara",
+      "description": "Doğrulamak istediğiniz kullanıcının e-posta adresini girin",
+      "emailPlaceholder": "kullanici@ornek.com",
+      "button": "Ara",
+      "searching": "Aranıyor...",
+      "notFound": "Bu e-posta adresiyle kullanıcı bulunamadı",
+      "error": "Arama başarısız oldu"
+    },
+    "userDetails": {
+      "title": "Kullanıcı Detayları",
+      "email": "E-posta",
+      "name": "İsim",
+      "notSet": "Belirtilmemiş",
+      "role": "Rol",
+      "roleAdmin": "Yönetici",
+      "roleCustomer": "Müşteri",
+      "roleNone": "Rol yok",
       "created": "Oluşturulma",
-      "updated": "Son güncelleme",
-      "expires": "Süre sonu",
-      "notes": "Notlar",
-      "items": "Sepet Ürünleri",
-      "summary": "Sipariş Özeti",
-      "subtotal": "Ara Toplam",
-      "discount": "İndirim",
-      "tax": "KDV",
-      "shipping": "Kargo",
-      "total": "Toplam",
-      "itemCount": "Ürün",
-      "uniqueItems": "benzersiz"
+      "currentAccess": "Mevcut Müşteri Erişimi"
     },
-    "actions": {
-      "refresh": "Yenile",
-      "export": "Dışa Aktar",
-      "convertToOrder": "Siparişe Dönüştür",
-      "delete": "Sil",
-      "removeItem": "Ürünü kaldır",
-      "updateQuantity": "Miktarı güncelle",
-      "selectCart": "Detayları görüntülemek için bir sepet seçin"
+    "adminWarning": {
+      "title": "Yönetici Kullanıcı Tespit Edildi",
+      "message": "Yönetici kullanıcıları düzenleyemezsiniz! Yönetici hesapları tam sistem erişimine sahiptir ve müşteri ilişkilendirmelerine ihtiyaç duymaz. Müşteri ID'leri yalnızca 'müşteri' rolüne sahip kullanıcılar içindir."
     },
-    "messages": {
-      "updateSuccess": "Sepet güncellendi",
-      "updateError": "Sepet güncellenemedi",
-      "deleteSuccess": "Sepet silindi",
-      "deleteError": "Sepet silinemedi",
-      "exportSuccess": "Sepet dışa aktarıldı",
-      "exportError": "Sepet dışa aktarılamadı",
-      "convertSuccess": "Sepet siparişe dönüştürüldü",
-      "convertError": "Sepet siparişe dönüştürülemedi",
-      "itemUnavailable": "Bu ürün şu anda mevcut değil"
+    "selectedCustomers": {
+      "title": "Seçili Müşteriler",
+      "description": "Bu müşteriler kullanıcıya bağlanacak",
+      "removeHint": "Seçimden kaldırmak için herhangi bir müşteri rozetine tıklayın"
+    },
+    "linkCustomers": {
+      "title": "Müşterilere Bağla",
+      "description": "Bu kullanıcının erişebileceği müşteri hesaplarını seçin",
+      "searchPlaceholder": "İsim veya ID'ye göre müşteri ara...",
+      "searchResults": "{{total}} müşteriden {{filtered}} tanesi gösteriliyor",
+      "noResults": "Eşleşen müşteri bulunamadı",
+      "loading": "Müşteriler yükleniyor...",
+      "noCustomers": "Müşteri mevcut değil. Sistemde müşteri bulunduğundan emin olun.",
+      "selected": "müşteri seçildi",
+      "updateButton": "Erişimi Güncelle",
+      "updating": "Güncelleniyor...",
+      "customerId": "ID"
+    },
+    "success": {
+      "title": "Başarılı!",
+      "message": "Kullanıcı erişimi başarıyla güncellendi."
+    },
+    "errors": {
+      "loadCustomers": "Müşteri listesi yüklenemedi",
+      "authenticate": "Doğrulama başarısız oldu"
     }
   }
 }

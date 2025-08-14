@@ -1,86 +1,135 @@
 {
-  "dashboard": "Kundpanel",
-  "pendingOrders": "Väntande beställningar",
-  "deliveries": "Följesedlar (Leveranser)",
-  "invoices": "Fakturor",
-  "unpaidInvoices": "Obetalda fakturor",
-  "cart": {
-    "title": "Kundvagnshantering",
-    "subtitle": "Hantera kundvagnar och övergivna vagnar",
-    "empty": {
-      "title": "Inga kundvagnar hittades",
-      "description": "Det finns inga kundvagnar som matchar dina kriterier",
-      "action": "Rensa filter"
+  "sidebar": {
+    "title": "Adminpanel",
+    "dashboard": "Översikt",
+    "createCustomer": "Skapa kund",
+    "createAdmin": "Skapa administratör",
+    "authenticateUser": "Autentisera användare",
+    "modifyUser": "Ändra användare",
+    "deliveries": "Leveranser",
+    "invoices": "Fakturor",
+    "pendingOrders": "Väntande beställningar",
+    "unpaidInvoices": "Obetalda fakturor"
+  },
+  "createCustomer": {
+    "title": "Skapa kundkonto",
+    "subtitle": "Skapa ett nytt kundkonto i Clerk-autentiseringssystemet",
+    "cardTitle": "Nytt kundkonto",
+    "cardDescription": "Ange kunduppgifterna nedan. Kontot kommer att skapas med kundrollen.",
+    "form": {
+      "email": "E-postadress",
+      "emailPlaceholder": "kund@exempel.se",
+      "password": "Lösenord",
+      "passwordPlaceholder": "••••••••",
+      "required": "*",
+      "submit": "Skapa kundkonto",
+      "submitting": "Skapar konto..."
     },
-    "status": {
-      "active": "Aktiv",
-      "pending": "Väntande",
-      "checkedOut": "Utcheckad",
-      "abandoned": "Övergiven",
-      "expired": "Utgången"
+    "validation": {
+      "invalidEmail": "Ogiltig e-postadress",
+      "passwordMin": "Lösenordet måste vara minst 8 tecken"
     },
-    "filter": {
-      "title": "Filter",
-      "search": "Sök efter användare, kund eller företag...",
-      "status": "Filtrera efter status",
-      "dateRange": "Datumintervall",
-      "totalRange": "Totalintervall",
-      "from": "Från",
-      "to": "Till",
-      "min": "Min",
-      "max": "Max",
-      "clearAll": "Rensa alla",
-      "apply": "Tillämpa filter"
+    "success": "Kundkonto har skapats!",
+    "errors": {
+      "default": "Ett fel uppstod",
+      "createFailed": "Misslyckades med att skapa kundkonto"
     },
-    "sort": {
-      "recentlyUpdated": "Senast uppdaterad",
-      "oldestUpdated": "Äldst uppdaterad",
-      "recentlyCreated": "Senast skapad",
-      "oldestCreated": "Äldst skapad",
-      "highestTotal": "Högsta total",
-      "lowestTotal": "Lägsta total",
-      "mostItems": "Flest artiklar",
-      "fewestItems": "Minst artiklar"
+    "notes": {
+      "title": "Viktiga anteckningar",
+      "note1": "Kontot kommer automatiskt att skapas med 'kund'-rollen",
+      "note2": "Användaren kan logga in omedelbart med dessa uppgifter",
+      "note3": "Kundåtkomst till specifika företag måste konfigureras separat",
+      "note4": "Använd 'Autentisera användare' för att länka kunder till företag"
+    }
+  },
+  "createAdmin": {
+    "title": "Skapa administratörskonto",
+    "subtitle": "Skapa ett nytt administratörskonto med full systemåtkomst",
+    "cardTitle": "Nytt administratörskonto",
+    "cardDescription": "Ange administratörsuppgifterna nedan. Detta konto kommer att ha fulla administrativa rättigheter.",
+    "form": {
+      "email": "E-postadress",
+      "emailPlaceholder": "admin@exempel.se",
+      "password": "Lösenord",
+      "passwordPlaceholder": "••••••••",
+      "required": "*",
+      "submit": "Skapa administratörskonto",
+      "submitting": "Skapar konto..."
     },
-    "detail": {
-      "customerInfo": "Kundinformation",
-      "userId": "Användar-ID",
-      "customerId": "Kund-ID",
-      "companyId": "Företag",
-      "timeline": "Tidslinje",
+    "validation": {
+      "invalidEmail": "Ogiltig e-postadress",
+      "passwordMin": "Lösenordet måste vara minst 8 tecken"
+    },
+    "success": "Administratörskonto har skapats!",
+    "errors": {
+      "default": "Ett fel uppstod",
+      "createFailed": "Misslyckades med att skapa administratörskonto"
+    },
+    "warning": {
+      "title": "⚠️ Viktig säkerhetsnotis",
+      "note1": "Administratörskonton har full systemåtkomst och kan hantera alla användare",
+      "note2": "Administratörskonton kan skapa, ändra och ta bort andra konton",
+      "note3": "Administratörskonton har tillgång till all kunddata och beställningar",
+      "note4": "Skapa endast administratörskonton för betrodd personal",
+      "note5": "Använd starka, unika lösenord för administratörskonton"
+    }
+  },
+  "authenticateUser": {
+    "title": "Autentisera användare",
+    "subtitle": "Sök efter användare och länka dem till kundkonton",
+    "validation": {
+      "invalidEmail": "Ogiltig e-postadress"
+    },
+    "search": {
+      "title": "Sök användare",
+      "description": "Ange e-postadressen för användaren du vill autentisera",
+      "emailPlaceholder": "användare@exempel.se",
+      "button": "Sök",
+      "searching": "Söker...",
+      "notFound": "Ingen användare hittades med denna e-postadress",
+      "error": "Sökningen misslyckades"
+    },
+    "userDetails": {
+      "title": "Användardetaljer",
+      "email": "E-post",
+      "name": "Namn",
+      "notSet": "Ej angivet",
+      "role": "Roll",
+      "roleAdmin": "Administratör",
+      "roleCustomer": "Kund",
+      "roleNone": "Ingen roll",
       "created": "Skapad",
-      "updated": "Senast uppdaterad",
-      "expires": "Utgår",
-      "notes": "Anteckningar",
-      "items": "Kundvagnsartiklar",
-      "summary": "Ordersammanfattning",
-      "subtotal": "Delsumma",
-      "discount": "Rabatt",
-      "tax": "Moms",
-      "shipping": "Frakt",
-      "total": "Totalt",
-      "itemCount": "Artiklar",
-      "uniqueItems": "unika"
+      "currentAccess": "Nuvarande kundåtkomst"
     },
-    "actions": {
-      "refresh": "Uppdatera",
-      "export": "Exportera",
-      "convertToOrder": "Konvertera till order",
-      "delete": "Ta bort",
-      "removeItem": "Ta bort artikel",
-      "updateQuantity": "Uppdatera antal",
-      "selectCart": "Välj en kundvagn för att visa detaljer"
+    "adminWarning": {
+      "title": "Administratörsanvändare upptäckt",
+      "message": "Du kan inte redigera administratörsanvändare! Administratörskonton har full systemåtkomst och behöver inte kundassociationer. Kund-ID är endast för användare med 'kund'-rollen."
     },
-    "messages": {
-      "updateSuccess": "Kundvagn uppdaterad",
-      "updateError": "Kunde inte uppdatera kundvagn",
-      "deleteSuccess": "Kundvagn borttagen",
-      "deleteError": "Kunde inte ta bort kundvagn",
-      "exportSuccess": "Kundvagn exporterad",
-      "exportError": "Kunde inte exportera kundvagn",
-      "convertSuccess": "Kundvagn konverterad till order",
-      "convertError": "Kunde inte konvertera kundvagn till order",
-      "itemUnavailable": "Denna artikel är för närvarande inte tillgänglig"
+    "selectedCustomers": {
+      "title": "Valda kunder",
+      "description": "Dessa kunder kommer att länkas till användaren",
+      "removeHint": "Klicka på valfri kundbricka för att ta bort den från urvalet"
+    },
+    "linkCustomers": {
+      "title": "Länka till kunder",
+      "description": "Välj vilka kundkonton denna användare ska ha tillgång till",
+      "searchPlaceholder": "Sök kunder efter namn eller ID...",
+      "searchResults": "Visar {{filtered}} av {{total}} kunder",
+      "noResults": "Inga kunder hittades som matchar",
+      "loading": "Laddar kunder...",
+      "noCustomers": "Inga kunder tillgängliga. Se till att kunder finns i systemet.",
+      "selected": "kund(er) valda",
+      "updateButton": "Uppdatera åtkomst",
+      "updating": "Uppdaterar...",
+      "customerId": "ID"
+    },
+    "success": {
+      "title": "Klart!",
+      "message": "Användaråtkomst har uppdaterats."
+    },
+    "errors": {
+      "loadCustomers": "Misslyckades med att ladda kundlistan",
+      "authenticate": "Autentiseringen misslyckades"
     }
   }
 }

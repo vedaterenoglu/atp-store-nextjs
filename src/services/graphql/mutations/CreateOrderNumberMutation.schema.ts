@@ -45,8 +45,10 @@ if (process.env['NODE_ENV'] === 'development') {
 
   try {
     CreateOrderNumberMutationResponseSchema.parse(exampleResponse)
-    console.log('✅ CreateOrderNumberMutation schema validation passed')
   } catch (error) {
-    console.error('❌ CreateOrderNumberMutation schema validation failed:', error)
+    console.error(
+      '❌ CreateOrderNumberMutation schema validation failed:',
+      error
+    )
   }
 }

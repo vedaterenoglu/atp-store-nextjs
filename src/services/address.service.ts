@@ -80,7 +80,9 @@ export class AddressService {
   /**
    * Gets the default address (first one) from the list
    */
-  static getDefaultAddress(addresses: FormattedAddress[]): FormattedAddress | null {
+  static getDefaultAddress(
+    addresses: FormattedAddress[]
+  ): FormattedAddress | null {
     if (!this.hasAddresses(addresses)) {
       return null
     }

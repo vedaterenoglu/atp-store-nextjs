@@ -61,17 +61,19 @@ export async function POST(request: NextRequest) {
     if (result.errors) {
       console.error('GraphQL errors:', result.errors)
       return NextResponse.json(
-        { 
+        {
           success: false,
-          error: 'Failed to generate order number', 
-          details: result.errors 
+          error: 'Failed to generate order number',
+          details: result.errors,
         },
         { status: 500 }
       )
     }
 
     // Validate response with Zod
-    const validatedData = CreateOrderNumberMutationResponseSchema.parse(result.data)
+    const validatedData = CreateOrderNumberMutationResponseSchema.parse(
+      result.data
+    )
 
     // Check if we got a result
     if (!validatedData.update_companies.returning.length) {

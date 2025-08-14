@@ -15,32 +15,25 @@ const createAdminSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
 })
 
-// Response schemas
-const successResponseSchema = z.object({
-  success: z.literal(true),
-  userId: z.string(),
-  email: z.string(),
-  message: z.string(),
-})
+// Response types
+type SuccessResponse = {
+  success: true
+  userId: string
+  email: string
+  message: string
+}
 
-const errorResponseSchema = z.object({
-  success: z.literal(false),
-  error: z.string(),
-})
-
-type SuccessResponse = z.infer<typeof successResponseSchema>
-type ErrorResponse = z.infer<typeof errorResponseSchema>
+type ErrorResponse = {
+  success: false
+  error: string
+}
 
 export async function POST(
   req: NextRequest
 ): Promise<NextResponse<SuccessResponse | ErrorResponse>> {
-  console.log('=== CREATE ADMIN API CALLED ===')
-  
   try {
     // Check admin authentication
     const { userId, sessionClaims } = await auth()
-    console.log('Auth check - userId:', userId)
-    console.log('Auth check - sessionClaims:', sessionClaims)
 
     if (!userId) {
       return NextResponse.json(
@@ -50,7 +43,9 @@ export async function POST(
     }
 
     // Check admin role
-    const metadata = sessionClaims?.['metadata'] as { role?: string } | undefined
+    const metadata = sessionClaims?.['metadata'] as
+      | { role?: string }
+      | undefined
     const userRole = metadata?.role
 
     if (userRole !== 'admin') {
@@ -62,10 +57,8 @@ export async function POST(
 
     // Parse and validate request body
     const body = await req.json()
-    console.log('Request body:', body)
-    
+
     const validationResult = createAdminSchema.safeParse(body)
-    console.log('Validation result:', validationResult)
 
     if (!validationResult.success) {
       return NextResponse.json(
@@ -95,8 +88,7 @@ export async function POST(
           { status: 409 }
         )
       }
-    } catch (checkError) {
-      console.error('Error checking existing user:', checkError)
+    } catch {
       // Continue with creation if check fails
     }
 
@@ -121,8 +113,6 @@ export async function POST(
       { status: 201 }
     )
   } catch (error) {
-    console.error('Error creating admin account:', error)
-
     // Handle Clerk-specific errors
     if (error && typeof error === 'object' && 'errors' in error) {
       const clerkError = error as { errors: Array<{ message: string }> }

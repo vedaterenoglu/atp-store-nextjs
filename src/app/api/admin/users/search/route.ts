@@ -20,40 +20,34 @@ const userMetadataSchema = z.object({
   customerids: z.array(z.string()).optional().default([]),
 })
 
-// Response schemas
-const userResponseSchema = z.object({
-  id: z.string(),
-  email: z.string(),
-  firstName: z.string().nullable(),
-  lastName: z.string().nullable(),
-  role: z.enum(['admin', 'customer']).nullable(),
-  customerIds: z.array(z.string()),
-  createdAt: z.string(),
-})
+// Response types
+type UserResponse = {
+  id: string
+  email: string
+  firstName: string | null
+  lastName: string | null
+  role: 'admin' | 'customer' | null
+  customerIds: string[]
+  createdAt: string
+}
 
-const successResponseSchema = z.object({
-  success: z.literal(true),
-  user: userResponseSchema.nullable(),
-  message: z.string(),
-})
+type SuccessResponse = {
+  success: true
+  user: UserResponse | null
+  message: string
+}
 
-const errorResponseSchema = z.object({
-  success: z.literal(false),
-  error: z.string(),
-})
-
-type SuccessResponse = z.infer<typeof successResponseSchema>
-type ErrorResponse = z.infer<typeof errorResponseSchema>
+type ErrorResponse = {
+  success: false
+  error: string
+}
 
 export async function GET(
   req: NextRequest
 ): Promise<NextResponse<SuccessResponse | ErrorResponse>> {
-  console.log('=== SEARCH USERS API CALLED ===')
-
   try {
     // Check admin authentication
     const { userId, sessionClaims } = await auth()
-    console.log('Auth check - userId:', userId)
 
     if (!userId) {
       return NextResponse.json(
@@ -63,7 +57,9 @@ export async function GET(
     }
 
     // Check admin role
-    const metadata = sessionClaims?.['metadata'] as { role?: string } | undefined
+    const metadata = sessionClaims?.['metadata'] as
+      | { role?: string }
+      | undefined
     const userRole = metadata?.role
 
     if (userRole !== 'admin') {
@@ -100,7 +96,6 @@ export async function GET(
     const clerk = await clerkClient()
 
     // Search for user by email
-    console.log('Searching for user with email:', email)
     const users = await clerk.users.getUserList({
       emailAddress: [email],
     })
@@ -144,12 +139,11 @@ export async function GET(
       message: 'User found successfully',
     })
   } catch (error) {
-    console.error('Error searching users:', error)
-
     // Handle Clerk-specific errors
     if (error && typeof error === 'object' && 'errors' in error) {
       const clerkError = error as { errors: Array<{ message: string }> }
-      const errorMessage = clerkError.errors[0]?.message || 'Failed to search users'
+      const errorMessage =
+        clerkError.errors[0]?.message || 'Failed to search users'
 
       return NextResponse.json(
         { success: false, error: errorMessage },

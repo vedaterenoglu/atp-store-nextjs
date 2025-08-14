@@ -17,38 +17,35 @@ import {
   UserCog,
   type LucideIcon,
 } from 'lucide-react'
+import { useSafeTranslation } from '@/hooks/use-safe-translation'
 
 interface NavItem {
-  label: string
+  labelKey: string
   href: string
   icon: LucideIcon
-  description: string
 }
 
+// Navigation items with translation keys
 const navItems: NavItem[] = [
   {
-    label: 'Create Customer',
+    labelKey: 'sidebar.createCustomer',
     href: '/admin/dashboard',
     icon: UserPlus,
-    description: 'Create new customer account',
   },
   {
-    label: 'Create Admin',
+    labelKey: 'sidebar.createAdmin',
     href: '/admin/dashboard/create-admin',
     icon: ShieldCheck,
-    description: 'Create new admin account',
   },
   {
-    label: 'Authenticate User',
+    labelKey: 'sidebar.authenticateUser',
     href: '/admin/dashboard/authenticate-user',
     icon: UserCheck,
-    description: 'Link users to customers',
   },
   {
-    label: 'Modify User',
+    labelKey: 'sidebar.modifyUser',
     href: '/admin/dashboard/modify-user',
     icon: UserCog,
-    description: 'Edit or delete users',
   },
 ]
 
@@ -56,7 +53,8 @@ interface AdminSidebarProps {
   onClose?: () => void
 }
 
-export function AdminSidebar({ onClose: _onClose }: AdminSidebarProps = {}) {
+export function AdminSidebar({}: AdminSidebarProps = {}) {
+  const { t } = useSafeTranslation('admin')
   const pathname = usePathname()
 
   return (
@@ -64,8 +62,10 @@ export function AdminSidebar({ onClose: _onClose }: AdminSidebarProps = {}) {
       <div className="flex h-full flex-col">
         {/* Sidebar Header */}
         <div className="border-b p-6">
-          <h2 className="text-lg font-semibold">Admin Dashboard</h2>
-          <p className="text-sm text-muted-foreground">User Management</p>
+          <h2 className="text-lg font-semibold">{t('sidebar.title')}</h2>
+          <p className="text-sm text-muted-foreground">
+            {t('sidebar.dashboard')}
+          </p>
         </div>
 
         {/* Navigation */}
@@ -91,25 +91,14 @@ export function AdminSidebar({ onClose: _onClose }: AdminSidebarProps = {}) {
                   )}
                 />
                 <div className="flex-1">
-                  <div className="text-sm font-medium">{item.label}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {item.description}
-                  </div>
+                  <div className="text-sm font-medium">{t(item.labelKey)}</div>
                 </div>
               </Link>
             )
           })}
         </nav>
 
-        {/* Sidebar Footer */}
-        <div className="border-t p-4">
-          <div className="rounded-lg bg-muted/50 p-3">
-            <p className="text-xs text-muted-foreground">
-              Manage user accounts and permissions through Clerk authentication
-              service.
-            </p>
-          </div>
-        </div>
+        {/* Sidebar Footer - removed as not needed */}
       </div>
     </aside>
   )

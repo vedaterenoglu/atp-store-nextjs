@@ -100,10 +100,7 @@ export function OrderSummary({
  * @param props - Component props
  * @returns Rendered compact summary
  */
-export function OrderSummaryCompact({
-  orderSummary,
-  orderMetadata: _orderMetadata,
-}: OrderSummaryProps) {
+export function OrderSummaryCompact({ orderSummary }: OrderSummaryProps) {
   return (
     <div className="space-y-2 rounded-lg bg-muted/50 p-4">
       <div className="flex items-center justify-between text-sm">

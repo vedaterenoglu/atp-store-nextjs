@@ -12,17 +12,17 @@ export interface OrderState {
   // Current order being processed
   currentOrderNumber: string | null
   currentOrderDate: string | null
-  
+
   // Order submission state
   isSubmitting: boolean
   submitError: string | null
   submitSuccess: boolean
-  
+
   // Address selection state
   showAddressModal: boolean
   selectedDispatchAddressId: string | null
   selectedInvoiceAddressId: string | null
-  
+
   // Actions
   setCurrentOrder: (orderNumber: string, orderDate: string) => void
   clearCurrentOrder: () => void
@@ -86,7 +86,10 @@ export const useOrderStore = create<OrderState>()(
           showAddressModal,
         }),
 
-      setSelectedAddresses: (selectedDispatchAddressId, selectedInvoiceAddressId) =>
+      setSelectedAddresses: (
+        selectedDispatchAddressId,
+        selectedInvoiceAddressId
+      ) =>
         set({
           selectedDispatchAddressId,
           selectedInvoiceAddressId,

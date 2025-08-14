@@ -1,86 +1,135 @@
 {
-  "dashboard": "Customer Dashboard",
-  "pendingOrders": "Pending Orders",
-  "deliveries": "Delivery Notes (Deliveries)",
-  "invoices": "Invoices",
-  "unpaidInvoices": "Unpaid Invoices",
-  "cart": {
-    "title": "Cart Management",
-    "subtitle": "Manage customer carts and abandoned cart recovery",
-    "empty": {
-      "title": "No carts found",
-      "description": "There are no carts matching your criteria",
-      "action": "Clear filters"
+  "sidebar": {
+    "title": "Admin Panel",
+    "dashboard": "Dashboard",
+    "createCustomer": "Create Customer",
+    "createAdmin": "Create Admin",
+    "authenticateUser": "Authenticate User",
+    "modifyUser": "Modify User",
+    "deliveries": "Deliveries",
+    "invoices": "Invoices",
+    "pendingOrders": "Pending Orders",
+    "unpaidInvoices": "Unpaid Invoices"
+  },
+  "createCustomer": {
+    "title": "Create Customer Account",
+    "subtitle": "Create a new customer account in Clerk authentication system",
+    "cardTitle": "New Customer Account",
+    "cardDescription": "Enter the customer details below. The account will be created with customer role.",
+    "form": {
+      "email": "Email Address",
+      "emailPlaceholder": "customer@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "required": "*",
+      "submit": "Create Customer Account",
+      "submitting": "Creating Account..."
     },
-    "status": {
-      "active": "Active",
-      "pending": "Pending",
-      "checkedOut": "Checked Out",
-      "abandoned": "Abandoned",
-      "expired": "Expired"
+    "validation": {
+      "invalidEmail": "Invalid email address",
+      "passwordMin": "Password must be at least 8 characters"
     },
-    "filter": {
-      "title": "Filters",
-      "search": "Search by user, customer, or company...",
-      "status": "Filter by Status",
-      "dateRange": "Date Range",
-      "totalRange": "Total Range",
-      "from": "From",
-      "to": "To",
-      "min": "Min",
-      "max": "Max",
-      "clearAll": "Clear All",
-      "apply": "Apply Filters"
+    "success": "Customer account created successfully!",
+    "errors": {
+      "default": "An error occurred",
+      "createFailed": "Failed to create customer account"
     },
-    "sort": {
-      "recentlyUpdated": "Recently Updated",
-      "oldestUpdated": "Oldest Updated",
-      "recentlyCreated": "Recently Created",
-      "oldestCreated": "Oldest Created",
-      "highestTotal": "Highest Total",
-      "lowestTotal": "Lowest Total",
-      "mostItems": "Most Items",
-      "fewestItems": "Fewest Items"
+    "notes": {
+      "title": "Important Notes",
+      "note1": "The account will be created with 'customer' role automatically",
+      "note2": "User will be able to sign in immediately with these credentials",
+      "note3": "Customer access to specific companies must be configured separately",
+      "note4": "Use the 'Authenticate User' section to link customers to companies"
+    }
+  },
+  "createAdmin": {
+    "title": "Create Admin Account",
+    "subtitle": "Create a new administrator account with full system access",
+    "cardTitle": "New Admin Account",
+    "cardDescription": "Enter the admin details below. This account will have full administrative privileges.",
+    "form": {
+      "email": "Email Address",
+      "emailPlaceholder": "admin@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "required": "*",
+      "submit": "Create Admin Account",
+      "submitting": "Creating Account..."
     },
-    "detail": {
-      "customerInfo": "Customer Information",
-      "userId": "User ID",
-      "customerId": "Customer ID",
-      "companyId": "Company",
-      "timeline": "Timeline",
+    "validation": {
+      "invalidEmail": "Invalid email address",
+      "passwordMin": "Password must be at least 8 characters"
+    },
+    "success": "Admin account created successfully!",
+    "errors": {
+      "default": "An error occurred",
+      "createFailed": "Failed to create admin account"
+    },
+    "warning": {
+      "title": "⚠️ Important Security Notice",
+      "note1": "Admin accounts have full system access and can manage all users",
+      "note2": "Admin accounts can create, modify, and delete other accounts",
+      "note3": "Admin accounts have access to all customer data and orders",
+      "note4": "Only create admin accounts for trusted personnel",
+      "note5": "Use strong, unique passwords for admin accounts"
+    }
+  },
+  "authenticateUser": {
+    "title": "Authenticate User",
+    "subtitle": "Search for users and link them to customer accounts",
+    "validation": {
+      "invalidEmail": "Invalid email address"
+    },
+    "search": {
+      "title": "Search User",
+      "description": "Enter the email address of the user you want to authenticate",
+      "emailPlaceholder": "user@example.com",
+      "button": "Search",
+      "searching": "Searching...",
+      "notFound": "No user found with this email address",
+      "error": "Search failed"
+    },
+    "userDetails": {
+      "title": "User Details",
+      "email": "Email",
+      "name": "Name",
+      "notSet": "Not set",
+      "role": "Role",
+      "roleAdmin": "Admin",
+      "roleCustomer": "Customer",
+      "roleNone": "No role",
       "created": "Created",
-      "updated": "Last updated",
-      "expires": "Expires",
-      "notes": "Notes",
-      "items": "Cart Items",
-      "summary": "Order Summary",
-      "subtotal": "Subtotal",
-      "discount": "Discount",
-      "tax": "Tax",
-      "shipping": "Shipping",
-      "total": "Total",
-      "itemCount": "Items",
-      "uniqueItems": "unique"
+      "currentAccess": "Current Customer Access"
     },
-    "actions": {
-      "refresh": "Refresh",
-      "export": "Export",
-      "convertToOrder": "Convert to Order",
-      "delete": "Delete",
-      "removeItem": "Remove item",
-      "updateQuantity": "Update quantity",
-      "selectCart": "Select a cart to view details"
+    "adminWarning": {
+      "title": "Admin User Detected",
+      "message": "You cannot edit admin users! Admin accounts have full system access and don't need customer associations. Customer IDs are only for users with 'customer' role."
     },
-    "messages": {
-      "updateSuccess": "Cart updated successfully",
-      "updateError": "Failed to update cart",
-      "deleteSuccess": "Cart deleted successfully",
-      "deleteError": "Failed to delete cart",
-      "exportSuccess": "Cart exported successfully",
-      "exportError": "Failed to export cart",
-      "convertSuccess": "Cart converted to order successfully",
-      "convertError": "Failed to convert cart to order",
-      "itemUnavailable": "This item is currently unavailable"
+    "selectedCustomers": {
+      "title": "Selected Customers",
+      "description": "These customers will be linked to the user",
+      "removeHint": "Click on any customer badge to remove it from selection"
+    },
+    "linkCustomers": {
+      "title": "Link to Customers",
+      "description": "Select which customer accounts this user should have access to",
+      "searchPlaceholder": "Search customers by name or ID...",
+      "searchResults": "Showing {{filtered}} of {{total}} customers",
+      "noResults": "No customers found matching",
+      "loading": "Loading customers...",
+      "noCustomers": "No customers available. Please ensure customers exist in the system.",
+      "selected": "customer(s) selected",
+      "updateButton": "Update Access",
+      "updating": "Updating...",
+      "customerId": "ID"
+    },
+    "success": {
+      "title": "Success!",
+      "message": "User access has been updated successfully."
+    },
+    "errors": {
+      "loadCustomers": "Failed to load customer list",
+      "authenticate": "Authentication failed"
     }
   }
 }

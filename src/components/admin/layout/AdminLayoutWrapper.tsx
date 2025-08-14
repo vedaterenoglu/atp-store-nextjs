@@ -16,12 +16,14 @@ import { useState } from 'react'
 import { AdminSidebar } from '@/components/admin'
 import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/schadcn'
+import { useSafeTranslation } from '@/hooks/use-safe-translation'
 
 interface AdminLayoutWrapperProps {
   children: React.ReactNode
 }
 
 export function AdminLayoutWrapper({ children }: AdminLayoutWrapperProps) {
+  const { t } = useSafeTranslation('admin')
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen)
@@ -67,7 +69,7 @@ export function AdminLayoutWrapper({ children }: AdminLayoutWrapperProps) {
                 <Menu className="h-6 w-6" />
               )}
             </Button>
-            <h1 className="text-lg font-semibold">Admin Dashboard</h1>
+            <h1 className="text-lg font-semibold">{t('sidebar.title')}</h1>
             <div className="w-10" /> {/* Spacer for centering */}
           </div>
         </div>
