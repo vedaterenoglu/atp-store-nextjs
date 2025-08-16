@@ -16,7 +16,6 @@ export const env = {
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: 'pk_test_mock',
   CLERK_SECRET_KEY: 'sk_test_mock',
   // NOTE: We don't include Clerk sign-in/sign-up URLs as we use modal authentication
-  DATABASE_URL: 'postgresql://mock-db-url',
   PORT: '3000',
   NEXT_PUBLIC_ENABLE_ANALYTICS: false,
   NEXT_PUBLIC_ENABLE_DEBUG: false,

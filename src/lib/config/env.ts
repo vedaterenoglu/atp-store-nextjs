@@ -29,9 +29,6 @@ const serverEnvSchema = z.object({
   // Clerk (Server)
   CLERK_SECRET_KEY: z.string().min(1),
 
-  // Database
-  DATABASE_URL: z.string().min(1),
-
   // Stripe (Server)
   STRIPE_SECRET_KEY: z.string().optional(),
 

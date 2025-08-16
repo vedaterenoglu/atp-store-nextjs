@@ -27,7 +27,7 @@ process.env['CLERK_FRONTEND_API'] =
 // ============================================
 
 // Polyfill for TextEncoder/TextDecoder (required for some dependencies)
-global.TextEncoder = TextEncoder
+global.TextEncoder = TextEncoder as unknown as typeof globalThis.TextEncoder
 global.TextDecoder = TextDecoder as unknown as typeof globalThis.TextDecoder
 
 // Add fetch polyfills for MSW in Node.js environment
