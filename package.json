@@ -2,6 +2,14 @@
   "name": "atp-store-nextjs",
   "version": "1.0.0",
   "private": true,
+    "author": {
+    "name": "Vedat Erenoglu",
+    "email": "info@vedaterenoglu.com",
+    "url": "https://vedaterenoglu.com",
+    "linkedin": "https://www.linkedin.com/in/vedaterenoglu/"
+  },
+  "license": "Recruiter-Evaluation License",
+  "homepage": "https://portfolio-atp-store-nextjs-staging.demo.vedaterenoglu.com",
   "scripts": {
     "dev": "next dev --port 3081",
     "build": "next build",

@@ -46,9 +46,29 @@ next-env.d.ts
 # documents
 /src/documents/project/
 /src/documents/prompts/
+/src/documents/claude/
 
 CLAUDE.md
 test-results/
 
 # Local scripts with secrets
 run-codegen.sh
+
+# Security & Logs
+*.log
+.swc/
+*.key
+*.cert
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.Spotlight-V100
+
+# Backups
+*.bak
+*~
+*.tmp
