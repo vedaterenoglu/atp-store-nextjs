@@ -137,7 +137,8 @@
       "admin": "Admin-Panel",
       "cart": "Warenkorb anzeigen",
       "toggleTheme": "Theme wechseln",
-      "changeLanguage": "Sprache ändern"
+      "changeLanguage": "Sprache ändern",
+      "adminDashboard": "Admin-Panel"
     },
     "footer": {
       "developerWebsite": "Entwickler-Website besuchen",

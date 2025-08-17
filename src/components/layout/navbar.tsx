@@ -288,7 +288,7 @@ function AdminDashboardButton() {
           variant="ghost"
           size="icon"
           className="h-9 w-9"
-          aria-label="Admin Dashboard"
+          aria-label={t('tooltips.navbar.adminDashboard')}
         >
           <UserCog className="h-5 w-5" />
         </Button>
@@ -345,7 +345,7 @@ function CustomerDashboardButton() {
             'h-9 w-9',
             !isDashboardAccessible && 'opacity-50 hover:opacity-50'
           )}
-          aria-label={t('navbar.customerDashboard')}
+          aria-label={t('tooltips.navbar.dashboard')}
           onClick={handleClick}
         >
           <LayoutDashboard className="h-4 w-4" />
@@ -355,7 +355,7 @@ function CustomerDashboardButton() {
         <p>
           {!isDashboardAccessible
             ? t('messages.auth.signInToAccessDashboard')
-            : t('navbar.customerDashboard')}
+            : t('tooltips.navbar.dashboard')}
         </p>
       </TooltipContent>
     </Tooltip>
@@ -483,7 +483,7 @@ function MobileMenu({
                 size="icon"
                 className="h-9 w-9"
                 onClick={handleDashboardClick}
-                aria-label={t('navbar.customerDashboard')}
+                aria-label={t('tooltips.navbar.dashboard')}
               >
                 <LayoutDashboard className="h-4 w-4" />
               </Button>

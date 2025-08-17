@@ -137,7 +137,8 @@
       "userMenu": "Brugermenu",
       "admin": "Admin panel",
       "toggleTheme": "Skift tema",
-      "changeLanguage": "Skift sprog"
+      "changeLanguage": "Skift sprog",
+      "adminDashboard": "Admin Panel"
     },
     "footer": {
       "developerWebsite": "Besøg udvikler hjemmeside",

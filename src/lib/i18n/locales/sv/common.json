@@ -137,7 +137,8 @@
       "admin": "Administratörspanel",
       "cart": "Visa kundvagn",
       "toggleTheme": "Växla tema",
-      "changeLanguage": "Ändra språk"
+      "changeLanguage": "Ändra språk",
+      "adminDashboard": "Administratörspanel"
     },
     "footer": {
       "developerWebsite": "Besök utvecklarens webbplats",
