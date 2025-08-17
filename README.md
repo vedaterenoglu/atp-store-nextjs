@@ -25,7 +25,7 @@ Production-ready B2B e-commerce platform for Alfe Tissue Paper AB, showcasing en
 - 🛒 **Complete E-commerce** - Cart, checkout, orders, invoices
 - 👥 **Dual Dashboard System**:
   - **Customer Dashboard** - Order tracking, invoices, delivery status, profile management
-  - **Admin Dashboard** - Product management, order processing, user administration, analytics
+  - **Admin Dashboard** - Create admin, create user for customers, authenticate users, modify users
 - 📱 **Responsive Design** - Mobile-first with Tailwind CSS
 - ⚡ **Performance Optimized** - Server components, caching
 - 🧪 **100% Test Coverage** - Jest, RTL, MSW
