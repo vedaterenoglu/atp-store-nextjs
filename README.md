@@ -11,7 +11,10 @@ Production-ready B2B e-commerce platform for Alfe Tissue Paper AB, showcasing en
 >
 > **Existing System:** Alfe Tissue Paper AB already has an internal frontend application used by their staff to create orders, dispatch lists, and invoice reminders. Client payments are tracked, reminders are sent to clients, and the inkasso process is managed through this system. Their frontend is connected to two backends: a Hasura GraphQL backend and a Nest.js REST API backend that serves as a mail server.
 >
-> **Our Contribution - ATP Store (This Repository):** We developed a customer-facing portal that integrates with their existing system, enabling the customer's clients to create orders online and track their orders, deliveries, and unpaid invoices. Stripe integration has been implemented, though online payments are not currently accepted by the customer.
+> **Our Contribution - ATP Store (This Repository):** We developed a comprehensive B2B e-commerce platform with dual functionality:
+> - **Customer Portal**: Enables clients to browse products, create orders online, track their orders, monitor deliveries, and manage unpaid invoices through a dedicated customer dashboard
+> - **Admin Portal**: Provides staff with comprehensive tools for product management, order processing, user administration, and business analytics through a separate admin dashboard
+> - **Payment Integration**: Stripe integration has been implemented, though online payments are not currently accepted by the customer
 >
 > **Deployment Status:** The ATP Store customer portal has been completed and is production-ready. Product images are awaited to be deployed to the Hasura GraphQL backend by the customer. The launch is scheduled for September 1st, 2025. A staging version has been deployed for portfolio demonstration purposes with one fallback image.
 
@@ -20,11 +23,35 @@ Production-ready B2B e-commerce platform for Alfe Tissue Paper AB, showcasing en
 - 🌍 **Multi-language Support** - 5 languages (EN, SV, TR, DA, DE)
 - 🔐 **Enterprise Authentication** - Multi-role RBAC with Clerk
 - 🛒 **Complete E-commerce** - Cart, checkout, orders, invoices
-- 👨‍💼 **Admin Dashboard** - Comprehensive management panel
+- 👥 **Dual Dashboard System**:
+  - **Customer Dashboard** - Order tracking, invoices, delivery status, profile management
+  - **Admin Dashboard** - Product management, order processing, user administration, analytics
 - 📱 **Responsive Design** - Mobile-first with Tailwind CSS
 - ⚡ **Performance Optimized** - Server components, caching
 - 🧪 **100% Test Coverage** - Jest, RTL, MSW
 - 🎨 **Component Library** - shadcn/ui with Atomic Design
+
+## 📊 Dashboard Systems
+
+### Customer Dashboard (`/customer/dashboard`)
+
+- 📦 **Waiting Orders View**: Display pending orders awaiting processing
+- 🚚 **Uninvoiced Deliveries**: Track deliveries that haven't been invoiced yet
+- 💳 **Unpaid Invoices**: View and manage outstanding invoice payments
+- 🔄 **Real-time Data Fetching**: Parallel data loading with error handling
+- 🌐 **Multi-language Support**: Full i18n integration
+- 🔒 **Protected Routes**: Customer role authentication required
+
+**Access**: Requires customer account authentication via Clerk with active customer selection
+
+### Admin Dashboard (`/admin`)
+
+- 👥 **Create Customer** (`/admin/dashboard`)
+- 🛡️ **Create Admin** (`/admin/dashboard/create-admin`)
+- 🔍 **Authenticate User** (`/admin/dashboard/authenticate-user`)
+- 🔧 **Modify User** (`/admin/dashboard/modify-user`)
+
+**Access**: Restricted to users with admin role via Clerk authentication
 
 ## 🚀 Quick Start
 
@@ -49,28 +76,30 @@ npm run dev
 ## 📚 Documentation
 
 ### For Developers
+
 - 🔧 [Setup Guide](src/documents/readme/SETUP.md) - Installation & configuration
 - 🏗️ [Architecture](src/documents/readme/ARCHITECTURE.md) - System design & patterns
 - 🤝 [Contributing](src/documents/readme/CONTRIBUTING.md) - Development workflow
 - 📡 [API Reference](src/documents/readme/API.md) - GraphQL & REST endpoints
 
 ### For Operations
+
 - 📦 [Deployment](src/documents/readme/DEPLOYMENT.md) - Production deployment
 - 🎯 [Usage Guide](src/documents/readme/USAGE.md) - Features & workflows
 - 🔍 [Troubleshooting](src/documents/readme/TROUBLESHOOTING.md) - Common issues
 
 ## 🛠️ Tech Stack
 
-| Category | Technology |
-|----------|-----------|
-| **Frontend** | Next.js 15.4, React 19, TypeScript 5 |
-| **Styling** | Tailwind CSS 4, shadcn/ui, Radix UI |
-| **State** | Zustand 5, Immer |
-| **Backend** | Hasura GraphQL, Apollo Client |
-| **Auth** | Clerk 6.28 |
-| **i18n** | i18next, react-i18next |
-| **Testing** | Jest 30, React Testing Library, MSW |
-| **Deployment** | Vercel, GitHub Actions |
+| Category       | Technology                           |
+| -------------- | ------------------------------------ |
+| **Frontend**   | Next.js 15.4, React 19, TypeScript 5 |
+| **Styling**    | Tailwind CSS 4, shadcn/ui, Radix UI  |
+| **State**      | Zustand 5, Immer                     |
+| **Backend**    | Hasura GraphQL, Apollo Client        |
+| **Auth**       | Clerk 6.28                           |
+| **i18n**       | i18next, react-i18next               |
+| **Testing**    | Jest 30, React Testing Library, MSW  |
+| **Deployment** | Vercel, GitHub Actions               |
 
 ## 🏃‍♂️ Available Scripts
 
@@ -112,7 +141,7 @@ See [Setup Guide](src/documents/readme/SETUP.md) for complete configuration.
 
 ## 📄 License
 
-MIT © 2025 Vedat Erenoglu
+Recruiter-Evaluation License © 2025 Vedat Erenoglu
 
 ---
 

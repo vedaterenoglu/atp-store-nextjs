@@ -19,11 +19,25 @@ This document provides a comprehensive analysis of the authentication system imp
 
 ### Key Metrics
 
-- **Protected Routes**: 5 major route patterns
-- **Supported Roles**: 3 roles + null state
+- **Protected Routes**: 5 major route patterns (admin, customer dashboard, auth pages)
+- **Supported Roles**: 3 roles + null state (admin, customer, guest, null)
 - **Languages**: 3 (English, Swedish, Turkish)
 - **Test Coverage**: 100% on auth hooks and components
 - **Performance**: Edge runtime middleware for optimal speed
+
+### Dashboard Access Control
+
+#### Customer Dashboard (`/dashboard`)
+- **Access**: Authenticated users with `customer` role
+- **Purpose**: Self-service portal for B2B customers
+- **Features**: Order tracking, invoice management, delivery status, profile management
+- **Protection**: Multi-layer authentication (middleware + server components)
+
+#### Admin Dashboard (`/admin`)
+- **Access**: Authenticated users with `admin` role only
+- **Purpose**: Platform management and operations
+- **Features**: Product management, order processing, user administration, analytics
+- **Protection**: Strict role validation at middleware and component levels
 
 ---
 
