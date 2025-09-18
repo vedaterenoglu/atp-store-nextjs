@@ -133,6 +133,38 @@ function mockUserAdmin(): MockUserReturn {
   }
 }
 
+function mockAuthSuperadmin(): MockAuthReturn {
+  return {
+    isLoaded: true,
+    isSignedIn: true,
+    userId: 'user_superadmin123',
+    sessionId: 'sess_superadmin123',
+    sessionClaims: null,
+    actor: null,
+    orgId: null,
+    orgRole: null,
+    orgSlug: null,
+    has: jest.fn(() => true),
+    signOut: jest.fn(),
+    getToken: jest.fn(),
+  }
+}
+
+function mockUserSuperadmin(): MockUserReturn {
+  return {
+    isLoaded: true,
+    isSignedIn: true,
+    user: {
+      id: 'user_superadmin123',
+      firstName: 'Super',
+      lastName: 'Admin',
+      username: 'superadmin',
+      imageUrl: 'https://example.com/superadmin-avatar.jpg',
+      publicMetadata: { role: 'superadmin' },
+    },
+  }
+}
+
 function mockRoleAuthCustomer() {
   return {
     isSignedIn: true,
@@ -156,6 +188,19 @@ function mockRoleAuthAdmin() {
     hasAnyRole: jest.fn(() => true),
     userRole: 'admin' as const,
     getUserRole: jest.fn(() => 'admin' as const),
+  }
+}
+
+function mockRoleAuthSuperadmin() {
+  return {
+    isSignedIn: true,
+    isLoaded: true,
+    hasRole: jest.fn((role: string | null) => role === 'superadmin'),
+    requireAuth: jest.fn(),
+    checkAuth: jest.fn(),
+    hasAnyRole: jest.fn(() => true),
+    userRole: 'superadmin' as const,
+    getUserRole: jest.fn(() => 'superadmin' as const),
   }
 }
 
@@ -603,6 +648,76 @@ describe('Navbar', () => {
       // Admin functionality is present through dashboard access
     })
 
+    it('should show admin dashboard button for superadmin users', () => {
+      mockUseAuth.mockReturnValue(
+        mockAuthSuperadmin() as ReturnType<typeof useAuth>
+      )
+      mockUseUser.mockReturnValue(
+        mockUserSuperadmin() as ReturnType<typeof useUser>
+      )
+      mockUseRoleAuth.mockReturnValue(mockRoleAuthSuperadmin())
+      mockUseAuthGuard.mockReturnValue({
+        isLoading: false,
+        authContext: {
+          isSignedIn: true,
+          role: 'superadmin',
+          hasActiveCustomer: true,
+          customerId: 'superadmin-customer',
+        },
+        canAccessCustomerFeatures: jest.fn(() => ({ success: true })),
+        canAccessAdminDashboard: jest.fn(() => ({ success: true })),
+        requireCustomerAccess: jest.fn(),
+        requireAdminAccess: jest.fn(),
+      } as ReturnType<typeof useAuthGuard>)
+
+      render(<Navbar />)
+
+      // Superadmin should see admin dashboard button by aria-label
+      const adminDashboardButton = screen.getByLabelText(
+        'tooltips.navbar.adminDashboard'
+      )
+      expect(adminDashboardButton).toBeInTheDocument()
+
+      // Should also have UserCog icon (using test-id)
+      const userCogIcon = screen.getByTestId('user-cog-icon')
+      expect(userCogIcon).toBeInTheDocument()
+    })
+
+    it('should show correct links for superadmin users', () => {
+      mockUseAuth.mockReturnValue(
+        mockAuthSuperadmin() as ReturnType<typeof useAuth>
+      )
+      mockUseUser.mockReturnValue(
+        mockUserSuperadmin() as ReturnType<typeof useUser>
+      )
+      mockUseRoleAuth.mockReturnValue(mockRoleAuthSuperadmin())
+      mockUseAuthGuard.mockReturnValue({
+        isLoading: false,
+        authContext: {
+          isSignedIn: true,
+          role: 'superadmin',
+          hasActiveCustomer: true,
+          customerId: 'superadmin-customer',
+        },
+        canAccessCustomerFeatures: jest.fn(() => ({ success: true })),
+        canAccessAdminDashboard: jest.fn(() => ({ success: true })),
+        requireCustomerAccess: jest.fn(),
+        requireAdminAccess: jest.fn(),
+      } as ReturnType<typeof useAuthGuard>)
+
+      render(<Navbar />)
+
+      // For superadmin users, check that dashboard icons are present
+      const dashboardIcons = screen.getAllByTestId('dashboard-icon')
+      expect(dashboardIcons.length).toBeGreaterThan(0)
+
+      // Superadmin functionality includes admin dashboard access
+      const adminDashboardButton = screen.getByLabelText(
+        'tooltips.navbar.adminDashboard'
+      )
+      expect(adminDashboardButton).toBeInTheDocument()
+    })
+
     it('should show correct links for authenticated customer', () => {
       mockUseAuth.mockReturnValue(
         mockAuthSignedIn() as ReturnType<typeof useAuth>
@@ -734,6 +849,90 @@ describe('Navbar', () => {
       // Since we can't easily test for the skeleton, we just verify the navbar renders without error
       const nav = screen.getByRole('navigation')
       expect(nav).toBeInTheDocument()
+    })
+
+    it('should navigate superadmin to create-admin page when clicking dashboard button', () => {
+      const mockPush = jest.fn()
+      const mockRouter = {
+        push: mockPush,
+        replace: jest.fn(),
+        refresh: jest.fn(),
+        back: jest.fn(),
+        forward: jest.fn(),
+        prefetch: jest.fn(),
+      }
+      ;(require('next/navigation').useRouter as jest.Mock).mockReturnValue(
+        mockRouter
+      )
+
+      mockUseAuth.mockReturnValue(
+        mockAuthSuperadmin() as ReturnType<typeof useAuth>
+      )
+      mockUseUser.mockReturnValue(
+        mockUserSuperadmin() as ReturnType<typeof useUser>
+      )
+      mockUseRoleAuth.mockReturnValue(mockRoleAuthSuperadmin())
+      mockUseAuthGuard.mockReturnValue({
+        authContext: {
+          isSignedIn: true,
+          role: 'superadmin',
+          hasActiveCustomer: true,
+          customerId: 'superadmin-customer',
+        },
+        canAccessCart: jest.fn(() => ({ success: true })),
+        canAccessAdminDashboard: jest.fn(() => ({ success: true })),
+      } as unknown as ReturnType<typeof useAuthGuard>)
+
+      const { getByLabelText } = render(<Navbar />)
+
+      // Find and click the admin dashboard button
+      const adminDashboardButton = getByLabelText(
+        'tooltips.navbar.adminDashboard'
+      )
+      adminDashboardButton.click()
+
+      // Verify navigation to create-admin page for superadmin
+      expect(mockPush).toHaveBeenCalledWith('/admin/dashboard/create-admin')
+    })
+
+    it('should navigate regular admin to dashboard when clicking dashboard button', () => {
+      const mockPush = jest.fn()
+      const mockRouter = {
+        push: mockPush,
+        replace: jest.fn(),
+        refresh: jest.fn(),
+        back: jest.fn(),
+        forward: jest.fn(),
+        prefetch: jest.fn(),
+      }
+      ;(require('next/navigation').useRouter as jest.Mock).mockReturnValue(
+        mockRouter
+      )
+
+      mockUseAuth.mockReturnValue(mockAuthAdmin() as ReturnType<typeof useAuth>)
+      mockUseUser.mockReturnValue(mockUserAdmin() as ReturnType<typeof useUser>)
+      mockUseRoleAuth.mockReturnValue(mockRoleAuthAdmin())
+      mockUseAuthGuard.mockReturnValue({
+        authContext: {
+          isSignedIn: true,
+          role: 'admin',
+          hasActiveCustomer: false,
+          customerId: null,
+        },
+        canAccessCart: jest.fn(() => ({ success: false })),
+        canAccessAdminDashboard: jest.fn(() => ({ success: true })),
+      } as unknown as ReturnType<typeof useAuthGuard>)
+
+      const { getByLabelText } = render(<Navbar />)
+
+      // Find and click the admin dashboard button
+      const adminDashboardButton = getByLabelText(
+        'tooltips.navbar.adminDashboard'
+      )
+      adminDashboardButton.click()
+
+      // Verify navigation to regular dashboard for admin
+      expect(mockPush).toHaveBeenCalledWith('/admin/dashboard')
     })
   })
 })

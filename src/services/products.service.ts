@@ -35,9 +35,15 @@ export async function getProducts(): Promise<ProductsArray> {
         ? process.env['NEXT_PUBLIC_APP_URL'] || 'http://localhost:3081'
         : ''
 
-    // Use new API route facade
+    // Use new API route facade with no-cache policy
     const response = await fetch(
-      `${baseUrl}/api/products?company_id=${companyId}`
+      `${baseUrl}/api/products?company_id=${companyId}`,
+      {
+        cache: 'no-store', // Disable caching to always get fresh data
+        next: {
+          revalidate: 0, // Ensure no caching in Next.js
+        },
+      }
     )
 
     if (!response.ok) {

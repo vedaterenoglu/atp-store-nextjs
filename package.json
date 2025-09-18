@@ -2,7 +2,7 @@
   "name": "atp-store-nextjs",
   "version": "1.0.0",
   "private": true,
-    "author": {
+  "author": {
     "name": "Vedat Erenoglu",
     "email": "info@vedaterenoglu.com",
     "url": "https://vedaterenoglu.com",
@@ -87,6 +87,7 @@
     "@types/react-dom": "^19",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dotenv": "^17.2.2",
     "eslint": "^9",
     "eslint-config-next": "15.4.5",
     "eslint-config-prettier": "^10.1.8",
@@ -105,6 +106,7 @@
     "tailwindcss": "^4",
     "tailwindcss-animate": "^1.0.7",
     "ts-jest": "^29.4.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }

@@ -1,201 +1,21 @@
 /**
- * Admin Dashboard - Create Admin Account Page
- * SOLID Principles: SRP - Single responsibility for admin creation
- * Design Patterns: Form Component Pattern
- * Dependencies: React Hook Form, Clerk API
+ * Admin Dashboard - Admin Management Page (Superadmin Only)
+ * SOLID Principles: SRP - Single responsibility for authentication and delegation
+ * Design Patterns: Delegation Pattern
+ * Dependencies: CreateAdminContainer, Secure Auth Hook
  */
 
 'use client'
 
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { Loader2, ShieldCheck, CheckCircle } from 'lucide-react'
-import { Button } from '@/components/ui/schadcn/button'
-import { Input } from '@/components/ui/schadcn/input'
-import { Label } from '@/components/ui/schadcn/label'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/schadcn/card'
-import { Alert, AlertDescription } from '@/components/ui/schadcn/alert'
-import { useSafeTranslation } from '@/hooks/use-safe-translation'
-
-type CreateAdminForm = {
-  email: string
-  password: string
-}
+import { useSecureAuth } from '@/hooks/use-secure-auth'
+import CreateAdminContainer from '@/components/admin/create-admin/containers/CreateAdminContainer'
 
 export default function CreateAdminPage() {
-  const { t } = useSafeTranslation('admin')
+  const { auth } = useSecureAuth()
 
-  // Form validation schema with translations
-  const createAdminSchema = z.object({
-    email: z.string().email(t('createAdmin.validation.invalidEmail')),
-    password: z.string().min(8, t('createAdmin.validation.passwordMin')),
-  })
-  const [isLoading, setIsLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  // Check if user is superadmin
+  const isSuperAdmin = auth.role === 'superadmin'
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<CreateAdminForm>({
-    resolver: zodResolver(createAdminSchema),
-  })
-
-  const onSubmit = async (data: CreateAdminForm) => {
-    setIsLoading(true)
-    setError(null)
-    setSuccess(false)
-
-    try {
-      const response = await fetch('/api/admin/users/create-admin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      })
-
-      const result = await response.json()
-
-      if (!response.ok) {
-        throw new Error(result.error || t('createAdmin.errors.createFailed'))
-      }
-
-      setSuccess(true)
-      reset()
-
-      // Clear success message after 5 seconds
-      setTimeout(() => setSuccess(false), 5000)
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : t('createAdmin.errors.default')
-      )
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  return (
-    <div className="max-w-2xl">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">{t('createAdmin.title')}</h1>
-        <p className="text-muted-foreground mt-2">
-          {t('createAdmin.subtitle')}
-        </p>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <ShieldCheck className="h-5 w-5" />
-            {t('createAdmin.cardTitle')}
-          </CardTitle>
-          <CardDescription>{t('createAdmin.cardDescription')}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Email Field */}
-            <div className="space-y-2">
-              <Label htmlFor="email">
-                {t('createAdmin.form.email')}{' '}
-                <span className="text-destructive">
-                  {t('createAdmin.form.required')}
-                </span>
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder={t('createAdmin.form.emailPlaceholder')}
-                {...register('email')}
-                disabled={isLoading}
-              />
-              {errors.email && (
-                <p className="text-sm text-destructive">
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
-
-            {/* Password Field */}
-            <div className="space-y-2">
-              <Label htmlFor="password">
-                {t('createAdmin.form.password')}{' '}
-                <span className="text-destructive">
-                  {t('createAdmin.form.required')}
-                </span>
-              </Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder={t('createAdmin.form.passwordPlaceholder')}
-                {...register('password')}
-                disabled={isLoading}
-              />
-              {errors.password && (
-                <p className="text-sm text-destructive">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
-
-            {/* Success Alert */}
-            {success && (
-              <Alert className="border-green-500 bg-green-50 dark:bg-green-950/20">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-                <AlertDescription className="text-green-600">
-                  {t('createAdmin.success')}
-                </AlertDescription>
-              </Alert>
-            )}
-
-            {/* Error Alert */}
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-
-            {/* Submit Button */}
-            <Button type="submit" disabled={isLoading} className="w-full">
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('createAdmin.form.submitting')}
-                </>
-              ) : (
-                <>
-                  <ShieldCheck className="mr-2 h-4 w-4" />
-                  {t('createAdmin.form.submit')}
-                </>
-              )}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-
-      {/* Warning Card */}
-      <Card className="mt-6 border-amber-500/50 bg-amber-50/50 dark:bg-amber-950/20">
-        <CardHeader>
-          <CardTitle className="text-sm text-amber-900 dark:text-amber-500">
-            {t('createAdmin.warning.title')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2 text-sm text-amber-800 dark:text-amber-400">
-          <p>• {t('createAdmin.warning.note1')}</p>
-          <p>• {t('createAdmin.warning.note2')}</p>
-          <p>• {t('createAdmin.warning.note3')}</p>
-          <p>• {t('createAdmin.warning.note4')}</p>
-          <p>• {t('createAdmin.warning.note5')}</p>
-        </CardContent>
-      </Card>
-    </div>
-  )
+  // Delegate all admin management to the container
+  return <CreateAdminContainer isSuperAdmin={isSuperAdmin} />
 }

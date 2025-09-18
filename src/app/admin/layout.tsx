@@ -1,8 +1,8 @@
 /**
- * Admin Layout - Server-side auth check for customer dashboard
+ * Admin Layout - Server-side auth check for admin dashboard
  *
  * Features:
- * - Protected route (requires customer role)
+ * - Protected route (requires admin or superadmin role)
  * - Server-side authentication check with proper error handling
  * - Delegates UI to client wrapper
  * - Enhanced security with multiple role check methods
@@ -18,7 +18,7 @@ import { redirect } from 'next/navigation'
 import { AdminLayoutWrapper } from '@/components/admin'
 
 // Define allowed roles for admin access
-const ADMIN_ALLOWED_ROLES = ['admin'] as const
+const ADMIN_ALLOWED_ROLES = ['admin', 'superadmin'] as const
 type AdminRole = (typeof ADMIN_ALLOWED_ROLES)[number]
 
 export default async function AdminLayout({

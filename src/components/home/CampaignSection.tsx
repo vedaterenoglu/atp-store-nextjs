@@ -14,14 +14,42 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { toast } from '@/lib/utils/toast'
+import { useState, useEffect } from 'react'
+import { getCampaignProducts } from '@/services/campaign.service'
 
 interface CampaignSectionProps {
   products: CampaignProduct[]
+  companyId?: string
 }
 
-export function CampaignSection({ products }: CampaignSectionProps) {
+export function CampaignSection({
+  products: initialProducts,
+  companyId = 'alfe',
+}: CampaignSectionProps) {
   const { t } = useTranslation('common')
   const { t: tCampaign } = useTranslation('campaign')
+  const [products, setProducts] = useState<CampaignProduct[]>(initialProducts)
+  const [isLoading, setIsLoading] = useState(false)
+
+  // Refetch campaign products on component mount
+  useEffect(() => {
+    const fetchLatestCampaignProducts = async () => {
+      setIsLoading(true)
+      try {
+        const freshProducts = await getCampaignProducts(companyId)
+        setProducts(freshProducts)
+      } catch (error) {
+        console.error('Failed to refetch campaign products:', error)
+        // Keep using initial products if fetch fails
+        setProducts(initialProducts)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    // Always fetch fresh data on mount
+    fetchLatestCampaignProducts()
+  }, [companyId, initialProducts]) // Re-fetch if companyId changes
 
   const handleProductClick = (product: CampaignProduct) => {
     toast.info(
@@ -31,8 +59,8 @@ export function CampaignSection({ products }: CampaignSectionProps) {
     // router.push(`/products/${product.stock_id}`)
   }
 
-  // Don't render anything if no products
-  if (products.length === 0) {
+  // Don't render anything if no products and not loading
+  if (!isLoading && products.length === 0) {
     return null
   }
 

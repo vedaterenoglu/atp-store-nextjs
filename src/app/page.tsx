@@ -35,7 +35,7 @@ export default async function Home() {
   return (
     <div className="flex flex-col">
       {/* Campaign Section - Only renders if products exist */}
-      <CampaignSection products={campaignProducts} />
+      <CampaignSection products={campaignProducts} companyId={customerId} />
 
       {/* Hero and Features Sections - Always visible */}
       <HeroSection />

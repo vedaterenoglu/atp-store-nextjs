@@ -103,11 +103,15 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
       requiresActiveCustomer,
     } of roleProtectedRoutes) {
       if (pattern.test(pathname)) {
-        // Check role requirement
-        // Allow admin to access customer routes (admin can do everything customer can)
+        // Check role requirement with hierarchy: superadmin > admin > customer
+        // Superadmin can access everything
+        // Admin can access admin and customer routes
+        // Customer can only access customer routes
         const hasRequiredRole =
           userRole === requiredRole ||
-          (requiredRole === 'customer' && userRole === 'admin')
+          userRole === 'superadmin' || // Superadmin can access everything
+          (requiredRole === 'customer' && userRole === 'admin') || // Admin can access customer routes
+          (requiredRole === 'admin' && userRole === 'superadmin') // Superadmin can access admin routes
 
         if (!hasRequiredRole) {
           const homeUrl = new URL('/', req.url)
@@ -140,22 +144,25 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
           // if no active customer is set
         }
 
-        // Check for admin impersonation
-        if (userRole === 'admin' && requiresActiveCustomer) {
-          // Admin can view customer routes via impersonation
+        // Check for admin/superadmin impersonation
+        if (
+          (userRole === 'admin' || userRole === 'superadmin') &&
+          requiresActiveCustomer
+        ) {
+          // Admin and superadmin can view customer routes via impersonation
           // Check both possible cookie names (active_customer_id is the standard one)
           const activeCustomerId = req.cookies.get('active_customer_id')?.value
           const impersonatingId = req.cookies.get(
             'impersonating_customer_id'
           )?.value
 
-          // Allow admin access if they have selected a customer
+          // Allow admin/superadmin access if they have selected a customer
           if (
             !activeCustomerId &&
             !impersonatingId &&
             pathname !== '/customer/switch'
           ) {
-            // Redirect admin to customer selection
+            // Redirect admin/superadmin to customer selection
             const switchUrl = new URL('/customer/switch', req.url)
             switchUrl.searchParams.set('redirect', pathname)
             return NextResponse.redirect(switchUrl)

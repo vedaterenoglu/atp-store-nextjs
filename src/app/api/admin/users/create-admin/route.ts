@@ -1,8 +1,9 @@
 /**
- * API Route - Create Admin Account
+ * API Route - Create Admin Account (Superadmin Only)
  * SOLID Principles: SRP - Single responsibility for admin creation
  * Design Patterns: API Route Pattern with validation
  * Dependencies: Clerk SDK, Zod validation
+ * Access Control: Only superadmin users can create admin accounts
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -42,15 +43,15 @@ export async function POST(
       )
     }
 
-    // Check admin role
+    // Check superadmin role - only superadmin can create admin accounts
     const metadata = sessionClaims?.['metadata'] as
       | { role?: string }
       | undefined
     const userRole = metadata?.role
 
-    if (userRole !== 'admin') {
+    if (userRole !== 'superadmin') {
       return NextResponse.json(
-        { success: false, error: 'Forbidden - Admin access required' },
+        { success: false, error: 'Forbidden - Superadmin access required' },
         { status: 403 }
       )
     }

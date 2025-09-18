@@ -33,10 +33,10 @@ export async function GET() {
       })
     }
 
-    // Check if user is admin
+    // Check if user is admin or superadmin
     const userRole = user.publicMetadata?.['role'] as string
 
-    if (userRole !== 'admin') {
+    if (userRole !== 'admin' && userRole !== 'superadmin') {
       return NextResponse.json({ customers: [] } as AllCustomersResponse, {
         status: 403,
       })

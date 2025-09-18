@@ -21,7 +21,7 @@ export interface AuthCheckResult {
 
 export interface AuthContext {
   isSignedIn: boolean
-  role: 'customer' | 'admin' | null
+  role: 'customer' | 'admin' | 'superadmin' | null
   hasActiveCustomer: boolean
   customerId?: string | undefined
 }
@@ -45,8 +45,12 @@ export class AuthorizationService {
       }
     }
 
-    // Check 2: User must have customer or admin role
-    if (context.role !== 'customer' && context.role !== 'admin') {
+    // Check 2: User must have customer, admin, or superadmin role
+    if (
+      context.role !== 'customer' &&
+      context.role !== 'admin' &&
+      context.role !== 'superadmin'
+    ) {
       return {
         success: false,
         error: 'INVALID_ROLE',
@@ -80,8 +84,8 @@ export class AuthorizationService {
       }
     }
 
-    // Check 2: User must have admin role
-    if (context.role !== 'admin') {
+    // Check 2: User must have admin or superadmin role
+    if (context.role !== 'admin' && context.role !== 'superadmin') {
       return {
         success: false,
         error: 'ADMIN_ONLY',
@@ -96,11 +100,14 @@ export class AuthorizationService {
   /**
    * Extract role from user metadata
    */
-  static extractRole(user: User | null): 'customer' | 'admin' | null {
+  static extractRole(
+    user: User | null
+  ): 'customer' | 'admin' | 'superadmin' | null {
     if (!user) return null
 
     const role = user.publicMetadata?.['role'] as string | undefined
     if (role === 'admin') return 'admin'
+    if (role === 'superadmin') return 'superadmin'
     if (role === 'customer') return 'customer'
 
     return null

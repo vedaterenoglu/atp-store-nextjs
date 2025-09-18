@@ -74,7 +74,7 @@ const createMockAuthService = (
   isValidCustomer: jest.fn(),
   isCustomer: false,
   isAdmin: false,
-  isStaff: false,
+  isSuperAdmin: false,
   ...overrides,
 })
 

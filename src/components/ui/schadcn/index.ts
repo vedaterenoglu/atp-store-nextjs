@@ -138,3 +138,15 @@ export {
   CommandShortcut,
   CommandSeparator,
 } from './command'
+
+// Table components
+export {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCaption,
+} from './table'

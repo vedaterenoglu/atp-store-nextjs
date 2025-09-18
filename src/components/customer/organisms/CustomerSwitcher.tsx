@@ -263,7 +263,10 @@ export function CustomerSwitcher() {
 
         const customerName = customer?.customer_title || customerId
         toast.success(
-          t('messages.customer.switchedTo', { customer: customerName })
+          t('messages.customer.switchedTo').replace(
+            '{{customer}}',
+            customerName
+          )
         )
 
         // Force refresh the auth context to get updated permissions

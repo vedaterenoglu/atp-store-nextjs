@@ -48,7 +48,12 @@ export async function getMostPurchasedProducts(
       customer_id: customerId,
     })
 
-    const response = await fetch(`${baseUrl}/api/most-purchased?${params}`)
+    const response = await fetch(`${baseUrl}/api/most-purchased?${params}`, {
+      cache: 'no-store', // Disable caching to always get fresh data
+      next: {
+        revalidate: 0, // Ensure no caching in Next.js
+      },
+    })
 
     if (!response.ok) {
       throw new Error(`Failed to fetch most purchased: ${response.statusText}`)

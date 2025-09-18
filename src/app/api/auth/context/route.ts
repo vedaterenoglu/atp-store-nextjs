@@ -15,7 +15,7 @@ import { cookies } from 'next/headers'
 export interface SecureAuthContext {
   isAuthenticated: boolean
   userId: string | null
-  role: 'admin' | 'customer' | null
+  role: 'admin' | 'superadmin' | 'customer' | null
   customerIds: string[]
   activeCustomerId: string | null
   canAddToCart: boolean
@@ -46,7 +46,11 @@ export async function GET() {
     }
 
     // Extract metadata from user.publicMetadata (server-side source of truth)
-    const role = user.publicMetadata?.['role'] as 'admin' | 'customer' | null
+    const role = user.publicMetadata?.['role'] as
+      | 'admin'
+      | 'superadmin'
+      | 'customer'
+      | null
     const customerIds = (user.publicMetadata?.['customerids'] as string[]) || []
 
     // Get active customer from cookies (server-side validated)
@@ -61,8 +65,8 @@ export async function GET() {
     // Validate active customer is in allowed list
     let validatedActiveCustomer: string | null = null
     if (activeCustomerId) {
-      if (role === 'admin') {
-        // Admin can impersonate any customer
+      if (role === 'admin' || role === 'superadmin') {
+        // Admin and superadmin can impersonate any customer
         validatedActiveCustomer = activeCustomerId
       } else if (
         role === 'customer' &&
@@ -77,17 +81,18 @@ export async function GET() {
     }
 
     // Server-side authorization logic (cannot be bypassed)
-    const canAccessAdmin = role === 'admin'
+    const canAccessAdmin = role === 'admin' || role === 'superadmin'
     const canAccessCustomerFeatures =
-      (role === 'customer' || role === 'admin') &&
+      (role === 'customer' || role === 'admin' || role === 'superadmin') &&
       validatedActiveCustomer !== null
 
     const canAddToCart =
       role === 'admin' ||
+      role === 'superadmin' ||
       (role === 'customer' && validatedActiveCustomer !== null)
 
     const canBookmark =
-      (role === 'customer' || role === 'admin') &&
+      (role === 'customer' || role === 'admin' || role === 'superadmin') &&
       validatedActiveCustomer !== null
 
     // Return secure context

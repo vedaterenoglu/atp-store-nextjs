@@ -32,7 +32,6 @@ export function CardActions({
   const { t } = useTranslation('campaign')
   const [quantity, setQuantity] = useState(0)
   const { auth, isAuthenticated } = useSecureAuth()
-  const addToCart = useCartStore(state => state.addToCart)
   const cartItem = useCartStore(state => state.findCartItem(product.stock_id))
   const cartQuantity = isAuthenticated ? cartItem?.quantity || 0 : 0
 
@@ -84,19 +83,9 @@ export function CardActions({
 
     if (quantity > 0) {
       try {
-        // Use cart store directly with campaign price
-        const success = await addToCart(
-          product.stock_id, // productId
-          product.stock_name, // productName
-          product.campaign_price, // unitPrice (use campaign price)
-          quantity, // quantity
-          product.stock_image_link, // productImage
-          product.stock_group, // productGroup
-          product.stock_unit, // stockUnit
-          99 // maxQuantity
-        )
-
-        if (success) {
+        // Use callback pattern to add to cart (parent handles the actual cart operation)
+        if (onAddToCart) {
+          onAddToCart(product, quantity)
           toast.success(
             t('cart.addedSuccess', {
               quantity,
@@ -104,11 +93,6 @@ export function CardActions({
             })
           )
           setQuantity(0) // Reset quantity after adding
-
-          // Call legacy callback if provided (for backwards compatibility)
-          if (onAddToCart) {
-            onAddToCart(product, quantity)
-          }
         } else {
           toast.error(t('errors.somethingWentWrong'))
         }

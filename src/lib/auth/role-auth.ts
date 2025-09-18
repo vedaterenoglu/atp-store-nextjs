@@ -41,7 +41,7 @@ export interface RequireAuthOptions {
 /**
  * User role type - extensible for future roles
  */
-export type UserRole = 'customer' | 'admin' | 'staff' | null
+export type UserRole = 'customer' | 'admin' | 'superadmin' | null
 
 /**
  * Hook for role-based authentication with typed results

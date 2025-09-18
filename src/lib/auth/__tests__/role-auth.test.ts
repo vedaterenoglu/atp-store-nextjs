@@ -155,7 +155,7 @@ describe('useRoleAuth', () => {
         createMockUser({
           user: {
             publicMetadata: { role: 'admin' },
-            unsafeMetadata: { role: 'staff' },
+            unsafeMetadata: { role: 'superadmin' },
           },
         })
       )
@@ -178,7 +178,7 @@ describe('useRoleAuth', () => {
         createMockUser({
           user: {
             publicMetadata: { role: 'admin' },
-            unsafeMetadata: { role: 'staff' },
+            unsafeMetadata: { role: 'superadmin' },
           },
         })
       )
@@ -201,14 +201,14 @@ describe('useRoleAuth', () => {
         createMockUser({
           user: {
             publicMetadata: {},
-            unsafeMetadata: { role: 'staff' },
+            unsafeMetadata: { role: 'superadmin' },
           },
         })
       )
 
       const { result } = renderHook(() => useRoleAuth())
 
-      expect(result.current.getUserRole()).toBe('staff')
+      expect(result.current.getUserRole()).toBe('superadmin')
     })
   })
 
@@ -458,7 +458,7 @@ describe('useRoleAuth', () => {
       const { result } = renderHook(() => useRoleAuth())
 
       expect(result.current.hasAnyRole(['customer', 'admin'])).toBe(true)
-      expect(result.current.hasAnyRole(['admin', 'staff'])).toBe(false)
+      expect(result.current.hasAnyRole(['admin', 'superadmin'])).toBe(false)
     })
 
     it('should return false when user has no role', () => {
@@ -480,6 +480,77 @@ describe('useRoleAuth', () => {
 
       expect(result.current.hasRole('customer')).toBe(false)
       expect(result.current.hasAnyRole(['customer', 'admin'])).toBe(false)
+    })
+  })
+
+  describe('superadmin role functionality', () => {
+    it('should recognize superadmin role correctly', () => {
+      mockUseAuth.mockReturnValue(
+        createMockAuth({
+          isLoaded: true,
+          isSignedIn: true,
+          sessionClaims: { metadata: { role: 'superadmin' } },
+        })
+      )
+
+      mockUseUser.mockReturnValue(
+        createMockUser({
+          user: { id: '123' },
+        })
+      )
+
+      const { result } = renderHook(() => useRoleAuth())
+
+      expect(result.current.getUserRole()).toBe('superadmin')
+      expect(result.current.hasRole('superadmin')).toBe(true)
+      expect(result.current.hasRole('admin')).toBe(false)
+    })
+
+    it('should allow superadmin to access admin-required functions', () => {
+      mockUseAuth.mockReturnValue(
+        createMockAuth({
+          isLoaded: true,
+          isSignedIn: true,
+          sessionClaims: { metadata: { role: 'superadmin' } },
+        })
+      )
+
+      mockUseUser.mockReturnValue(
+        createMockUser({
+          user: { id: '123' },
+        })
+      )
+
+      const { result } = renderHook(() => useRoleAuth())
+
+      // Test that superadmin can access admin functions
+      expect(result.current.hasAnyRole(['admin', 'superadmin'])).toBe(true)
+      expect(result.current.hasAnyRole(['admin'])).toBe(false)
+      expect(result.current.hasAnyRole(['superadmin'])).toBe(true)
+    })
+
+    it('should successfully authenticate superadmin for admin-required operations', () => {
+      mockUseAuth.mockReturnValue(
+        createMockAuth({
+          isLoaded: true,
+          isSignedIn: true,
+          sessionClaims: { metadata: { role: 'superadmin' } },
+        })
+      )
+
+      mockUseUser.mockReturnValue(
+        createMockUser({
+          user: { id: '123' },
+        })
+      )
+
+      const onSuccess = jest.fn()
+      const { result } = renderHook(() => useRoleAuth())
+
+      // Test that superadmin passes auth check for superadmin role
+      const superadminAuth = result.current.requireAuth('superadmin', onSuccess)
+      expect(superadminAuth).toBe(true)
+      expect(onSuccess).toHaveBeenCalledTimes(1)
     })
   })
 })

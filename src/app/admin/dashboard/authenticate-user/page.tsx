@@ -2,7 +2,7 @@
  * Admin Dashboard - Authenticate User Page
  * SOLID Principles: SRP - Single responsibility for user authentication
  * Design Patterns: Form Component Pattern, State Management Pattern
- * Dependencies: React Hook Form, Customer API, User Search API
+ * Dependencies: React Hook Form, Customer API, User Search API, Secure Auth Hook
  */
 
 'use client'
@@ -64,6 +64,7 @@ type SearchForm = {
 
 export default function AuthenticateUserPage() {
   const { t } = useSafeTranslation('admin')
+
   const [isSearching, setIsSearching] = useState(false)
   const [isAuthenticating, setIsAuthenticating] = useState(false)
   const [searchError, setSearchError] = useState<string | null>(null)
@@ -451,10 +452,12 @@ export default function AuthenticateUserPage() {
                   </div>
                   {customerFilter && (
                     <p className="mt-2 text-sm text-muted-foreground">
-                      {t('authenticateUser.linkCustomers.searchResults', {
-                        filtered: filteredCustomers.length,
-                        total: customers.length,
-                      })}
+                      {t('authenticateUser.linkCustomers.searchResults')
+                        .replace(
+                          '{{filtered}}',
+                          filteredCustomers.length.toString()
+                        )
+                        .replace('{{total}}', customers.length.toString())}
                     </p>
                   )}
                 </div>

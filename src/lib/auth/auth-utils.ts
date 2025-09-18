@@ -64,5 +64,5 @@ export function extractCustomerId(
  * Validate role value
  */
 export function isValidRole(role: unknown): role is UserRole {
-  return role === 'customer' || role === 'admin' || role === 'staff'
+  return role === 'customer' || role === 'admin' || role === 'superadmin'
 }

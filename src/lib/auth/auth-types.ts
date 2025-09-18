@@ -8,7 +8,7 @@
 /**
  * User role types supported by the system
  */
-export type UserRole = 'customer' | 'admin' | 'staff' | null
+export type UserRole = 'customer' | 'admin' | 'superadmin' | null
 
 /**
  * Authenticated user data structure

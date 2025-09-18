@@ -198,6 +198,6 @@ export function useAuthService() {
     // Convenience getters
     isCustomer: authState.user?.role === 'customer',
     isAdmin: authState.user?.role === 'admin',
-    isStaff: authState.user?.role === 'staff',
+    isSuperAdmin: authState.user?.role === 'superadmin',
   }
 }

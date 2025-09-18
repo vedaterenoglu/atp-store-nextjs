@@ -13,7 +13,7 @@ import { useCartStore } from '@/lib/stores/cart.store'
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const { isLoaded, isSignedIn, user } = useUser()
-  const { initializeCart, resetCart, isInitialized } = useCartStore()
+  const { initializeCart, resetCart, isInitialized, cart } = useCartStore()
   const [activeCustomerId, setActiveCustomerId] = useState<string | null>(null)
 
   // Fetch active customer from cookie/API
@@ -72,8 +72,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       return
     }
 
-    // Initialize cart with active customer
-    if (!isInitialized) {
+    // Check if customer has changed
+    const customerChanged =
+      cart?.customerId && cart.customerId !== activeCustomerId
+
+    // Initialize cart with active customer if:
+    // 1. Cart is not initialized yet, OR
+    // 2. Customer has changed (switching customers)
+    if (!isInitialized || customerChanged) {
       initializeCart(user.id, activeCustomerId)
     }
   }, [
@@ -81,6 +87,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     isSignedIn,
     user,
     activeCustomerId,
+    cart,
     initializeCart,
     resetCart,
     isInitialized,

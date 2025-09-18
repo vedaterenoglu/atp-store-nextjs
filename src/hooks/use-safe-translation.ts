@@ -19,9 +19,7 @@ export function useSafeTranslation(namespace: string = 'common') {
 
   // Safe fallback function that returns the key if translation isn't ready
   // Matches the signature of the real t function to accept interpolation options
-  const t = translationResult.ready
-    ? translationResult.t
-    : (key: string, _options?: Record<string, unknown>) => key
+  const t = translationResult.ready ? translationResult.t : (key: string) => key
 
   return {
     t,

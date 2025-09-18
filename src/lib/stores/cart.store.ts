@@ -84,7 +84,7 @@ export const useCartStore = create<CartStore>()(
             state.companyId = companyId
           }
 
-          // If cart exists and belongs to same user, keep it
+          // If cart exists and belongs to same user AND same customer, keep it
           if (
             state.cart &&
             state.cart.userId === userId &&
@@ -95,6 +95,10 @@ export const useCartStore = create<CartStore>()(
             get().refreshPrices()
             return
           }
+
+          // Customer has changed or new initialization - create new cart
+          // Reset loading state when switching customers
+          state.isLoading = false
 
           // Create new cart for user
           state.cart = {

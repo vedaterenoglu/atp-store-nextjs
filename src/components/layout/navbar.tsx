@@ -269,15 +269,22 @@ function AdminDashboardButton() {
   const router = useRouter()
   const { user } = useUser()
 
-  // Only show for admin users
-  const isAdmin = user?.publicMetadata?.['role'] === 'admin'
+  // Only show for admin and superadmin users
+  const isAdmin =
+    user?.publicMetadata?.['role'] === 'admin' ||
+    user?.publicMetadata?.['role'] === 'superadmin'
 
   if (!isAdmin) {
     return null
   }
 
   const handleClick = () => {
-    router.push('/admin/dashboard')
+    // Navigate to different pages based on admin role
+    if (user?.publicMetadata?.['role'] === 'superadmin') {
+      router.push('/admin/dashboard/create-admin')
+    } else {
+      router.push('/admin/dashboard')
+    }
   }
 
   return (
@@ -449,7 +456,9 @@ function MobileMenu({
     onClose()
   }
 
-  const isAdmin = user?.publicMetadata?.['role'] === 'admin'
+  const isAdmin =
+    user?.publicMetadata?.['role'] === 'admin' ||
+    user?.publicMetadata?.['role'] === 'superadmin'
 
   return (
     <div className={cn('sm:hidden border-t bg-background')}>

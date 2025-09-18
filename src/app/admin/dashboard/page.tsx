@@ -2,12 +2,12 @@
  * Admin Dashboard - Create Customer Account Page
  * SOLID Principles: SRP - Single responsibility for customer creation
  * Design Patterns: Form Component Pattern
- * Dependencies: React Hook Form, Clerk API
+ * Dependencies: React Hook Form, Clerk API, Secure Auth Hook
  */
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -38,6 +38,7 @@ export default function CreateCustomerPage() {
     email: z.string().email(t('createCustomer.validation.invalidEmail')),
     password: z.string().min(8, t('createCustomer.validation.passwordMin')),
   })
+
   const [isLoading, setIsLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -49,7 +50,19 @@ export default function CreateCustomerPage() {
     formState: { errors },
   } = useForm<CreateCustomerForm>({
     resolver: zodResolver(createCustomerSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
   })
+
+  // Reset form on component mount to ensure clean state
+  useEffect(() => {
+    reset({
+      email: '',
+      password: '',
+    })
+  }, [reset])
 
   const onSubmit = async (data: CreateCustomerForm) => {
     setIsLoading(true)
@@ -70,7 +83,10 @@ export default function CreateCustomerPage() {
       }
 
       setSuccess(true)
-      reset()
+      reset({
+        email: '',
+        password: '',
+      })
 
       // Clear success message after 5 seconds
       setTimeout(() => setSuccess(false), 5000)
