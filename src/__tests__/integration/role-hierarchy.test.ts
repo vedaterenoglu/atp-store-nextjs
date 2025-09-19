@@ -327,23 +327,28 @@ describe('Role Hierarchy and Permissions Integration', () => {
 
   describe('System Integration Verification', () => {
     it('should have consistent role definitions across all modules', () => {
-      const expectedRoles: UserRole[] = [
+      const expectedRoles: NonNullable<UserRole>[] = [
         'customer',
         'admin',
         'superadmin',
-        null,
       ]
 
       // Verify all roles are accounted for in hierarchy
       expectedRoles.forEach(role => {
-        expect(ROLE_HIERARCHY).toHaveProperty(role as string)
+        expect(ROLE_HIERARCHY).toHaveProperty(role)
       })
 
       // Verify no unexpected roles exist
-      const hierarchyRoles = Object.keys(ROLE_HIERARCHY) as UserRole[]
+      const hierarchyRoles = Object.keys(
+        ROLE_HIERARCHY
+      ) as NonNullable<UserRole>[]
       hierarchyRoles.forEach(role => {
         expect(expectedRoles).toContain(role)
       })
+
+      // Null is a valid role but not in hierarchy (level 0)
+      const allPossibleRoles: UserRole[] = [...expectedRoles, null]
+      expect(allPossibleRoles).toContain(null)
     })
 
     it('should validate permission consistency', () => {

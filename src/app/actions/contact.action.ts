@@ -8,6 +8,10 @@
 'use server'
 
 import { z } from 'zod'
+import {
+  getEmailTemplates,
+  type EmailTemplateData,
+} from '@/lib/email-templates'
 
 // Define the validation schema using Zod
 const contactFormSchema = z.object({
@@ -48,50 +52,66 @@ export async function submitContactForm(
 
     // Get environment variables server-side
     const SENDGRID_API_KEY = process.env['SENDGRID_API_KEY']
-    const CONTACT_EMAIL_TO = process.env['CONTACT_EMAIL_TO'] || 'info@alfe.se'
+    const CONTACT_EMAIL_TO =
+      process.env['CONTACT_EMAIL_TO'] || process.env['EMAIL_TO']
     const CONTACT_EMAIL_FROM =
-      process.env['CONTACT_EMAIL_FROM'] || 'noreply@alfe.se'
+      process.env['CONTACT_EMAIL_FROM'] || process.env['EMAIL_FROM']
 
     if (!SENDGRID_API_KEY) {
-      console.error('SendGrid API key not configured')
+      console.error('❌ [CONTACT FORM] SendGrid API key not configured')
       return {
         success: false,
         error: 'Email service not configured. Please contact support directly.',
       }
     }
 
-    // Prepare the email content
-    const emailContent = {
-      to: CONTACT_EMAIL_TO,
-      from: CONTACT_EMAIL_FROM,
-      subject: `[${validatedData.subject.toUpperCase()}] Contact Form Submission from ${validatedData.name}`,
-      replyTo: validatedData.email,
-      text: `
-Name: ${validatedData.name}
-Email: ${validatedData.email}
-Phone: ${validatedData.phone || 'Not provided'}
-Subject: ${validatedData.subject}
-Customer ID: ${validatedData.customerid || 'Not provided'}
-Language: ${validatedData.language || 'Not specified'}
-
-Message:
-${validatedData.message}
-      `,
-      html: `
-<h2>Contact Form Submission</h2>
-<p><strong>Name:</strong> ${validatedData.name}</p>
-<p><strong>Email:</strong> ${validatedData.email}</p>
-<p><strong>Phone:</strong> ${validatedData.phone || 'Not provided'}</p>
-<p><strong>Subject:</strong> ${validatedData.subject}</p>
-<p><strong>Customer ID:</strong> ${validatedData.customerid || 'Not provided'}</p>
-<p><strong>Language:</strong> ${validatedData.language || 'Not specified'}</p>
-<hr>
-<h3>Message:</h3>
-<p>${validatedData.message.replace(/\n/g, '<br>')}</p>
-      `,
+    if (!CONTACT_EMAIL_TO || !CONTACT_EMAIL_FROM) {
+      console.error('❌ [CONTACT FORM] Email addresses not configured:', {
+        to: CONTACT_EMAIL_TO,
+        from: CONTACT_EMAIL_FROM,
+      })
+      return {
+        success: false,
+        error:
+          'Email configuration incomplete. Please contact support directly.',
+      }
     }
 
-    // Send email using SendGrid API directly (server-side)
+    // Prepare template data
+    const templateData: EmailTemplateData = {
+      name: validatedData.name,
+      email: validatedData.email,
+      phone: validatedData.phone || '',
+      subject: validatedData.subject,
+      message: validatedData.message,
+      timestamp: new Date().toISOString(),
+    }
+
+    // Get email templates - Company ALWAYS gets Swedish, User gets their locale
+    const companyTemplates = getEmailTemplates('sv', templateData)
+    const userTemplates = getEmailTemplates(
+      validatedData.language || 'en',
+      templateData
+    )
+
+    // Prepare the company notification email content (always in Swedish)
+    const companyEmailContent = {
+      to: CONTACT_EMAIL_TO,
+      from: CONTACT_EMAIL_FROM,
+      subject: companyTemplates.admin.subject,
+      replyTo: validatedData.email,
+      html: companyTemplates.admin.html,
+    }
+
+    // Prepare the user confirmation email content (in user's language)
+    const userEmailContent = {
+      to: validatedData.email,
+      from: CONTACT_EMAIL_FROM,
+      subject: userTemplates.user.subject,
+      html: userTemplates.user.html,
+    }
+
+    // Send company notification email using SendGrid API
     const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
       method: 'POST',
       headers: {
@@ -99,30 +119,80 @@ ${validatedData.message}
         Authorization: `Bearer ${SENDGRID_API_KEY}`,
       },
       body: JSON.stringify({
-        personalizations: [{ to: [{ email: emailContent.to }] }],
-        from: { email: emailContent.from },
-        reply_to: { email: emailContent.replyTo },
-        subject: emailContent.subject,
-        content: [
-          { type: 'text/plain', value: emailContent.text },
-          { type: 'text/html', value: emailContent.html },
-        ],
+        personalizations: [{ to: [{ email: companyEmailContent.to }] }],
+        from: { email: companyEmailContent.from },
+        reply_to: { email: companyEmailContent.replyTo },
+        subject: companyEmailContent.subject,
+        content: [{ type: 'text/html', value: companyEmailContent.html }],
       }),
     })
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('SendGrid API error:', response.status, errorText)
-      throw new Error('Failed to send email')
+      console.error('❌ [CONTACT FORM] SendGrid API error:', {
+        status: response.status,
+        error: errorText,
+      })
+
+      // Try to parse error as JSON for more details
+      try {
+        const errorJson = JSON.parse(errorText)
+        console.error('❌ [CONTACT FORM] SendGrid error details:', errorJson)
+      } catch {
+        // Not JSON, already logged as text
+      }
+
+      throw new Error('Failed to send company notification email')
+    }
+
+    // Send user confirmation email
+
+    const userResponse = await fetch('https://api.sendgrid.com/v3/mail/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${SENDGRID_API_KEY}`,
+      },
+      body: JSON.stringify({
+        personalizations: [{ to: [{ email: userEmailContent.to }] }],
+        from: { email: userEmailContent.from },
+        subject: userEmailContent.subject,
+        content: [{ type: 'text/html', value: userEmailContent.html }],
+      }),
+    })
+
+    if (!userResponse.ok) {
+      const errorText = await userResponse.text()
+      console.error('❌ [CONTACT FORM] User email SendGrid API error:', {
+        status: userResponse.status,
+        error: errorText,
+      })
+
+      // Try to parse error as JSON for more details
+      try {
+        const errorJson = JSON.parse(errorText)
+        console.error(
+          '❌ [CONTACT FORM] User email SendGrid error details:',
+          errorJson
+        )
+      } catch {
+        // Not JSON, already logged as text
+      }
+
+      throw new Error('Failed to send user confirmation email')
     }
 
     return {
       success: true,
     }
   } catch (error) {
-    console.error('Contact form submission error:', error)
+    console.error(
+      '[CONTACT FORM] Error:',
+      error instanceof Error ? error.message : 'Unknown error'
+    )
 
     if (error instanceof z.ZodError) {
+      console.error('❌ [CONTACT FORM] Validation error:', error.issues)
       return {
         success: false,
         error: error.issues[0]?.message || 'Invalid form data',

@@ -37,6 +37,20 @@ const subjectTranslations = {
     partnership: 'Ortaklık',
     feedback: 'Geri Bildirim',
   },
+  de: {
+    general: 'Allgemeine Anfrage',
+    sales: 'Verkaufsfrage',
+    support: 'Technischer Support',
+    partnership: 'Partnerschaft',
+    feedback: 'Feedback',
+  },
+  da: {
+    general: 'Generel forespørgsel',
+    sales: 'Salgsspørgsmål',
+    support: 'Teknisk support',
+    partnership: 'Partnerskab',
+    feedback: 'Feedback',
+  },
 }
 
 function getTranslatedSubject(language: string, subjectKey: string): string {
@@ -69,53 +83,62 @@ const templates = {
         <html>
           <head>
             <style>
-              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-              .header { background: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
-              .field { margin-bottom: 15px; }
-              .label { font-weight: bold; color: #555; }
-              .value { color: #000; margin-top: 5px; }
-              .message { background: #f1f3f5; padding: 15px; border-left: 4px solid #0066cc; margin-top: 20px; }
-              .footer { margin-top: 30px; font-size: 12px; color: #666; text-align: center; }
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+              .container { max-width: 600px; margin: 0 auto; }
+              .header { background: #4267B2; color: white; padding: 30px; text-align: center; }
+              .header h2 { margin: 0; font-size: 24px; }
+              .header p { margin: 5px 0 0; font-size: 14px; opacity: 0.9; }
+              .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }
+              .field { margin-bottom: 20px; }
+              .label { font-weight: bold; color: #333; font-size: 14px; margin-bottom: 5px; }
+              .value { color: #555; font-size: 16px; }
+              .value a { color: #4267B2; text-decoration: none; }
+              .value a:hover { text-decoration: underline; }
+              .message-box { background: #f8f9fa; padding: 20px; border-left: 4px solid #4267B2; margin: 20px 0; }
+              .message-box .label { color: #4267B2; margin-bottom: 10px; font-size: 16px; }
+              .message-box .value { white-space: pre-wrap; color: #333; }
+              .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border: 1px solid #e0e0e0; border-top: none; }
             </style>
           </head>
           <body>
             <div class="container">
               <div class="header">
-                <h2 style="margin: 0; color: #0066cc;">New Contact Form Submission</h2>
-                <p style="margin: 5px 0 0; color: #666;">ATP Store Website</p>
+                <h2>New Contact Form Submission</h2>
+                <p>ATP Store Website</p>
               </div>
-              
-              <div class="field">
-                <div class="label">Full Name:</div>
-                <div class="value">${data.name}</div>
+
+              <div class="content">
+                <div class="field">
+                  <div class="label">Full Name:</div>
+                  <div class="value">${data.name}</div>
+                </div>
+
+                <div class="field">
+                  <div class="label">Email:</div>
+                  <div class="value"><a href="mailto:${data.email}">${data.email}</a></div>
+                </div>
+
+                <div class="field">
+                  <div class="label">Phone:</div>
+                  <div class="value">${data.phone || 'Not provided'}</div>
+                </div>
+
+                <div class="field">
+                  <div class="label">Subject:</div>
+                  <div class="value">${translatedSubject}</div>
+                </div>
+
+                <div class="field">
+                  <div class="label">Submitted at:</div>
+                  <div class="value">${data.timestamp}</div>
+                </div>
+
+                <div class="message-box">
+                  <div class="label">Message:</div>
+                  <div class="value">${data.message}</div>
+                </div>
               </div>
-              
-              <div class="field">
-                <div class="label">Email:</div>
-                <div class="value"><a href="mailto:${data.email}">${data.email}</a></div>
-              </div>
-              
-              <div class="field">
-                <div class="label">Phone:</div>
-                <div class="value">${data.phone || 'Not provided'}</div>
-              </div>
-              
-              <div class="field">
-                <div class="label">Subject:</div>
-                <div class="value">${translatedSubject}</div>
-              </div>
-              
-              <div class="field">
-                <div class="label">Submitted at:</div>
-                <div class="value">${data.timestamp}</div>
-              </div>
-              
-              <div class="message">
-                <div class="label">Message:</div>
-                <div class="value" style="white-space: pre-wrap; margin-top: 10px;">${data.message}</div>
-              </div>
-              
+
               <div class="footer">
                 <p>This email was sent from the ATP Store contact form.</p>
               </div>
@@ -198,53 +221,62 @@ const templates = {
         <html>
           <head>
             <style>
-              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-              .header { background: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
-              .field { margin-bottom: 15px; }
-              .label { font-weight: bold; color: #555; }
-              .value { color: #000; margin-top: 5px; }
-              .message { background: #f1f3f5; padding: 15px; border-left: 4px solid #0066cc; margin-top: 20px; }
-              .footer { margin-top: 30px; font-size: 12px; color: #666; text-align: center; }
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+              .container { max-width: 600px; margin: 0 auto; }
+              .header { background: #4267B2; color: white; padding: 30px; text-align: center; }
+              .header h2 { margin: 0; font-size: 24px; }
+              .header p { margin: 5px 0 0; font-size: 14px; opacity: 0.9; }
+              .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }
+              .field { margin-bottom: 20px; }
+              .label { font-weight: bold; color: #333; font-size: 14px; margin-bottom: 5px; }
+              .value { color: #555; font-size: 16px; }
+              .value a { color: #4267B2; text-decoration: none; }
+              .value a:hover { text-decoration: underline; }
+              .message-box { background: #f8f9fa; padding: 20px; border-left: 4px solid #4267B2; margin: 20px 0; }
+              .message-box .label { color: #4267B2; margin-bottom: 10px; font-size: 16px; }
+              .message-box .value { white-space: pre-wrap; color: #333; }
+              .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border: 1px solid #e0e0e0; border-top: none; }
             </style>
           </head>
           <body>
             <div class="container">
               <div class="header">
-                <h2 style="margin: 0; color: #0066cc;">Ny Kontaktformulär Inlämning</h2>
-                <p style="margin: 5px 0 0; color: #666;">ATP Store Webbplats</p>
+                <h2>Ny Kontaktformulär Inlämning</h2>
+                <p>ATP Store Webbplats</p>
               </div>
-              
-              <div class="field">
-                <div class="label">Fullständigt namn:</div>
-                <div class="value">${data.name}</div>
+
+              <div class="content">
+                <div class="field">
+                  <div class="label">Fullständigt namn:</div>
+                  <div class="value">${data.name}</div>
+                </div>
+
+                <div class="field">
+                  <div class="label">E-post:</div>
+                  <div class="value"><a href="mailto:${data.email}">${data.email}</a></div>
+                </div>
+
+                <div class="field">
+                  <div class="label">Telefon:</div>
+                  <div class="value">${data.phone || 'Ej angivet'}</div>
+                </div>
+
+                <div class="field">
+                  <div class="label">Ämne:</div>
+                  <div class="value">${translatedSubject}</div>
+                </div>
+
+                <div class="field">
+                  <div class="label">Skickat:</div>
+                  <div class="value">${data.timestamp}</div>
+                </div>
+
+                <div class="message-box">
+                  <div class="label">Meddelande:</div>
+                  <div class="value">${data.message}</div>
+                </div>
               </div>
-              
-              <div class="field">
-                <div class="label">E-post:</div>
-                <div class="value"><a href="mailto:${data.email}">${data.email}</a></div>
-              </div>
-              
-              <div class="field">
-                <div class="label">Telefon:</div>
-                <div class="value">${data.phone || 'Ej angivet'}</div>
-              </div>
-              
-              <div class="field">
-                <div class="label">Ämne:</div>
-                <div class="value">${translatedSubject}</div>
-              </div>
-              
-              <div class="field">
-                <div class="label">Skickat:</div>
-                <div class="value">${data.timestamp}</div>
-              </div>
-              
-              <div class="message">
-                <div class="label">Meddelande:</div>
-                <div class="value" style="white-space: pre-wrap; margin-top: 10px;">${data.message}</div>
-              </div>
-              
+
               <div class="footer">
                 <p>Detta e-postmeddelande skickades från ATP Store kontaktformulär.</p>
               </div>
@@ -327,53 +359,62 @@ const templates = {
         <html>
           <head>
             <style>
-              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-              .header { background: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
-              .field { margin-bottom: 15px; }
-              .label { font-weight: bold; color: #555; }
-              .value { color: #000; margin-top: 5px; }
-              .message { background: #f1f3f5; padding: 15px; border-left: 4px solid #0066cc; margin-top: 20px; }
-              .footer { margin-top: 30px; font-size: 12px; color: #666; text-align: center; }
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+              .container { max-width: 600px; margin: 0 auto; }
+              .header { background: #4267B2; color: white; padding: 30px; text-align: center; }
+              .header h2 { margin: 0; font-size: 24px; }
+              .header p { margin: 5px 0 0; font-size: 14px; opacity: 0.9; }
+              .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }
+              .field { margin-bottom: 20px; }
+              .label { font-weight: bold; color: #333; font-size: 14px; margin-bottom: 5px; }
+              .value { color: #555; font-size: 16px; }
+              .value a { color: #4267B2; text-decoration: none; }
+              .value a:hover { text-decoration: underline; }
+              .message-box { background: #f8f9fa; padding: 20px; border-left: 4px solid #4267B2; margin: 20px 0; }
+              .message-box .label { color: #4267B2; margin-bottom: 10px; font-size: 16px; }
+              .message-box .value { white-space: pre-wrap; color: #333; }
+              .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border: 1px solid #e0e0e0; border-top: none; }
             </style>
           </head>
           <body>
             <div class="container">
               <div class="header">
-                <h2 style="margin: 0; color: #0066cc;">Yeni İletişim Formu Gönderimi</h2>
-                <p style="margin: 5px 0 0; color: #666;">ATP Store Web Sitesi</p>
+                <h2>Yeni İletişim Formu Gönderimi</h2>
+                <p>ATP Store Web Sitesi</p>
               </div>
-              
-              <div class="field">
-                <div class="label">Ad Soyad:</div>
-                <div class="value">${data.name}</div>
+
+              <div class="content">
+                <div class="field">
+                  <div class="label">Ad Soyad:</div>
+                  <div class="value">${data.name}</div>
+                </div>
+
+                <div class="field">
+                  <div class="label">E-posta:</div>
+                  <div class="value"><a href="mailto:${data.email}">${data.email}</a></div>
+                </div>
+
+                <div class="field">
+                  <div class="label">Telefon:</div>
+                  <div class="value">${data.phone || 'Belirtilmemiş'}</div>
+                </div>
+
+                <div class="field">
+                  <div class="label">Konu:</div>
+                  <div class="value">${translatedSubject}</div>
+                </div>
+
+                <div class="field">
+                  <div class="label">Gönderilme Zamanı:</div>
+                  <div class="value">${data.timestamp}</div>
+                </div>
+
+                <div class="message-box">
+                  <div class="label">Mesaj:</div>
+                  <div class="value">${data.message}</div>
+                </div>
               </div>
-              
-              <div class="field">
-                <div class="label">E-posta:</div>
-                <div class="value"><a href="mailto:${data.email}">${data.email}</a></div>
-              </div>
-              
-              <div class="field">
-                <div class="label">Telefon:</div>
-                <div class="value">${data.phone || 'Belirtilmemiş'}</div>
-              </div>
-              
-              <div class="field">
-                <div class="label">Konu:</div>
-                <div class="value">${translatedSubject}</div>
-              </div>
-              
-              <div class="field">
-                <div class="label">Gönderilme Zamanı:</div>
-                <div class="value">${data.timestamp}</div>
-              </div>
-              
-              <div class="message">
-                <div class="label">Mesaj:</div>
-                <div class="value" style="white-space: pre-wrap; margin-top: 10px;">${data.message}</div>
-              </div>
-              
+
               <div class="footer">
                 <p>Bu e-posta ATP Store iletişim formundan gönderildi.</p>
               </div>
@@ -437,6 +478,282 @@ const templates = {
                 Maskinvägen 1 Port 8, 227 30 Lund, Skåne İsveç<br>
                 E-posta: info@alfetissuepaper.se | Web: atpstore.se</p>
                 <p style="margin-top: 10px;">Bu otomatik bir yanıttır. Lütfen bu e-postaya cevap vermeyin.</p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `
+      },
+    },
+  },
+  de: {
+    admin: {
+      subject: (data: EmailTemplateData) =>
+        `${data.name} - Von ATP Store Kontaktformular - ${getTranslatedSubject('de', data.subject)}`,
+      html: (data: EmailTemplateData) => {
+        const translatedSubject = getTranslatedSubject('de', data.subject)
+        return `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+              .container { max-width: 600px; margin: 0 auto; }
+              .header { background: #4267B2; color: white; padding: 30px; text-align: center; }
+              .header h2 { margin: 0; font-size: 24px; }
+              .header p { margin: 5px 0 0; font-size: 14px; opacity: 0.9; }
+              .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }
+              .field { margin-bottom: 20px; }
+              .label { font-weight: bold; color: #333; font-size: 14px; margin-bottom: 5px; }
+              .value { color: #555; font-size: 16px; }
+              .value a { color: #4267B2; text-decoration: none; }
+              .value a:hover { text-decoration: underline; }
+              .message-box { background: #f8f9fa; padding: 20px; border-left: 4px solid #4267B2; margin: 20px 0; }
+              .message-box .label { color: #4267B2; margin-bottom: 10px; font-size: 16px; }
+              .message-box .value { white-space: pre-wrap; color: #333; }
+              .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border: 1px solid #e0e0e0; border-top: none; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h2>Neue Kontaktformular-Nachricht</h2>
+                <p>ATP Store Webseite</p>
+              </div>
+
+              <div class="content">
+                <div class="field">
+                  <div class="label">Vollständiger Name:</div>
+                  <div class="value">${data.name}</div>
+                </div>
+
+                <div class="field">
+                  <div class="label">E-Mail:</div>
+                  <div class="value"><a href="mailto:${data.email}">${data.email}</a></div>
+                </div>
+
+                <div class="field">
+                  <div class="label">Telefon:</div>
+                  <div class="value">${data.phone || 'Nicht angegeben'}</div>
+                </div>
+
+                <div class="field">
+                  <div class="label">Betreff:</div>
+                  <div class="value">${translatedSubject}</div>
+                </div>
+
+                <div class="field">
+                  <div class="label">Gesendet am:</div>
+                  <div class="value">${data.timestamp}</div>
+                </div>
+
+                <div class="message-box">
+                  <div class="label">Nachricht:</div>
+                  <div class="value">${data.message}</div>
+                </div>
+              </div>
+
+              <div class="footer">
+                <p>Diese E-Mail wurde vom ATP Store Kontaktformular gesendet.</p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `
+      },
+    },
+    user: {
+      subject: (data: EmailTemplateData) =>
+        `Vielen Dank für Ihre Kontaktaufnahme mit ATP Store - ${getTranslatedSubject('de', data.subject)}`,
+      html: (data: EmailTemplateData) => {
+        const translatedSubject = getTranslatedSubject('de', data.subject)
+        return `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+              .header { background: #0066cc; color: white; padding: 30px; border-radius: 5px 5px 0 0; text-align: center; }
+              .content { background: #fff; padding: 30px; border: 1px solid #ddd; border-top: none; }
+              .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border: 1px solid #ddd; border-top: none; border-radius: 0 0 5px 5px; }
+              .button { display: inline-block; padding: 12px 30px; background: #0066cc; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; font-weight: bold; font-size: 16px; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1 style="margin: 0;">Vielen Dank für Ihre Nachricht!</h1>
+              </div>
+
+              <div class="content">
+                <p>Sehr geehrte/r ${data.name},</p>
+
+                <p>Wir haben Ihre Nachricht erhalten und danken Ihnen für Ihre Kontaktaufnahme mit ATP Store. Unser Team wird Ihre Anfrage prüfen und sich so schnell wie möglich bei Ihnen melden, normalerweise innerhalb von 1-2 Werktagen.</p>
+
+                <h3 style="color: #0066cc;">Ihre Nachrichtendetails:</h3>
+                <p><strong>Betreff:</strong> ${translatedSubject}</p>
+                <p><strong>Nachricht:</strong></p>
+                <p style="background: #f8f9fa; padding: 15px; border-left: 3px solid #0066cc; white-space: pre-wrap;">${data.message}</p>
+
+                <p>Falls Sie sofortige Hilfe benötigen, rufen Sie uns bitte während der Geschäftszeiten an:</p>
+                <ul>
+                  <li><strong>Bestellannahme:</strong> +46 76 196 1113</li>
+                  <li><strong>Kundendienst:</strong> +46 76 260 1112</li>
+                  <li><strong>Geschäftszeiten:</strong> Montag - Freitag, 08:00 - 16:00</li>
+                </ul>
+
+                <p>Mit freundlichen Grüßen,<br>
+                Das ATP Store Team</p>
+
+                <center>
+                  <a href="http://atpstore.se" class="button" style="color: white !important; text-decoration: none;">Besuchen Sie unsere Webseite</a>
+                </center>
+              </div>
+
+              <div class="footer">
+                <p>Alfe Tissue Paper AB<br>
+                Maskinvägen 1 Port 8, 227 30 Lund, Skåne Schweden<br>
+                E-Mail: info@alfetissuepaper.se | Web: atpstore.se</p>
+                <p style="margin-top: 10px;">Dies ist eine automatische Antwort. Bitte antworten Sie nicht auf diese E-Mail.</p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `
+      },
+    },
+  },
+  da: {
+    admin: {
+      subject: (data: EmailTemplateData) =>
+        `${data.name} - Fra ATP Store kontaktformular - ${getTranslatedSubject('da', data.subject)}`,
+      html: (data: EmailTemplateData) => {
+        const translatedSubject = getTranslatedSubject('da', data.subject)
+        return `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+              .container { max-width: 600px; margin: 0 auto; }
+              .header { background: #4267B2; color: white; padding: 30px; text-align: center; }
+              .header h2 { margin: 0; font-size: 24px; }
+              .header p { margin: 5px 0 0; font-size: 14px; opacity: 0.9; }
+              .content { background: white; padding: 30px; border: 1px solid #e0e0e0; border-top: none; }
+              .field { margin-bottom: 20px; }
+              .label { font-weight: bold; color: #333; font-size: 14px; margin-bottom: 5px; }
+              .value { color: #555; font-size: 16px; }
+              .value a { color: #4267B2; text-decoration: none; }
+              .value a:hover { text-decoration: underline; }
+              .message-box { background: #f8f9fa; padding: 20px; border-left: 4px solid #4267B2; margin: 20px 0; }
+              .message-box .label { color: #4267B2; margin-bottom: 10px; font-size: 16px; }
+              .message-box .value { white-space: pre-wrap; color: #333; }
+              .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border: 1px solid #e0e0e0; border-top: none; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h2>Ny Kontaktformular Indsendelse</h2>
+                <p>ATP Store Hjemmeside</p>
+              </div>
+
+              <div class="content">
+                <div class="field">
+                  <div class="label">Fulde navn:</div>
+                  <div class="value">${data.name}</div>
+                </div>
+
+                <div class="field">
+                  <div class="label">E-mail:</div>
+                  <div class="value"><a href="mailto:${data.email}">${data.email}</a></div>
+                </div>
+
+                <div class="field">
+                  <div class="label">Telefon:</div>
+                  <div class="value">${data.phone || 'Ikke angivet'}</div>
+                </div>
+
+                <div class="field">
+                  <div class="label">Emne:</div>
+                  <div class="value">${translatedSubject}</div>
+                </div>
+
+                <div class="field">
+                  <div class="label">Sendt:</div>
+                  <div class="value">${data.timestamp}</div>
+                </div>
+
+                <div class="message-box">
+                  <div class="label">Besked:</div>
+                  <div class="value">${data.message}</div>
+                </div>
+              </div>
+
+              <div class="footer">
+                <p>Denne e-mail blev sendt fra ATP Store kontaktformular.</p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `
+      },
+    },
+    user: {
+      subject: (data: EmailTemplateData) =>
+        `Tak for din henvendelse til ATP Store - ${getTranslatedSubject('da', data.subject)}`,
+      html: (data: EmailTemplateData) => {
+        const translatedSubject = getTranslatedSubject('da', data.subject)
+        return `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+              .header { background: #0066cc; color: white; padding: 30px; border-radius: 5px 5px 0 0; text-align: center; }
+              .content { background: #fff; padding: 30px; border: 1px solid #ddd; border-top: none; }
+              .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border: 1px solid #ddd; border-top: none; border-radius: 0 0 5px 5px; }
+              .button { display: inline-block; padding: 12px 30px; background: #0066cc; color: white !important; text-decoration: none; border-radius: 5px; margin-top: 20px; font-weight: bold; font-size: 16px; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1 style="margin: 0;">Tak for din henvendelse!</h1>
+              </div>
+
+              <div class="content">
+                <p>Kære ${data.name},</p>
+
+                <p>Vi har modtaget din besked og sætter pris på, at du kontakter ATP Store. Vores team vil gennemgå din forespørgsel og vende tilbage til dig så hurtigt som muligt, typisk inden for 1-2 hverdage.</p>
+
+                <h3 style="color: #0066cc;">Dine beskeddetaljer:</h3>
+                <p><strong>Emne:</strong> ${translatedSubject}</p>
+                <p><strong>Besked:</strong></p>
+                <p style="background: #f8f9fa; padding: 15px; border-left: 3px solid #0066cc; white-space: pre-wrap;">${data.message}</p>
+
+                <p>Hvis du har brug for øjeblikkelig hjælp, er du velkommen til at ringe til os i åbningstiden:</p>
+                <ul>
+                  <li><strong>Ordremodtagelse:</strong> +46 76 196 1113</li>
+                  <li><strong>Kundeservice:</strong> +46 76 260 1112</li>
+                  <li><strong>Åbningstider:</strong> Mandag - Fredag, 08:00 - 16:00</li>
+                </ul>
+
+                <p>Med venlig hilsen,<br>
+                ATP Store Teamet</p>
+
+                <center>
+                  <a href="http://atpstore.se" class="button" style="color: white !important; text-decoration: none;">Besøg vores hjemmeside</a>
+                </center>
+              </div>
+
+              <div class="footer">
+                <p>Alfe Tissue Paper AB<br>
+                Maskinvägen 1 Port 8, 227 30 Lund, Skåne Sverige<br>
+                E-mail: info@alfetissuepaper.se | Web: atpstore.se</p>
+                <p style="margin-top: 10px;">Dette er et automatisk svar. Venligst svar ikke på denne e-mail.</p>
               </div>
             </div>
           </body>

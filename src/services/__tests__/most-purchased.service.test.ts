@@ -53,7 +53,11 @@ describe('most-purchased.service', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         expect.stringContaining(
           '/api/most-purchased?company_id=alfe&customer_id=SE0+1001+1086'
-        )
+        ),
+        expect.objectContaining({
+          cache: 'no-store',
+          next: { revalidate: 0 },
+        })
       )
       expect(result).toHaveLength(2) // Default mock has 2 products
       expect(result[0]?.rank).toBe(1) // First product should have rank 1
@@ -68,7 +72,11 @@ describe('most-purchased.service', () => {
       await getMostPurchasedProducts(mockCustomerId)
 
       expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('company_id=alfe')
+        expect.stringContaining('company_id=alfe'),
+        expect.objectContaining({
+          cache: 'no-store',
+          next: { revalidate: 0 },
+        })
       )
     })
 
@@ -81,7 +89,11 @@ describe('most-purchased.service', () => {
       await getMostPurchasedProducts(mockCustomerId)
 
       expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('company_id=env_company')
+        expect.stringContaining('company_id=env_company'),
+        expect.objectContaining({
+          cache: 'no-store',
+          next: { revalidate: 0 },
+        })
       )
     })
 

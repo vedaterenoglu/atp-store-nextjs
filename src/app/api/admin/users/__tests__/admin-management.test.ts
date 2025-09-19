@@ -10,6 +10,20 @@ import { GET } from '../list-admins/route'
 import { PUT } from '../update-admin/route'
 import { DELETE } from '../delete-admin/route'
 
+// Mock NextResponse to work in Jest environment
+jest.mock('next/server', () => ({
+  NextRequest: jest.requireActual('next/server').NextRequest,
+  NextResponse: {
+    json: (body: unknown, options?: { status?: number }) => {
+      const response = new Response(JSON.stringify(body), {
+        status: options?.status || 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
+      return response
+    },
+  },
+}))
+
 // Mock Clerk functions
 const mockAuth = jest.fn()
 const mockCurrentUser = jest.fn()

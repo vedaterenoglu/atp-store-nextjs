@@ -26,7 +26,7 @@ describe('auth-utils', () => {
         role: 'customer' as const,
       }
       const unsafeMetadata = {
-        role: 'staff' as const,
+        role: 'superadmin' as const,
       }
 
       const result = extractRole(sessionClaims, publicMetadata, unsafeMetadata)
@@ -39,7 +39,7 @@ describe('auth-utils', () => {
         role: 'customer' as const,
       }
       const unsafeMetadata = {
-        role: 'staff' as const,
+        role: 'superadmin' as const,
       }
 
       const result = extractRole(null, publicMetadata, unsafeMetadata)
@@ -49,12 +49,12 @@ describe('auth-utils', () => {
 
     it('should extract role from unsafeMetadata as last resort', () => {
       const unsafeMetadata = {
-        role: 'staff' as const,
+        role: 'superadmin' as const,
       }
 
       const result = extractRole(null, null, unsafeMetadata)
 
-      expect(result).toBe('staff')
+      expect(result).toBe('superadmin')
     })
 
     it('should return null when no valid role found', () => {
@@ -93,13 +93,13 @@ describe('auth-utils', () => {
       // All three have roles
       const sessionClaims = { metadata: { role: 'admin' as const } }
       const publicMetadata = { role: 'customer' as const }
-      const unsafeMetadata = { role: 'staff' as const }
+      const unsafeMetadata = { role: 'superadmin' as const }
 
       expect(extractRole(sessionClaims, publicMetadata, unsafeMetadata)).toBe(
         'admin'
       )
       expect(extractRole(null, publicMetadata, unsafeMetadata)).toBe('customer')
-      expect(extractRole(null, null, unsafeMetadata)).toBe('staff')
+      expect(extractRole(null, null, unsafeMetadata)).toBe('superadmin')
     })
   })
 
@@ -192,8 +192,8 @@ describe('auth-utils', () => {
       expect(isValidRole('admin')).toBe(true)
     })
 
-    it('should return true for valid staff role', () => {
-      expect(isValidRole('staff')).toBe(true)
+    it('should return true for valid superadmin role', () => {
+      expect(isValidRole('superadmin')).toBe(true)
     })
 
     it('should return false for invalid role', () => {
@@ -227,7 +227,7 @@ describe('auth-utils', () => {
     it('should be case sensitive', () => {
       expect(isValidRole('Customer')).toBe(false)
       expect(isValidRole('ADMIN')).toBe(false)
-      expect(isValidRole('Staff')).toBe(false)
+      expect(isValidRole('Superadmin')).toBe(false)
     })
 
     it('should type guard correctly', () => {

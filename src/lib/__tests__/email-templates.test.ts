@@ -612,8 +612,16 @@ describe('email-templates', () => {
       const trTemplates = getEmailTemplates('tr', testData)
       expect(trTemplates.admin.subject).toContain('Genel Soru')
 
+      // German (direct key exists)
+      const deTemplates = getEmailTemplates('de', testData)
+      expect(deTemplates.admin.subject).toContain('Allgemeine Anfrage')
+
+      // Danish (direct key exists)
+      const daTemplates = getEmailTemplates('da', testData)
+      expect(daTemplates.admin.subject).toContain('Generel forespørgsel')
+
       // Unsupported language (should fallback to English)
-      const unsupportedTemplates = getEmailTemplates('de', testData)
+      const unsupportedTemplates = getEmailTemplates('fr', testData)
       expect(unsupportedTemplates.admin.subject).toContain('General Inquiry')
     })
   })

@@ -47,6 +47,17 @@ jest.mock('lucide-react', () => ({
   ),
 }))
 
+jest.mock('@/hooks/use-safe-translation', () => ({
+  useSafeTranslation: () => ({
+    t: (key: string) => {
+      if (key === 'createAdmin.closeAlert') {
+        return 'Close alert'
+      }
+      return key
+    },
+  }),
+}))
+
 import StatusAlert from '../StatusAlert'
 
 describe('StatusAlert', () => {

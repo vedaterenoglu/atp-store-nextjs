@@ -85,7 +85,11 @@ describe('Campaign Service', () => {
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining(
           `/api/campaign-products?company_id=${mockCompanyId}`
-        )
+        ),
+        expect.objectContaining({
+          cache: 'no-store',
+          next: { revalidate: 0 },
+        })
       )
       expect(Array.isArray(result)).toBe(true)
       expect(result.length).toBe(2)
@@ -111,10 +115,18 @@ describe('Campaign Service', () => {
 
       // Should use relative URL for client-side (when window exists)
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/campaign-products')
+        expect.stringContaining('/api/campaign-products'),
+        expect.objectContaining({
+          cache: 'no-store',
+          next: { revalidate: 0 },
+        })
       )
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining(`company_id=${mockCompanyId}`)
+        expect.stringContaining(`company_id=${mockCompanyId}`),
+        expect.objectContaining({
+          cache: 'no-store',
+          next: { revalidate: 0 },
+        })
       )
     })
 
@@ -131,7 +143,11 @@ describe('Campaign Service', () => {
         await getCampaignProducts(companyId)
 
         expect(mockFetch).toHaveBeenCalledWith(
-          expect.stringContaining(`company_id=${companyId}`)
+          expect.stringContaining(`company_id=${companyId}`),
+          expect.objectContaining({
+            cache: 'no-store',
+            next: { revalidate: 0 },
+          })
         )
 
         mockFetch.mockClear()

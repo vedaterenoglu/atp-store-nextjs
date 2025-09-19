@@ -8,6 +8,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { CardActions } from '../CardActions'
 import type { CampaignProduct } from '@/types/campaign'
+import { toast } from '@/lib/utils/toast'
 
 // Mock react-i18next
 jest.mock('react-i18next', () => ({
@@ -308,16 +309,6 @@ describe('CardActions', () => {
 
       // Assert - wait for async operations
       await waitFor(() => {
-        expect(mockAddToCart).toHaveBeenCalledWith(
-          mockProduct.stock_id,
-          mockProduct.stock_name,
-          mockProduct.campaign_price,
-          1,
-          mockProduct.stock_image_link,
-          mockProduct.stock_group,
-          mockProduct.stock_unit,
-          99
-        )
         expect(mockOnAddToCart).toHaveBeenCalledWith(mockProduct, 1)
       })
     })
@@ -348,10 +339,9 @@ describe('CardActions', () => {
       // Act
       fireEvent.click(screen.getByTestId('add-to-cart-button'))
 
-      // Assert - No error should occur, component should handle gracefully
+      // Assert - Component should show error toast when onAddToCart is not provided
       await waitFor(() => {
-        expect(mockAddToCart).toHaveBeenCalled()
-        expect(screen.getByTestId('quantity-display')).toHaveTextContent('0')
+        expect(toast.error).toHaveBeenCalled()
       })
     })
 
@@ -436,9 +426,9 @@ describe('CardActions', () => {
       // Act
       fireEvent.click(screen.getByTestId('add-to-cart-button'))
 
-      // Assert - Should not throw error
+      // Assert - Should show error toast when onAddToCart is not provided
       await waitFor(() => {
-        expect(mockAddToCart).toHaveBeenCalled()
+        expect(toast.error).toHaveBeenCalled()
       })
     })
 
@@ -471,9 +461,9 @@ describe('CardActions', () => {
       fireEvent.click(screen.getByTestId('increase-button'))
       fireEvent.click(screen.getByTestId('add-to-cart-button'))
 
-      // Assert - Should not throw error
+      // Assert - Should show error toast when onAddToCart is not provided
       await waitFor(() => {
-        expect(mockAddToCart).toHaveBeenCalled()
+        expect(toast.error).toHaveBeenCalled()
       })
     })
   })

@@ -48,7 +48,11 @@ describe('products.service', () => {
       expect(Array.isArray(result)).toBe(true)
       expect(result.length).toBeGreaterThan(0)
       expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/products?company_id=alfe')
+        expect.stringContaining('/api/products?company_id=alfe'),
+        expect.objectContaining({
+          cache: 'no-store',
+          next: { revalidate: 0 },
+        })
       )
     })
 
@@ -62,7 +66,11 @@ describe('products.service', () => {
       await getProducts()
 
       expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/products?company_id=custom_company')
+        expect.stringContaining('/api/products?company_id=custom_company'),
+        expect.objectContaining({
+          cache: 'no-store',
+          next: { revalidate: 0 },
+        })
       )
     })
 
@@ -74,7 +82,11 @@ describe('products.service', () => {
       await getProducts()
 
       expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/products?company_id=alfe')
+        expect.stringContaining('/api/products?company_id=alfe'),
+        expect.objectContaining({
+          cache: 'no-store',
+          next: { revalidate: 0 },
+        })
       )
     })
 
@@ -87,7 +99,11 @@ describe('products.service', () => {
       await getProducts()
 
       expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/products?company_id=env_company')
+        expect.stringContaining('/api/products?company_id=env_company'),
+        expect.objectContaining({
+          cache: 'no-store',
+          next: { revalidate: 0 },
+        })
       )
     })
 
@@ -187,7 +203,11 @@ describe('products.service', () => {
       await getProductsByCategory('ELECTRONICS')
 
       expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/products?company_id=alfe')
+        expect.stringContaining('/api/products?company_id=alfe'),
+        expect.objectContaining({
+          cache: 'no-store',
+          next: { revalidate: 0 },
+        })
       )
     })
   })
@@ -282,7 +302,11 @@ describe('products.service', () => {
       await searchProducts('test')
 
       expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining('/api/products?company_id=alfe')
+        expect.stringContaining('/api/products?company_id=alfe'),
+        expect.objectContaining({
+          cache: 'no-store',
+          next: { revalidate: 0 },
+        })
       )
     })
 
